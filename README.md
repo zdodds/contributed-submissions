@@ -5,5 +5,5 @@ The goal of this project is to create a computing curriculum of value for every 
 
 That said, it has been an animating purpose here at Harvey Mudd College for at least the past 30 years. My suspicion: It's even more important in 2026 than it was in 1996!
 
-
+hi
 
