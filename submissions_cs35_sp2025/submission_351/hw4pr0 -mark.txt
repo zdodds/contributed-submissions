@@ -1,0 +1,27 @@
+<br>
+
+#### week4 ~ <i>... and into the data we dive ...</i>  &nbsp;&nbsp; (hw4pr0.ipynb)
+
+<a href="https://docs.google.com/document/d/1OdQ-01Gp7XAk9vbZ61zM3CaTdGsZVWEvZxgu1Z0toSY/edit?tab=t.0">This week's hw page</a>
+
+<hr><br>
+
+#### Reading for hw4...     (hw4pr0.ipynb)
+
+As we transition into AI/Machine Learning for the next few weeks, this week's reading takes a more <u>policy-based</u>, rather than socially-normed, view:
++ it's a NYTimes article from a few years ago -- nice, because it has a definite, wide-angle stance on regulating AI:
++ [How to Regulate Artificial Intelligence](https://www.nytimes.com/2017/09/01/opinion/artificial-intelligence-regulations-rules.html)
++ [locally-hosted pdf copy](https://drive.google.com/file/d/1EZcygQdk40J0dJTZ1vp0F20rIoQU27nH/view)
+
+Consider the author's three proposed principles, which elaborate Isaac Asimov's "laws":
++ AIs must obey human society's laws
++ AIs must disclose themselves as such
++ AIs cannot retain confidential information (w/o permission)
+
+Choose one (or more) of these principles with which to agree or disagree, bringing in your own experience and perspective. 
+
+Alternative paths and balancing acts are, as always, welcome! For example -- this article was written before conversational AI was a reality. Do you feel there are differences in the appropriate principles or guidance for regulating today's AI agents and their authors?
+
+<hr>#### Reading response
+
+I agree with almost all of the laws of that Etzioni proposed for AI. I think for the most important of all of them is the second rule. Etzioni says that bots, that use AI, have worked for good, for example Georgia Tech's Jill Watson bot teaching assistant or on social media platforms like @DeepDrumpf on X, an account that humorously impersonates Trump. However, I think AI bots have also been used for bad; for example, political, pro-Trump AI bots that posted numerous statements supporting the Republican party through the 2016 election. It's not only the fact that they were supporting Trump, but they were bots who simply were following the instructions of pro-Trump user, which is one of Asimov's laws. So, I question...even if the AI bots don't harm humans directly or risk their protection, isn't wrong to lead astray humans who think that others support their statements but aren't actually?
