@@ -1,0 +1,70 @@
+# Final Deliverable - Project:
+##  Project Title:
+**Land Valuation Modeling in Al-Tharawat: Regression vs. KNN**
+
+### Mohammed & IST341_Participant_5 – IST341 – Spring 2025.
+## 📌 Project Introduction
+
+In this project, we aim to predict land prices in a new area called Al-Tharawat, in southern Saudi Arabia. We manually collected 90 rows of data from a local real estate office.
+
+The dataset includes features like land area, number of street faces, corner or not, street width, and land use.
+
+We applied Linear Regression and KNN Regressor to compare their performance.
+Our goal is to create a simple model that helps the real estate office estimate land prices more accurately.
+
+## Progress So Far
+
+Since the proposal, we expanded our dataset from 50 to 90 rows, collected manually from a real estate office in the Al-Tharawat area, in southern Saudi Arabia. This gave us more useful and realistic data.
+
+We used pandas to check the structure and data types, and to confirm there were no missing or strange values. The data looks clean and ready for modeling.
+
+We followed the same steps from the class notebook to build a Linear Regression model, using three features. After that, we also implemented a KNN Regressor model to compare both approaches.
+
+Now the project is complete, and we are ready to analyze and reflect on the results.## Step 1: Load the dataset
+
+We show first rows to check structure before modeling.
+## Step 2 – Modeling with Linear Regression
+
+We start by selecting the features (X) and the target (y), and then we split the data into training and testing sets. This helps us test how good the model is.
+##  Step 3 – Evaluate the Model
+
+Now we evaluate the model using the R² score to see how well the model fits the data.
+##  Step 4 – Visualization
+
+Now we make a scatter plot to compare the real prices (y_test) with the predicted prices (y_pred). This helps us see how close the model predictions are to the actual prices.
+### Step 5 – Feature Impact Analysis
+
+To better understand which feature is the most important in predicting land prices, we remove each feature one by one and test how the model performance changes. We calculate the R-squared score in each case to see how the accuracy is affected.
+**Observation:** When we removed `Area_sqm`, the R-squared dropped a lot. This means land area is very important for price prediction.
+**Observation:** When we removed `Num_Street_Faces`, the model performance stayed high. This feature is helpful but not as critical as `Area_sqm`.
+**Observation:** Removing `Street_Width` caused a small drop in performance. It has some importance but not as much as `Area_sqm`.
+We see that the Linear Regression model gives very high R-squared score (0.99), which means it predicts land price very well in our dataset. The visualization also shows that predicted prices are close to the actual prices.
+
+But our dataset is small (only 90 rows), and we collect it from one real estate office in our region. Maybe if we add more data from other places, the model will not be perfect.
+
+Next step, we want to try other models like KNN Regressor to compare the results.
+### What’s Next
+
+Before the presentation, we will try to use KNN Regressor on the same dataset to compare it with Linear Regression. We want to see which model gives better results in our case.
+
+Also, we are still working on adding more rows to the dataset, and maybe we will try some visualization to compare more features like land area and land use.
+
+We want to improve our understanding of the models and prepare for the next steps in our project.
+### Step 6 – Modeling with KNN Regressor
+
+Now we try a different model: KNN Regressor.  
+We use the same three features: Area_sqm, Num_Street_Faces, and Street_Width.  
+We want to compare its results with Linear Regression to see which model performs better.
+#  Reflection
+
+#### 1. Initial Vision and Its Evolution
+We started with the goal to use Linear Regression to predict land prices in Al-Tharawat area. At first, we had only 50 rows, but we collected more data (90 rows) and decided to try KNN Regressor too.
+
+#### 2. Progress and Final System
+We followed the steps from class. We used pandas, matplotlib, and scikit-learn. The Linear Regression model worked very well with R² around 0.99. We also tried KNN and compared results. We tested what happens when we remove features, as the professor suggested.
+
+#### 3. Future Work
+If we had more time, we would try more models like Decision Tree, and collect more data from other areas. We also want to build a small tool to help the real estate office.
+
+#### 4. Lessons Learned
+Next time, we would clean the data earlier and test more values of K. We learned how to model, compare results, and understand real data better.
