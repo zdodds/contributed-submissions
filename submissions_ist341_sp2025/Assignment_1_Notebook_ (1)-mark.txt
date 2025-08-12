@@ -1,0 +1,437 @@
+# Welcome to IST 341, everyone!!!!!! My Name Is IST341_Participant_3
+
+_"CS Insights via Python"_
+### <font color="darkblue"><b>Welcome to Python notebooks! 🐍</b></font>
+
+***Computing*** is a powerful technique for discovery, in IS and IT, in science and engineering, and in many fields.
+
+This Python notebook interleaves descriptions with its computations. Both text and code are hosted in ***cells***:
+   + _description cells_, like this cell, are in **markdown**, a widely-used language for <u>presenting</u> ideas with text, pictures, etc. 📖
+   + Markdown can be **bold**
+   + _computation cells_, which you will see just below, are in **Python**, a widely-used language for <u>executing</u> ideas, that is, _code_  💻
+
+In the following cells, you'll create a description with some details about yourself.
+
+In the cells after that, you'll read, run, and compose ~~Java~~ Python scripts (snippets)
+
+
+### <font color="FireBrick"><b>Overview of Week1's Python Notebook</b> (this notebook)</font>
+
+This notebook itself offers examples and guidance for diving in to computing with Python and communicating with notebooks and markdown.
+
+This assignment, solo or in a team of 2-3, asks you to
++ work through the examples,
++ trying out examples as they arise
++ answering questions that are interspersed
++ writing new cells, markdown or Python, as the challenges arise
+
+Specifically, there are several waypoints in this notebook:
+1. when you complete an "introduction" markdown cell, about yourself
+2. when you have tried out and generated new data of various types
+3. when you have worked on the "Four fours" problem (finding all but 4!)
+4. when you've run and analyzed the first (very unfair) rock-paper-scissors example
+5. when you've created a fair - and complete - RPS example
+6. and, when you've authored a choose-your-own-adventure interactive fiction, using a number of different control structures to navigate various story-threads..., and
+7. reading an article about how language can influence thought -- and then reflecting on how you've "bumped into the boundaries" of language!  
+
+
+# Make your own <u>copy</u> of this notebook
+
+### Do this now...   &nbsp;&nbsp; _Troubles? Let me know._
+
+<br>
+
+With the starter notebook, you'll be able to read the content.
+When signed in with Google, you'll be able to run it.
+But you won't be able to _edit_ until you have your own copy.
+
+So, to get started, make your own copy of this notebook:
++ it will be stored in your space in Google Drive
++ you'll need to use Google credentials to make a copy and run cells
++ from there, you can edit, answer, and compose
+
+<br>
+
+### Submitting
+
+When you're ready to submit, be sure to
++ **share** your new copied-and-edited notebook with me:
+   + `zdodds@gmail.com`
++ and **submit** the url to your new copied-and-edited notebook at the appropriate spot on Canvas# Markdown cells### Your task
+
+The next few cells show a few example introductions...
+
+__Your task__ is to create a new markdown cell that answers the same questions as these...
+
+If you're working in a team, create one for each person.### <font color="DodgerBlue"><b>Introduction: IST341_Participant_3</b></font>
++ _Name_:  IST341_Participant_3
++ _School_:  PhD Student at CGU
++ _Two favorite things_:  
+   + My favorite beverages are __Black Coffee, Arabic Coffee and Tea__.
+   + one of my many favorite snacks are __milk shake & Cookies__.
++ _Two least-favorite things_:   
+   + My least-favorite coffee is __coffee latte  & hot chocolate__ and
+   + I also don't like cold or iced coffee, I don't count it as a coffee!
++ _Links to 4-6 things_ I find interesting/fun/inspiring/informative etc:
+   + YES, I enjoy using AI bots chats, I use it alot such as: [ChatGPT](https://openai.com/blog/chatgpt/)  &nbsp;  
+   + I love going to the gym, probably 4 to 5 days a week. [Planet Fitness](https://www.planetfitness.com) &nbsp;
+   + I love astronomy and watching the stars, not through a telescope, but by using an app called "Night Sky." When I see a bright star at night, I often wonder if it’s Jupiter or Mars, or maybe a galaxy that's far away from us. I open the app and point my device in the desired direction, and it will show me all the stars, planets, and even galaxies in that area. If you click on an object it will show you detailed info about it. You can zoom in and out to locate specific objects. The app also displays the live location of the International Space Station (ISS) and other satellites that orbit Earth. [Night Sky](https://icandiapps.com/)</font>
+   + Watching TV shows and Movies with family and friends is my favorite thing to do in my free time. [Netflix](https://www.netflix.com/)!
+   + I enjoy visiting ancient palaces, and my favorite place in my country is Alula, where an ancient civilization thrived thousands of years ago. A place that looks like a gate to an alien galaxy.  [Journey to the past](https://www.experiencealula.com/en/places-to-go/hegra)
+   
+
+<br># Code cells### <font color="darkblue"><b>Code cells: &nbsp; <i>Executable</i> expression</b></font>
+
+The next section of this notebook demonstrates several *code cells* and invites you to try - and build - several of your own.
+
+This next cell holds a short, scripted conversation. Try it:
+
+(ChatGPT, it is not!)
+### <font color="darkblue"><b>Variables and <i>values</i></b></font>
+
+The above cell, when run, interacts with a user. Notice!
++ The <tt>input</tt> function pauses for user input.
++ The <tt>answer</tt> variable "catches" the user's input.
++ The <tt>print</tt> function, well, prints things!
++ The single-equals-sign <tt>=</tt> is <u>assignment</u>
+   + it's <u><i>assigning</i></u> the left-side <i>variable</i> to be a name for the right-side <i>value</i>
+   + thus, the variable <tt>answer</tt> is a name for the user's input (what the user typed)
+   + and, the variable <tt>fav_num</tt> is a name for the next user input (what the user typed)
+### <font color="darkblue"><b><i>Variables</i> vs. <i>values</i></b></font>
+
+This is an important distinction: <i>variables</i> vs. <i>values</i>:
++ Variables give names to values. For example,
++ The <tt>answer</tt> variable gives the name <tt>answer</tt> to the user's first input.
++ The <tt>fav_num</tt> variable gives the name <tt>fav_num</tt> to the user's second input.
+
+In the next cell, notice that <tt>fav_num</tt> continues to hold the user-input value:### <font color="darkblue"><b><i>Short AI Challenge</i></b></font>
++ <tt>fav_num</tt> is a <i>string</i> not an <i>integer</i>
++ that is, <tt>fav_num</tt> is a sequence of characters, not a numeric value
+
+<b><font color="Cinnamon">Challenge</font></b>: Use AI to print the number that's one BIGGER than <tt>fav_num</tt>. That is, <tt>fav_num+1</tt>
++ This is tricky, because we need to create an integer in order to add 1
++ See if you can work with AI to make this work!
++ Be sure what you're printing uses <tt>fav_num</tt>
++ That way, it will work <i>no matter the value</i> that <tt>fav_num</tt> has!### <font color="darkblue"><b><i>Operators</i> and <i>Composition</i></b></font>
+
+CS usually means _Computer Science_
+
+However, CS is more accurately thought of as _Compositional Science_:
++ Software/programs are collections of small behaviors, carefully composed together  
++ Computers themselves are simply large compositions of smaller machines, each of which contributes to the whole
+
+The conceptual effort of CS is predominantly creating _compositions_
++ Determining the pieces needed for the task at hand, then
++ Assembling those pieces into the overall system desired
+
+<br>
+
+If CS is _Compositional Science_, let's dive in!
+
+We'll use the Four fours challenge.
+
+First, try out some example ___computations___:### <font color="darkblue"><b><i>Challenge</i>: Four fours</b></font>
+
++ The challenge: add several more lines similar to the above line to compute values from `0` to `24`
+  + you should compute at least 21 of these 25 values (from 0 through 24) using exactly four fours -- and no other numbers).
+  + why only 21 of the 25 possibilities? So that you can skip <u>four</u>, if they give you trouble!
+  
+<br>
+
++ You may use any of Python's arithmetic operations:
+  + `-`    subtraction or negation
+  + `*`    multiplication
+  + `/`    division
+  + `(   )`    parentheses for grouping
+  + `**`    power
+
+<br>
+
+#### hints and notes:
++ Results with decimals: 1.0, 2.0, etc. are totally OK!
++ You may also use 44 or 4.4, each of which count as two fours,
++ or .4, which counts as one four.
++ or, `sqrt`, for example `math.sqrt(4)` (or others, from the `math` library
++ or, `factorial`, for example `math.factorial(4)` (or others).
+
+#### desired results:
+Here are what the results, but not the source code, will look like.
+Remember you need only 21 of them!
+
+<code><pre>
+Zero is 0
+One is 1
+Two is 2
+Three is 3
+Four is 4
+Five is 5
+Six is 6
+Seven is 7
+Eight is 8
+Nine is 9
+Ten is 10
+Eleven is 11
+Twelve is 12
+Thirteen is 13
+Fourteen is 14
+Fifteen is 15
+Sixteen is 16
+Seventeen is 17
+Eighteen is 18
+Nineteen is 19
+Twenty is 20
+Twenty-one is 21
+Twenty-two is 22
+Twenty-three is 23
+Twenty-four is 24
+Twenty-five is 25
+</pre></code>
+
+
+
+
+
+
+### <font color="darkblue"><b>Use AI!</b></font>
+
+You're encouraged to use AI to help you...
+
+Remember -- AI can be helpful, and AI can be misleading.
+
+The skill of our era:
++ <b><i>keep AI's help</i></b>
++ skip what's unhelpful
++ practice <i><u>describing</u></i> that difference...
+  + to yourself...
+  + to others...### <font color="darkblue"><b>Data</b></font>
+
+The Four fours challenge uses _only_ numeric data, stereotypical of computing.
+
+In general, however, data can be numeric or sequential.
+
+Here are the two most important examples of each:
++ <tt>46</tt>, <tt>42</tt>, <tt>-40</tt>, <tt>0</tt>, and <tt>1000000000000</tt> are <i>integers</i>. Integers are a _numeric_ type.
+   + in Python they are of type <font color="darkred"><b><tt>int</tt></b></font>
++ <tt>3.14</tt>, <tt>46.0</tt>, <tt>-.001</tt> are <i>floating-point</i> values: numeric with a fractional part - even if that fractional part is zero.
+   + in Python these are of type <font color="darkred"><b><tt>float</tt></b></font>
++ <tt>"claremont"</tt>, <tt>'Python'</tt>, and <tt>"ATG"</tt> are <i>strings</i>. They are sequences of characters. Single-quotes <tt>'like this'</tt> and double-quotes <tt>"like this"</tt> are both ok and both equivalent.
+   + strings in Python are of type <font color="darkred"><b><tt>str</tt></b></font>
++ <tt>[4,6]</tt>, <tt>[4,5,6]</tt>, <tt>[ "scripps", "pitzer", "cgu" ]</tt>, and <tt>[ [7,"scripps"], [6,"pitzer"], [3,"cgu"] ]</tt> are <i>lists</i>, sequences of anything at all...
+   + in Python they are of type <font color="darkred"><b><tt>list</tt></b></font>
+
+The next cell provides working examples.
+
+The following cell asks you to create one of each -- with your own context added. :-)### <font color="darkblue"><b>A notebook's cells are global...</b></font>
+
+All notebook cells <u>share</u> a set of variables and their values!
++ These are called <tt>global</tt> variables and values.
++ These global variables and values are really convenient for exploration
+   + We can just keep exploring, cell-by-cell.
++ It runs into trouble, however, when variable names get re-used (<i>Aargh!</i>)
+   + Re-use of a variable is called <i><b>clobbering</b></i>
+
+Let's clobber <tt>fav_num</tt> here:
+# <font color="darkblue"><b>Conditionals</b></font>
+
+### Conditionals are <i>Code Paths</i>
+
+In Python, all decisions are made through three keywords:
++ <tt>if</tt>, <tt>elif</tt>, and <tt>else</tt>  
++ These allow you to make decisions based on the value of data
++ And those decisions can direct code to take different actions.
+
+These control structures are called ***conditionals***
+
+As an example of a conditional control structure, try the following cell.
+
+It plays a very unfair (and impolite) version of rock-paper-scissors:### <u><b>To Do</b></u>
+
+### Run the above cell several times...
+
++ Try different inputs, including <tt>rock</tt>, <tt>paper</tt>, <tt>scissors</tt>, and some others. Experiment!
++ In each case, consider the results...
+
+<br>
+
+### <u><b>To Answer</b></u>
+
+Feel free to include your answers here, just after each question. (A couple of these are completed as examples.)
+
++ In the above cell, which lines run when <tt>user_choice</tt> is equal to ``"rock"``?
+   + <b>Answer</b>:  lines 13-15, the <tt>if</tt> block's body, are run in this case
++ In the above cell, which lines run when <tt>user_choice</tt> is equal to ``"paper"``?
+   + <b>Answer</b>: Lines **18, 19**
++ In the above cell, which lines run when <tt>user_choice</tt> is equal to ``"Paper"``? (Hint: it's different than above!)
+   + <b>Answer</b>: Lines **22, 23 , 24**
++ In the above cell, which lines run when <tt>user_choice</tt> is equal to <tt>POPTARTS!</tt>?
+   + <b>Answer</b>: Lines **22, 23 , 24**
++ If you delete just the <tt>if</tt> block (lines 12-15) entirely, how does the program's behavior change?
+   + <b>Answer</b>:  This breaks the code: it's a syntax error to have an <tt>elif</tt> or an <tt>else</tt> without an initial <tt>if</tt>!
++ What if you delete just the <tt>elif</tt> block (lines 17-19)?
+   + <b>Answer</b>: The code will run without any errors but it will generate logical errors. If the user chooses "rock" it will print lines **13,14,15** otherwise it will print lines **22,23,24** no matter what the choice is.
+
++ What if you delete just the <tt>else</tt> block (lines 21-24)?
+   + <b>Answer</b>: The code will run without any errors but there will missing choices to handle. If the user chooses "rock" it will print lines **13,14,15**. If the user chooses "paper" it will print lines **18,19**. However, when the user chooses "scissors" or any other invalid entry, the code will print lines **28**.
+
++ What if you change just the keyword <tt>elif</tt> to the keyword <tt>if</tt> on line 17? How does the program's behavior change?
+   + <b>Answer</b>: The code will run without any errors but when the user chooses "rock", it will check the two if test every time and this will result in double-printed results. For example, If the user chooses "rock" it will print lines **13,14,15** but it does not stop there it will also go to the second if "line **17**" and check for the test which is fault, then it will print the else block "lines **22,23,24**" before it will print the last two lines **27,28**. When the user chooses "paper" or "scissors" or any other choices, it will run smoothly as the original version of the code.
+<br>
+
+### <u><b>To Notice</b></u>
+
++ In the above cell, notice that to **test** if a variable is equal to a value, Python uses two equal signs
+   + <tt>user_choice == "rock"</tt> is a <u>test</u>
++ On the other hand, to **set** a variable to a value, Python uses one equal sign
+  + <tt>user_choice = input("Which?")</tt> <i>sets</i> <tt>user_choice</tt>. (It's not a test.)
++ The **body** of each conditional block is indented. This is how Python knows when the block ends.
+   + When its indentation ends, so does that _block_ of code.
+
+
+# <font color="darkblue"><b><i>Nested</i> Conditionals</b></font>
+
+That's it!
+
+Incredibly, that's all there is to know about conditionals!
+
+(Although there's value to practicing further!)
+
+Even more incredibly, ***this is all that's needed for <u>any</u> computational decision-making at all***
++ <tt>if</tt>, <tt>elif</tt>, and <tt>else</tt> are all that are needed
++ Every conditional must begin with an <tt>if</tt>. The <tt>elif</tt> and <tt>else</tt> blocks are optional.
++ Sophistication, power, and intricacy can be built through ***nesting***
+
+Below is a more sophisticated -- and more fair -- rock-paper-scissors example. + It uses _nested_ conditionals to keep track of both the user's choice and the computer's choice.
+
+You'll see the line <tt>comp_choice = random.choice(["rock","paper","scissors"])</tt>
++ This line makes a random choice from the three options
++ It assigns that choice to the variable <tt>comp_choice</tt>
++ We don't know which it's chosen!
+
+Try it out!# <font color="darkblue"><b>Your Task: a <i>real</i> RPS...</b></font>
+
+Above is a _start_ to a real RPS challenge. It's fair, but incomplete.
+
+<br>
+
+Your task, in the following cell, is to create a complete, fair-playing RPS-like game:
++ it should run and should handle at least nine possibilities correctly
++ they can be rock-paper-scissors or your own options...
++ use creative/personalized dialog!
+
+<br>
+
+There are lots of extra-credit possibilities, as well:
++ create an RPS-variation of your own design
+   + There are several variants that involve bears.
+   + Perhaps bear-stag-sagehen?
+   + Could have more than three options, e.g., [rock-paper-scissors-lizard-spock](https://www.youtube.com/watch?v=x5Q6-wMx-K8)
++ use better/sharper dialog!
++ include "easter eggs" - for example, different behavior if the name is recognized...
+   + With conditionals, there's no limit to the code-paths possible...
+
+<br>
+
+But, don't spend too much time on RPS...
+
+... because the final task, your Python Adventure, awaits!
+# <font color="darkblue"><b>Adventure! (example)</b></font>
+
+Try running the cell below and then read it over.
+
+It is an example "interactive fiction" adventure:
++ featuring poptarts  (naturally)
++ with multiple outcomes available  (only two, in this case)
+
+With this as an example, the final problem asks you to create-your-own-adventure...  (see the details below).# <font color="darkblue"><b>Adventure (Yours!)</b></font>
+
+### Interactive Fiction
+
+For this problem, you-the-author should create a Python program (built on the starting template above) that is a work of interactive fiction, a.k.a., a choose-your-own-adventure program.
+
+Its goals are
++ to build experience with control structures! Your adventure needs at least 5 <tt>if</tt>-based control structures, noted below.
++ to begin writing code in a function (the template does this using <tt>def adventure():</tt> at the top of the cell) -- and then running it (by calling <tt>adventure()</tt> at the bottom of the cell
++ to invite story-telling (in Python)!
+
+<br>
+
+### Conditional structures to include:
+
+The example story includes two if-based control structures: (a) an <tt>if-elif-else</tt> and (b) an <tt>if-else</tt>
+
+For this challenge, you use each of five conditional control structures in a creative way that affects the story or dialog
++ They don't have to appear in this or any order
++ You're welcome to have many more than this, if you wish!
++ Here are the control structures to be sure to include:
+   + An `if`, `elif`, and `else` control structure (with exactly one `elif`)
+   + An `if`, `elif`, `elif`, ... and `else` control structure (with at least two `elif`s and a trailing `else`)
+   + An `if`, `else` control structure (with zero `elif`s)
+   + An `if`, `elif`, ... control structure (with one or more `elif`s but no trailing `else` at all)
+   + A plain `if` control structure (with no trailing `elif` nor trailing `else` at all)
+
+<i>Keep things light!</i>
++ There are forums for all forms of expression, and this one's goals is really contextualizing conditionals in CS.
++ Know that, poentially, lots of people (our tutors! us!) will read—and run—your story: we look forward to it!
++ It's appreciated if you describe how to "win" your adventure at the top of your cell, in a comment
+
+Also, please be mindful of the time you spend!
+
+The goal here is _not_ to take a lot of time.
++ It's easy to let time slip away: the poptart adventure above took much longer than I originally thought it would—and it has only two control structures!
+
+<br>
+
+### I look forward to your adventure!
+# <font color="darkblue"><b>Reading and Response</b></font>
+
+### There is often a "reading-and-response challenge"
++ There is usually one of these each week...
++ It often complements the programming portion for that week...
++ **Response**    We ask you to compose a response to each article. It can be short (4-5 sentences is great), and the goal is to engage with something in each article and incorporate your own thoughts and experiences into your response.
+  + The responses are worth about 5 points each week.
+  + Include your response in the cell below...\
+  
+
+<br>
+
+### This week's reading is about _language_
++ Here is the [article in the NYTimes](https://www.nytimes.com/2010/08/29/magazine/29language-t.html)
++ Here is a [local pdf copy](https://www.cs.hmc.edu/twiki/pub/CS5/Reading0Gold/language_shapes.pdf), in case you don't have access the NYTimes version
+
+<br>
+
+#### What to do...
+
++ After you have read the above excerpt (or whole article), create a response to the article that addresses one or both of the following prompts in a plain-text file named hw0pr0.txt, which you should submit through the submissions system.
+  + Have there been moments in which you felt that your language or another language "got in the way" of something you wanted to accomplish? That is, have you "bumped into a language's boundaries," in the manner suggested by the article? Elaborate briefly.  or
+  + To what extent do artificial languages (such as Python or Picobot) have the ability to shape human thought, if at all? Or are such languages fundamentally different from human ones, such as Guugu Yimithirr and English?
++ You only need write a few sentences in the next cell down; a paragraph of 4-6 sentences certainly suffices. More are welcome, but the real goal is that your response shows you have thought about the article and added your own experience or insights to its ideas.
+
+## <font color="darkblue"><b>Response to "Does language shape how we think?!"</b></font>
+
+<br>
+
+### **"Does Language Shape How We Think?"**
+
+Language plays a significant role in shaping our perceptions and interactions with the world. For instance, I've noticed that my father frequently uses geographical directions. This is likely because he worked on my grandfather's farm as a young boy, where he was a shepherd tending to sheep in the open desert. He learned to navigate using these directions at an early age. Sometimes I find it difficult to find the location that sent me to because he uses these directions.  
+
+Interestingly, modern contexts like movies demonstrate the potential for a more universal directional system. Phrases like "The target is at 10 o'clock" provide a clear and intuitive way to describe spatial relationships, combining the benefits of egocentric and geographic systems. If such a system were widely adopted, it could bridge gaps between cultural and linguistic differences, making communication more efficient and universally understandable.
+
+Similarly, artificial languages like Python also shape thought processes, training us to think logically and sequentially. While programming languages do not influence perception like natural languages, they guide problem-solving strategies. Both natural and artificial languages remind us that the tools we use for communication shape how we interact with the world and one another.
+
+
+<br>
+<br># <B>Submitting...</B>
+
+Be sure to submit the url of _your_ copy -- with the challenges, questions, and programs composed --
++ to Canvas in the appropriate spot
++ by the _following_ Friday evening, any time...
+
+Remember that there is lots of cgu-based tutoring support (the Python tutoring), as well as office-hour support available...
+
+<br>
+
+The programming parts of IST341, especially this one, seek poptarts -- as well as
++ creativity/novelty
++ personalization/individual context
++ exploration and understanding (does it run?)
