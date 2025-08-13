@@ -1,0 +1,240 @@
+# 📦 import libraries
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.linear_model import linearregression
+from sklearn.model_selection import train_test_split
+
+
+# load dataset
+df = pd.read_csv('tharawat.csv')
+
+# show first rows
+df.head()
+
+
+
+# show dataset structure and column types
+df.info()
+
+
+# show basic stats like mean, min, max
+df.describe()
+
+
+# select the features (input columns)
+x = df[['area_sqm', 'num_street_faces', 'street_width']]
+
+# select the target column (output)
+y = df['price_sar']
+
+# split the data into training and testing
+x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=42)
+
+# create the linear regression model
+model = linearregression()
+
+# fit the model with training data
+model.fit(x_train, y_train)
+
+# make predictions using the test data
+y_pred = model.predict(x_test)
+
+# show first 5 predictions vs actual prices
+print("predicted prices:", y_pred[:5])
+print("actual prices:   ", y_test.values[:5])
+
+
+
+from sklearn.metrics import r2_score
+
+# calculate the r-squared score
+r2 = r2_score(y_test, y_pred)
+
+# print the result
+print("r-squared score:", r2)
+
+
+# scatter plot: real vs predicted
+plt.figure(figsize=(8, 5))
+plt.scatter(y_test, y_pred, color='blue')
+plt.plot([y_test.min(), y_test.max()], [y_test.min(), y_test.max()], 'r--')  # perfect prediction line
+plt.xlabel("actual prices")
+plt.ylabel("predicted prices")
+plt.title("actual vs predicted prices")
+plt.grid(true)
+plt.show()
+
+
+
+# remove 'area_sqm' and test the model
+x = df[['num_street_faces', 'street_width']]
+y = df['price_sar']
+
+x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=42)
+
+model = linearregression()
+model.fit(x_train, y_train)
+y_pred = model.predict(x_test)
+
+r2 = r2_score(y_test, y_pred)
+print("r-squared without area_sqm:", r2)
+
+
+
+# scatter plot for model without 'area_sqm'
+plt.figure(figsize=(8, 5))
+plt.scatter(y_test, y_pred, color='green')
+plt.plot([y_test.min(), y_test.max()], [y_test.min(), y_test.max()], 'r--')  # perfect prediction line
+plt.xlabel("actual prices")
+plt.ylabel("predicted prices")
+plt.title("actual vs predicted (without area_sqm)")
+plt.grid(true)
+plt.show()
+
+
+
+# remove 'num_street_faces' and test the model
+x = df[['area_sqm', 'street_width']]
+y = df['price_sar']
+
+x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=42)
+
+model = linearregression()
+model.fit(x_train, y_train)
+y_pred = model.predict(x_test)
+
+r2 = r2_score(y_test, y_pred)
+print("r-squared without num_street_faces:", r2)
+
+
+
+# scatter plot for model without 'num_street_faces'
+plt.figure(figsize=(8, 5))
+plt.scatter(y_test, y_pred, color='orange')
+plt.plot([y_test.min(), y_test.max()], [y_test.min(), y_test.max()], 'r--')  # perfect prediction line
+plt.xlabel("actual prices")
+plt.ylabel("predicted prices")
+plt.title("actual vs predicted (without num_street_faces)")
+plt.grid(true)
+plt.show()
+
+
+
+# remove 'street_width' and test the model
+x = df[['area_sqm', 'num_street_faces']]
+y = df['price_sar']
+
+x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=42)
+
+model = linearregression()
+model.fit(x_train, y_train)
+y_pred = model.predict(x_test)
+
+r2 = r2_score(y_test, y_pred)
+print("r-squared without street_width:", r2)
+
+
+
+# scatter plot for model without 'street_width'
+plt.figure(figsize=(8, 5))
+plt.scatter(y_test, y_pred, color='green')
+plt.plot([y_test.min(), y_test.max()], [y_test.min(), y_test.max()], 'r--')  # perfect prediction line
+plt.xlabel("actual prices")
+plt.ylabel("predicted prices")
+plt.title("actual vs predicted (without street_width)")
+plt.grid(true)
+plt.show()
+
+
+
+# step 6 – modeling with knn regressor
+
+from sklearn.neighbors import kneighborsregressor
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import r2_score
+import matplotlib.pyplot as plt
+
+# use the same features
+x = df[['area_sqm', 'num_street_faces', 'street_width']]
+y = df['price_sar']
+
+# split data
+x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=42)
+
+# create and train the knn model
+knn_model = kneighborsregressor(n_neighbors=5)
+knn_model.fit(x_train, y_train)
+
+# predict and evaluate
+y_pred_knn = knn_model.predict(x_test)
+r2_knn = r2_score(y_test, y_pred_knn)
+print("r-squared score (knn):", r2_knn)
+
+# visualize the predictions
+plt.figure(figsize=(8, 5))
+plt.scatter(y_test, y_pred_knn, color='purple')
+plt.plot([y_test.min(), y_test.max()], [y_test.min(), y_test.max()], 'r--')
+plt.xlabel("actual prices")
+plt.ylabel("predicted prices")
+plt.title("knn regressor: actual vs predicted prices")
+plt.grid(true)
+plt.show()
+
+
+
+# import necessary libraries
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.linear_model import linearregression
+from sklearn.neighbors import kneighborsregressor
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import r2_score
+
+# load the dataset
+df = pd.read_csv('tharawat.csv')
+
+# define features and target
+features = ['area_sqm', 'num_street_faces', 'street_width']
+target = 'price_sar'
+
+x = df[features]
+y = df[target]
+
+# split the data
+x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=42)
+
+# train linear regression model
+lr_model = linearregression()
+lr_model.fit(x_train, y_train)
+y_pred_lr = lr_model.predict(x_test)
+
+# train knn regressor model
+knn_model = kneighborsregressor(n_neighbors=5)
+knn_model.fit(x_train, y_train)
+y_pred_knn = knn_model.predict(x_test)
+
+# compare visualizations
+fig, axs = plt.subplots(1, 2, figsize=(14, 5))
+
+# plot linear regression
+axs[0].scatter(y_test, y_pred_lr, color='blue')
+axs[0].plot([y_test.min(), y_test.max()], [y_test.min(), y_test.max()], 'r--')
+axs[0].set_title("linear regression")
+axs[0].set_xlabel("actual prices")
+axs[0].set_ylabel("predicted prices")
+axs[0].grid(true)
+
+# plot knn regressor
+axs[1].scatter(y_test, y_pred_knn, color='purple')
+axs[1].plot([y_test.min(), y_test.max()], [y_test.min(), y_test.max()], 'r--')
+axs[1].set_title("knn regressor")
+axs[1].set_xlabel("actual prices")
+axs[1].set_ylabel("predicted prices")
+axs[1].grid(true)
+
+plt.tight_layout()
+plt.show()
+
+
+
