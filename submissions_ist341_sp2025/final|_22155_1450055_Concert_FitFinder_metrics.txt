@@ -1,0 +1,98 @@
+
+
+
+import os
+import openai
+import gradio as gr
+
+openai.api_key = "sk-proj-2zsveaif0d0jtb8zqo_nmkizqhvj_w6vrvqr8rikptvq2dcff7ybc-hx-txozdpmha_fruaqmnt3blbkfjzhuinajr5ghaefbbfuonj5kui--vltl28rjnsa961iqv7og_78yeq2swfwsoaw2rvnu6nr71ya"
+client = openai.openai(api_key=openai.api_key)
+
+
+
+def parse_outfit_text(text):
+    import re
+    sections = {"top": "", "bottoms": "", "shoes": "", "accessories": ""}
+    matches = re.findall(r"(top|bottoms|shoes|accessories):\s*(.*)", text, re.ignorecase)
+    for key, value in matches:
+        sections[key.capitalize()] = value.strip()
+    return sections
+
+
+
+def generate_outfit_components(vibe, style, gender, no_items, top, bottoms, shoes, accessories):
+    style_clause = f"style preference: {style}" if style != "any" else ""
+    prompt = f"""
+you are a fashion assistant helping finalize an outfit for a concert.
+
+concert vibe: "{vibe}"
+{style_clause}
+gender identity: {gender}
+
+the user already has:
+top: {top or 'none'}
+bottoms: {bottoms or 'none'}
+shoes: {shoes or 'none'}
+accessories: {accessories or 'none'}
+
+the user explicitly does not want:
+{no_items}
+
+strictly follow these instructions:
+- do not include any forbidden items from the list above.
+- do not modify any fields that are already filled in by the user.
+- only generate items that are empty and must still be suggested.
+- generate items that complement the fixed ones and match the vibe and style.
+
+respond only in this format:
+top: ...
+bottoms: ...
+shoes: ...
+accessories: ...
+"""
+
+    try:
+        response = client.chat.completions.create(
+            model="gpt-4",
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0.7,
+            max_tokens=300
+        )
+        parsed = parse_outfit_text(response.choices[0].message.content)
+        return top or parsed["top"], bottoms or parsed["bottoms"], shoes or parsed["shoes"], accessories or parsed["accessories"]
+    except exception as e:
+        return f" error: {e}", "", "", ""
+
+
+
+with gr.blocks() as app:
+    gr.markdown("## 🎤 concert outfit generator")
+
+    with gr.row():
+        with gr.column():
+            vibe = gr.textbox(label="concert vibe")
+            style = gr.dropdown(["any", "trendy", "bold", "casual", "eco-friendly", "classic"], label="style")
+            gender = gr.dropdown(["feminine", "masculine", "gender-neutral"], label="gender identity")
+            no_items = gr.textbox(label="things to avoid")
+
+            top = gr.textbox(label="top (optional)", placeholder="add a top you want to keep — or leave blank")
+            bottoms = gr.textbox(label="bottoms (optional)", placeholder="add bottoms you want to keep — or leave blank")
+            shoes = gr.textbox(label="shoes (optional)", placeholder="add shoes you want to keep — or leave blank")
+            accessories = gr.textbox(label="accessories (optional)", placeholder="add accessories you want to keep — or leave blank")
+
+            suggest_btn = gr.button("🔄 suggest missing pieces")
+
+        with gr.column():
+            output_top = gr.textbox(label="top")
+            output_bottoms = gr.textbox(label="bottoms")
+            output_shoes = gr.textbox(label="shoes")
+            output_accessories = gr.textbox(label="accessories")
+
+    suggest_btn.click(generate_outfit_components,
+                      inputs=[vibe, style, gender, no_items, top, bottoms, shoes, accessories],
+                      outputs=[output_top, output_bottoms, output_shoes, output_accessories])
+
+app.launch(share=true)
+
+
+

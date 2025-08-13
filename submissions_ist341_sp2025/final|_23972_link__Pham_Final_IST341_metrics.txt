@@ -1,0 +1,324 @@
+import pandas as pd
+
+# read the csv file into a dataframe
+df = pd.read_csv('small_games_csv.csv')
+
+# create a scatter plot using matplotlib
+import matplotlib.pyplot as plt
+
+# filter out rows where average_playtime_forever is greater than 50000 minutes
+filtered_df = df[df['average_playtime_forever'] <= 55000]
+
+plt.figure(figsize=(12, 7))
+plt.scatter(filtered_df['price'], filtered_df['average_playtime_forever'], alpha=0.5)
+plt.xlabel('price ($)')
+plt.ylabel('average playtime (minutes)')
+plt.title('game price vs average playtime')
+
+# add a grid for better readability
+plt.grid(true, linestyle='--', alpha=0.7)
+
+# show the plot
+plt.show()
+
+
+import pandas as pd
+
+# read the csv file into a dataframe
+df = pd.read_csv('small_games_csv.csv')
+
+# create a scatter plot using matplotlib
+import matplotlib.pyplot as plt
+
+# filter out rows where average_playtime_forever is greater than 50000 minutes
+filtered_df = df[df['average_playtime_forever'] <= 50000]
+
+plt.figure(figsize=(12, 10))
+plt.scatter(filtered_df['metacritic_score'], filtered_df['average_playtime_forever'], alpha=0.5)
+plt.xlabel('metacritic score')
+plt.ylabel('average playtime (minutes)')
+plt.title('metacritic vs average playtime')
+
+# add a grid for better readability
+plt.grid(true, linestyle='--', alpha=0.7)
+
+# show the plot
+plt.show()
+
+
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# read the csv file
+df = pd.read_csv('small_games_csv.csv')
+
+# filter out extreme playtimes and invalid scores
+filtered_df = df[(df['average_playtime_forever'] <= 50000) &
+                (df['metacritic_score'] > 40)]  # only scores > 0
+
+# create figure
+plt.figure(figsize=(12, 7))
+
+# plot all games in light gray
+plt.scatter(filtered_df['metacritic_score'],
+            filtered_df['average_playtime_forever'],
+            color='lightgray',
+            alpha=0.4,
+            label='all games')
+
+# highlight high-scoring games (score > 90)
+high_score_games = filtered_df[filtered_df['metacritic_score'] > 90]
+plt.scatter(high_score_games['metacritic_score'],
+            high_score_games['average_playtime_forever'],
+            color='red',
+            alpha=0.7,
+            label='exceptional games (score > 90)')
+
+# customize plot
+plt.xlabel('metacritic score', fontsize=8)
+plt.ylabel('average playtime (minutes)', fontsize=12)
+plt.title('metacritic score vs playtime (highlighting exceptional games)', fontsize=14)
+plt.grid(true, linestyle='--', alpha=0.3)
+
+# add legend
+plt.legend()
+
+# add text annotation for context
+plt.text(20, 45000,
+         f"total games: {len(filtered_df)}\nexceptional games: {len(high_score_games)}",
+         bbox=dict(facecolor='white', alpha=0.8))
+
+plt.tight_layout()
+plt.show()
+
+
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import linearregression
+from sklearn.metrics import mean_squared_error, r2_score
+import matplotlib.pyplot as plt
+
+# load the dataset
+df = pd.read_csv('small_games_csv.csv')
+
+# clean the data
+# 1. remove rows with missing or invalid metacritic scores (0 or nan)
+df = df[df['metacritic_score'].notna() & (df['metacritic_score'] > 0)]
+
+# 2. filter extreme playtime outliers (keep ≤ 50,000 minutes)
+df = df[df['average_playtime_forever'] <= 50000]
+
+# prepare features (x) and target (y)
+x = df[['average_playtime_forever']]  # playtime in minutes (as original)
+y = df['metacritic_score']            # target variable
+
+
+
+
+
+
+
+
+# split data (80% train, 20% test)
+x_train, x_test, y_train, y_test = train_test_split(
+    df[['average_playtime_forever']],  # features (minutes)
+    df['metacritic_score'],            # target
+    test_size=0.2,
+    random_state=42
+)
+
+print(f"train samples: {len(x_train)}")
+print(f"test samples: {len(x_test)}")
+
+
+from sklearn.linear_model import linearregression
+
+# initialize and train the model
+model = linearregression()
+model.fit(x_train, y_train)
+
+# interpret coefficients (in minutes)
+print(f"intercept (baseline score): {model.intercept_:.2f}")
+print(f"coefficient: {model.coef_[0]:.6f} (metacritic points per minute of playtime)")
+
+
+from sklearn.metrics import mean_squared_error, r2_score
+import matplotlib.pyplot as plt
+
+# predict on test data
+y_pred = model.predict(x_test)
+
+# calculate metrics
+mse = mean_squared_error(y_test, y_pred)
+r2 = r2_score(y_test, y_pred)
+
+print(f"mean squared error: {mse:.2f}")
+print(f"r² score: {r2:.2f} (1.0 = perfect fit)")
+
+# plot results
+plt.figure(figsize=(10, 6))
+plt.scatter(x_test, y_test, alpha=0.5, label='actual scores')
+plt.plot(x_test, y_pred, color='red', linewidth=2, label='predicted trend')
+plt.xlabel('average playtime (minutes)')
+plt.ylabel('metacritic score')
+plt.title('metacritic score vs. playtime (minutes)')
+plt.legend()
+plt.grid(true, linestyle='--', alpha=0.3)
+plt.show()
+
+
+def predict_metacritic_score(playtime_minutes):
+    """predict metacritic score for a given playtime in minutes."""
+    # convert input to dataframe with the expected feature name
+    input_data = pd.dataframe({'average_playtime_forever': [playtime_minutes]})
+    score = model.predict(input_data)[0]
+    return f"predicted metacritic score for {playtime_minutes} minutes: {score:.1f}"
+
+# example predictions (now warning-free)
+print(predict_metacritic_score(500))    # ~8 hours
+print(predict_metacritic_score(3000))   # 50 hours
+print(predict_metacritic_score(10000))  # ~166 hours
+
+
+import seaborn as sns
+plt.figure(figsize=(10,6))
+sns.regplot(x='average_playtime_forever', y='metacritic_score', data=df,
+            scatter_kws={'alpha':0.3}, line_kws={'color':'red'})
+plt.title('actual playtime vs. metacritic relationship')
+plt.show()
+
+
+# split your data as before (if not already done)
+x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=42)
+
+# fit the model again (in case this isn't already done)
+model = linearregression()
+model.fit(x_train, y_train)
+
+# predict using the test set
+y_pred = model.predict(x_test)
+
+# plot
+plt.figure(figsize=(8, 5))
+plt.scatter(x_test, y_test, color='blue', label='actual scores', alpha=0.6)
+plt.scatter(x_test, y_pred, color='red', label='predicted scores', alpha=0.6)
+plt.plot(x_test, y_pred, color='black', linewidth=1, label='prediction trend')
+
+plt.xlabel('playtime (hours)')
+plt.ylabel('metacritic score')
+plt.title('actual vs. predicted metacritic scores')
+plt.legend()
+plt.grid(true)
+plt.tight_layout()
+plt.show()
+
+
+
+import pandas as pd
+from sklearn.ensemble import randomforestregressor
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import mean_squared_error, r2_score
+import matplotlib.pyplot as plt
+
+# load the dataset
+df = pd.read_csv('small_games_csv.csv')
+
+# select relevant columns and drop missing values
+data = df[['average_playtime_forever', 'metacritic_score']].dropna()
+
+# define features (x) and target (y)
+x = data[['average_playtime_forever']]
+y = data['metacritic_score']
+
+# split into training and test sets
+x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=42)
+
+# train the random forest regressor
+model = randomforestregressor(random_state=42)
+model.fit(x_train, y_train)
+
+# predict on the test set
+y_pred = model.predict(x_test)
+
+# evaluate the model
+mse = mean_squared_error(y_test, y_pred)
+r2 = r2_score(y_test, y_pred)
+print(f"mean squared error: {mse:.2f}")
+print(f"r² score: {r2:.2f}")
+
+# optional: plot predicted vs actual
+plt.scatter(x_test, y_test, color='blue', label='actual')
+plt.scatter(x_test, y_pred, color='red', alpha=0.2, label='predicted')
+plt.xlabel("average playtime forever")
+plt.ylabel("metacritic score")
+plt.title("random forest predictions")
+plt.legend()
+plt.show()
+
+
+
+import pandas as pd
+import numpy as np
+from sklearn.neighbors import kneighborsregressor
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import mean_squared_error
+import matplotlib.pyplot as plt
+
+# load and clean data
+df = pd.read_csv('small_games_csv.csv')
+df = df[(df['average_playtime_forever'] <= 50000) &
+        (df['metacritic_score'] > 0)].copy()
+
+# prepare data with proper feature names
+x = df[['average_playtime_forever']]  # keep as dataframe to preserve feature name
+y = df['metacritic_score']
+
+# train-test split
+x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=42)
+
+# knn model
+knn = kneighborsregressor(n_neighbors=10)
+knn.fit(x_train, y_train)
+
+# evaluation
+y_pred = knn.predict(x_test)
+rmse = np.sqrt(mean_squared_error(y_test, y_pred))
+print(f"model rmse: {rmse:.2f}")
+
+# enhanced prediction function
+def predict_and_visualize():
+    """generate random playtime and predict score with visualization"""
+    random_playtime = np.random.randint(0, 50000)
+
+    # proper prediction format (dataframe with correct feature name)
+    prediction = knn.predict(pd.dataframe({'average_playtime_forever': [random_playtime]}))[0]
+
+    # create figure
+    plt.figure(figsize=(12, 6))
+
+    # plot all games
+    plt.scatter(x, y, alpha=0.3, label='all games (training data)')
+
+    # plot the k nearest neighbors used for prediction
+    distances, indices = knn.kneighbors(pd.dataframe({'average_playtime_forever': [random_playtime]}))
+    plt.scatter(x_train.iloc[indices[0]], y_train.iloc[indices[0]],
+                color='yellow', s=100, alpha=0.7, label='nearest neighbors')
+
+    # plot the prediction
+    plt.scatter(random_playtime, prediction, color='red', s=200,
+                marker='*', label=f'prediction: {prediction:.1f} for {random_playtime} mins')
+
+    plt.title(f'knn prediction (k={knn.n_neighbors})\nactual rmse: {rmse:.2f}', pad=20)
+    plt.xlabel('playtime (minutes)')
+    plt.ylabel('metacritic score')
+    plt.legend()
+    plt.grid(alpha=0.2)
+    plt.show()
+
+    return prediction
+
+# generate 3 predictions with visualization
+for _ in range(3):
+    predict_and_visualize()
+
+
