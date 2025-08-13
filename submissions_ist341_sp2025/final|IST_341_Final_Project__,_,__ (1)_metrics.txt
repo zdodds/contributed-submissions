@@ -1,0 +1,402 @@
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import labelencoder
+from sklearn.tree import decisiontreeregressor
+from sklearn.metrics import mean_absolute_error
+from sklearn.model_selection import cross_val_score
+from sklearn.neighbors import kneighborsclassifier
+from sklearn import ensemble
+from sklearn.neural_network import mlpclassifier
+from sklearn.preprocessing import standardscaler
+from sklearn import tree
+from sklearn.metrics import accuracy_score
+
+# load dataset
+file_path = "ab_nyc_2019.csv"
+data = pd.read_csv(file_path)
+
+
+# display the dataset in a nice tabular format (without print)
+data.head(20)
+
+
+# drop uninformative columns
+data = data.drop(columns=['id', 'host_id', 'name', 'host_name', 'longitude','latitude','last_review','neighbourhood_group','calculated_host_listings_count','minimum_nights'])
+
+# drop rows with missing values (or impute if needed)
+data = data.dropna()
+
+# encode categorical features
+label_encoders = {}
+for col in data.select_dtypes(include='object').columns:
+    le = labelencoder()
+    data[col] = le.fit_transform(data[col])
+    label_encoders[col] = le
+
+# define features (x) and target (y)
+x = data.drop(columns=['price'])
+y = data['price']
+
+# split into train/test sets
+x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=42)
+
+
+
+
+
+# distribution of prices
+
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# limit to reasonable prices (e.g., under $1000)
+filtered_price_data = data[data['price'] <= 1000]
+
+plt.figure(figsize=(12, 6))
+sns.kdeplot(data=filtered_price_data, x="price", fill=true, color="green", alpha=0.7)
+
+plt.title("distribution of price for nyc airbnb listings (under $1000)")
+plt.xlabel("price (usd)")
+plt.ylabel("density")
+plt.show()
+
+
+# visualizing feature relationships with a correlation heatmap (airbnb dataset)
+
+import matplotlib.pyplot as plt
+import seaborn as sns
+sns.set_theme()
+
+# create a correlation matrix from the airbnb dataset
+corr_matrix = data.corr()
+
+# draw a heatmap with the numeric values in each cell
+f, ax = plt.subplots(figsize=(10, 8))
+sns.heatmap(corr_matrix, annot=true, fmt=".2f", linewidths=.5, ax=ax)
+plt.title("correlation heatmap of nyc airbnb listing features")
+plt.show()
+
+
+
+# decision tree
+dtree_model = tree.decisiontreeclassifier()
+dtree_model.fit(x_train, y_train)
+accuracy = accuracy_score(y_test, dtree_model.predict(x_test)) * 100
+print('accuracy ', accuracy )
+
+
+# finding the best number of neighbors for knn
+
+best_k = none
+best_accuracy = 0.0
+
+for k in range(1, 8):
+    knn_cv_model = kneighborsclassifier(n_neighbors=k)
+    cv_scores = cross_val_score(knn_cv_model, x_train, y_train, cv=5)
+    average_cv_accuracy = cv_scores.mean()
+    print(f"k: {k:2d}  cv accuracy: {average_cv_accuracy:7.4f}")
+    if average_cv_accuracy > best_accuracy:
+        best_accuracy = average_cv_accuracy
+        best_k = k
+
+print(f"\nbest k = {best_k} yields the highest average cv accuracy.")
+
+# train final knn model and evaluate
+knn_model = kneighborsclassifier(n_neighbors=best_k)
+knn_model.fit(x_train, y_train)
+print("test set accuracy:", knn_model.score(x_test, y_test) * 100)
+
+
+# kneighbors model
+knn_model = kneighborsclassifier(n_neighbors=best_k)   # here, we use the best_k!
+knn_model.fit(x_train, y_train)
+print("accuracy on test set:", knn_model.score(x_test, y_test)* 100 )
+
+
+
+# finding the best random forest depth and number of trees
+
+best_d = 1
+best_ntrees = 50
+best_accuracy = 0
+
+for d in range(9, 10):
+    for ntrees in range(50, 300, 100):
+        rforest_model = ensemble.randomforestclassifier(
+            max_depth=d,
+            n_estimators=ntrees,
+            max_samples=0.5
+        )
+        cv_scores = cross_val_score(rforest_model, x_train, y_train, cv=5)
+        average_cv_accuracy = cv_scores.mean()
+        print(f"depth: {d:2d} ntrees: {ntrees:3d} cv accuracy: {average_cv_accuracy:7.4f}")
+
+        if average_cv_accuracy > best_accuracy:
+            best_d = d
+            best_ntrees = ntrees
+
+best_depth = best_d
+best_num_trees = best_ntrees
+
+print(f"\nbest depth: {best_depth}, best number of trees: {best_num_trees}")
+
+
+
+# random forest:
+rforest_model= ensemble.randomforestclassifier(max_depth=best_depth,
+                                                      n_estimators=best_num_trees,
+                                                      max_samples=0.5)
+rforest_model.fit(x_train, y_train)
+print(f"built an rf classifier with depth={best_depth} and ntrees={best_num_trees}")
+print("accuracy on test set:", rforest_model.score(x_test, y_test) * 100)
+
+
+print("accuracy on test set:", rforest_model.score(x_test, y_test)*100)
+
+
+# neural network
+from sklearn.preprocessing import standardscaler
+from sklearn.neural_network import mlpclassifier
+
+scaler = standardscaler(with_mean=false)
+scaler.fit(x_train)
+
+x_train_scaled = scaler.transform(x_train)
+x_test_scaled = scaler.transform(x_test)
+
+y_train_scaled = y_train
+y_test_scaled = y_test
+
+nn_classifier = mlpclassifier(
+    hidden_layer_sizes=(5, 10),
+    max_iter=500,
+    activation="tanh",
+    solver='sgd',
+    verbose=true,
+    shuffle=true,
+    random_state=none,
+    learning_rate_init=0.1,
+    learning_rate='adaptive'
+)
+
+print("training started...")
+nn_classifier.fit(x_train_scaled, y_train_scaled)
+print("training completed.")
+print("final training loss:", nn_classifier.loss_)
+print("test accuracy:", nn_classifier.score(x_test_scaled, y_test_scaled) * 100)
+
+
+# load dataset
+file_path = "student_performance_data.csv"
+data = pd.read_csv(file_path)
+
+
+# display the dataset in a nice tabular format (without print)
+data.head(20)
+
+
+# drop uninformative columns
+data = data.drop(columns=['studentid'])
+
+
+
+# drop rows with missing values (or impute if needed)
+data = data.dropna()
+
+# encode categorical features
+label_encoders = {}
+for col in data.select_dtypes(include='object').columns:
+    le = labelencoder()
+    data[col] = le.fit_transform(data[col])
+    label_encoders[col] = le
+
+# define features (x) and target (y)
+x = data.drop(columns=['gradeclass'])
+y = data['gradeclass']
+
+# split into train/test sets
+x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=42)
+
+
+
+
+
+# distribution of gpa for all students
+
+import numpy as np
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+plt.rcparams["figure.figsize"] = 12, 6
+
+# plot gpa density for all students
+sns.kdeplot(data=data, x="gpa", fill=true, color="skyblue", alpha=0.7)
+
+# format plot
+plt.title("distribution of gpa for all students")
+plt.xlabel("gpa")
+plt.ylabel("density")
+plt.show()
+
+
+# visualizing feature relationships with a correlation heatmap
+
+
+# making sure a provided example works, adapted to student data...
+
+import matplotlib.pyplot as plt
+import seaborn as sns
+sns.set_theme()
+
+# create a correlation matrix from the student dataset
+corr_matrix = data.corr()
+
+# draw a heatmap with the numeric values in each cell
+f, ax = plt.subplots(figsize=(10, 8))
+sns.heatmap(corr_matrix, annot=true, fmt=".2f", linewidths=.5, ax=ax)
+plt.title("correlation heatmap of student performance features")
+plt.show()
+
+
+# this heatmap visualizes the correlation between numerical features in the student performance dataset.
+# stronger correlations are indicated by higher absolute values and more intense colors.
+# gpa shows a positive correlation with study time and parental support, and a negative correlation with absences.
+# this visualization helps identify which factors are most associated with student academic performance.
+
+
+
+# descion tree model:
+
+# train a decision tree model
+model = decisiontreeregressor(random_state=42)
+model.fit(x_train, y_train)
+
+# predict and evaluate
+y_pred = model.predict(x_test)
+mae = mean_absolute_error(y_test, y_pred)
+accuracy = 100 - (mae / y_test.mean()) * 100
+print("approximate accuracy (%):", accuracy)
+
+
+from sklearn.neighbors import kneighborsregressor
+from sklearn.model_selection import cross_val_score
+from sklearn.metrics import mean_squared_error, r2_score
+import numpy as np
+
+best_k = none
+best_score = -np.inf  # for maximizing r^2
+
+for k in range(1, 8):
+    knn_cv_model = kneighborsregressor(n_neighbors=k)
+    cv_scores = cross_val_score(knn_cv_model, x_train, y_train, cv=5, scoring='r2')
+    average_cv_score = cv_scores.mean()
+    print(f"k: {k:2d}  cv r² score: {average_cv_score:7.4f}")
+    if average_cv_score > best_score:
+        best_score = average_cv_score
+        best_k = k
+
+print(f"\nbest k = {best_k} yields the highest average cv r² score.")
+
+# train final knn regressor and evaluate
+knn_model = kneighborsregressor(n_neighbors=best_k)
+knn_model.fit(x_train, y_train)
+y_pred = knn_model.predict(x_test)
+
+print("test set r² score:", r2_score(y_test, y_pred))
+print("test set rmse:", np.sqrt(mean_squared_error(y_test, y_pred)))
+
+
+
+# finding the best number of neighbors for knn
+
+best_k = none
+best_accuracy = 0.0
+
+for k in range(1, 8):
+    knn_cv_model = kneighborsclassifier(n_neighbors=k)
+    cv_scores = cross_val_score(knn_cv_model, x_train, y_train, cv=5)
+    average_cv_accuracy = cv_scores.mean()
+    print(f"k: {k:2d}  cv accuracy: {average_cv_accuracy:7.4f}")
+    if average_cv_accuracy > best_accuracy:
+        best_accuracy = average_cv_accuracy
+        best_k = k
+
+print(f"\nbest k = {best_k} yields the highest average cv accuracy.")
+
+# train final knn model and evaluate
+knn_model = kneighborsclassifier(n_neighbors=best_k)
+knn_model.fit(x_train, y_train)
+print("test set accuracy:", knn_model.score(x_test, y_test) * 100)
+
+
+
+# finding the best random forest depth and number of trees
+
+best_d = 1
+best_ntrees = 50
+best_accuracy = 0
+
+for d in range(9, 10):
+    for ntrees in range(50, 300, 100):
+        rforest_model = ensemble.randomforestclassifier(
+            max_depth=d,
+            n_estimators=ntrees,
+            max_samples=0.5
+        )
+        cv_scores = cross_val_score(rforest_model, x_train, y_train, cv=5)
+        average_cv_accuracy = cv_scores.mean()
+        print(f"depth: {d:2d} ntrees: {ntrees:3d} cv accuracy: {average_cv_accuracy:7.4f}")
+
+        if average_cv_accuracy > best_accuracy:
+            best_d = d
+            best_ntrees = ntrees
+
+best_depth = best_d
+best_num_trees = best_ntrees
+
+print()
+print(f"best depth: {best_depth}, best number of trees: {best_num_trees}")
+
+
+
+# random forest:
+rforest_model= ensemble.randomforestclassifier(max_depth=best_depth,
+                                                      n_estimators=best_num_trees,
+                                                      max_samples=0.5)
+rforest_model.fit(x_train, y_train)
+print(f"built an rf classifier with depth={best_depth} and ntrees={best_num_trees}")
+print("accuracy on test set:", rforest_model.score(x_test, y_test) * 100)
+
+
+from sklearn.preprocessing import standardscaler
+from sklearn.neural_network import mlpclassifier
+
+scaler = standardscaler(with_mean=false)
+scaler.fit(x_train)
+
+x_train_scaled = scaler.transform(x_train)
+x_test_scaled = scaler.transform(x_test)
+
+y_train_scaled = y_train
+y_test_scaled = y_test
+
+nn_classifier = mlpclassifier(
+    hidden_layer_sizes=(5, 10),
+    max_iter=500,
+    activation="tanh",
+    solver='sgd',
+    verbose=true,
+    shuffle=true,
+    random_state=none,
+    learning_rate_init=0.1,
+    learning_rate='adaptive'
+)
+
+print("training started...")
+nn_classifier.fit(x_train_scaled, y_train_scaled)
+print("training completed.")
+print("final training loss:", nn_classifier.loss_)
+print("test accuracy:", nn_classifier.score(x_test_scaled, y_test_scaled) * 100)
+
+
