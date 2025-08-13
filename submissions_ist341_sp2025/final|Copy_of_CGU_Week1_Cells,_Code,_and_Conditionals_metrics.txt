@@ -1,0 +1,798 @@
+# prompt: how to stop the code from runni
+
+
+# prompt: how to stop the code from running in a code cell from a code cell
+
+import os
+import signal
+
+# this function sends a sigint signal to the current process, effectively interrupting it.
+def stop_current_process():
+  os.kill(os.getpid(), signal.sigint)
+
+# example usage:  uncomment to test
+# stop_current_process()
+
+
+2**3
+
+
+2^3
+
+
+2//3
+
+
+
+# this is a code cell.
+# to run it, click play at left or type ctrl-enter (cmd-enter)
+
+
+answer = input("what is your name? ")
+print("welcome,", answer)
+print()
+
+print("my favorite number is 42, naturally.")
+fav_num = input("what is your favorite number? ")
+print()
+
+print("nice!", fav_num, "is solid. and very numeric!")
+print("plus, it's close to the best number, 42.")
+
+
+
+
+
+fav_num
+
+
+fav_color = input("what is your favorite color?")
+
+
+print("fav_num is", fav_num)
+
+
+print(int(fav_num)+1)
+
+
+# this is a code-cell, which should be runnable with the arrow,
+# also with (control-enter) or (command-return)
+
+35 + 7
+
+
+# try running this cell to compute a googol
+# this is the number after which google was named!
+
+10**100   # ** is power operator
+
+
+# this cell imports the math library and then runs a function from it.
+# (the square root of 4 is 2, as you'll see :-)
+
+from math import *    # imports the sqrt function and others
+sqrt(4)
+
+
+# here is an example of the "factorial" function. factorial(4) is 1*2*3*4, which is 24
+
+factorial(10)     # also imported from the math library
+
+
+1*2*3*4*5*6*7*8*9*10
+
+
+# this cell shows how printing works. try it!
+# it should print:   zero is 0
+#             and:   one is 1       actually, 1.0, this is ok!
+#
+# notice that this sets you up for the four fours challenge!
+
+print("zero is", 4+4-4-4)
+print("one is", 4/4*4/4)                 # uh oh! no non-fours allowed!!
+print("two is", (4/4)+(4/4))   # uh oh! this is incorrect... temporarily
+
+
+
+
+
+
+-4 + sqrt(4) + factorial(4) - 4
+
+
+#
+#  here is a space for your explorations and solutions
+#       to the four fours challenge.
+#
+# this will get you started.
+
+import math
+
+print("zero is", int(4+4-4-4))
+print("one is", int((4/4)*(4/4)))  # yay!  exactly four fours - and no other digits
+print("two is", int((4/4)+(4/4)))
+print("three is", int((4+4+4)/4))
+print("four is", int(math.sqrt(4)*math.sqrt(4)))
+print("five is", int(4+(math.sqrt(4)-(4/4))))
+print("six is", int(4+(math.sqrt(4))*(4/4)))
+print("seven is", int(4+(math.sqrt(4))+(4/4)))
+print("eight is", int(4+4+4-4))
+print("nine is", int(4+4+4/4))
+print("ten is", int(44/4-(4/4)))
+print("eleven is", int(44/4*4/4))
+print("twelve is", int(math.sqrt(4)*((4+4)-math.sqrt(4))))
+print("thirteen is", int(44/4+math.sqrt(4)))
+print("fourteen is", int(4*4-4/math.sqrt(4)))
+print("fifteen is", int(4*4-4/4))
+print("sixteen is", int(4*4*4/4))
+print("seventeen is", int(4*4+4/4))
+print("eighteen is", int(4*4+4/math.sqrt(4)))
+print("nineteen is", int(math.factorial(4)-(4+4/4)))
+print("twenty is", int(4*4+math.sqrt(4)+math.sqrt(4)))
+print("twenty-one is", int(math.factorial(4)-(4-4/4)))
+#that weird floating decimal point makes me angry
+#so i got rid of it
+#yay ehehehehe :d
+
+
+#
+# examples of the most important four types of data
+#   numeric:     int, float
+#   sequential:  str, list
+#
+
+print("our examples:")
+print()
+
+fav_num = 46      # an int
+pi = 3.14         # a float
+
+inator_creator = 'dr. heinz doofenshmirtz'  # a string
+l = ["jan", 31, "feb", 28, "mar", 31]       # a list, of ints and strings
+
+#
+# now, let's print them -- and print their types:
+#
+print("fav_num is", fav_num, "\n  type(fav_num) is", type(fav_num))
+print()  # prints a blank line, "\n" is another way to go to a newline
+
+print("pi is", pi, "\n  type(pi) is", type(pi))
+print()
+
+print("inator_creator is", inator_creator, "\n  type(inator_creator) is", type(inator_creator))
+print()
+
+print("l is", l, "\n  type(l) is", type(l))
+print()
+
+
+#
+# you'll notice that python uses <class 'int'> instead of int, and so on...
+# no worries!
+#
+
+
+#
+# here, create at least one example of int, float, str, and list data
+#
+#     + feel free to copy-and-paste-then-edit from the above cell
+#
+#     + the objective is to try out variables, assignment, and printing
+#     + with your own names, data, etc.
+#
+#     + try it out...  creativity is the goal...
+#
+#     + errors?  ask us - or whoever's next to you... :-)
+#
+#
+
+print("your examples:")
+print()
+
+fav_food = "i have no idea"
+print("fav_food is", fav_food, "\n  type(fav_food) is", type(fav_food))
+print()
+
+sanrio_characters = ['cinnomoroll', 'my melody', 'kuromi', 'pochacco', 'pompompurin', 'hello kitty', 'and more!']
+print("sanrio_characters are", sanrio_characters, "\n  type(sanrio_characters) is", type(sanrio_characters))
+print()
+
+crewed_moon_landings = 6
+print("crewed_moon_landings is", crewed_moon_landings, "\n  type(crewed_moon_landings) is", type(crewed_moon_landings))
+print()
+
+nice_number = 3.33
+print("nice_number is", nice_number, "\n  type(nice_number) is", type(nice_number))
+print()
+
+
+#
+# example of clobbering fav_num
+#
+
+print("fav_num before is", fav_num)
+
+fav_num = 1925            # founded it!  (this was cgu's founding year.)
+
+print("fav_num after is", fav_num)
+
+
+
+#
+# thought experiment:
+#   what do you think happens if you re-run the above cell?!
+#   try it out... no need to answer the question beyond trying it! :-)
+#
+
+
+comp = "rock"
+user = "paper"
+
+if comp == 'paper' and user == 'paper':
+    print('we tie. try again?')
+
+elif comp == 'rock':
+
+    if user == 'scissors':
+        print('i win! *_*')
+    else:
+        print('you win. aargh!')
+
+
+# a very unfair game of rock-paper-scissors
+
+user_name = input("what is your name? ")
+print("welcome,", user_name, "!")
+print()
+
+print("i challenge you to rock-paper-scissors! prepare to be vanquished!")
+
+user_choice = input("which do you choose? (rock/paper/scissors):")
+print()
+
+if user_choice == "rock":
+  print("you chose", user_choice)
+  print("but i chose paper...")   # this doesn't seem fair...
+  print("my paper smothers your rock!")
+
+elif user_choice == "paper":
+  print("you chose", user_choice, "?")
+  print("i'm sorry: my scissors have confetti'd you!")
+
+else:
+  print("you chose", user_choice)
+  print("wow. you chose poorly!")
+  print("i win.")
+
+
+print()
+print("try again, if you dare...")
+
+
+
+#
+# a fairer but incomplete game of rock-paper-scissors
+#
+
+import random       # imports a library (named random)
+                    # for making random choices
+
+user_name = input("what is your name? ")
+print("welcome,", user_name, "!")
+print()
+
+print("ready for rps? choose wisely!!")
+user_choice = input("which do you choose? (rock/paper/scissors):")
+comp_choice = random.choice(["rock","paper","scissors"])
+print()
+
+# we print both choices
+print("you chose", user_choice)
+print("  i chose", comp_choice)
+print()
+
+
+# we can handle different possibilities with nested conditionals
+
+if user_choice == "rock":
+
+  if comp_choice == "rock":
+    print('aargh! we tied but my rock was rockier!)')
+  elif comp_choice == "paper":
+    print("i win! my paper outclasses any rock!")
+  else:
+    print('alack! your rock cast my scissors asunder.')
+
+else:
+
+  print("you have ventured into the unknown...")
+  print("... but i probably won!!")
+
+
+
+print()
+print("try again!")
+
+
+
+#
+#
+# i made a rock paper scissors variant :d
+# yay! kskakgkvgxkvgkgksgv
+
+
+
+
+import random
+
+user_name = input("what is your name? ")
+print("hi, ", user_name, "! :d", sep='')
+print()
+
+def intro():
+  """this is the intro/tutorial to the game"""
+  print("the 'bird' eats the 'worm' and the 'fish',")
+  print("the 'stone' impales the 'bird' and the 'fish' (it is a very sharp stone),")
+  print("the 'worm' tunnels through the 'stone' and the eats the 'plant',")
+  print("the 'fish' eats the 'plant' and the 'worm',")
+  print("and the 'plant' traps the 'bird' and cracks the 'rock'")
+  print()
+
+print("let's play bird-stone-worm-fish-plant!")
+understand = input ("do you know how to play? (yes, no) ")
+print()
+if understand == "no":
+  print("here,")
+  intro()
+  understand = input ("do you understand now? (yes, no) ")
+
+  if understand == "no":
+    print("*sigh*")
+    print("fine, let me explain it one more time")
+    print()
+    intro()
+    print("i will assume you understand now")
+  else:
+    print("great!")
+
+else:
+  print("great!")
+
+def le_game():
+  """le game"""
+  user_choice = input("which do you choose? (bird/stone/worm/fish/plant):").lower()
+  comp_choice = random.choice(["bird","stone","worm", "fish", "plant"])
+  print("i see, you chose", user_choice)
+  print("and i chose", comp_choice)
+  print()
+
+  if user_choice == "bird":
+    if comp_choice == "bird":
+      print("my bird and your bird say hi to each other.")
+      print("it's a tie!")
+    elif comp_choice == "stone":
+      print("my stone flies into your bird, knocking it down.")
+      print("yes! i win! better luck next time, ehehe.")
+    elif comp_choice == "worm":
+      print("my worm was enjoying its little wormy day until your bird swooped down.")
+      print("no! i lost! :( good job!")
+    elif comp_choice == "fish":
+      print("my fish was swimming down the river when your bird decided it wanted a snack!")
+      print("no! i lost! :( good job!")
+    else:
+      print("my big planty vines snuck up behind your bird and pinned down its wings!")
+      print("yes! i win! better luck next time, ehehe.")
+
+  elif user_choice == "stone":
+    if comp_choice == "bird":
+      print("my bird was flying until your stone smacked it in the face!")
+      print("no! i lost! :( good job!")
+    elif comp_choice == "stone":
+      print("both of our stones sit there. the end.")
+      print("it's a tie!")
+    elif comp_choice == "worm":
+      print("my worm encountered your stone and tunneled right through it!")
+      print("yes! i win! better luck next time, ehehe.")
+    elif comp_choice == "fish":
+      print("my fish swam right into your stone!")
+      print("no! i lost! :( good job!")
+    else:
+      print("my plant sprouted up right in the middle of your stone!")
+      print("yes! i win! better luck next time, ehehe.")
+
+  elif user_choice == "worm":
+    if comp_choice == "bird":
+      print("my bird decided it was hungry and picked your worm up for a snak!")
+      print("yes! i win! better luck next time, ehehe.")
+    elif comp_choice == "stone":
+      print("my stone was minding its own business when your worm came and tunneled through it...")
+      print("no! i lost! :( good job!")
+    elif comp_choice == "worm":
+      print("both of our worms decide to chomp some dirt together.")
+      print("it's a tie!")
+    elif comp_choice == "fish":
+      print("my fish saw your worm and gobbled it up!")
+      print("yes! i win! better luck next time, ehehe.")
+    else:
+      print("my planty weed became your worm's dinner.")
+      print("no! i lost! :( good job!")
+
+  elif user_choice == "fish":
+    if comp_choice == "bird":
+      print("my bird noticed your fish and decided it was hungry.")
+      print("yes! i win! better luck next time, ehehe.")
+    elif comp_choice == "stone":
+      print("my stone blocked your fish's path, and wasn't noticed until it was too late...")
+      print("yes! i win! better luck next time, ehehe.")
+    elif comp_choice == "worm":
+      print("my worm wriggled straight into your fish's mouth!")
+      print("no! i lost! :( good job!")
+    elif comp_choice == "fish":
+      print("our fish see each other and become friends.")
+      print("it's a tie!")
+    else:
+      print("my very planty seaweed's very planty existence was cut short by your fish.")
+      print("no! i lost! :( good job!")
+
+  elif user_choice == "plant":
+    if comp_choice == "bird":
+      print("my bird flew right into your planty tree's branches!")
+      print("no! i lost! :( good job!")
+    elif comp_choice == "stone":
+      print("my stone was very rudely cracked in half by your planty weed.")
+      print("no! i lost! :( good job!")
+    elif comp_choice == "worm":
+      print("my worm chomped a whole hole through your planty leaf.")
+      print("yes! i win! better luck next time, ehehe.")
+    elif comp_choice == "fish":
+      print("my fish took a bite out of your planty plant!")
+      print("yes! i win! better luck next time, ehehe.")
+    else:
+      print("both of our plants look for the sunlight.")
+      print("it's a tie!")
+
+  else:
+    print("it looks like what you chose doesn't make sense...")
+    print("please choose again.")
+    print("and make sure you choose right this time!!! >:(")
+    print()
+    le_game()
+
+  print()
+  play_again = input("play again? (yes/no)")
+  if play_again == "yes":
+    play_again = "h"
+    le_game()
+
+  else:
+    print ("ok! bye!")
+
+le_game()
+
+
+# title for this example adventure:   the quest.
+#
+# notes on how to "win" or "lose" this adventure:
+#   to win, choose the table.
+#   to lose, choose the door.
+
+
+def adventure():
+    """this function runs one session of interactive fiction
+       well, it's "fiction," depending on the pill color chosen...
+       arguments: no arguments (prompted text doesn't count as an argument)
+       results: no results     (printing doesn't count as a result)
+    """
+    user_name = input("what do they call you, worthy adventurer? ")
+
+    print()
+    print("welcome,", user_name, "-- to the undermine, a labyrinth")
+    print("beneath cgu's unending academic complex, with weighty")
+    print("wonders and unreal quantities...of poptarts!")
+    print()
+
+    print("your quest: to find--and partake of--a poptart!")
+    print()
+    flavor = input("what flavor do you seek? ")
+    if flavor == "strawberry":
+        print("wise! you show deep poptart experience.")
+    elif flavor == "s'mores":
+        print("the taste of the campfire: well chosen, adventurer!")
+    else:
+        print("each to their own, then.")
+    print()
+
+    print("on to the quest!\n\n")
+    print("a corridor stretches before you; its dim lighting betrays, to")
+    print("one side, a table supporting nameless forms of inorganic bulk")
+    print("and, to the other, a door ajar, leaking laughter--is that")
+    print("laughter?--of lab-goers.")
+    print()
+
+    choice1 = input("do you choose the table or the door? [table/door] ")
+    print()
+
+    if choice1 == "table":
+        print("as you approach the table, its hazy burdens loom ever larger,")
+        print("until...")
+        print()
+        print("...they resolve into unending stacks of poptarts, foil")
+        print("shimmering.  you succeed, sumptuously, in sating the")
+        print("challenge--and your hunger.")
+        print("go well,", user_name, "!")
+
+    else:
+        print("you push the door into a gathering of sagefowl, athenas,")
+        print("and stags alike, all relishing their tasks. teamwork and")
+        print("merriment abound here, except...")
+        print()
+        print("...they have consumed all of the poptarts! drifts of wrappers")
+        print("coat the floor.  dizzy, you grasp for a pastry. none is at")
+        print("hand. you exhale and slip under the teeming tide of foil as")
+        print("it finishes winding around you.")
+        print("farewell,", user_name, ".")
+
+
+#
+# the above adventure is defined in a _function_  (next week: functions!)
+#
+# this means it's defined, but it does not run until we call it.
+# this line below calls it:
+adventure()
+
+
+# title for this adventure: the flower garden
+#
+# to win,
+# don't input anything random more than 3 times
+# and choose clematis and asphodel
+# (after the intro input 1 then 2)
+# to lose,
+# choose lilac or applethorn or input random things 4 or more times
+
+
+
+
+def my_adventure():
+    """my adventure
+    (obviously)"""
+    global strikes
+    strikes = 0
+    clematis = 0
+    asphodel = 0
+    last_name = 'nothing! :d'
+
+    def lose():
+      print()
+      print('you lose, sorry :(')
+      playagain = input("play again? (yes/no) ")
+      if playagain == "yes":
+        from ipython.display import clear_output
+        clear_output()
+        print('restarting...')
+        my_adventure()
+      else:
+        print("bye!")
+        def stop_current_process():
+          import os
+          import signal
+          os.kill(os.getpid(), signal.sigint)
+        stop_current_process()
+
+    def strike():
+      """don't do this or you lose !"""
+      if strikes == 1:
+        print("no, no, no! that's not an option!")
+        print("make sure you only type the number.")
+        print("no dot or space or anything else.")
+        print("this is your first strike, so i'll let you off this time.")
+        print("be careful, though. 3 strikes and you lose!")
+        print()
+      elif strikes == 2:
+        print("be careful!")
+        print("3 strikes and you lose!")
+        print("this is strike 2.")
+        print()
+      elif strikes == 3:
+        print("be careful!")
+        print("3 strikes and you lose!")
+        print("this is the last strike.")
+        print()
+      else:
+        print("you've done this too many times! >:(")
+        lose()
+
+
+
+
+    user_name = input("what is the moniker that you go by? (first name please) ")
+    if user_name.lower() == "zach" or user_name.lower() == "zachary":
+      print("oh!")
+      last_name = input("what be your surname? ")
+      if last_name.lower() == "dodds":
+        print("aha!")
+        print()
+        print("...you see a shadowy figure walk towards you.")
+        print("it says 'you like poptarts, right?")
+        print("you nod.")
+        print("'then join the cult of flowers and poptarts! ehehehehe'")
+        print("it slinks away.")
+        print()
+        print("odd.")
+        print()
+        print("you feel a sudden urge to eat a poptart.")
+      else:
+        print("oh.")
+        print("sorry, i thought you were someone else.")
+    else:
+      print("hmmm... where have i heard that name before? \n...")
+    print()
+    print("anyways")
+    print("hello, ", user_name, "!", sep='')
+    print("i am the narrator.")
+    print('i suspect you will be hearing me a lot.')
+    print()
+    def choice1():
+      choices = input("1. so you're not just a voice in my head? \n2. hello there, narrator \n(input 1 or 2!) \n ")
+      if choices == "1":
+        print("*gasp* of course i'm not!")
+      elif choices == "2":
+        print("hello to you too! (i like you already! :d)")
+      else:
+        global strikes
+        strikes = int(strikes) + 1
+        strike()
+        choice1()
+    choice1()
+
+    print("now that i know you, let's begin!")
+    input("input anything to begin!")
+
+    from ipython.display import clear_output
+    clear_output()
+
+    print("welcome to the flower garden.")
+    print("there are many flowers in this garden.")
+    print("your goal is to find the red camellia.")
+    print("use your knowledge of victorian era flower meanings to find it!")
+    print("good luck!")
+    print("~~~~~~~~~~~~~~~~~~")
+    print("you find yourself in a clearing surrounded by small stone walls.")
+    print("there is a fence in one of the four walls.")
+    print("that must be where you are supposed to go.")
+    print("you see two large garden beds, both filled with purple flowers.")
+    print("on the left are clematises, the right, lilacs.")
+    print("between them, there is a table. upon the table, there is a letter and a dictionary of flowers.")
+    print("you pocket the dictionary before reading the letter.")
+    print("it says:")
+    print("       the key lies in the mind, but remembering times past will only trap you.")
+    print()
+
+    def choice2():
+      print("be careful with your choices!!!")
+      print("investigating the wrong thing has consequences.")
+      clematis = input("what do you do now? (1/2/3/4) \n 1. investigate the clematises \n 2. investigate the lilacs \n 3. look up clematis in the flower dictionary \n 4. look up lilac in the flower dictionary \n ")
+      print()
+      if clematis == '1':
+        print("you investigate the clematises.")
+        print("inside the largest flower, there is a shiny purple key.")
+        print("you take the key and walk over to the fence.")
+        print("with bated breath, you insert and turn the key.")
+        print("the fence swings open.")
+        print()
+        print()
+      elif clematis == '2':
+        print("you investigate the lilacs.")
+        print("when you touch the petals if one of the lilacs, you begin to feel dizzy.")
+        print("flashes of color appear in your vision, eventually becoming what seems to be...")
+        print("memories.")
+        print("memories from when you didn't even know you could remember.")
+        print("both good and bad.")
+        print("you don't even realize when you pass out until you wake up in your bed.")
+        print("had it been a dream all along?")
+        lose()
+      elif clematis == '3':
+        print("you look up clematis in the dictionary.")
+        print("the dictionary says:")
+        print("       the clematis is a flowering vine that represents \n mental acuity, cleverness, and ingenuity.")
+        print()
+        choice2()
+      elif clematis == '4':
+        print("you look up lilac in the dictionary.")
+        print("the dictionary says:")
+        print("       the lilac is a flowering bush that represents old love, \n renewal, and rememberance.")
+        print()
+        choice2()
+      else:
+        global strikes
+        strikes = int(strikes) + 1
+        strike()
+        choice2()
+
+    choice2()
+    print("you step through the gates and find yourself in another area identical to the last.")
+    print("the only difference is that the flowers are pure white.")
+    print("the applethorn and the asphodel.")
+    print("the fence gates swing shut behind you with a loud boom.")
+    print("turning around, you see that it dissolved into the wall.")
+    print("oh well. you aren't going to go back there again.")
+    print("turning back around, you see a beautiful arched doorway at the far end.")
+    print("that must be the way out.")
+    print("once again, there is a letter for you to read.")
+    print("it says:")
+    print("       fear not death, but the untrustworthy. fear not regrets, but \n the outwardly charming.")
+    print()
+
+    def choice3():
+      print("be careful with your choices.")
+      print("investigating the wrong thing has c o n s e q u e n c e s!!!")
+      asphodel = input("what do you do now? \n 1. investigate the applethorns \n 2. investigate the asphodels \n 3. look up applethorn in the flower dictionary \n 4. look up asphodel in the flower dictionary \n ")
+      print()
+      if asphodel == '1':
+        print("you investigate the applethorns.")
+        print("as you get closer to the applethorns, it's sweet scent allures you.")
+        print("a tingling feeling tells you this is dangerous, but you can't seem to move away.")
+        print("you touch a flower.")
+        print("the scent of the applethorns engulf you, and you faint.")
+        print("you wake up in your bed.")
+        print("had it been a dream all along?")
+        lose()
+      elif asphodel == '2':
+        print("you investigate the asphodels.")
+        print("the first asphodel you touch wilts beneath your fingers.")
+        print("you behin to feel apprehensive.")
+        print("then, the flower snaps off, and you can see a shiny thing in the hollow stem.")
+        print("it turns out to be a gleaming silver key, delicate and small.")
+        print("you pick it up and take it over to the door, careful not to snap it.")
+        print("the key slides in smoothly, turning with a satisfying click.")
+        print("you turn the doorknob, and the doors open.")
+        print()
+        print()
+      elif asphodel == '3':
+        print("you look up applethorn in the dictionary.")
+        print("the dictionary says:")
+        print("       the applethorn is a poisonous flowering plant that symbolizes \n deceitful charm.")
+        choice3()
+      elif asphodel == '4':
+        print("you look up asphodel in the dictionary.")
+        print("the dictionary says:")
+        print("       the asphodel is a lily that symbolizes death, literally \n meaning 'my regrets follow you to the grave.'")
+        choice3()
+      else:
+        global strikes
+        strikes = int(strikes) + 1
+        strike()
+        choice3()
+    choice3()
+
+    print("the garden layout is about the same as before, except for one thing.")
+    print("well, a few things.")
+    print("it is filled with brilliant red flowers, and in the center, a deep crimson flowerbush grows.")
+    print("it is the red camellia.")
+    print("you hesitantly step forward and touch it, and a warm feeling sprouts in your chest.")
+    print("you feel like you can perservere through the darkest of times.")
+    print("that what you hold dear will never be separated from you.")
+    print("the world fades to black.")
+    print()
+    print("when you wake up, you realize it had been a dream.")
+    print("but it had been a good one.")
+    print()
+    print("~~~~~~~~~~~~~~~~~~")
+    print("you win!")
+    print("good job :d")
+    if last_name.lower() != "dodds":
+      print("(p.s., the advertiser didn't stop by, but join the cult of flowers and poptarts!! ^u^)")
+
+
+
+
+
+
+#
+# the above adventure is defined in a _function_  (next week: functions!)
+#
+# this means it's defined, but it does not run until we call it.
+# this line below calls it:
+my_adventure()
+
+

@@ -1,0 +1,1156 @@
+# single-character substitution:
+
+def i2i_once(s):
+  """ i2i_once changes an input 'i' to an output 'i'
+      all other inputs remain the same
+  """
+  if s == 'i':
+    return 'i'
+  else:
+    return s
+
+# tests are in the next cell...
+
+
+# tests to try for i2i_once  (try control-/ to uncomment them!)
+
+print("i2i_once('i') should be 'i' <->", i2i_once('i'))
+print("i2i_once('j') should be 'j' <->", i2i_once('j'))
+print()
+
+print("i2i_once('alien') should be 'alien' <->", i2i_once('alien'))
+print("i2i_once('icicle') should be 'icicle' <->", i2i_once('icicle'))
+
+
+# multiple-character substitution
+
+def i2i_all(s):
+  """ changes i to i for all characters in the input, s """
+  if s == '':       # empty case!
+    return ''
+  else:
+    return i2i_once(s[0]) + i2i_all(s[1:])  # first and rest
+
+# tests are in the next cell...
+
+
+# tests to try for i2i_all
+
+print("i2i_all('alien') should be 'alien' <->", i2i_all('alien'))
+print("i2i_all('aliiien') should be 'aliiien' <->", i2i_all('aliiien'))
+
+print("i2i_all('icicle') should be 'icicle' <->", i2i_all('icicle'))
+print("i2i_all('no eyes to see here') should be 'no eyes to see here' <->", i2i_all('no eyes to see here'))
+
+
+# multiple-character substitution
+
+def i2i_all_loop(s):
+  """ changes i to i for all characters in the input, s """
+  result = ''        # the result starts as the empty string!
+
+  for c in s:        # c is the name we are giving to each element in s (that is, each character in s)
+    result = result + i2i_once(c)   # each time, we add the new transformed output to the end of result
+    # print("result is", result)    # uncomment this to see the process, in action!
+
+  return result      # at the end, we return the final, completely-created result string!
+
+# tests are in the next cell...
+
+
+# tests to try for i2i_all_loop
+
+print("i2i_all_loop('alien') should be 'alien' <->", i2i_all_loop('alien'))
+print("i2i_all_loop('aliiien') should be 'aliiien' <->", i2i_all_loop('aliiien'))
+print()
+
+print("i2i_all_loop('icicle') should be 'icicle' <->", i2i_all_loop('icicle'))
+print("i2i_all_loop('no eyes to see here') should be 'no eyes to see here' <->", i2i_all_loop('no eyes to see here'))
+
+
+#
+# example of recursion-as-future:
+#
+
+from random import *
+
+def guess( hidden ):
+    """
+        have the computer guess numbers until it gets the "hidden" value
+        return the number of guesses
+    """
+    this_guess = choice( range(0,100) )  # 0 to 99, inclusive
+
+    if this_guess == hidden:
+        print("i guessed it!")
+        return 1                         # it only took one guess!
+
+    else:
+        return 1 + guess( hidden )  # 1 for this guess, plus all future guesses!
+
+# test our function!
+guess(42)
+
+
+s = 'shout!'
+print("s is", s)
+print("s.upper() is", s.upper())
+
+
+s = 'whisper...'
+print("s is", s)
+print("s.lower() is", s.lower())
+
+
+# we provide the one-character version, in this case:
+import random                  #  get the random library
+
+def spongebobbify_once(s):
+  """ returns the input, randomly "upper-cased" or "lower-cased" """
+  result = random.choice( [s.upper(), s.lower()] )   # choose one at random
+  return result
+
+# tests in the next cell...
+
+
+# tests to try for spongebobbify_once
+# there are not "right" answers, so we just test them:
+
+print(spongebobbify_once('f is for friends who do stuff together!'))
+print(spongebobbify_once('i knew i shouldn\'t have gotten out of bed today.'))
+print()
+
+# but we want to use it on single letters!
+print(spongebobbify_once('a'))
+print(spongebobbify_once('b'))
+print(spongebobbify_once('c'))
+print(spongebobbify_once('d'))
+print(spongebobbify_once('e'))
+
+
+import random
+def spongebobbify_all(s):
+  result = random.choice( [s.upper(), s.lower()] )   # choose one at random
+  return result
+def i2i_all_loop(x):
+
+  result = ''        # the result starts as the empty string!
+
+  for c in x:        # c is the name we are giving to each element in s (that is, each character in s)
+    result = result + i2i_once(c)
+  return result
+
+
+# tests to try for spongebobbify_once
+# there are not "right" answers, so we just test them:
+
+print(spongebobbify_all('f is for friends who do stuff together!'))
+print(spongebobbify_all('i knew i shouldn\'t have gotten out of bed today.'))
+print(spongebobbify_all('the inner machinations of my mind are an enigma. - patrick'))
+print(spongebobbify_all('hell0 w0rld!'))
+print(spongebobbify_all('to be or no to be - ist341_participant_8!'))
+print(spongebobbify_all('how much wood would a woodchuck'), end=" ")
+print(i2i_all_loop('chuck if he couldn\'t chuck any wood!'))
+
+print()
+
+# but we want to use it on single letters!
+print(spongebobbify_all('a'))
+print(spongebobbify_all('b'))
+print(spongebobbify_all('c'))
+
+# your tests here:
+
+
+substitutions = {
+    'a': '@', 'b': '8', 'c': '1', 'd': ']', 'e': '3',
+    'f': '#', 'g': '9', 'h': '4', 'i': '!', 'j': ';',
+}
+
+reverse_substitutions = {v: k for k, v in substitutions.items()}
+
+def encode_once(s):
+    """encodes a string by replacing defined characters once."""
+    return ''.join(substitutions.get(char, char) for char in s)
+
+def decode_once(s):
+    """decodes a string by reversing the substitution."""
+    decoded = []
+    i = 0
+    while i < len(s):
+        if s[i:i+2] in reverse_substitutions:  # check for multi-character substitutions
+            decoded.append(reverse_substitutions[s[i:i+2]])
+            i += 2
+        else:
+            decoded.append(reverse_substitutions.get(s[i], s[i]))
+            i += 1
+    return ''.join(decoded)
+
+def encode_each(s):
+    """encodes each character in the string recursively."""
+    if not s:
+        return ''
+    return encode_once(s[0]) + encode_each(s[1:])
+
+def decode_each(s):
+    """decodes each character in the string recursively."""
+    if not s:
+        return ''
+    return decode_once(s[0]) + decode_each(s[1:])
+
+def encode_all(text):
+    """encodes an entire text string."""
+    return encode_each(text)
+
+def decode_all(text):
+    """decodes an entire text string."""
+    return decode_each(text)
+
+
+
+# our tests are below. then, add three tests of your own:
+
+
+cgu = """claremont graduate university prepares individuals to be leaders
+for positive change in the world. unique in its transdisciplinary approach,
+the university is dedicated to the creation, dissemination, and application
+of new knowledge and diverse perspectives through research, practice,
+creative works, and community engagement.
+"""
+
+e = encode_each(cgu)
+print("encode_all(cgu) is", e)
+
+d = decode_each(e)
+print("decode_all(e) is", d)  # should be the original!
+
+
+cmc = """claremont mckenna college's mission is to educate its students
+for thoughtful and productive lives and responsible leadership in
+business, government, and the professions, and to support faculty
+and student scholarship that contribute to intellectual vitality
+and the understanding of public policy issues."""
+
+e = encode_each(cmc)
+print("encode_all(cmc) is", e)
+
+d = decode_each(e)
+print("decode_all(e) is", d)  # should be the original!
+
+print()
+scr = """the mission of scripps college is to educate women to
+develop their intellects and talents through active participation
+in a community of scholars, so that as graduates they may contribute
+to society through public and private lives of leadership, service,
+integrity, and creativity.."""
+
+e = encode_each(scr)
+print("encode_all(scr) is", e)
+
+print()
+d = decode_each(e)
+print("decode_all(e) is", d)  # should be the original!
+
+
+
+
+ng = """northrop grumman's mission is to be at the forefront of technology and
+innovation, delivering superior capability in tandem with maximized cost
+efficiencies. the company is committed to advancing global security and human
+discovery in support of its customers’ missions around the world. northrop
+grumman's teams are exploring burgeoning research areas and creating revolutionary
+technology that will not only power the mission but also connect, advance and
+protect the u.s. and its allies. the company solves the toughest problems in
+space, aeronautics, defense and cyberspace to meet the ever evolving needs of
+its customers worldwid"""
+
+n = encode_each(ng)
+print("encode_all(ng) is", n)
+print()
+g = decode_each(n)
+print("decode_all(n) is", g)  # should be the original!
+
+
+usa = """to deploy, fight, and win our nation’s wars by providing ready, prompt,
+and sustained land dominance by army forces across the full spectrum of conflict
+as part of the joint force"""
+print()
+a = encode_each(usa)
+print("encode_all(usa) is", a)
+print()
+s = decode_each(a)
+print("decode_all(a) is", s)  # should be the original!
+
+
+usr = """the army reserve's mission is to provide quick access to trained, equipped,
+and ready soldiers and units, with the critical enabling capabilities needed to
+compete globally and win across the full range of military operations. the army
+reserve is a powerful and resilient force that is ready to deliver vital capabilities
+around the world and here at home. the army reserve provides combat-ready units and
+soldiers to the army and the joint force across the full spectrum of conflict. the
+united states special operations command (ussocom) army reserve element provides
+mos-qualified and deployable army reserve personnel to augment ussocom."""
+print()
+u = encode_each(usr)
+print("encode_all(usr) is", u)
+print()
+r = decode_each(u)
+print("decode_all(u) is", r)  # should be the original!
+
+
+def vwl_once(s):
+  """ returns a score of 1 for single-character vowels aeiou
+      returns a score of 0 for everything else
+  """
+  if len(s) != 1:    # not a single-character? score is 0
+    return 0
+  else:
+    s = s.lower()    # simplify by making s lower case
+    if s in 'aeiou':      # if s is in that string, it's a vowel: score is 1
+      return 1
+    else:                 # if not: score is 0
+      return 0
+
+
+def vwl_count(s):
+  """ returns the total "vowel-score for an input string s
+      that is, we return the number of vowels in s
+  """
+  result = 0
+  for c in s:
+    result = result + vwl_once(c)
+  return result
+
+
+
+# tests and tests-to-write are in the next cells:
+
+
+print("vwl_count('english usually has lots of vowels.') should be 10 <->", vwl_count('english usually has lots of vowels.'))
+print("the cgu mission statement has this many vowels: (let's see!) <->", vwl_count(cgu))
+
+
+# part 1 task: determine which mission statement has the most vowels-per-character!
+#        hint: count the vowels, then use len to determine vowels-per-character!
+#        compare the three strings already defined above:   cgu,  cmc,  and scr
+
+
+def ratio_vowels(text):
+  return vwl_count(text) / len(text)
+cmc_ratio = ratio_vowels(cmc)
+scr_ratio = ratio_vowels(scr)
+cgu_ratio = ratio_vowels(cgu)
+
+print("the cgu mission statement has this many vowels per character: (let's see!) <->", cgu_ratio)
+print("the cmc mission statement has this many vowels per character: (let's see!) <->", cmc_ratio)
+print("the scr mission statement has this many vowels per character: (let's see!) <->", scr_ratio)
+ratios = [("cgu", cgu_ratio,),("cmc", cmc_ratio), ("scr", scr_ratio)]
+winner = max(ratios, key=lambda x: x[1])
+print("and the winner is...", winner[0])
+
+
+#
+# part 2 task: determine whose prose is more vowel-rich?
+# + find a paragraph of prose you've written
+# + find a paragraph a friend has written (or another one that you have!)
+#
+# assign each to a variable:
+
+yours = """  <paste your prose here
+it's ok to have multiple lines inside
+triple-quoted strings>
+"""
+
+theirs = """  <paste their prose here
+again, ok to have multiple lines inside
+triple-quoted strings>
+"""
+yours_ratio = ratio_vowels(yours)
+theirs_ratio = ratio_vowels(theirs)
+
+print("yours ratio", yours_ratio)
+print("theirs ratio", theirs_ratio)
+
+if yours_ratio>theirs_ratio:
+  print("yours is more vowel-rich!")
+elif theirs_ratio>yours_ratio:
+  print("theirs is more vowel-rich!")
+else:
+  print("they are equally vowel-rich!")
+
+
+
+# this imports the library named random
+
+import random
+
+# once it's imported, you are able to call random.choice(l) for any sequence l
+# try it:
+
+
+
+# try out random.choice -- several times!
+result = random.choice( ['claremont', 'graduate', 'university'] )
+print("result is", result)
+
+
+
+# let's see a loop do this 10 times!
+
+for i in range(10):                # loop 10 times
+    result = random.choice( ['claremont', 'graduate', 'university'] ) # choose
+    print("result is", result)     # print
+
+
+
+#
+# you can also import a library can be imported by using this line:
+
+from random import *
+
+# when the above line is run, you are able to call choice(l) for any sequence l
+#
+# note that you won't need random.choice(l)
+# let's try it!
+
+
+
+result = choice( ["rock", "paper", "scissors"] )
+print("result is", result)
+
+
+
+# python can create lists of any integers you'd like...
+l = list(range(0,100))    # try different values; try omitting/changing the 0
+print(l)
+
+
+
+# combining these, we can choose random integers from a list
+result = choice( range(0,100) )   # from 0 to 99
+print("result is", result)
+
+
+
+# let's run this 10 times!
+for i in range(0,10):
+    result = choice( range(0,100) )   # from 0 to 99
+    print("result is", result)
+
+
+
+# let's get more comfortable with loops...
+
+for i in [0,1,2]:     # key: what variable is being defined and set?!
+    print("i is", i)
+
+
+
+
+# note that range(0,3) generates [0,1,2]
+
+for i in range(0,3):     # key: what variable is being defined and set?!
+    print("i is", i)
+
+# when would you _not_ want to use range for integers?
+
+
+
+# usually i is for counting, x is for other things (wise, not req.)
+
+for x in [2,15,2025]:     # key: the loop variable
+    print("x is", x)
+
+# when would you _not_ want to use range for integers?
+
+
+
+# how could we get this to print "happy birthday!" 42 times?
+
+for i in range(0,42):
+    print("happy birthday!")
+
+
+
+
+# return _after_ a loop:
+
+def funa():
+    for i in range(0,3):
+        print("i is", i)
+    return
+
+# why does this not print anything?!??
+
+
+
+
+# return _within_ a loop:
+
+def funb():
+    for i in range(0,3):
+       print("i is", i)
+       return
+
+# what do we need here?  (is this what you expect?!)
+
+
+
+
+# let's add an if statement (a conditional)
+#              ... to test different indentations
+
+def funb1():
+    for i in range(1,6):
+        if i%2 == 0:
+            print("i is", i)
+            return
+
+
+
+
+# an add-em-up function
+
+def addup(n):
+    """ adds from 1 through n (inclusive)
+    """
+    result = 0
+
+    for x in range(1,n+1):
+        result = result + x
+
+    return result
+
+# addup(4) should be 0+1+2+3+4 == 10
+
+
+
+# an factorial function
+
+def fac(n):
+    """ a factorial function, returns the factorial of the input n
+    """
+    result = 1
+
+    for x in range(1,n+1):
+        result = result*x
+
+    return result
+
+# fac(4) should be 1*2*3*4 == 24
+
+
+"""
+
+loops we tried in our "breakout quiz":
+
+# upper left
+result = 1
+for x in [2,5,1,4]:
+    result *= x
+print(result)
+
+# upper right
+x = 0
+for i in range(4):
+    x += 10
+print(x)
+
+# lower left
+l = ['golf','fore!','club','tee']
+for i in range(len(l)):
+    if i%2 == 1:
+        print(l[i])
+
+# lower right
+s = 'time to think this over! '
+result = ''
+for i in range(len(s)):
+    if s[i-1] == ' '
+        result += s[i]
+print(result)
+
+"""
+
+
+
+# staging area...
+
+print("start!")
+
+
+
+
+# function to sum all numbers in the list l
+def summer(l):
+    total = 0
+    for num in l:
+        total += num
+    return total
+
+# function to sum only the odd numbers in the list l
+def summedodds(l):
+    total = 0
+    for num in l:
+        if num % 2 != 0:  # check if the number is odd
+            total += num
+    return total
+
+# function to sum all numbers in l except the given "exc"
+def summedexcept(exc, l):
+    total = 0
+    for num in l:
+        if num != exc:  # skip the number if it matches exc
+            total += num
+    return total
+
+def summedupto(exc, l):
+    total = 0
+    for num in l:
+        if num == exc:
+            break  # stop summing once we reach exc
+        total += num
+    return total
+
+# examples:
+print(summer( [2,3,4,1] ),    "->  10")
+print(summedodds( [2,3,4,1] ),    "->   4")
+print(summedexcept( 4, [2,3,4,1] ), "->   6")
+print(summedupto( 4, [2,3,4,1] ), "->   5")
+
+
+#
+# here, write the summer function!
+#
+
+def summer(l):
+    """ uses a for loop to add and return all of the elements in l
+    """
+    total = 0
+    for num in l:
+        total += num
+    return total
+
+# here are two tests -- be sure to try them!
+print("summer( [2,3,4,1] )  should be 10 <->", summer( [2,3,4,1] ))
+print("summer( [35,3,4,100] )  should be 142 <->", summer( [35,3,4,100] ))
+
+
+#
+# here, write the summedodds function!
+#
+
+def summedodds(l):
+    """ uses a for loop to add and return all of the _odd_ elements in l
+    """
+    total = 0
+    for num in l:
+        if num % 2 != 0:
+            total += num
+    return total
+
+
+
+# here are two tests -- be sure to try them!
+print("summedodds( [2,3,4,1] )  should be 4 <->", summedodds( [2,3,4,1] ))
+print("summedodds( [35,3,4,100] )  should be 38 <->", summedodds( [35,3,4,100] ))
+
+
+#
+# here, write the summedexcept function!
+#
+
+def summedexcept( exc, l ):
+    """ include a short description here!
+    """
+    total = 0
+    for num in l:
+        if num != exc:
+            total += num
+    return total
+
+# here are two tests -- be sure to try them!
+print("summedexcept( 4, [2,3,4,1] )  should be 6 <->", summedexcept( 4, [2,3,4,1] ))
+print("summedexcept( 4, [35,3,4,100] )  should be 138 <->", summedexcept( 4, [35,3,4,100] ))
+
+
+#
+# here, write the summedupto function!
+#
+
+def summedupto( exc, l ):
+    """ include a short description here!
+    """
+    total = 0
+    for num in l:
+        if num == exc:
+            break
+        total += num
+    return total
+
+
+# here are two tests -- be sure to try them!
+print("summedupto( 4, [2,3,4,1] )  should be 5 <->", summedupto( 4, [2,3,4,1] ))
+print("summedupto( 100, [35,3,4,100] )  should be 42 <->", summedupto( 100, [35,3,4,100] ))
+
+
+
+#
+# example while loop: the "guessing game"
+#
+
+from random import *
+
+def guess( hidden ):
+    """
+        have the computer guess numbers until it gets the "hidden" value
+        return the number of guesses
+    """
+    guess = -1      # start with a wrong guess and don't count it as a guess
+    number_of_guesses = 0   # start with no guesses made so far...
+
+    while guess != hidden:
+        guess = choice( range(0,100) )  # 0 to 99, inclusive
+        number_of_guesses += 1
+
+    return number_of_guesses
+
+# test our function!
+guess(42)
+
+
+import random
+
+# function to guess a number between low and high
+def guess_between(low, high):
+    while true:
+        guess = random.randint(low, high - 1)  # generate a number in the range [low, high)
+        if low <= guess < high:  # check if the number is within the range
+            return guess
+
+# function to accumulate a list of values until one repeats
+def listtilrepeat(high):
+    seen = set()  # a set to keep track of numbers we have already seen
+    numbers = []  # list to store the numbers
+    while true:
+        num = random.randint(0, high - 1)  # generate a number between 0 and high-1
+        if num in seen:  # check if the number is a repeat
+            numbers.append(num)  # append the repeat number to the list
+            return numbers
+        seen.add(num)  # add the number to the set
+        numbers.append(num)  # add the number to the list
+
+print(guess_between(40, 50))  # will print a number between 40 and 50 (inclusive of 40, exclusive of 50)
+
+print(listtilrepeat(10))  # will print a list with numbers from 0 to 9 until one repeats
+
+# examples (don't forget the randomness will change things!)
+#
+#print(guess_between(40,50))
+#
+# listtilrepeat(10)      ->   [4, 7, 8, 3, 7]     (the final # must be a repeat)
+# listtilrepeat(10)      ->   [2, 1, 9, 9]     (the final # must be a repeat)
+
+
+
+# here, write guess_between
+#
+
+def guess_between(low,high):
+    """ guesses a # from 0 to 99 (inclusive) until
+        it gets one that is strictly less than high and
+        greater than or equal to low
+        then, this function returns the total # of guesses made
+    """
+    count = 0
+    while true:
+        guess = random.randint(0, 99)
+        count += 1
+        if low <= guess < high:
+            return count
+
+
+#
+# be sure to test your guess_between here -- and leave the test in the notebook!
+#
+
+total_guesses = guess_between(40, 50)
+print(f"total guesses made: {total_guesses}")
+
+
+
+# try out adding elements to lists
+
+l = [3,4]
+print("before: l is", l)
+
+guess = 42
+l = l + [guess]
+print(" after: l is", l)
+
+
+# here, write listtilrepeat
+def listtilrepeat(high):
+    """ this f'n accumulates random guesses into a list, l, until a repeat is found
+        it then returns the list (the final element should be repeated, somewhere)
+    """
+    l = []
+    while true:
+        guess = random.randint(0, high - 1)
+        if guess in l:
+            l.append(guess)
+            return l
+        l.append(guess)
+
+
+result = listtilrepeat(365)
+print("length of the list:", len(result))
+
+
+
+# the birthday paradox is the fact that
+#     listtilrepeat(365) has surprisingly few elements!
+#
+# run listtilrepeat(365) a few times and print its _length_ each time
+#     (don't print the lists... it's too much to digest.)
+#
+# to many people, the results feel counterintuitive!
+
+
+# example while loop: the "guessing game"
+
+from random import *
+
+def guess( hidden ):
+    """
+        have the computer guess numbers until it gets the "hidden" value
+        return the number of guesses
+    """
+    guess = hidden - 1      # start with a wrong guess + don't count it as a guess
+    number_of_guesses = 0   # start with no guesses made so far...
+
+    while guess != hidden:
+        guess = choice( range(0,100) )  # 0 to 99, inclusive
+        number_of_guesses += 1
+
+    return number_of_guesses
+
+# test our function!
+guess(42)
+
+
+#example monte carlo simulation: rolling two dice and counting doubles
+
+from random import *
+import time
+
+def count_doubles( num_rolls ):
+    """
+        have the computer roll two six-sided dice, counting the # of doubles
+        (same value on both dice)
+        then, return the number of doubles...
+    """
+    numdoubles = 0       # start with no doubles so far...
+
+    for i in range(0,num_rolls):   # roll repeatedly: i keeps track
+        d1 = choice( [1,2,3,4,5,6] )  # 0 to 6, inclusive
+        d2 = choice( range(1,7) )     # 0 to 6, inclusive
+        if d1 == d2:
+            numdoubles += 1
+            you = "🙂"
+        else:
+            you = " "
+
+        print("run", i, "roll:", d1, d2, you, flush=true)
+        time.sleep(.01)
+
+    return numdoubles
+
+# test our function!
+count_doubles(10)
+
+
+
+#
+# example monte carlo simulation: the monte-carlo monte hall paradox
+#
+
+import random
+import time
+
+def count_wins( n, original_choice, stay_or_switch ):
+    """
+        run the monte hall paradox n times, with
+        original_choice, which can be 1, 2, or 3 and
+        stay_or_switch, which can be "stay" or "switch"
+        count the number of wins and return that number.
+    """
+    numwins = 0       # start with no wins so far...
+
+    for i in range(1,n+1):      # run repeatedly: i keeps track
+        win_curtain = random.choice([1,2,3])   # the curtain with the grand prize
+        original_choice = original_choice      # just a reminder that we have this variable
+        stay_or_switch = stay_or_switch        # a reminder that we have this, too
+
+        result = ""
+        if original_choice == win_curtain and stay_or_switch == "stay": result = " win!!!"
+        elif original_choice == win_curtain and stay_or_switch == "switch": result = "lose..."
+        elif original_choice != win_curtain and stay_or_switch == "stay": result = "lose..."
+        elif original_choice != win_curtain and stay_or_switch == "switch": result = " win!!!"
+
+        print("run", i, "you", result, flush=true)
+        time.sleep(.025)
+
+        if result == " win!!!":
+            numwins += 1
+
+
+    return numwins
+
+# test our three-curtain-game, many times:
+count_wins(10, 1, "stay")
+
+
+
+
+# more monte carlo simulations!
+
+#
+# example of a random-walk (but no animation is intended here...)
+#
+
+import random
+
+def rs():
+    """ one random step """
+    return random.choice([-1, 1])
+
+
+def rpos(start,n):
+    """ wander from start for n steps, printing as we go
+        return the position at the end (the final "current" position)
+    """
+    current = start        # our current position begins at start...
+
+    for i in range(n):     # step repeatedly:  i keeps track from 0..n
+        print("at location:", current)
+        current = current + rs()  # add one step,
+
+    print("at location:", current)
+    return current
+
+
+# let's test it, perhaps start at 47 and take 9 steps...
+rpos(47,9)
+
+
+
+# monte carlo simulation #2... the random-walker
+
+#
+# task #1:  understand the _single_ "sleepwalker":
+#           change the character sleepwalking to something else, emoji, etc.
+#           change the "walls" to something else
+#           change the "sidewalk" to something else (water, air, walls, ...)
+#           try it with some different inputs... then you'll be ready for task 2
+
+import time
+import random
+
+def rs():
+    """ one random step """
+    return random.choice([-1, 1])
+
+def rwalk(start, low, high):
+    """ random walk between -radius and +radius  (starting at 0 by default) """
+    totalsteps = 0          # initial value of totalsteps (_not_ final value!)
+    current = start         # current location (_not_ the total # of steps)
+
+    while true:             # run "forever" (really, until a return or break)
+        if current <= low:  # too low!
+            return totalsteps # phew!  return totalsteps (stops the while loop)
+        elif current >= high: # too high!
+            return totalsteps # phew!  return totalsteps (stops the while loop)
+        else:
+            current = current + rs()  # take a step
+            totalsteps += 1           # count it
+
+            # let's animate!
+            left_side = current - low   # distance on the left of our sleepwalker
+            right_side = high - current
+            print("|" + "_"*left_side + "s" + "_"*right_side + "|", flush=true)  # a start of our "asciimation"
+            time.sleep(0.042)
+
+    # the code can never get here!
+
+# you will need to add the right-hand side, too
+# then, improve your sleepwalker!
+
+# let's try it!  rwalk(tart, low, high)
+rwalk(5,0,10)
+rwalk(15,0,30)
+
+
+
+#
+# task #2:  create a _two_ sleepwalker animation!
+#           for an example _idea_ see the next cell...
+
+import time
+import random
+
+def random_step():
+    """returns a random step of -1 or 1."""
+    return random.choice([-1, 1])
+
+def print_sailors(posa, posb):
+    """prints the dock with two sailors moving on it."""
+    if posa < posb:
+        pleft = posa; cleft = "\033[6;33;41m" + "s" + "\033[0m"  # sailor a (red)
+        pright = posb; cright = "\033[6;36;43m" + "s" + "\033[0m"  # sailor b (blue)
+    else:
+        pleft = posb; cleft = "\033[6;36;43m" + "s" + "\033[0m"
+        pright = posa; cright = "\033[6;33;41m" + "s" + "\033[0m"
+
+    left_space = (pleft - 0)
+    middle_space = (pright - pleft)
+    right_space = (30 - pright)
+
+    print("dock|" + "_" * left_space + cleft + "_" * middle_space + cright + "_" * right_space + "|water", flush=true)
+
+def drunken_sailors_race(posa, posb):
+    """
+    simulates two drunken sailors wandering randomly on a dock (0 to 30).
+    they both take random steps until one of them falls into the water.
+    """
+    steps = 0  # count the number of steps
+
+    while 0 < posa < 30 and 0 < posb < 30:  # ensure both sailors are on the dock
+        print_sailors(posa, posb)  # display their positions
+        posa += random_step()  # move sailor a
+        posb += random_step()  # move sailor b
+        steps += 1  # increment step count
+        time.sleep(0.05)  # small delay for visualization
+
+    # determine which sailor fell off first
+    if posa <= 0 or posa >= 30:
+        print("sailor a fell into the water!")
+    else:
+        print("sailor b fell into the water!")
+
+    return steps
+
+# example test run
+steps_taken = drunken_sailors_race(10, 20)
+print("the race ended in", steps_taken, "steps!")
+
+
+
+
+# here is an _example_ of a two-sleepwalker animation idea
+# a starting point has been written... but only one wanderer is wandering!
+# your task is to make sure two wanderers are wandering... in a fashion you design...
+
+import time
+import random
+
+def rs():
+    """ one random step """
+    return random.choice([-1, 1])
+
+def print_poptarts(pst, psm):
+    """ print the two poptarts! """
+    if pst < psm:
+        pleft = pst;   cleft = "\033[6;33;41m" + "p" + "\033[0m"
+        pright = psm;  cright = "\033[6;36;43m" + "p" + "\033[0m"
+    else:
+        pleft = psm;   cleft = "\033[6;36;43m" + "p" + "\033[0m"
+        pright = pst;  cright = "\033[6;33;41m" + "p" + "\033[0m"
+
+    left_space = (pleft-0)
+    middle_space = (pright-pleft)
+    right_space = (30-pright)
+
+    print("cgu|" + "_"*left_space + cleft + "_"*middle_space + cright + "_"*right_space + "|toaster", flush=true)
+
+
+def poptart_race(pst, psm):
+    """
+        this simulator observes two poptarts, pst, psm (you can guess the flavors...)
+        wandering between 0 and 30.
+
+        call this with
+               poptart_race(10, 20)
+           or  poptart_race(pst=10, psm=20)    # this is the same as the line above
+
+        the endpoints are always at 0 and 30. we check that  0 < pst < 30 and 0 < psm < 30
+
+        other values to try:  poptart_race(18, 22)    # evenly spaced
+                              poptart_race(5, 15)     # uneven spacing: pst is closer...
+    """
+    num_steps = 0       # count the number of steps
+
+    while 0 < pst < 30:
+        print_poptarts(pst, psm)   # print the current poptart-configuration!
+        pst = pst + rs()           # take a random step for the strawberry poptart...
+        psm = psm + rs()           # take a random step for the mint-chocolate poptart...
+        num_steps += 1             # add 1 to our count of steps (in the variable num_steps)
+        time.sleep(0.05)           # pause a bit, to add drama!
+
+    # finished with the while loop!
+    return num_steps
+
+
+
+
+poptart_race(10, 20)
+
+
+import time
+
+# emoji test
+emoji_list = [ "♫", "♪" ]
+for i in range(1,10):
+    left_side = i
+    right_side = (10-i)
+
+    e = "🙂"
+    # e = random.choice(emoji_list)
+
+    print("|" + "_"*left_side + e + "_"*right_side + "|", flush=true)
+    time.sleep(0.25)
+
+
+print("\nbefore: " + "\033[6;30;43m" + "this text uses 6;30;43 ." + "\033[0m" + " :end\n")
+
+
+import time
+
+def gold_bg(text):
+    return "\033[6;30;43m" + text + "\033[0m"
+
+# gold_bg test
+for i in range(1,10):
+    left_side = i
+    right_side = (10-i)
+
+    e = "e"
+    # e = random.choice(emoji_list)
+
+    print("|" + "_"*left_side + gold_bg(e) + "_"*right_side + "|", flush=true)
+    time.sleep(0.25)
+
+# by zach
+
+# reverse gold_bg test
+for i in range(10,0,-1):
+    left_side = i
+    right_side = (10-i)
+
+    e = "e"
+    # e = random.choice(emoji_list)
+
+    print("|" + gold_bg("_"*left_side) + e + gold_bg("_"*right_side) + "|", flush=true)
+    time.sleep(0.25)
+
+
