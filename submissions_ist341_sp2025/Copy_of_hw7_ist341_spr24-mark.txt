@@ -1,0 +1,184 @@
+# Looking for the **"All-in-one-cell"** example?
+
+It's located [here at this link](https://colab.research.google.com/drive/1vAfDyKUmH2e48OQhWkWbDRWmGlXpaHEO?usp=sharing)# Homework 7
+
+This is a large notebook!
+
+Use the collapsable sections, which include
++ a reading on _creating more data_ ... an interesting, undecided question in ML and modeling
++ data-cleaning for the flower data (irises, complete)
++ model-building for the flower data (knn, complete)
++ cleaning+modeling for the births data (to be completed!)
++ cleaning+modeling for the digits data (to be completed!)  
++ extra: clean and model your own data, or the Titanic data
+
+Actually, this "extra-credit" will be regular-credit in _next week's_ hw, hw8
+# Reading for hw7...   <br>
+
+
+This week's reading is a 2020 [Economist article (pdf)](https://drive.google.com/file/d/1tJC3jLjk_ZNzA1UTxREJGqzZg5pg2N24/view) on the pitfalls and promise of the data-driven era of AI we now inhabit.  The article takes a "data-based" view on recent developments and concerns in AI, especially machine-learning (or "statistical learning"). [original](https://www.economist.com/technology-quarterly/2020/06/11/for-ai-data-are-harder-to-come-by-than-you-think)
+
+
+One of the newest ideas in this article is the possibility -- and possible importance -- of generating data to improve model-training, when available data is inequitable, inflexible, or insufficient in another way.   
+
+Using the article and your own experience, what are your thoughts on artificially generating data to assist AI/ML training?  Possible jumping-off points include
++ (1) echo-chamber effects: can generated data yield more fairness -- or only reinforce existing biases?, or
++ (2) implementation concerns: what process would artificially generate the data?, or
++ (3) a specific example you've encountered, where a computational system generated data, but "got things obviously wrong" (there may be lots of these examples!)
+
+In this last case, the generated data made the world's "data-landscape" worse, not better.  Alternative directions on artificially-generated data more than welcome!  
+
+As with each week's reading, responses should be thoughtful, but need not be long: a 4-5 sentence paragraph is wonderful.
+
+<hr>Reading response
+
+<br>
+
+
+<br>
+
+(Feel free to use this cell for your response.)
+
+<br>
+<hr>
+<br>
+
+While artificially generating data to assist AI/ML training can be a useful way to overcome things such as missing data, removing biases, and balancing datasets, there can be long-term risks. To be more specific, artificially generated data can lead to reinforcing existing biases. This can negatively affect minorities. For example, if facial recognition algorithms are trained on synthetic data that is similar to biased existing data, this can further reinforce biases towrds those with darker complexions. Thus, it is extremely important to consider both the advantages and challenges of utilizing synthetic data and how it can affect other people's lives.# Data Cleaning: Iris data
+
+This series of cells demonstrates how to use ``pandas`` to "clean" the ``iris.csv`` dataset, which has some intentional errors...
+
+Note: for sure, you can always use excel or google sheets to clean data.
+
+However, when you have _thousands_ of rows, you'll want scripting to help :-)
+
+**Start by uploading** ``iris.csv`` to the folder whose icon is at left.<b><font color="Coral">Be sure to upload</font></b> the file ``iris.csv`` to the notebook's files (the folder icon at left).
+
+You can grab ``iris.csv`` and [our other hw7 files here](https://drive.google.com/drive/folders/1V7IrdJdW_4qoUbT6gOdKCJP9xxmhuOSS).# Data Modeling: Iris data
+
+Now, let's use ``iris_cleaned.csv`` as the raw material of a model.
+
+We're going to build a k-nearest-neighbors model.
+
+Once built, this means
++ we "get" a new flower and ask for a prediction of its species
++ we can also "make up" a new flower - the model doesn't worry about whether it's real or not (warning!)
++ the model looks up the ``k`` nearest neighbors to the new flower's features
++ the model takes the _most common species_ from those ``k``
++ that _most-common species_ is the prediction!  Yay!
+
+Let's see it in action:<b><font color="Coral">Remember</font></b> that ``A`` is the numpy array of all of our data!<br>
+
+#### Here is where the model-buidling begins in earnest...<br>
+
+#### That's it! :-)
+
+In fact, the model is complete!  Let's test...   
+<font size="-2">Then, let's build a <i>better</i> model.</font>### That's it! The model is complete...
+
+... not perfect, but **complete**
+
+What does this mean?
+
+It means that the model -- the function (above) -- is ***already*** prepared to provide an output for every possible input!
+
+We can see this in a plot of the outputs for every input in the "sepal" plane (length vs. width) as well as the "petal" plane:### check the cell above...### Yay!  
+
+Next up:  Births modeling# <font color="Coral"><b>To Do</b></font> &nbsp;&nbsp; Births: cleaning and modeling
+
+Next, you'll do the same thing on the births dataset! The goal is to build a model with
+1. the features being ``month`` and ``day``
+2. the classification (target) to predict being above-average or below-average popularity
+  + you will need to create a numeric column with 0 for "below" and 1 for "above"
+  + notice the "below" and "above" are already present... _but they're strings_
+
+So, you'll _clean up_ the `births.csv` file - with birthday popularities and then
++ be sure to drop the data that's incorrect!
+  + there's an incorrect column with a url and
+  + several incorrect days (April 31, for example - and others like it!)
++ be sure there is a numeric column with 0 for "below" and 1 for "above"
++ be sure to drop the column with the actual number of births
+
+Also, drop the actual ``births`` because we're trying to predict whether a date is above-average (1, or "above") or below-average (0, or "below)
++ Thus, there will be 2 input features, to be used (`day` and `month`)
++ And 1 output (target) attribute, to be predicted
+
+Then, adapt the iris approach to build a model:
++ Go one cell at a time!
++ create the training and testing data
++ try guessing the value of ``k`` and then building the model
++ see how well it does
++ then, use cross-validation to find the _best_ value of ``k``
+  + call that ``best_k``
++ build a new model with this value of ``best_k``
++ see how well it does
++ Finally, adapt the heatmap-plots so that you get at least one heatmap-plot of the birthday-popularity, based on the two features ``day`` and ``month``
+
+<br>
+
+<font size="-1">For a google-docs write-up of all of this with more detail (and more hints), [here is the HMC cs35 page](https://docs.google.com/document/d/1AZbjCXwdm4wYvDmQaq4s41FLZaEhLl4uNlKUGV2eoZQ/edit?tab=t.0). It's the same, just much more detailed.</font>
+
+<br>### Suggestion:
+
+Open this notebook twice!
+
+**One window** so that you can go cell-by-cell through the iris-cleaning and iris-modeling cells...
+
+**The second window** is to copy-paste-and-adapt the iris approach to the births data
+
+The approach is identical.
+
+The data-details are different, and that's where the adaptation is necessary and important.
+
+Onward:These are just placeholders.
+
+You'll copy-and-edit ***lots*** of cells from the iris example.next up: <b>digits</b> modeling# <font color="Coral"><b>To Do</b></font> &nbsp;&nbsp; Digits: cleaning and modeling
+
+Next, you'll do the same thing on the births dataset! The goal is to build a model with
+1. there are now 64 features! They ``pix0`` through ``pix63``
+2. the classification (target) to predict is the _digit species_, which is 0 or 1 or 2 or 3 or 4 or 5 or 6 or 7 or 8 or 9. That is, _you're predicting which digit the pixels are from_ !
+
+So, you'll _clean up_ the `digits.csv` file
++ the only incorrect data is the column with the url at the end
++ after dropping that, the last ``actual_digit`` column is the value to predict -- it's the <i>actual_digit</i> of the pixels in the first 64 columns...
+
+Then, _again_ adapt the iris approach to build a model:
++ Go one cell at a time!
++ create the training and testing data
++ try guessing the value of ``k`` and then building the model
++ see how well it does
++ then, use cross-validation to find the _best_ value of ``k``
+  + call that ``best_k``
++ build a new model with this value of ``best_k``
++ see how well it does
++ For this example, you ***don't need to adapt the heatmap-plots*** - because it's not really reasonable to use only two features (two pixels) to predict a digit!
+
+<br>
+
+<font size="+1"><b>Instead</b></font>, use AI -- or the more detailed cs35 write-up of all of this -- to plot one of the digits.  [Here is the HMC cs35 page](https://docs.google.com/document/d/1AZbjCXwdm4wYvDmQaq4s41FLZaEhLl4uNlKUGV2eoZQ/edit?tab=t.0). It's the same, just much more detailed.</font>
+
+<br>
+
+For this hw, you don't need to complete the ***partial-digits*** portion of the cs35 assignment. <font color="DodgerBlue">But it's EC, if you'd like to try!</font>. It helps to create a single notebook cell to do the Machine Learning -- and a starting point is available on that page.Notice that you're getting more and more practice with the "modeling workflow."
+
+It's not an exaggeration to say that this is, in essence, what all ML/modeling efforts look-and-feel like!<br><br>
+
+a placeholder text cell# Extra: Partial-data modeling!
+
+<font size="+1" color="DodgerBlue"><b>As optional EC</b></font>, use the more detailed cs35 write-up of all of this -- to run this digit-modeling 64 times -- once for each "partial digit," using the first ``P`` pixels, where ``P`` loops from 1 to 63 (64, since we don't include the right endpoint.)  [Here is the HMC cs35 page](https://docs.google.com/document/d/1AZbjCXwdm4wYvDmQaq4s41FLZaEhLl4uNlKUGV2eoZQ/edit?tab=t.0).
+
+<br>
+
+As that page explains, tt helps to create a single notebook cell to do the Machine Learning -- and a starting point is available on that page.
+
+<br>
+<hr>
+<br>
+
+
+Lookin-ahead to future weeks, you'll be invited to use these machine-learning algorithms on datasets of your choice.
+
+You can tell we're already evolving into a "final-project" mindset! 😀
+
+So, feel free to think about a dataset you'd like to analyze for a final project...
+
+Onward!
