@@ -1,0 +1,1841 @@
+#
+# let's practice the collapsing! and f-strings:
+#
+
+x = 42
+ascii_emoji = "<3"
+
+print(f"x is {x}.   we {ascii_emoji} f-strings!")
+
+
+
+#
+# iris cleaner:  data-cleaning for iris modeling and classification
+#
+
+#
+# here, our goal is to
+# [1] look over the iris.csv data...
+# [2] clean it up, removing rows and columns we don't want to use
+# [3] save the "cleaned-up data" to a new filename, iris_cleaned.csv
+
+#
+# then, we can use iris_cleaned.csv for _all_ of our iris-modeling from here...
+#
+
+
+#
+# side note only!
+# # don't worry about this cell - it's just an example of a _silly_ data model
+# # don't copy this cell over when you model the births-data or the digits-data
+#
+# it's here, because it's worth noting that we don't _need_ any data at all to create a predictive model!
+#
+# # here is a model that is half hand-built and half random. no data is used!
+#
+import random
+
+def predictive_model( features ):
+    """ input: a list of four features
+                [ sepallen, sepalwid, petallen, petalwid ]
+        output: the predicted species of iris, from
+                  setosa (0), versicolor (1), virginica (2)
+    """
+    [ sepallen, sepalwid, petallen, petalwid ] = features # unpacking!
+
+    if petalwid < 1.0:
+        return 'setosa (0)'
+    else:
+        return random.choice( ['versicolor (1)', 'virginica (2)'] )
+
+#
+# try it!
+#
+# features = eval(input("enter new features: "))
+#
+features = [ 4.6, 3.6, 3.0, 1.92 ]
+result = predictive_model( features )
+print(f"from features {features},  i predict...   {result} ")
+
+
+#
+# (next, let's explore how we _can_ use data to do better... :-)
+#
+
+
+# libraries!
+import numpy as np      # numpy is python's "array" library
+import pandas as pd     # pandas is python's "data" library ("dataframe" == spreadsheet)
+
+
+# let's read in our flower data...
+#
+# for read_csv, use header=0 when row 0 is a header row
+#
+filename = 'iris.csv'
+df = pd.read_csv(filename)        # encoding="utf-8" et al.
+print(f"{filename} : file read into a pandas dataframe.")
+
+
+#
+# a dataframe is a "spreadsheet in python"   (seems to have an extra column!)
+#
+# let's view it!
+
+
+
+#
+# looking at the result, above, we see some things that need to be "tidied":
+#
+# [1] there's an extra column (holding the reference url)
+# [2] there are some flowers not in our three speciesl setosa, versicolor, virginica
+# [3] there is a flower without a species name (irisname)
+# [4] this is a virginica flower without a petallen
+#
+
+
+#
+# let's look at the dataframe's "info":
+df.info()
+
+
+# let's look at the dataframe's columns -- and remind ourselves of for loops!
+for column_name in df.columns:
+    print(f"{column_name =}")
+
+
+# we can drop a series of data (a row or a column)
+# the dimensions each have a numeric value, row~0, col~1, but let's use readable names we define:
+row = 0
+column = 1
+
+df_clean1 = df.drop('adapted from https://en.wikipedia.org/wiki/iris_flower_data_set', axis=column)
+df_clean1
+
+# df_clean1 is a new dataframe, without that unwanted column
+
+
+df_clean2 = df_clean1
+
+
+# and, let's drop the unwanted rows:
+row = 0
+column = 1
+
+df_clean2 = df_clean1.drop([141,142], axis=row)
+df_clean2
+
+
+#
+# let's re-look at our cleaned-up dataframe's info:
+#
+df_clean2.info()
+#
+# notice that the non-null count is _different_ across the features...
+#
+
+
+#
+# let's drop _all_ rows with data that is missing/nan (not-a-number)
+df_clean3 = df_clean2.dropna()  # drop na rows (nan, not-a-number)
+df_clean3.info()  # print the info, and
+# let's see the whole table, as well:
+df_clean3
+
+# tidy!  our data is ready!
+
+
+#
+# let's keep our column names in variables, for reference
+#
+columns = df_clean1.columns            # "list" of columns
+print(f"columns is {columns}")
+  # it's a "pandas" list, called an index
+  # use it just as a python list of strings:
+print(f"columns[0] is {columns[0]}\n")
+
+# let's create a dictionary to look up any column index by name
+col_index = {}
+for i, name in enumerate(columns):
+    col_index[name] = i  # using the name (as key), look up the value (i)
+print(f"col_index is {col_index}")
+print(f"col_index[ 'petallen' ] is {col_index[ 'petallen' ]}")
+
+
+
+# all of scikit-learn's ml routines need numbers, not strings
+#   ... even for categories/classifications (like species!)
+#   so, we will convert the flower-species to numbers
+
+#
+# first, let's map our different species to numeric values:
+
+species = ['setosa','versicolor','virginica']   # int to str
+species_index = {'setosa':0,'versicolor':1,'virginica':2}  # str to int
+
+def convert_species(speciesname):
+    """ return the species index (a unique integer/category) """
+    #print(f"converting {speciesname}...")
+    return species_index[speciesname]
+
+# let's try it out...
+for name in species:
+    print(f"{name} maps to {convert_species(name)}")
+
+
+convert_species( 'virginica')  # try converting from string to index!
+
+
+# convert the other direction, from integer index to species name
+species[2]
+
+
+#
+# we can "apply" to a whole column and create a new column
+#   it may give a warning, but this is ok...
+#
+
+df_clean4 = df_clean3.copy()  # copy everything and...
+
+# add a new column, 'irisnum'
+df_clean4['irisnum'] = df_clean3['irisname'].apply(convert_species)
+
+# let's see...
+df_clean4
+
+
+#
+# different version vary on how to see all rows (adapt to suit your system!)
+#
+# pd.options.display.max_rows = 150   # none for no limit; default: 10
+# pd.options.display.min_rows = 150   # none for no limit; default: 10
+# pd.options.display.max_rows = 10   # none for no limit; default: 10
+# pd.options.display.min_rows = 10   # none for no limit; default: 10
+for row in df_clean4.itertuples():
+    print(row)
+
+
+#
+# let's call it df_tidy
+#
+df_tidy =  df_clean4
+
+
+
+#
+# that's it!  then, and write it out to iris_cleaned.csv
+
+# we'll construct the new filename:
+old_basename = filename[:-4]                      # remove the ".csv"
+cleaned_filename = old_basename + "_cleaned.csv"  # name-creating
+print(f"cleaned_filename is {cleaned_filename}")
+
+# now, save
+df_tidy.to_csv(cleaned_filename, index_label=false)  # no "index" column...
+
+
+#
+# let's make sure this worked, by re-reading in the data...
+#
+
+# let's re-read that file and take a look...
+#
+# for read_csv, use header=0 when row 0 is a header row
+#
+df_tidy_reread = pd.read_csv(cleaned_filename)   # encoding="utf-8" et al.
+print(f"{filename} : file read into a pandas dataframe.")
+df_tidy_reread
+
+
+#
+# let's make sure we have all of our helpful variables in one place
+#
+#   this will be adapted if we drop/add more columns...
+#
+
+#
+# let's keep our column names in variables, for reference
+#
+columns = df_tidy.columns            # "list" of columns
+print(f"columns is {columns}\n")
+  # it's a "pandas" list, called an index
+  # use it just as a python list of strings:
+print(f"columns[0] is {columns[0]}\n")
+
+# let's create a dictionary to look up any column index by name
+col_index = {}
+for i, name in enumerate(columns):
+    col_index[name] = i  # using the name (as key), look up the value (i)
+print(f"col_index is {col_index}\n\n")
+
+
+#
+# and our "species" names
+#
+
+# all of scikit-learn's ml routines need numbers, not strings
+#   ... even for categories/classifications (like species!)
+#   so, we will convert the flower-species to numbers:
+
+species = ['setosa','versicolor','virginica']   # int to str
+species_index = {'setosa':0,'versicolor':1,'virginica':2}  # str to int
+
+def convert_species(speciesname):
+    """ return the species index (a unique integer/category) """
+    #print(f"converting {speciesname}...")
+    return species_index[speciesname]
+
+# let's try it out...
+for name in species:
+    print(f"{name} maps to {convert_species(name)}")
+
+
+#
+# that's it!  welcome to the world of data-cleaning workflows!!
+#
+#             our prediction?  you'll be headed to the "modeler" next!
+#
+
+#
+# and, the rest of the hw is to run more ml workflows:   (1) births, (2) digits, (3) titanic, (ec) housing, ...
+#
+
+
+#
+# iris modeler:  iris clasification via nearest neighbors
+#
+
+
+# libraries!
+import numpy as np      # numpy is python's "array" library
+import pandas as pd     # pandas is python's "data" library ("dataframe" == spreadsheet)
+
+
+# let's read in our flower data...
+#
+# for read_csv, use header=0 when row 0 is a header row
+#
+cleaned_filename = "iris_cleaned.csv"
+df_tidy = pd.read_csv(cleaned_filename)   # encoding="utf-8" et al.
+print(f"{cleaned_filename} : file read into a pandas dataframe.")
+df_tidy
+
+
+#
+# here's how to view every single row at once -- it's a lot!
+for row in df_tidy.itertuples():
+    print(row)
+
+
+#
+# let's drop the columns [features] we don't want/need
+#                or that we _shouldn't_ have...!
+#
+
+# first, look at the info:
+df_tidy.info()
+
+
+#
+# all of the columns need to be numeric, we'll drop irisname
+row = 0
+column = 1
+df_model1 = df_tidy.drop( 'irisname', axis=column )
+df_model1
+
+
+#
+# once we have all the columns we want, let's create an index of their names...
+
+#
+# let's make sure we have all of our helpful variables in one place
+#       to be adapted if we drop/add more columns...
+#
+
+#
+# let's keep our column names in variables, for reference
+#
+columns = df_model1.columns            # "list" of columns
+print(f"columns is {columns}\n")
+  # it's a "pandas" list, called an index
+  # use it just as a python list of strings:
+print(f"columns[0] is {columns[0]}\n")
+
+# let's create a dictionary to look up any column index by name
+col_index = {}
+for i, name in enumerate(columns):
+    col_index[name] = i  # using the name (as key), look up the value (i)
+print(f"col_index is {col_index}\n\n")
+
+
+#
+# and our "species" names
+#
+
+# all of scikit-learn's ml routines need numbers, not strings
+#   ... even for categories/classifications (like species!)
+#   so, we will convert the flower-species to numbers:
+
+species = ['setosa','versicolor','virginica']   # int to str
+species_index = {'setosa':0,'versicolor':1,'virginica':2}  # str to int
+
+# let's try it out...
+for name in species:
+    print(f"{name} maps to {species_index[name]}")
+
+
+#
+# we _could_ reweight our columns...
+# what if petalwid is "worth" 20x more than the others?
+#
+df_model1['petalwid'] *= 20
+df_model1
+
+
+
+# until we have more insight, this is arbitrary at best and data-rigging, at worst.
+# so, let's set it back...
+df_model1['petalwid'] /= 20
+df_model1
+
+
+
+#
+a = df_model1.to_numpy()    # yields the underlying numpy array
+a = a.astype('float64')     # make sure it's all floating point  (www.tutorialspoint.com/numpy/numpy_data_types.htm)
+print(a[0:5])               # a is too big, let's just sanity-check
+
+
+
+#
+# also, nice to have num_rows and num_cols around
+#
+num_rows, num_cols = a.shape
+print(f"\nthe dataset has {num_rows} rows and {num_cols} cols")
+
+
+df_tidy.info()
+
+
+print("+++ start of data definitions +++\n")
+
+#
+# we could do this at the data-frame level, too!
+#
+
+x_all = a[:,0:4]  # x (features) ... is all rows, columns 0, 1, 2, 3
+y_all = a[:,4]    # y (labels) ... is all rows, column 4 only
+
+print(f"y_all (just the labels/species)   are \n {y_all}")
+print(f"x_all (just the features - a few) are \n {x_all[0:5]}")
+
+
+
+#
+# we next separate into test data and training data ...
+#    + we will train on the training data...
+#    + we will _not_ look at the testing data to build the model
+#
+# then, afterward, we will test on the testing data -- and see how well we do!
+#
+
+#
+# a common convention:  train on 80%, test on 20%    let's define the test_percent
+#
+
+
+from sklearn.model_selection import train_test_split
+
+x_train, x_test, y_train, y_test = train_test_split(x_all, y_all, test_size=0.2) # random_state=42
+
+print(f"training with {len(y_train)} rows;  testing with {len(y_test)} rows\n" )
+
+#
+# let's print the training data
+#
+print("+++++")
+print(f"held-out data... (testing data: {len(y_test)} rows)")
+print("+++++\n")
+print(f"y_test: {y_test}")
+print(f"x_test (first few rows): {x_test[0:5,:]}")  # 5 rows
+print()
+
+
+#
+# let's print some of the training data
+#
+
+print("+++++")
+print(f"data used for modeling... (training data: {len(y_train)} rows)")
+print("+++++\n")
+print(f"y_train: {y_train}")
+print(f"x_train (first few rows): {x_train[0:5,:]}")  # 5 rows
+
+
+#
+# +++ this is the "model-building and model-training cell"
+#
+# create a knn model and train it!
+#
+from sklearn.neighbors import kneighborsclassifier
+
+k = 84   # we don't know what k to use, so we guess!  (this will _not_ be a good value)
+knn_model = kneighborsclassifier(n_neighbors=k)       # here, k is the "k" in knn
+
+# we train the model (it's one line!)
+knn_model.fit(x_train, y_train)                              # yay!  trained!
+print("created and trained a knn classifier with k =", k)
+
+
+#
+# +++ this cell is our "model-testing cell"
+#
+# now, let's see how well our model does on our "held-out data" (the testing data)
+#
+
+# we run our test set:
+
+# the function knn_model.predict is the instantiation of our model
+# it's what runs the k-nearest-neighbors algorithm:
+predicted_labels = knn_model.predict(x_test)      # this is the key line:  predict
+actual_labels = y_test
+
+# let's print them so we can compare...
+print("predicted labels:", predicted_labels)
+print("actual  labels  :", actual_labels)
+
+# and, some overall results
+num_correct = sum(predicted_labels == actual_labels)
+total = len(actual_labels)
+print(f"\nresults on test set:  {num_correct} correct out of {total} total.")
+
+
+#
+# let's print things in a vertical table
+#
+
+def compare_labels(predicted_labels, actual_labels):
+    """ a more neatly formatted comparison """
+    num_labels = len(predicted_labels)
+    num_correct = 0
+
+    print()
+    print(f'row {"#":>3s} : {"predicted":>12s} {"actual":<12s}   {"result"}')
+
+    for i in range(num_labels):
+        p = int(round(predicted_labels[i]))         # round protects from fp error
+        a = int(round(actual_labels[i]))
+        result = "incorrect"
+        if p == a:  # if they match,
+            result = ""       # no longer incorrect
+            num_correct += 1  # and we count a match!
+
+        print(f"row {i:>3d} : {species[p]:>12s} {species[a]:<12s}   {result}")
+
+    print()
+    print("correct:", num_correct, "out of", num_labels)
+    return num_correct
+
+# let's try it out!
+compare_labels(predicted_labels,actual_labels)
+
+
+#
+# ok!  we have our knn model, we could just use it...
+
+# data-driven predictive model (k-nearest-neighbor), using scikit-learn
+
+# warning: this model has not yet been tuned to its "best k"
+#
+def predictive_model( features ):
+    """ input: a list of four features
+                [ sepallen, sepalwid, petallen, petalwid ]
+        output: the predicted species of iris, from
+                  setosa (0), versicolor (1), virginica (2)
+    """
+    our_features = np.asarray([features])                 # extra brackets needed
+    predicted_species = knn_model.predict(our_features)   # predict!
+
+    predicted_species = int(round(predicted_species[0]))  # unpack one element
+    name = species[predicted_species]                     # look up the species
+    return name
+
+#
+# try it!
+#
+# features = eval(input("enter new features: "))
+#
+features = [6.7,3.3,4.7,0.1]            # [5.8,2.7,4.1,1.0] [4.6,3.6,3.0,2.2] [6.7,3.3,5.7,2.1]
+result = predictive_model( features )
+print(f"i predict {result} from features {features}")
+
+
+#
+# except, we didn't really explore whether this was the best model we could build...
+#
+#
+# we used k = 84  (a neighborhood size of 84 flowers)
+# in a dataset of only 140ish flowers, with three species, this is a _bad_ idea!
+#
+# perhaps we should try all the neighborhood sizes in their own train/test split
+# and see which neighborhood size works the best, for irises, at least...
+#
+# this is "cross validation" ...
+#
+
+
+#
+# here, we use "cross validation" to find the "best" k...
+#
+
+from sklearn.model_selection import cross_val_score
+
+#
+# cross-validation splits the training set into two pieces:
+#   + model-building and model-validation. we'll use "build" and "validate"
+#
+best_k = 84  # not correct!
+best_accuracy = 0.0  # also not correct...
+all_accuracies = []
+
+# note that we are cross-validating using only our test data!
+for k in range(1,85):
+    knn_cv_model = kneighborsclassifier(n_neighbors=k)   # build a knn_model for every k
+    cv_scores = cross_val_score( knn_cv_model, x_train, y_train, cv=5 )  # cv=5 means 80/20
+    this_cv_accuracy = cv_scores.mean()               # mean() is numpy's built-in average function
+    print(f"k: {k:2d}  cv accuracy: {this_cv_accuracy:7.4f}")
+    all_accuracies += [this_cv_accuracy]
+
+    if this_cv_accuracy > best_accuracy:  # is this one better?
+        best_accuracy = this_cv_accuracy  # track the best accuracy
+        best_k = k                        # with the best k
+
+
+# use best_k!
+print(f"best_k = {best_k}   yields the highest average cv accuracy.")  # print the best one
+
+
+
+### let's see all the accuracies!
+
+import pandas as pd
+# let's create a pandas dataframe out of the above cell's data
+crossvalidation_df = pd.dataframe( {"k_value":np.asarray(range(1,84+1)),
+                                    "accuracy":np.asarray(all_accuracies)}
+                                    )
+
+import seaborn as sns
+sns.set_theme(style="darkgrid")
+# plot the responses for different events and regions
+sns.lineplot(x="k_value", y="accuracy",  #  hue="region", style="event",
+             data=crossvalidation_df)
+
+
+#
+# with the best k, we build and train a new model:
+#
+# now using best_k instead of the original, randomly-guessed value:
+#
+best_k = best_k   # not needed, but nice
+from sklearn.neighbors import kneighborsclassifier
+knn_model_tuned = kneighborsclassifier(n_neighbors=best_k)   # here, we use the best_k!
+
+# we train the model (one line!)
+knn_model_tuned.fit(x_train, y_train)                              # yay!  trained!
+print(f"created + trained a knn classifier, now tuned with a (best) k of {best_k}")
+
+# how does it do?!  the next cell will show...
+
+
+#
+# re-create and re-run the  "model-testing cell"     how does it do with best_k?!
+#
+predicted_labels = knn_model_tuned.predict(x_test)
+actual_labels = y_test
+
+# let's print them so we can compare...
+print("predicted labels:", predicted_labels)
+print("actual labels:", actual_labels)
+
+# and, the overall results
+num_correct = sum(predicted_labels == actual_labels)
+total = len(actual_labels)
+print(f"\nresults on test set:  {num_correct} correct out of {total} total.\n\n")
+
+# plus, we'll print our nicer table...
+compare_labels(predicted_labels,actual_labels)
+
+
+#
+# ok!  we tuned our knn modeling to use the "best" value of k...
+#
+# and, we should now use all available data to train our final predictive model:
+#
+knn_model_final = kneighborsclassifier(n_neighbors=best_k)     # here, we use the best_k
+knn_model_final.fit(x_all, y_all)                              # key difference:  we use all the data!
+print(f"created + trained a 'final' knn classifier, with a (best) k of {best_k}")
+
+
+#
+# final predictive model (k-nearest-neighbor), with tuned k + all data incorporated
+#
+
+def predictive_model( features, model ):
+    """ input: a list of four features
+                [ sepallen, sepalwid, petallen, petalwid ]
+        output: the predicted species of iris, from
+                  setosa (0), versicolor (1), virginica (2)
+    """
+    our_features = np.asarray([features])                 # extra brackets needed
+    predicted_species = model.predict(our_features)       # the model's prediction!
+    predicted_species = int(round(predicted_species[0]))  # unpack the extra brackets
+    return predicted_species
+
+#
+# try it!
+#
+# features = eval(input("enter new features: "))
+#
+# features = [6.7,3.3,5.7,0.1]  # [5.8,2.7,4.1,1.0] [4.6,3.6,3.0,2.2] [6.7,3.3,5.7,2.1]
+
+lof = [
+[4.8, 3.1, 1.6, 0.2 ],
+[5.7, 2.9, 4.2, 1.3 ],
+[5.8, 2.7, 5.1, 1.9 ],
+[5.2, 4.1, 1.5, 0.1 ],
+[5.4, 3.4, 1.5, 0.4 ],
+[5.1, 2.5, 3.0, 1.1 ],
+[6.2, 2.9, 4.3, 1.3 ],
+[6.3, 3.3, 6.0, 2.5 ],
+[5.7, 2.8, 4.1, 1.3 ],
+]
+
+# lof =  [ [0.1,7.2,4.2,1.042] ]
+
+# run on each one:
+for features in lof:
+    predicted_species = predictive_model( features, knn_model_final )  # pass in the model, too!
+    name = species[predicted_species]
+    print(f"i predict {name} from the features {features}")    # answers in the assignment...
+
+
+# we can only plot 2 dimensions at a time!
+# these two will be our constants:
+sepallen = 5.0
+sepalwid = 3.0
+
+vertical = np.arange(0,10,.1) # array of vertical input values
+horizont = np.arange(0,10,.1) # array of horizontal input values
+plane = np.zeros( (len(horizont),len(vertical)) ) # the output array
+
+row = 0
+col = 0
+for petallen in vertical: # for every sepal length
+  for petalwid in horizont: # for every sepal width
+    features = [ sepallen, sepalwid, petallen, petalwid ]
+    output = predictive_model(features,knn_model_final)
+    #print(f"input {features} output: {output}")
+    plane[row,col] = output
+    col += 1
+  col = 0
+  row += 1
+  print(".", end="")  # so we know it's running
+  if row % 42 == 0: print() # same...
+
+print("\n", plane[0:3,0:3]) # small bit of the upper-left corner
+
+
+
+# prompt: please plot the above heatmap, with 1/4 as many axis labels
+
+# assuming 'plane', 'vertical', and 'horizont' are defined as in the original code
+
+# create a new figure and axes
+import matplotlib.pyplot as plt
+fig, ax = plt.subplots(figsize=(12, 8))
+
+# create the heatmap
+im = ax.imshow(plane, cmap="viridis", extent=[horizont.min(), horizont.max(), vertical.min(), vertical.max()], origin="lower", aspect="auto")
+
+# set axis labels and ticks
+ax.set_xlabel("petalwid", fontsize=14)
+ax.set_ylabel("petallen", fontsize=14)
+
+# calculate the indices for reduced ticks and labels
+reduced_tick_indices = np.arange(0, len(horizont), len(horizont)//8)
+# ensure that the last index is included
+# if reduced_tick_indices[-1] != len(horizont)-1:
+#   reduced_tick_indices = np.append(reduced_tick_indices, len(horizont)-1)
+
+
+# set ticks and tick labels with correct values
+ax.set_xticks(horizont[reduced_tick_indices]) # display ticks every 0.4 unit
+ax.set_yticks(vertical[reduced_tick_indices])
+ax.set_xticklabels([f"{x:.1f}" for x in horizont[reduced_tick_indices]], fontsize=12)  # format x-axis labels
+ax.set_yticklabels([f"{y:.1f}" for y in vertical[reduced_tick_indices]], fontsize=12)  # format y-axis labels
+
+
+# add a colorbar
+cbar = plt.colorbar(im)
+cbar.set_label('predicted species (0: setosa, 1: versicolor, 2: virginica)', rotation=270, labelpad=25)
+
+# set the title
+sepallen = 5.0
+sepalwid = 3.0
+ax.set_title(f"species classification with sepal length: {sepallen}, sepal width: {sepalwid}", fontsize=16)
+
+plt.show()
+
+print("remember our species-to-number mapping:")
+print("0 - setosa")
+print("1 - versicolor")
+print("2 - virginica")
+
+
+#
+# let's hold the petal length and width constant and vary sepal len + wid:
+
+petallen = 3.42
+petalwid = 3.42
+
+vertical = np.arange(0,10,.1) # array of vertical input values
+horizont = np.arange(0,10,.1) # array of horizontal input values
+planev2 = np.zeros( (len(horizont),len(vertical)) ) # the output array
+
+row = 0
+col = 0
+for sepallen in vertical: # for every sepal length
+  for sepalwid in horizont: # for every sepal width
+    features = [ sepallen, sepalwid, petallen, petalwid ]
+    output = predictive_model(features,knn_model_final)
+    #print(f"input {features} output: {output}")
+    planev2[row,col] = output
+    col += 1
+  col = 0
+  row += 1
+  print(".", end="")  # so we know it's running
+  if row % 42 == 0: print() # same...
+
+print("\n", planev2[0:3,0:3]) # small bit of the upper-left corner
+
+
+
+# prompt: please plot the above heatmap, with 1/4 as many axis labels
+
+# assuming 'plane', 'vertical', and 'horizont' are defined as in the original code
+import matplotlib.pyplot as plt
+# create a new figure and axes
+fig, ax = plt.subplots(figsize=(12, 8))
+
+# create the heatmap
+im = ax.imshow(planev2, cmap="viridis", extent=[horizont.min(), horizont.max(), vertical.min(), vertical.max()], origin="lower", aspect="auto")
+
+# set axis labels and ticks
+ax.set_xlabel("sepalwid", fontsize=14)
+ax.set_ylabel("sepallen", fontsize=14)
+
+# calculate the indices for reduced ticks and labels
+reduced_tick_indices = np.arange(0, len(horizont), len(horizont)//8)
+# ensure that the last index is included
+# if reduced_tick_indices[-1] != len(horizont)-1:
+#   reduced_tick_indices = np.append(reduced_tick_indices, len(horizont)-1)
+
+
+# set ticks and tick labels with correct values
+ax.set_xticks(horizont[reduced_tick_indices]) # display ticks every 0.4 unit
+ax.set_yticks(vertical[reduced_tick_indices])
+ax.set_xticklabels([f"{x:.1f}" for x in horizont[reduced_tick_indices]], fontsize=12)  # format x-axis labels
+ax.set_yticklabels([f"{y:.1f}" for y in vertical[reduced_tick_indices]], fontsize=12)  # format y-axis labels
+
+
+# add a colorbar
+cbar = plt.colorbar(im)
+cbar.set_label('predicted species (0: setosa, 1: versicolor, 2: virginica)', rotation=270, labelpad=25)
+
+# set the title
+sepallen = 5.0
+sepalwid = 3.0
+ax.set_title(f"species classification with petal length: {petallen}, petal width: {petalwid}", fontsize=16)
+
+plt.show()
+
+print("remember our species-to-number mapping:")
+print("0 - setosa")
+print("1 - versicolor")
+print("2 - virginica")
+
+
+#
+# that's it!  welcome to the world of model-building workflows!!
+#
+#             our prediction?  we'll be back for more ml!
+#
+# in fact, the rest of the hw is to run more ml workflows:   births, digits, titanic, (ec) housing, ...
+#
+
+
+#
+# a coding cell placeholder
+#
+
+# you'll copy lots of cells - mostly coding cells - from the iris example
+
+
+
+
+# let's read in our flower data...
+#
+# for read_csv, use header=0 when row 0 is a header row
+#
+filename = 'births.csv'
+df = pd.read_csv(filename)        # encoding="utf-8" et al.
+print(f"{filename} : file read into a pandas dataframe.")
+
+
+
+
+
+df.info()
+
+
+for column_name in df.columns:
+    print(f"{column_name =}")
+
+
+# we can drop a series of data (a row or a column)
+# the dimensions each have a numeric value, row~0, col~1, but let's use readable names we define:
+row = 0
+column = 1
+
+df_clean1 = df[df['births']>250]
+df_clean1
+
+# df_clean1 is a new dataframe
+
+
+df_clean1.info()
+
+
+row = 0
+column = 1
+
+df_clean2 = df_clean1.drop('births', axis=column)
+df_clean2
+
+
+#
+# let's keep our column names in variables, for reference
+#
+columns = df_clean2.columns            # "list" of columns
+print(f"columns is {columns}")
+  # it's a "pandas" list, called an index
+  # use it just as a python list of strings:
+print(f"columns[0] is {columns[0]}\n")
+
+# let's create a dictionary to look up any column index by name
+col_index = {}
+for i, name in enumerate(columns):
+    col_index[name] = i  # using the name (as key), look up the value (i)
+print(f"col_index is {col_index}")
+print(f"col_index[ 'day' ] is {col_index[ 'day' ]}")
+
+
+averages = ['below','above']   # int to str
+averages_index = {'below':0,'above':1}  # str to int
+
+def convert_average(averagecat):
+    """ return the average index (a unique integer/category) """
+    return averages_index[averagecat]
+
+# let's try it out...
+for name in averages:
+    print(f"{name} maps to {convert_average(name)}")
+
+
+convert_average('below')  # try converting from string to index!
+
+
+averages[1]
+
+
+#
+# we can "apply" to a whole column and create a new column
+#   it may give a warning, but this is ok...
+#
+
+df_clean3 = df_clean2.copy()  # copy everything and...
+
+# add a new column, 'irisnum'
+df_clean3['avgnum'] = df_clean2['popularity_versus_median'].apply(convert_average)
+
+# let's see...
+df_clean3
+
+
+for row in df_clean3.itertuples():
+    print(row)
+
+
+df_tidy =  df_clean3
+
+
+#
+# we'll construct the new filename:
+old_basename = filename[:-4]                      # remove the ".csv"
+cleaned_filename = old_basename + "_cleaned.csv"  # name-creating
+print(f"cleaned_filename is {cleaned_filename}")
+
+# now, save
+df_tidy.to_csv(cleaned_filename, index_label=false)  # no "index" column...
+
+
+df_tidy_reread = pd.read_csv(cleaned_filename)   # encoding="utf-8" et al.
+print(f"{filename} : file read into a pandas dataframe.")
+df_tidy_reread
+
+
+#
+# let's make sure we have all of our helpful variables in one place
+#
+#   this will be adapted if we drop/add more columns...
+#
+
+#
+# let's keep our column names in variables, for reference
+#
+columns = df_tidy.columns            # "list" of columns
+print(f"columns is {columns}\n")
+  # it's a "pandas" list, called an index
+  # use it just as a python list of strings:
+print(f"columns[0] is {columns[0]}\n")
+
+# let's create a dictionary to look up any column index by name
+col_index = {}
+for i, name in enumerate(columns):
+    col_index[name] = i  # using the name (as key), look up the value (i)
+print(f"col_index is {col_index}\n\n")
+
+
+#
+# and our "species" names
+#
+
+# all of scikit-learn's ml routines need numbers, not strings
+#   ... even for categories/classifications
+
+averages = ['below','above']   # int to str
+averages_index = {'below':0,'above':1}  # str to int
+
+def convert_average(averagecat):
+    """ return the average index (a unique integer/category) """
+    #print(f"converting {averagecat}...")
+    return averages_index[averagecat]
+
+# let's try it out...
+for name in averages:
+    print(f"{name} maps to {convert_average(name)}")
+
+
+# libraries!
+import numpy as np      # numpy is python's "array" library
+import pandas as pd     # pandas is python's "data" library ("dataframe" == spreadsheet)
+
+
+cleaned_filename = "births_cleaned.csv"
+df_tidy = pd.read_csv(cleaned_filename)   # encoding="utf-8" et al.
+print(f"{cleaned_filename} : file read into a pandas dataframe.")
+df_tidy
+
+
+for row in df_tidy.itertuples():
+    print(row)
+
+
+df_tidy.info()
+
+
+#
+# all of the columns need to be numeric, we'll drop irisname
+row = 0
+column = 1
+df_model1 = df_tidy.drop( 'popularity_versus_median', axis=column )
+df_model1
+
+
+#
+# let's make sure we have all of our helpful variables in one place
+#
+#   this will be adapted if we drop/add more columns...
+#
+
+#
+# let's keep our column names in variables, for reference
+#
+columns = df_model1.columns            # "list" of columns
+print(f"columns is {columns}\n")
+  # it's a "pandas" list, called an index
+  # use it just as a python list of strings:
+print(f"columns[0] is {columns[0]}\n")
+
+# let's create a dictionary to look up any column index by name
+col_index = {}
+for i, name in enumerate(columns):
+    col_index[name] = i  # using the name (as key), look up the value (i)
+print(f"col_index is {col_index}\n\n")
+
+
+#
+# and our "species" names
+#
+
+# all of scikit-learn's ml routines need numbers, not strings
+#   ... even for categories/classifications
+
+averages = ['below','above']   # int to str
+averages_index = {'below':0,'above':1}  # str to int
+
+def convert_average(averagecat):
+    """ return the average index (a unique integer/category) """
+    #print(f"converting {averagecat}...")
+    return averages_index[averagecat]
+
+# let's try it out...
+for name in averages:
+    print(f"{name} maps to {convert_average(name)}")
+
+
+#
+a = df_model1.to_numpy()    # yields the underlying numpy array
+a = a.astype('float64')     # make sure it's all floating point  (www.tutorialspoint.com/numpy/numpy_data_types.htm)
+print(a[0:5])               # a is too big, let's just sanity-check
+
+
+
+#
+# also, nice to have num_rows and num_cols around
+#
+num_rows, num_cols = a.shape
+print(f"\nthe dataset has {num_rows} rows and {num_cols} cols")
+
+
+df_tidy.info()
+
+
+print("+++ start of data definitions +++\n")
+
+#
+# we could do this at the data-frame level, too!
+#
+
+x_all = a[:,0:2]  # x (features) ... is all rows, columns 0, 1
+y_all = a[:,2]    # y (labels) ... is all rows, column 2 only
+
+print(f"y_all (just the labels)   are \n {y_all}")
+print(f"x_all (just the features - a few) are \n {x_all[0:5]}")
+
+
+
+#
+# we next separate into test data and training data ...
+#    + we will train on the training data...
+#    + we will _not_ look at the testing data to build the model
+#
+# then, afterward, we will test on the testing data -- and see how well we do!
+#
+
+#
+# a common convention:  train on 80%, test on 20%    let's define the test_percent
+#
+
+
+from sklearn.model_selection import train_test_split
+
+x_train, x_test, y_train, y_test = train_test_split(x_all, y_all, test_size=0.2) # random_state=42
+
+print(f"training with {len(y_train)} rows;  testing with {len(y_test)} rows\n" )
+
+#
+# let's print the training data
+#
+print("+++++")
+print(f"held-out data... (testing data: {len(y_test)} rows)")
+print("+++++\n")
+print(f"y_test: {y_test}")
+print(f"x_test (first few rows): {x_test[0:5,:]}")  # 5 rows
+print()
+
+
+#
+# let's print some of the training data
+#
+
+print("+++++")
+print(f"data used for modeling... (training data: {len(y_train)} rows)")
+print("+++++\n")
+print(f"y_train: {y_train}")
+print(f"x_train (first few rows): {x_train[0:5,:]}")  # 5 rows
+
+
+#
+# +++ this is the "model-building and model-training cell"
+#
+# create a knn model and train it!
+#
+from sklearn.neighbors import kneighborsclassifier
+
+k = 84   # we don't know what k to use, so we guess!  (this will _not_ be a good value)
+knn_model = kneighborsclassifier(n_neighbors=k)       # here, k is the "k" in knn
+
+# we train the model (it's one line!)
+knn_model.fit(x_train, y_train)                              # yay!  trained!
+print("created and trained a knn classifier with k =", k)
+
+
+#
+# +++ this cell is our "model-testing cell"
+#
+# now, let's see how well our model does on our "held-out data" (the testing data)
+#
+
+# we run our test set:
+
+# the function knn_model.predict is the instantiation of our model
+# it's what runs the k-nearest-neighbors algorithm:
+predicted_labels = knn_model.predict(x_test)      # this is the key line:  predict
+actual_labels = y_test
+
+# let's print them so we can compare...
+print("predicted labels:", predicted_labels)
+print("actual  labels  :", actual_labels)
+
+# and, some overall results
+num_correct = sum(predicted_labels == actual_labels)
+total = len(actual_labels)
+print(f"\nresults on test set:  {num_correct} correct out of {total} total.")
+
+
+#
+# let's print things in a vertical table
+#
+
+def compare_labels(predicted_labels, actual_labels):
+    """ a more neatly formatted comparison """
+    num_labels = len(predicted_labels)
+    num_correct = 0
+
+    print()
+    print(f'row {"#":>3s} : {"predicted":>12s} {"actual":<12s}   {"result"}')
+
+    for i in range(num_labels):
+        p = int(round(predicted_labels[i]))         # round protects from fp error
+        a = int(round(actual_labels[i]))
+        result = "incorrect"
+        if p == a:  # if they match,
+            result = ""       # no longer incorrect
+            num_correct += 1  # and we count a match!
+
+        print(f"row {i:>3d} : {averages[p]:>12s} {averages[a]:<12s}   {result}")
+
+    print()
+    print("correct:", num_correct, "out of", num_labels)
+    return num_correct
+
+# let's try it out!
+compare_labels(predicted_labels,actual_labels)
+
+
+#
+# ok!  we have our knn model, we could just use it...
+
+# data-driven predictive model (k-nearest-neighbor), using scikit-learn
+
+# warning: this model has not yet been tuned to its "best k"
+#
+def predictive_model( features ):
+    """ input: a list of two features
+                [month, day]
+        output: the predicted average category, from
+                  below (0), above (1)
+    """
+    our_features = np.asarray([features])                 # extra brackets needed
+    predicted_avg = knn_model.predict(our_features)   # predict!
+
+    predicted_avg = int(round(predicted_avg[0]))  # unpack one element
+    name = averages[predicted_avg]                     # look up the species
+    return name
+
+#
+# try it!
+#
+# features = eval(input("enter new features: "))
+#
+features = [2, 29]            # [5.8,2.7,4.1,1.0] [4.6,3.6,3.0,2.2] [6.7,3.3,5.7,2.1]
+result = predictive_model( features )
+print(f"i predict {result} from features {features}")
+
+
+#
+# here, we use "cross validation" to find the "best" k...
+#
+
+from sklearn.model_selection import cross_val_score
+
+#
+# cross-validation splits the training set into two pieces:
+#   + model-building and model-validation. we'll use "build" and "validate"
+#
+best_k = 84  # not correct!
+best_accuracy = 0.0  # also not correct...
+all_accuracies = []
+
+# note that we are cross-validating using only our test data!
+for k in range(1,85):
+    knn_cv_model = kneighborsclassifier(n_neighbors=k)   # build a knn_model for every k
+    cv_scores = cross_val_score( knn_cv_model, x_train, y_train, cv=5 )  # cv=5 means 80/20
+    this_cv_accuracy = cv_scores.mean()               # mean() is numpy's built-in average function
+    print(f"k: {k:2d}  cv accuracy: {this_cv_accuracy:7.4f}")
+    all_accuracies += [this_cv_accuracy]
+
+    if this_cv_accuracy > best_accuracy:  # is this one better?
+        best_accuracy = this_cv_accuracy  # track the best accuracy
+        best_k = k                        # with the best k
+
+
+# use best_k!
+print(f"best_k = {best_k}   yields the highest average cv accuracy.")  # print the best one
+
+
+### let's see all the accuracies!
+
+import pandas as pd
+# let's create a pandas dataframe out of the above cell's data
+crossvalidation_df = pd.dataframe( {"k_value":np.asarray(range(1,84+1)),
+                                    "accuracy":np.asarray(all_accuracies)}
+                                    )
+
+import seaborn as sns
+sns.set_theme(style="darkgrid")
+# plot the responses for different events and regions
+sns.lineplot(x="k_value", y="accuracy",  #  hue="region", style="event",
+             data=crossvalidation_df)
+
+
+#
+# with the best k, we build and train a new model:
+#
+# now using best_k instead of the original, randomly-guessed value:
+#
+best_k = best_k   # not needed, but nice
+from sklearn.neighbors import kneighborsclassifier
+knn_model_tuned = kneighborsclassifier(n_neighbors=best_k)   # here, we use the best_k!
+
+# we train the model (one line!)
+knn_model_tuned.fit(x_train, y_train)                              # yay!  trained!
+print(f"created + trained a knn classifier, now tuned with a (best) k of {best_k}")
+
+# how does it do?!  the next cell will show...
+
+
+#
+# re-create and re-run the  "model-testing cell"     how does it do with best_k?!
+#
+predicted_labels = knn_model_tuned.predict(x_test)
+actual_labels = y_test
+
+# let's print them so we can compare...
+print("predicted labels:", predicted_labels)
+print("actual labels:", actual_labels)
+
+# and, the overall results
+num_correct = sum(predicted_labels == actual_labels)
+total = len(actual_labels)
+print(f"\nresults on test set:  {num_correct} correct out of {total} total.\n\n")
+
+# plus, we'll print our nicer table...
+compare_labels(predicted_labels,actual_labels)
+
+
+#
+# ok!  we tuned our knn modeling to use the "best" value of k...
+#
+# and, we should now use all available data to train our final predictive model:
+#
+knn_model_final = kneighborsclassifier(n_neighbors=best_k)     # here, we use the best_k
+knn_model_final.fit(x_all, y_all)                              # key difference:  we use all the data!
+print(f"created + trained a 'final' knn classifier, with a (best) k of {best_k}")
+
+
+#
+# final predictive model (k-nearest-neighbor), with tuned k + all data incorporated
+#
+
+def predictive_model( features, model ):
+    """ input: a list of two features
+                [ month, day ]
+        output: the predicted averages of birthdays, from
+                  below (0), above (1)
+    """
+    our_features = np.asarray([features])                 # extra brackets needed
+    predicted_avg = model.predict(our_features)       # the model's prediction!
+    predicted_avg = int(round(predicted_avg[0]))  # unpack the extra brackets
+    return predicted_avg
+
+#
+# try it!
+#
+# features = eval(input("enter new features: "))
+#
+# features = [6.7,3.3,5.7,0.1]  # [5.8,2.7,4.1,1.0] [4.6,3.6,3.0,2.2] [6.7,3.3,5.7,2.1]
+
+lof = [
+[8, 17],
+[6, 20],
+[7, 17],
+[2, 2],
+[1, 30],
+[1, 1],
+[12, 25],
+[12, 31],
+[2, 29 ],
+]
+
+# lof =  [ [0.1,7.2,4.2,1.042] ]
+
+# run on each one:
+for features in lof:
+    predicted_avg = predictive_model( features, knn_model_final )  # pass in the model, too!
+    name = averages[predicted_avg]
+    print(f"i predict {name} from the features {features}")    # answers in the assignment...
+
+
+# we can only plot 2 dimensions at a time!
+# these two will be our constants:
+
+vertical = np.arange(0,10,.1) # array of vertical input values
+horizont = np.arange(0,10,.1) # array of horizontal input values
+plane = np.zeros( (len(horizont),len(vertical)) ) # the output array
+
+row = 0
+col = 0
+for day in vertical: # for every sepal length
+  for month in horizont: # for every sepal width
+    features = [ day, month ]
+    output = predictive_model(features,knn_model_final)
+    #print(f"input {features} output: {output}")
+    plane[row,col] = output
+    col += 1
+  col = 0
+  row += 1
+  print(".", end="")  # so we know it's running
+  if row % 42 == 0: print() # same...
+
+print("\n", plane[0:3,0:3]) # small bit of the upper-left corner
+
+
+
+# prompt: please plot the above heatmap, with 1/4 as many axis labels
+
+# assuming 'plane', 'vertical', and 'horizont' are defined as in the original code
+
+# create a new figure and axes
+import matplotlib.pyplot as plt
+fig, ax = plt.subplots(figsize=(12, 8))
+
+# create the heatmap
+im = ax.imshow(plane, cmap="viridis", extent=[horizont.min(), horizont.max(), vertical.min(), vertical.max()], origin="lower", aspect="auto")
+
+# set axis labels and ticks
+ax.set_xlabel("month", fontsize=14)
+ax.set_ylabel("day", fontsize=14)
+
+# calculate the indices for reduced ticks and labels
+reduced_tick_indices = np.arange(0, len(horizont), len(horizont)//8)
+# ensure that the last index is included
+# if reduced_tick_indices[-1] != len(horizont)-1:
+#   reduced_tick_indices = np.append(reduced_tick_indices, len(horizont)-1)
+
+
+# set ticks and tick labels with correct values
+ax.set_xticks(horizont[reduced_tick_indices]) # display ticks every 0.4 unit
+ax.set_yticks(vertical[reduced_tick_indices])
+ax.set_xticklabels([f"{x:.1f}" for x in horizont[reduced_tick_indices]], fontsize=12)  # format x-axis labels
+ax.set_yticklabels([f"{y:.1f}" for y in vertical[reduced_tick_indices]], fontsize=12)  # format y-axis labels
+
+
+# add a colorbar
+cbar = plt.colorbar(im)
+cbar.set_label('predicted average (0: below, 1: above)', rotation=270, labelpad=25)
+
+# set the title
+#sepallen = 5.0
+#sepalwid = 3.0
+ax.set_title(f"births classification", fontsize=16)
+
+plt.show()
+
+print("remember our species-to-number mapping:")
+print("0 - below")
+print("1 - above")
+
+
+
+# a placeholder code cell
+
+
+filename = 'digits.csv'
+df = pd.read_csv(filename)        # encoding="utf-8" et al.
+print(f"{filename} : file read into a pandas dataframe.")
+
+
+
+
+
+df.info()
+
+
+for column_name in df.columns:
+    print(f"{column_name =}")
+
+
+# we can drop a series of data (a row or a column)
+# the dimensions each have a numeric value, row~0, col~1, but let's use readable names we define:
+row = 0
+column = 1
+
+df_clean1 = df.drop('excerpted from http://yann.lecun.com/exdb/mnist/', axis=column)
+df_clean1
+
+# df_clean1 is a new dataframe, without that unwanted column
+
+
+df_clean1.info()
+
+
+#
+# let's keep our column names in variables, for reference
+#
+columns = df_clean1.columns            # "list" of columns
+print(f"columns is {columns}")
+  # it's a "pandas" list, called an index
+  # use it just as a python list of strings:
+print(f"columns[0] is {columns[0]}\n")
+
+# let's create a dictionary to look up any column index by name
+col_index = {}
+for i, name in enumerate(columns):
+    col_index[name] = i  # using the name (as key), look up the value (i)
+print(f"col_index is {col_index}")
+print(f"col_index[ 'pix0' ] is {col_index[ 'pix0' ]}")
+
+
+for row in df_clean1.itertuples():
+    print(row)
+
+
+#
+# let's call it df_tidy
+#
+df_tidy =  df_clean1
+
+
+
+#
+# that's it!  then, and write it out to digits_cleaned.csv
+
+# we'll construct the new filename:
+old_basename = filename[:-4]                      # remove the ".csv"
+cleaned_filename = old_basename + "_cleaned.csv"  # name-creating
+print(f"cleaned_filename is {cleaned_filename}")
+
+# now, save
+df_tidy.to_csv(cleaned_filename, index_label=false)  # no "index" column...
+
+
+df_tidy_reread = pd.read_csv(cleaned_filename)   # encoding="utf-8" et al.
+print(f"{filename} : file read into a pandas dataframe.")
+df_tidy_reread
+
+
+columns = df_tidy.columns            # "list" of columns
+print(f"columns is {columns}\n")
+  # it's a "pandas" list, called an index
+  # use it just as a python list of strings:
+print(f"columns[0] is {columns[0]}\n")
+
+# let's create a dictionary to look up any column index by name
+col_index = {}
+for i, name in enumerate(columns):
+    col_index[name] = i  # using the name (as key), look up the value (i)
+print(f"col_index is {col_index}\n\n")
+
+
+
+cleaned_filename = "digits_cleaned.csv"
+df_tidy = pd.read_csv(cleaned_filename)   # encoding="utf-8" et al.
+print(f"{cleaned_filename} : file read into a pandas dataframe.")
+df_tidy
+
+
+for row in df_tidy.itertuples():
+    print(row)
+
+
+df_tidy.info()
+
+
+df_model1 = df_tidy
+
+
+columns = df_model1.columns            # "list" of columns
+print(f"columns is {columns}\n")
+  # it's a "pandas" list, called an index
+  # use it just as a python list of strings:
+print(f"columns[0] is {columns[0]}\n")
+
+# let's create a dictionary to look up any column index by name
+col_index = {}
+for i, name in enumerate(columns):
+    col_index[name] = i  # using the name (as key), look up the value (i)
+print(f"col_index is {col_index}\n\n")
+
+
+
+#
+a = df_model1.to_numpy()    # yields the underlying numpy array
+a = a.astype('float64')     # make sure it's all floating point  (www.tutorialspoint.com/numpy/numpy_data_types.htm)
+print(a[0:5])               # a is too big, let's just sanity-check
+
+
+df_tidy.info()
+
+
+print("+++ start of data definitions +++\n")
+
+#
+# we could do this at the data-frame level, too!
+#
+
+x_all = a[:,0:63]  # x (features) ... is all rows, columns 0, 1, 2, 3
+y_all = a[:,64]    # y (labels) ... is all rows, column 4 only
+
+print(f"y_all (just the labels)   are \n {y_all}")
+print(f"x_all (just the features - a few) are \n {x_all[0:5]}")
+
+
+
+from sklearn.model_selection import train_test_split
+
+x_train, x_test, y_train, y_test = train_test_split(x_all, y_all, test_size=0.2) # random_state=42
+
+print(f"training with {len(y_train)} rows;  testing with {len(y_test)} rows\n" )
+
+#
+# let's print the training data
+#
+print("+++++")
+print(f"held-out data... (testing data: {len(y_test)} rows)")
+print("+++++\n")
+print(f"y_test: {y_test}")
+print(f"x_test (first few rows): {x_test[0:5,:]}")  # 5 rows
+print()
+
+
+
+# let's print some of the training data
+#
+
+print("+++++")
+print(f"data used for modeling... (training data: {len(y_train)} rows)")
+print("+++++\n")
+print(f"y_train: {y_train}")
+print(f"x_train (first few rows): {x_train[0:5,:]}")  # 5 rows
+
+
+#
+# +++ this is the "model-building and model-training cell"
+#
+# create a knn model and train it!
+#
+from sklearn.neighbors import kneighborsclassifier
+
+k = 64  # we don't know what k to use, so we guess!  (this will _not_ be a good value)
+knn_model = kneighborsclassifier(n_neighbors=k)       # here, k is the "k" in knn
+
+# we train the model (it's one line!)
+knn_model.fit(x_train, y_train)                              # yay!  trained!
+print("created and trained a knn classifier with k =", k)
+
+
+#
+# +++ this cell is our "model-testing cell"
+#
+# now, let's see how well our model does on our "held-out data" (the testing data)
+#
+
+# we run our test set:
+
+# the function knn_model.predict is the instantiation of our model
+# it's what runs the k-nearest-neighbors algorithm:
+predicted_labels = knn_model.predict(x_test)      # this is the key line:  predict
+actual_labels = y_test
+
+# let's print them so we can compare...
+print("predicted labels:", predicted_labels)
+print("actual  labels  :", actual_labels)
+
+# and, some overall results
+num_correct = sum(predicted_labels == actual_labels)
+total = len(actual_labels)
+print(f"\nresults on test set:  {num_correct} correct out of {total} total.")
+
+
+
+def compare_labels(predicted_labels, actual_labels):
+    """ a more neatly formatted comparison """
+    num_labels = len(predicted_labels)
+    num_correct = 0
+
+    print()
+    print(f'row {"#":>3s} : {"predicted":>12s} {"actual":<12s}   {"result"}')
+
+    for i in range(num_labels):
+        p = int(round(predicted_labels[i]))         # round protects from fp error
+        a = int(round(actual_labels[i]))
+        result = "incorrect"
+        if p == a:  # if they match,
+            result = ""       # no longer incorrect
+            num_correct += 1  # and we count a match!
+
+        print(f"row {i:>3d} : {p:>12d} {a:<12d}   {result}")
+
+    print()
+    print("correct:", num_correct, "out of", num_labels)
+    return num_correct
+
+# let's try it out!
+compare_labels(predicted_labels,actual_labels)
+
+
+#
+# here, we use "cross validation" to find the "best" k...
+#
+
+from sklearn.model_selection import cross_val_score
+
+#
+# cross-validation splits the training set into two pieces:
+#   + model-building and model-validation. we'll use "build" and "validate"
+#
+best_k = 84  # not correct!
+best_accuracy = 0.0  # also not correct...
+all_accuracies = []
+
+# note that we are cross-validating using only our test data!
+for k in range(1,85):
+    knn_cv_model = kneighborsclassifier(n_neighbors=k)   # build a knn_model for every k
+    cv_scores = cross_val_score( knn_cv_model, x_train, y_train, cv=5 )  # cv=5 means 80/20
+    this_cv_accuracy = cv_scores.mean()               # mean() is numpy's built-in average function
+    print(f"k: {k:2d}  cv accuracy: {this_cv_accuracy:7.4f}")
+    all_accuracies += [this_cv_accuracy]
+
+    if this_cv_accuracy > best_accuracy:  # is this one better?
+        best_accuracy = this_cv_accuracy  # track the best accuracy
+        best_k = k                        # with the best k
+
+
+# use best_k!
+print(f"best_k = {best_k}   yields the highest average cv accuracy.")  # print the best one
+
+
+
+### let's see all the accuracies!
+
+import pandas as pd
+# let's create a pandas dataframe out of the above cell's data
+crossvalidation_df = pd.dataframe( {"k_value":np.asarray(range(1,84+1)),
+                                    "accuracy":np.asarray(all_accuracies)}
+                                    )
+
+import seaborn as sns
+sns.set_theme(style="darkgrid")
+# plot the responses for different events and regions
+sns.lineplot(x="k_value", y="accuracy",  #  hue="region", style="event",
+             data=crossvalidation_df)
+
+
+#
+# with the best k, we build and train a new model:
+#
+# now using best_k instead of the original, randomly-guessed value:
+#
+best_k = best_k   # not needed, but nice
+from sklearn.neighbors import kneighborsclassifier
+knn_model_tuned = kneighborsclassifier(n_neighbors=best_k)   # here, we use the best_k!
+
+# we train the model (one line!)
+knn_model_tuned.fit(x_train, y_train)                              # yay!  trained!
+print(f"created + trained a knn classifier, now tuned with a (best) k of {best_k}")
+
+# how does it do?!  the next cell will show...
+
+
+#
+# re-create and re-run the  "model-testing cell"     how does it do with best_k?!
+#
+predicted_labels = knn_model_tuned.predict(x_test)
+actual_labels = y_test
+
+# let's print them so we can compare...
+print("predicted labels:", predicted_labels)
+print("actual labels:", actual_labels)
+
+# and, the overall results
+num_correct = sum(predicted_labels == actual_labels)
+total = len(actual_labels)
+print(f"\nresults on test set:  {num_correct} correct out of {total} total.\n\n")
+
+# plus, we'll print our nicer table...
+compare_labels(predicted_labels,actual_labels)
+
+
+#
+# ok!  we tuned our knn modeling to use the "best" value of k...
+#
+# and, we should now use all available data to train our final predictive model:
+#
+knn_model_final = kneighborsclassifier(n_neighbors=best_k)     # here, we use the best_k
+knn_model_final.fit(x_all, y_all)                              # key difference:  we use all the data!
+print(f"created + trained a 'final' knn classifier, with a (best) k of {best_k}")
+
+
+import pandas as pd
+
+# load the csv
+df = pd.read_csv("digits_cleaned.csv")
+
+# peek at the data
+print(df.shape)
+print(df.columns)
+df.head()
+
+
+import matplotlib.pyplot as plt
+import numpy as np
+
+# choose one row (e.g., index 0)
+row = df.iloc[0]
+
+# assuming the first column is the label
+label = row[0]
+pixels = row[1:].values.reshape(8, 8)   # reshape to 8×8 for digits
+
+# plot it
+plt.imshow(pixels, cmap='gray_r')
+plt.title(f"digit: {label}")
+plt.axis('off')
+plt.show()
+
+
+# a placeholder code cell
+
+
