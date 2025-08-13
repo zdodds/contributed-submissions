@@ -1,0 +1,52 @@
+#  Land Valuation Modeling in Al-Tharawat: Regression vs. KNN  
+### Progress Report – Final Project (IST341)  
+### Mohammed & IST341_Participant_5 – IST341 – Spring 2025.
+## 📌 Project Introduction
+
+In this project we try to use Linear Regression to predict land price in our area in the south of Saudi Arabia. The dataset we use is builded manually from real examples in a new area called "Al-Tharawat" in our region.
+
+In the proposal before we start with only 50 rows, but now we increase it to 90 rows to make the data more useful. We collect this data from a real estate office who know the prices in the area. We include different features like land area, number of streets, if it is a corner land or not, and land use (residential or commercial).  
+
+We begin by using  Linear Regression to test how well it can learn the prices from these features. and then we can try other model (like KNN Regressor) to compare it with linear regression.
+## Progress So Far
+
+Since the proposal, we worked more on collecting data. At first we only had 50 rows, but now we increase it to 90 rows. We collect this data manually from a real estate office in south of Saudi Arabia, who give us real prices from new area called Al-Tharawat.
+
+Then we open the CSV file in pandas to check the structure and data types. We look at the values to make sure there is no missing or strange data. Everything looks clean, and now we are ready to use Linear Regression model.
+
+We follow the material from previouse Notebook about Linear Regression. We use the same steps and now we try it on our dataset to predict some featuers.
+## Step 1: Load the dataset
+
+We show first rows to check structure before modeling.
+## Step 2 – Modeling with Linear Regression
+
+We start by selecting the features (X) and the target (y), and then we split the data into training and testing sets. This helps us test how good the model is.
+##  Step 3 – Evaluate the Model
+
+Now we evaluate the model using the R² score to see how well the model fits the data.
+##  Step 4 – Visualization
+
+Now we make a scatter plot to compare the real prices (y_test) with the predicted prices (y_pred). This helps us see how close the model predictions are to the actual prices.
+### Step 5 – Feature Impact Analysis
+
+To better understand which feature is the most important in predicting land prices, we remove each feature one by one and test how the model performance changes. We calculate the R-squared score in each case to see how the accuracy is affected.
+**Observation:** When we removed `Area_sqm`, the R-squared dropped a lot. This means land area is very important for price prediction.
+**Observation:** When we removed `Num_Street_Faces`, the model performance stayed high. This feature is helpful but not as critical as `Area_sqm`.
+**Observation:** Removing `Street_Width` caused a small drop in performance. It has some importance but not as much as `Area_sqm`.
+We see that the Linear Regression model gives very high R-squared score (0.99), which means it predicts land price very well in our dataset. The visualization also shows that predicted prices are close to the actual prices.
+
+But our dataset is small (only 90 rows), and we collect it from one real estate office in our region. Maybe if we add more data from other places, the model will not be perfect.
+
+Next step, we want to try other models like KNN Regressor to compare the results.
+### What’s Next
+
+Before the presentation, we will try to use KNN Regressor on the same dataset to compare it with Linear Regression. We want to see which model gives better results in our case.
+
+Also, we are still working on adding more rows to the dataset, and maybe we will try some visualization to compare more features like land area and land use.
+
+We want to improve our understanding of the models and prepare for the next steps in our project.
+### Step 6 – Modeling with KNN Regressor
+
+Now we try a different model: KNN Regressor.  
+We use the same three features: Area_sqm, Num_Street_Faces, and Street_Width.  
+We want to compare its results with Linear Regression to see which model performs better.
