@@ -1,0 +1,547 @@
+# here is a coding cell. try it!
+
+41 + 1
+
+
+# this is a code cell.
+# to run it, click play at left or type ctrl-enter (cmd-enter)
+
+
+answer = input("what is your name? ")
+print("welcome,", answer)
+print()
+
+print("my favorite number is 42, naturally.")
+fav_num = input("what is your favorite number? ")
+print()
+
+print("nice!", fav_num, "is solid. and very numeric!")
+print("plus, it's close to the best number, 42.")
+
+
+print("fav_num is", fav_num)
+
+
+fav_num = input("what is your favorite number? ")
+
+# type converting
+next_num = int(fav_num) + 1
+
+print("your favorite number is", fav_num, "and one number bigger than your fav, is", next_num)
+
+
+
+# this is a code-cell, which should be runnable with the arrow,
+# also with (control-enter) or (command-return)
+
+35 + 7
+
+
+# try running this cell to compute a googol
+# this is the number after which google was named!
+
+10**100   # ** is power operator
+
+
+# this cell imports the math library and then runs a function from it.
+# (the square root of 4 is 2, as you'll see :-)
+
+from math import *    # imports the sqrt function and others
+sqrt(4)
+
+
+# here is an example of the "factorial" function. factorial(4) is 1*2*3*4, which is 24
+
+factorial(10)     # also imported from the math library
+
+
+1*2*3*4*5*6*7*8*9*10
+
+
+# this cell shows how printing works. try it!
+# it should print:   zero is 0
+#             and:   one is 1       actually, 1.0, this is ok!
+#
+# notice that this sets you up for the four fours challenge!
+
+print("zero is", 4+4-4-4)
+print("one is", 1)                 # uh oh! no non-fours allowed!!
+print("two is", (4/4) * (4/4)  )   # uh oh! this is incorrect... temporarily
+
+
+
+
+
+
+-4 + sqrt(4) + factorial(4) - 4
+
+
+#
+#  here is a space for your explorations and solutions
+#       to the four fours challenge.
+#
+# this will get you started.
+
+import math
+
+print("zero is", 4+4-4-4)
+print("one is", (4/4)*(4/4))  # yay!  exactly four fours - and no other digits
+
+
+print("two is", (4 / 4) + (4 / 4))
+print("three is", (4 + 4 + 4) / 4)
+print("four is", 4 + (4 - 4) * 4)
+print("five is", (4 * 4 + 4) / 4)
+print("six is", (4 + 4) / 4 + 4)
+print("seven is", (44 / 4) - 4)
+print("eight is", (4 + 4))
+print("nine is", (4/4 + 4 + 4))
+print("ten is", (44 / 4.4) )
+print("eleven is", (4/.4 + 4/4))
+print("twelve is", ((44 + 4) / 4))
+print("thirteen is", (44 / 4) + (4 / 4)) #############
+print("fourteen is", ((4 * (4 - .4)) - .4))
+print("fifteen is", (44 / 4 + 4))
+print("sixteen is", (4 + 4) + (4 + 4))
+print("seventeen is", (4 * 4) + (4 / 4))
+print("eighteen is", (44 * .4) + .4)
+print("nineteen is", (4 * 4) + 4 - 4 / 4) ############
+print("twenty is",  ((4 / 4 ) + 4) * 4)
+print("twenty-one is", (4.4 + 4) / .4)
+print("twenty-two is", (4 * 4) + 4 + (4 // 4))  ##########
+print("twenty-three is", (4 * 4) + 4 + (4 // 4) + 4 // 4)  ##########
+print("twenty-four is", (4 * 4) + 4 + 4)
+
+
+
+
+
+#
+# examples of the most important four types of data
+#   numeric:     int, float
+#   sequential:  str, list
+#
+
+print("our examples:")
+print()
+
+fav_num = 46      # an int
+pi = 3.14         # a float
+
+inator_creator = 'dr. heinz doofenshmirtz'  # a string
+l = ["jan", 31, "feb", 28, "mar", 31]       # a list, of ints and strings
+
+#
+# now, let's print them -- and print their types:
+#
+print("fav_num is", fav_num, "\n  type(fav_num) is", type(fav_num))
+print()  # prints a blank line, "\n" is another way to go to a newline
+
+print("pi is", pi, "\n  type(pi) is", type(pi))
+print()
+
+print("inator_creator is", inator_creator, "\n  type(inator_creator) is", type(inator_creator))
+print()
+
+print("l is", l, "\n  type(l) is", type(l))
+print()
+
+
+#
+# you'll notice that python uses <class 'int'> instead of int, and so on...
+# no worries!
+#
+
+
+#
+# here, create at least one example of int, float, str, and list data
+#
+#     + feel free to copy-and-paste-then-edit from the above cell
+#
+#     + the objective is to try out variables, assignment, and printing
+#     + with your own names, data, etc.
+#
+#     + try it out...  creativity is the goal...
+#
+#     + errors?  ask us - or whoever's next to you... :-)
+#
+#
+
+print("your examples:")
+print()
+
+name = 'ist341_participant_3'   #string
+age = 36   #int
+hight = 1.75   #float
+weight = 87   #float
+
+fav_drinks = ["coffee", "tea", "soda", "water"]   #list
+
+print("this is my info:")
+print("name:", name, ", age:", age, ", hight:", hight, ", weight:", weight)
+print("i like to drink: ", fav_drinks)
+print()
+print("ok, now lets print data types:")
+print(name, "is a type of ", type(name))
+print(age, "is a type of ", type(age))
+print(hight, "is a type of ", type(hight))
+print(weight, "is a type of ", type(weight))
+print(fav_drinks, "is a type of ", type(fav_drinks))
+
+
+
+
+
+
+#
+# example of clobbering fav_num
+#
+
+print("fav_num before is", fav_num)
+
+fav_num = 1925            # founded it!  (this was cgu's founding year.)
+
+print("fav_num after is", fav_num)
+
+
+
+#
+# thought experiment:
+#   what do you think happens if you re-run the above cell?!
+#   try it out... no need to answer the question beyond trying it! :-)
+#
+
+x = 6
+y = 4
+z = x + y
+print("z = ", z)
+print()
+x = z + 1
+print("z = ", z, ", x = ", x , ", y = ", y)
+
+
+
+comp = "rock"
+user = "paper"
+
+if comp == 'paper' and user == 'paper':
+    print('we tie. try again?')
+
+elif comp == 'rock':
+
+    if user == 'scissors':
+        print('i win! *_*')
+    else:
+        print('you win. aargh!')
+
+
+# a very unfair game of rock-paper-scissors
+
+user_name = input("what is your name? ")
+print("welcome,", user_name, "!")
+print()
+
+print("i challenge you to rock-paper-scissors! prepare to be vanquished!")
+
+user_choice = input("which do you choose? (rock/paper/scissors):")
+print()
+
+if user_choice == "rock":
+  print("you chose", user_choice)
+  print("but i chose paper...")   # this doesn't seem fair...
+  print("my paper smothers your rock!")
+
+elif user_choice == "paper":
+  print("you chose", user_choice, "?")
+  print("i'm sorry: my scissors have confetti'd you!")
+
+else:
+  print("you chose", user_choice)
+  print("wow. you chose poorly!")
+  print("i win.")
+
+
+print()
+print("try again, if you dare...")
+
+
+
+#
+# a fairer but incomplete game of rock-paper-scissors
+#
+
+import random       # imports a library (named random)
+                    # for making random choices
+
+user_name = input("what is your name? ")
+print("welcome,", user_name, "!")
+print()
+
+print("ready for rps? choose wisely!!")
+user_choice = input("which do you choose? (rock/paper/scissors):")
+comp_choice = random.choice(["rock","paper","scissors"])
+print()
+
+# we print both choices
+print("you chose", user_choice)
+print("  i chose", comp_choice)
+print()
+
+
+# we can handle different possibilities with nested conditionals
+
+if user_choice == "rock":
+
+  if comp_choice == "rock":
+    print("aargh! we tied (but my rock was rockier!)")
+  elif comp_choice == "paper":
+    print("i win! my paper outclasses any rock!")
+  else:
+    print('alack! your rock cast my scissors asunder.')
+
+else:
+
+  print("you have ventured into the unknown...")
+  print("... but i probably won!!")
+
+
+
+print()
+print("try again!")
+
+
+
+#
+# your fair, complete rps or rps-variant  (this cell)
+#
+#
+# use the previous, unfair/incomplete examples as starting points and resources
+# and keep adding/fixing/creating from there... .
+#
+import random
+
+
+
+user_name = input("what is your name? ")
+print("hello ,", user_name, " welcome ")
+print()
+
+print("i challenge you to a fair game of rps: rock-paper-scissors! are you ready!")
+print("you are smart if you can beat me, can you ^^")
+print("get ready ")
+
+user_choice = input("which do you choose? (rock/paper/scissors)")
+computer_choice = random.choice(["rock","paper","scissors"])
+
+print("\n you chose: " ,user_choice, "and i chose: "  ,computer_choice)
+
+if user_choice == computer_choice:
+    print("oh it's a tie!")
+    print("you seem a worthy opponent")
+    print("let us do it again")
+elif user_choice == "rock":
+    if computer_choice == "scissors":
+        print("you win! congratulations!")
+    else:
+        print("i win! better luck next time!")
+elif user_choice == "paper":
+    if computer_choice == "rock":
+        print("you win! congratulations!")
+    else:
+        print("i win! better luck next time!")
+elif user_choice == "scissors":
+    if computer_choice == "paper":
+        print("you win! congratulations!")
+    else:
+        print("i win! better luck next time!")
+else:
+    print("invalid choice. please select rock, paper, or scissors. check your spelling")
+
+print()
+print("thanks for playing^^ i had good time playing with you")
+print("if you are ready let's play again")
+
+
+# title for this example adventure:   the quest.
+#
+# notes on how to "win" or "lose" this adventure:
+#   to win, choose the table.
+#   to lose, choose the door.
+
+
+def adventure():
+    """this function runs one session of interactive fiction
+       well, it's "fiction," depending on the pill color chosen...
+       arguments: no arguments (prompted text doesn't count as an argument)
+       results: no results     (printing doesn't count as a result)
+    """
+    user_name = input("what do they call you, worthy adventurer? ")
+
+    print()
+    print("welcome,", user_name, "-- to the undermine, a labyrinth")
+    print("beneath cgu's unending academic complex, with weighty")
+    print("wonders and unreal quantities...of poptarts!")
+    print()
+
+    print("your quest: to find--and partake of--a poptart!")
+    print()
+    flavor = input("what flavor do you seek? ")
+    if flavor == "strawberry":
+        print("wise! you show deep poptart experience.")
+    elif flavor == "s'mores":
+        print("the taste of the campfire: well chosen, adventurer!")
+    else:
+        print("each to their own, then.")
+    print()
+
+    print("on to the quest!\n\n")
+    print("a corridor stretches before you; its dim lighting betrays, to")
+    print("one side, a table supporting nameless forms of inorganic bulk")
+    print("and, to the other, a door ajar, leaking laughter--is that")
+    print("laughter?--of lab-goers.")
+    print()
+
+    choice1 = input("do you choose the table or the door? [table/door] ")
+    print()
+
+    if choice1 == "table":
+        print("as you approach the table, its hazy burdens loom ever larger,")
+        print("until...")
+        print()
+        print("...they resolve into unending stacks of poptarts, foil")
+        print("shimmering.  you succeed, sumptuously, in sating the")
+        print("challenge--and your hunger.")
+        print("go well,", user_name, "!")
+
+    else:
+        print("you push the door into a gathering of sagefowl, athenas,")
+        print("and stags alike, all relishing their tasks. teamwork and")
+        print("merriment abound here, except...")
+        print()
+        print("...they have consumed all of the poptarts! drifts of wrappers")
+        print("coat the floor.  dizzy, you grasp for a pastry. none is at")
+        print("hand. you exhale and slip under the teeming tide of foil as")
+        print("it finishes winding around you.")
+        print("farewell,", user_name, ".")
+
+
+#
+# the above adventure is defined in a _function_  (next week: functions!)
+#
+# this means it's defined, but it does not run until we call it.
+# this line below calls it:
+adventure()
+
+
+# title for this adventure: "conquering the pyramids of ancient egypt"
+#
+##############################
+# about this game:
+# you are an explorer venturing into the pyramids of giza in search of the fabled jewel of ra,
+# said to grant eternal wisdom and power.
+# to succeed, you must navigate traps, solve riddles, and choose wisely between ancient paths.
+#############################
+# notes on how to "win" or "lose" this adventure:
+#     to win:
+#     choose "main" → "mural" → answer "echo" → final answer "footsteps".
+#  or choose "tunnel" → "staircase" → duck to avoid arrows → final answer "footsteps".
+#  or choose "tunnel" → "door" → grab the jewel → final answer "footsteps".
+#############################
+
+import random
+
+def adventure():
+    """an interactive fiction adventure: conquering the pyramids of ancient egypt."""
+
+    print("welcome to the great pyramid of giza, brave explorer!")
+    print("your goal is to find the legendary jewel of ra and escape safely.")
+    print()
+
+    user_name = input("what is your name, adventurer? ")
+    print("welcome", user_name, "prepare for a journey full of danger and mystery.")
+    print()
+
+    # first decision: how to enter the pyramid
+    print("you stand before the great pyramid. you see two entrances:")
+    print("1. the main entrance")
+    print("2. a hidden tunnel")
+    entrance = input("do you choose the main entrance or the hidden tunnel? (main/tunnel): ")
+    print()
+
+    if entrance == "main":
+        print("you enter through the main entrance. the air is heavy with ancient dust.")
+        print("the passage is grand, but something feels ominous...")
+        print()
+    elif entrance == "tunnel":
+        print("you crawl through the hidden tunnel. it's dark, but quiet.")
+        print("you emerge into a dimly lit corridor.")
+        print()
+    else:
+        print("invalid choice! you hesitate too long, and a sandstorm forces you to retreat.")
+        print("game over.")
+        return
+
+    # second decision: choose a path inside the pyramid
+    print("inside the pyramid, you see three paths:")
+    print("1. a glowing mural with hieroglyphs.")
+    print("2. a dark staircase descending into the abyss.")
+    print("3. a golden door with the eye of horus.")
+    path = input("which path do you choose? (mural/staircase/door): ")
+    print()
+
+    if path == "mural":
+        print("you approach the glowing mural. a booming voice asks you a riddle:")
+        print("'i speak without a mouth and hear without ears. i have no body, but i come alive with wind. what am i?'")
+        print("options: 1) shadow  2) echo  3) whisper")
+        answer = input("choose your answer (1/2/3): ")
+        if answer == "2":
+            print("correct! the mural reveals a secret passage.")
+        else:
+            print("wrong! the mural traps you in its glow forever.")
+            print("game over.")
+            return
+    elif path == "staircase":
+        print("you descend the dark staircase. suddenly, arrows shoot from the walls!")
+        trap_action = input("do you run forward or duck? (run/duck): ")
+        if trap_action == "duck":
+            print("you duck just in time and avoid the arrows. you proceed safely.")
+        else:
+            print("you are hit by the arrows and collapse.")
+            print("game over.")
+            return
+    elif path == "door":
+        print("you open the golden door and enter a room filled with treasure!")
+        print("however, the floor begins to crumble beneath you.")
+        treasure_action = input("do you grab the jewel of ra and run, or retreat empty-handed? (grab/retreat): ")
+        if treasure_action == "grab":
+            print("you grab the jewel of ra and escape just in time. victory!")
+        else:
+            print("you retreat safely, but the jewel of ra remains lost.")
+            print("game over.")
+            return
+    else:
+        print("invalid choice! you wander aimlessly and fall into a hidden trap.")
+        print("game over.")
+        return
+
+    # final challenge: the chamber of ra
+    print("you reach the final chamber, where the path is guarded by a sphinx.")
+    print("the sphinx challenges you with one last riddle:")
+    print("'the more you take, the more you leave behind. what am i?'")
+    print("options: 1) time  2) footsteps  3) sand")
+    final_answer = input("choose your answer (1/2/3): ")
+
+    if final_answer == "2":
+        print("brilliant" , user_name, "you have solved the sphinx's riddle.")
+        print("the jewel of ra is yours, and you escape the pyramid!")
+        print("congratulations! you win!")
+    else:
+        print("wrong! the sphinx curses you, and the pyramid seals you inside forever.")
+        print("game over.")
+
+# start the adventure
+adventure()
+
+
+
+
