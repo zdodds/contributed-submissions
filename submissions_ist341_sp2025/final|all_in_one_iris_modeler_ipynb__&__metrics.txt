@@ -1,0 +1,770 @@
+#
+# modern modeling ~ iris_modeler:  all-in-one iris clasification via nearest neighbors
+#
+
+
+# section 1:  libraries
+#
+import sklearn          # if not present, use a variant of  #3 install -u scikit-learn
+import numpy as np      # numpy is python's "array" library
+import pandas as pd     # pandas is python's "data" library ("dataframe" == spreadsheet)
+
+# section 2:  read the already-cleaned data  (+ view, if you wish)
+#
+cleaned_filename = "iris_cleaned.csv"     # data should be "tidy" already...
+df_tidy = pd.read_csv(cleaned_filename)   # can add encoding="utf-8" if needed
+if false:
+    print(f"{cleaned_filename} : file read into a pandas dataframe.")
+    print("df_tidy is\n", df_tidy)
+    print("df_tidy.info() is"); df_tidy.info()
+
+# section 3:  drop any columns we don't want to use
+row = 0
+column = 1
+df_model1 = df_tidy.drop('irisname', axis=column )
+if false:  print("df_model1 is\n", df_model1)
+
+# section 4:  create columns and species variables to show we're organized + know what's happening...
+columns = df_model1.columns                     # int to str
+species = ['setosa','versicolor','virginica']   # int to str
+species_index = { s:i for i,s in enumerate(species) }  # str to int   {'setosa':0,'versicolor':1,'virginica':2}
+columns_index = { c:i for i,c in enumerate(columns) }  # str to int   {'sepallen':0,'sepalwid':1,'petallen':2, <more> }
+if false:  print(f"{columns = } \n {columns_index = } \n {species = } \n {species_index = }")
+
+# section 5:  convert from pandas (spreadsheet) to numpy (array)
+a = df_model1.to_numpy()    # yields the underlying numpy array
+a = a.astype('float64')     # make sure everything is floating-point
+num_rows, num_cols = a.shape   # let's have num_rows and num_cols around
+if false:  print(f"\nthe dataset has {num_rows} rows and {num_cols} cols")
+
+# section 6:  define our features (x_all) and our target-to-predict (y_all)
+x_all = a[:,0:4]  # x (features) watch out! this is likely to change from model to model...
+y_all = a[:,4]    # y (labels) watch out! this is likely to change from model to model...
+if false:
+    print(f"the labels/species are \n {y_all} \n ");
+    print(f"the first few data rows are \n {x_all[0:5,:]}")
+
+# section 7:  80/20 split into training and testing sets:  x_train and y_train, x_test and y_test
+from sklearn.model_selection import train_test_split      # this function splits into training + testing sets
+x_train, x_test, y_train, y_test = train_test_split(x_all, y_all, test_size=0.20)  # random_state=42 # 20% testing
+if false:
+    print(f"training with {len(y_train)} rows;  testing with {len(y_test)} rows\n" )
+    print(f"held-out testing data... (testing data: {len(y_test)} rows)")
+    print(f"y_test: {y_test}")
+    print(f"x_test (first few rows): {x_test[0:5,:]}\n")
+    print(f"training data used for modeling... (training data: {len(y_train)} rows)")
+    print(f"y_train: {y_train}")
+    print(f"x_train (first few rows): {x_train[0:5,:]}")  # 5 rows
+
+# section 8:  here's where the model-building happens!  first, we guess at the parameters (k=84)
+from sklearn.neighbors import kneighborsclassifier
+k = 84   # we don't know what k to use, so we guess!  (this will _not_ be a good value)
+knn_model = kneighborsclassifier(n_neighbors=k)       # here, k is the "k" in knn
+knn_model.fit(x_train, y_train)      # we train the model ... it's one line!
+if false:  print("created and trained a knn classifier with k =", k)
+
+# section 9:  let's see how our naive model does on the test data!
+predicted_labels = knn_model.predict(x_test)      # this is the key line:  predict
+actual_labels = y_test
+if true:
+    print("predicted labels:", predicted_labels)
+    print("actual  labels  :", actual_labels)
+    num_correct = sum(predicted_labels == actual_labels)
+    total = len(actual_labels)
+    print(f"\nresults on test set:  {num_correct} correct out of {total} total, for {num_correct*100/total}%\n")
+
+# section 10:  let's cross-validate to find the "best" value of k, best_k:
+import time
+from sklearn.model_selection import cross_val_score
+all_accuracies = []
+best_k = 84  # not correct!
+best_accuracy = 0.0  # also not correct...
+for k in range(1,85):    # note that we are cross-validating using only our training data!
+    knn_cv_model = kneighborsclassifier(n_neighbors=k)   # build a knn_model for every k
+    cv_scores = cross_val_score( knn_cv_model, x_train, y_train, cv=5 )  # cv=5 means 80/20
+    this_cv_accuracy = cv_scores.mean()               # mean() is numpy's built-in average function
+    if true: print(f"k: {k:2d}  cv accuracy: {this_cv_accuracy:7.4f}")
+    if this_cv_accuracy > best_accuracy:  # is this one better?
+        best_accuracy = this_cv_accuracy  # track the best accuracy
+        best_k = k                        # with the best k
+    all_accuracies.append(this_cv_accuracy)
+    time.sleep(0.002)   # dramatic pauses!
+if true: print(f"best_k = {best_k}  \n    yields the highest cv accuracy: {best_accuracy}")  # print the best one
+
+
+
+
+#
+# let's print things in a vertical table
+#
+
+def compare_labels(predicted_labels, actual_labels):
+    """ a more neatly formatted comparison """
+    num_labels = len(predicted_labels)
+    num_correct = 0
+
+    print()
+    print(f'row {"#":>3s} : {"predicted":>12s} {"actual":<12s}   {"result"}')
+
+    for i in range(num_labels):
+        p = int(round(predicted_labels[i]))         # round protects from fp error
+        a = int(round(actual_labels[i]))
+        result = "incorrect"
+        if p == a:  # if they match,
+            result = ""       # no longer incorrect
+            num_correct += 1  # and we count a match!
+
+        print(f"row {i:>3d} : {species[p]:>12s} {species[a]:<12s}   {result}")
+
+    print()
+    print("correct:", num_correct, "out of", num_labels)
+    return num_correct
+
+# let's try it out!
+compare_labels(predicted_labels,actual_labels)
+
+
+#
+# ok!  we have our knn model, let's use it...
+#
+# ... in a data-trained predictive model (k-nearest-neighbors), using scikit-learn
+#
+# warning: this model has not yet been tuned to its "best k"
+#
+def predictive_model( features ):
+    """ input: a list of four features
+                [ sepallen, sepalwid, petallen, petalwid ]
+        output: the predicted species of iris, from
+                  setosa (0), versicolor (1), virginica (2)
+    """
+    our_features = np.asarray([features])                      # extra brackets needed so it's 2d
+    predicted_species_list = knn_model.predict(our_features)   # predict!
+
+    predicted_species = int(round(predicted_species_list[0]))  # unpack the one element it contains
+    name = species[predicted_species]                          # look up the species
+    return name
+
+#
+# try it!
+#
+# features = eval(input("enter new features: "))
+#
+listoffeatures = [ [6.7,3.3,5.7,2.1],
+                   [5.8,2.7,4.1,1.0],
+                   [4.6,3.6,3.0,2.2],
+                   [6.7,3.3,5.7,2.1],
+                   [4.2,4.2,4.2,4.2],
+                   [1,42,4.7,3.01],        # -4.7? .01?  0?
+                   ]
+
+for features in listoffeatures:
+    result = predictive_model( features )
+    print(f"from the features {features}, i predict {result}")
+
+
+### let's see all the accuracies!
+
+import pandas as pd
+# let's create a pandas dataframe out of the above cell's data
+crossvalidation_df = pd.dataframe( {"k_value":np.asarray(range(1,84+1)),
+                                    "accuracy":np.asarray(all_accuracies)}
+                                    )
+
+import seaborn as sns
+sns.set_theme(style="darkgrid")
+# plot the responses for different events and regions
+sns.lineplot(x="k_value", y="accuracy",  #  hue="region", style="event",
+             data=crossvalidation_df)
+
+
+#
+# with the best k, we build and train a new model:
+#
+# now using best_k instead of the original, randomly-guessed value:
+#
+best_k = best_k   # not needed, but nice
+from sklearn.neighbors import kneighborsclassifier
+knn_model_tuned = kneighborsclassifier(n_neighbors=best_k)   # here, we use the best_k!
+
+# we train the model (one line!)
+knn_model_tuned.fit(x_train, y_train)                              # yay!  trained!
+print(f"created + trained a knn classifier, now tuned with a (best) k of {best_k}")
+
+# how does it do?!  the next cell will show...
+
+
+#
+# re-create and re-run the  "model-testing cell"     how does it do with best_k?!
+#
+predicted_labels = knn_model_tuned.predict(x_test)
+actual_labels = y_test
+
+# let's print them so we can compare...
+print("predicted labels:", predicted_labels)
+print("actual labels:", actual_labels)
+
+# and, the overall results
+num_correct = sum(predicted_labels == actual_labels)
+total = len(actual_labels)
+print(f"\nresults on test set:  {num_correct} correct out of {total} total.\n\n")
+
+# plus, we'll print our nicer table...
+compare_labels(predicted_labels,actual_labels)
+
+
+#
+# ok!  we tuned our knn modeling to use the "best" value of k...
+#
+# and, we should now use all available data to train our final predictive model:
+#
+knn_model_final = kneighborsclassifier(n_neighbors=best_k)     # here, we use the best_k
+knn_model_final.fit(x_all, y_all)                              # key difference:  we use all the data!
+print(f"created + trained a 'final' knn classifier, with a (best) k of {best_k}")
+
+
+#
+# final predictive model (k-nearest-neighbor), with tuned k + all data incorporated
+#
+
+def predictive_model( features, model ):                 # to allow the input of any model
+    """ input: a list of four features
+                [ sepallen, sepalwid, petallen, petalwid ]
+        output: the predicted species of iris, from
+                  setosa (0), versicolor (1), virginica (2)
+    """
+    our_features = np.asarray([features])                 # extra brackets needed for 2d
+    predicted_species = model.predict(our_features)       # the model's prediction!
+    predicted_species = int(round(predicted_species[0]))  # unpack the extra brackets
+    return predicted_species
+
+#
+# try it!
+#
+
+lof = [
+[4.8, 3.1, 1.6, 0.2 ],   # actually setosa
+[5.7, 2.9, 4.2, 1.3 ],   # actually versicolor
+[5.8, 2.7, 5.1, 1.9 ],   # actually virginica
+[5.2, 4.1, 1.5, 0.1 ],   # actually setosa
+[5.4, 3.4, 1.5, 0.4 ],   # actually setosa
+[5.1, 2.5, 3.0, 1.1 ],   # actually versicolor
+[6.2, 2.9, 4.3, 1.3 ],   # actually versicolor
+[6.3, 3.3, 6.0, 2.5 ],   # actually virginica
+[5.7, 2.8, 4.1, 1.3 ],   # actually virginica  <-- almost always wrong!
+
+[0,0,0,0],               # used as a separator here
+
+[3.7, 2.8, 2.1, 0.3 ],   # let's use this for our own "new" iris ...
+]
+
+# run on each one:
+for features in lof:
+    predicted_species = predictive_model( features, knn_model_final )  # pass in the model, too!
+    name = species[predicted_species]
+    print(f"i predict {name} from the features {features}")    # answers in the assignment...
+
+
+#
+# that's it!  welcome to the world of model-building workflows!!
+#
+#             our prediction?  we'll be back for more ml!
+#
+# in fact, the rest of the hw is to run more ml workflows:
+# births, digits, another dataset, which could be titanic, housing, ...
+#
+# and more ml algorithms:
+# decision trees, random forests, neural nets
+# and, optionally, time series, recommendation systems, ...
+
+
+# we can only plot 2 dimensions at a time!
+# these two will be our constants:
+sepallen = 5.0
+sepalwid = 3.0
+# petallen =
+# petalwid =
+
+vertical = np.arange(0,8,.1) # array of vertical input values
+horizont = np.arange(0,8,.1) # array of horizontal input values
+plane = np.zeros( (len(horizont),len(vertical)) ) # the output array
+model = knn_model_final
+
+
+col = 0
+row = 0
+for petallen in vertical: # for every sepal length
+  for petalwid in horizont: # for every sepal width
+    features = [ sepallen, sepalwid, petallen, petalwid ]
+    output = predictive_model(features,model)
+    #print(f"input {features} output: {output}")
+    plane[row,col] = output
+    row += 1
+  row = 0
+  col += 1
+  print(".", end="")  # so we know it's running
+  if col % 42 == 0: print() # same...
+
+print("\n", plane[0:3,0:3]) # small bit of the lower-left corner
+
+
+# assuming 'plane', 'vertical', and 'horizont' are defined as in the original code
+
+# create a new figure and axes
+import matplotlib.pyplot as plt
+fig, ax = plt.subplots(figsize=(12, 8))
+
+# create the heatmap
+im = ax.imshow(plane, cmap="viridis", extent=[horizont.min(), horizont.max(), vertical.min(), vertical.max()], origin="lower", aspect="auto")
+
+# set axis labels and ticks
+ax.set_xlabel("petalwid", fontsize=14)
+ax.set_ylabel("petallen", fontsize=14)
+
+# calculate the indices for reduced ticks and labels
+reduced_tick_indices = np.arange(0, len(horizont), len(horizont)//8)
+# ensure that the last index is included
+# if reduced_tick_indices[-1] != len(horizont)-1:
+#   reduced_tick_indices = np.append(reduced_tick_indices, len(horizont)-1)
+
+
+# set ticks and tick labels with correct values
+ax.set_xticks(horizont[reduced_tick_indices]) # display ticks every 0.4 unit
+ax.set_yticks(vertical[reduced_tick_indices])
+ax.set_xticklabels([f"{x:.1f}" for x in horizont[reduced_tick_indices]], fontsize=12)  # format x-axis labels
+ax.set_yticklabels([f"{y:.1f}" for y in vertical[reduced_tick_indices]], fontsize=12)  # format y-axis labels
+
+
+# add a colorbar
+cbar = plt.colorbar(im)
+cbar.set_label('predicted species (0: setosa, 1: versicolor, 2: virginica)', rotation=270, labelpad=25)
+
+# set the title
+sepallen = 5.0
+sepalwid = 3.0
+ax.set_title(f"species classification with sepal length: {sepallen}, sepal width: {sepalwid}", fontsize=16)
+
+plt.show()
+
+print("remember our species-to-number mapping:")
+print("0 - setosa")
+print("1 - versicolor")
+print("2 - virginica")
+
+
+import numpy as np
+import pandas as pd
+
+filename='births.csv'
+df=pd.read_csv(filename)
+print(f"{filename} : file read into a pandas dataframe.")
+
+
+
+
+
+df.info()
+
+
+for column_name in df.columns:
+    print(f"{column_name =}")
+
+
+row = 0
+column = 1
+
+df_clean1 = df.drop(['births','from http://chmullig.com/2012/06/births-by-day-of-year/'], axis=column)
+df_clean1
+
+
+df_clean2 = df_clean1.dropna()
+df_clean2.info()
+
+df_clean2
+
+
+df_clean2.info()
+
+
+columns = df_clean1.columns
+print(f"columns is {columns}")
+
+print(f"columns[0] is {columns[0]}\n")
+
+col_index = {}
+for i, name in enumerate(columns):
+    col_index[name] = i
+print(f"col_index is {col_index}")
+
+
+median = ['below','above']
+median_index = {'above':1,'below':0}
+
+def convert_median(median):
+
+    return median_index[median]
+
+for median in median:
+    print(f"{median} maps to {convert_median(median)}")
+
+
+convert_median( 'below')
+
+
+df_clean3 = df_clean2.copy()
+
+df_clean3['above/below median (num)'] = df_clean2['above/below median'].apply(convert_median)
+
+df_clean3
+
+
+df_tidy =  df_clean3
+old_basename = filename[:-4]
+cleaned_filename = old_basename + "_cleaned.csv"
+print(f"cleaned_filename is {cleaned_filename}")
+
+df_tidy.to_csv(cleaned_filename, index_label=false)
+
+
+df_tidy_reread = pd.read_csv(cleaned_filename)
+print(f"{filename} : file read into a pandas dataframe.")
+df_tidy_reread
+
+
+columns = df_tidy.columns
+print(f"columns is {columns}\n")
+
+print(f"columns[0] is {columns[0]}\n")
+
+col_index = {}
+for i, name in enumerate(columns):
+    col_index[name] = i
+print(f"col_index is {col_index}\n\n")
+
+median = ['below','above']
+median_index = {'below':0,'above':1}
+
+def convert_median(median):
+    """ return the species index (a unique integer/category) """
+
+    return median_index[median]
+
+for median in median:
+    print(f"{median} maps to {convert_median(median)}")
+
+
+
+import numpy as np
+import pandas as pd
+
+cleaned_filename = "births_cleaned.csv"
+df_tidy = pd.read_csv(cleaned_filename)
+print(f"{cleaned_filename} : file read into a pandas dataframe.")
+df_tidy
+
+
+pd.set_option('display.max_rows',20)
+pd.set_option('max_colwidth', 400)
+df_tidy
+
+
+df_tidy.info()
+
+
+row = 0
+column = 1
+df_model1 = df_tidy.drop( 'above/below median', axis=column )
+df_model1
+
+
+columns = df_model1.columns
+print(f"columns is {columns}\n")
+print(f"columns[0] is {columns[0]}\n")
+
+col_index = {}
+for i, name in enumerate(columns):
+    col_index[name] = i
+print(f"col_index is {col_index}\n\n")
+
+median = ['below','above']
+median_index = {'below':0,'above':1}
+
+def convert_median(median):
+
+    return median_index[median]
+
+for median in median:
+    print(f"{median} maps to {convert_median(median)}")
+
+
+a = df_model1.to_numpy()
+print(a)
+
+
+a = a.astype('int64')
+print(a[0:5])
+
+
+num_rows, num_cols = a.shape
+print(f"\nthe dataset has {num_rows} rows and {num_cols} cols")
+
+
+df_tidy.info()
+
+
+n = 35
+print(f"births #{n} is {a[n]}")
+
+for i in range(len(columns)):
+    colname = columns[i]
+    value = a[n][i]
+    print(f"  the {colname} is {value}")
+
+median_index = col_index['above/below median (num)']
+median_num = int(round(a[n][median_index]))
+median = median[median_num]
+print(f"  the median is {median} (i.e., {median_num})")
+
+
+print("+++ start of data definitions +++\n")
+
+x_all = a[:,0:2]
+y_all = a[:,2]
+
+print(f"y_all (just the labels)   are \n {y_all}")
+print(f"x_all (just the features - a few) are \n {x_all[0:5]}")
+
+
+from sklearn.model_selection import train_test_split
+
+x_train, x_test, y_train, y_test = train_test_split(x_all, y_all, test_size=0.2)
+
+print(f"training with {len(y_train)} rows;  testing with {len(y_test)} rows\n" )
+
+print("+++++")
+print(f"held-out data... (testing data: {len(y_test)} rows)")
+print("+++++\n")
+print(f"y_test: {y_test}")
+print(f"x_test (first few rows): {x_test[0:5,:]}")
+print()
+
+
+
+print("+++++")
+print(f"data used for modeling... (training data: {len(y_train)} rows)")
+print("+++++\n")
+print(f"y_train: {y_train}")
+print(f"x_train (first few rows): {x_train[0:5,:]}")
+
+
+from sklearn.neighbors import kneighborsclassifier
+
+k = 84
+knn_model = kneighborsclassifier(n_neighbors=k)
+
+knn_model.fit(x_train, y_train)
+print("created and trained a knn classifier with k =", k)
+
+
+predicted_labels = knn_model.predict(x_test)
+actual_labels = y_test
+print("predicted labels:", predicted_labels)
+print("actual  labels  :", actual_labels)
+
+num_correct = sum(predicted_labels == actual_labels)
+total = len(actual_labels)
+print(f"\nresults on test set:  {num_correct} correct out of {total} total.")
+
+
+def compare_labels(predicted_labels, actual_labels):
+    """ a more neatly formatted comparison """
+    num_labels = len(predicted_labels)
+    num_correct = 0
+
+    print()
+    print(f'row {"#":>3s} : {"predicted":>12s} {"actual":<12s}   {"result"}')
+
+    for i in range(num_labels):
+        p = int(round(predicted_labels[i]))
+        a = int(round(actual_labels[i]))
+        result = "incorrect"
+        if p == a:
+            result = ""
+            num_correct += 1
+
+        print(f"row {i:>3d} : {median[p]:>12s} {median[a]:<12s}   {result}")
+
+    print()
+    print("correct:", num_correct, "out of", num_labels)
+    return num_correct
+compare_labels(predicted_labels,actual_labels)
+
+
+def predictive_model( features ):
+
+    our_features = np.asarray([features[:2]])
+    predicted_median = knn_model.predict(our_features)
+
+    predicted_median = int(round(predicted_median[0]))
+    name = median[predicted_median]
+    return name
+
+features = [-7006.7,3900.3,0.7,80]
+result = predictive_model( features )
+print(f"i predict {result} from features {features}")
+
+
+from sklearn.model_selection import cross_val_score
+best_k = 84
+best_accuracy = 0
+
+for k in range(1,85):
+    knn_cv_model = kneighborsclassifier(n_neighbors=k)
+    cv_scores = cross_val_score( knn_cv_model, x_train, y_train, cv=5 )
+    this_cv_accuracy = cv_scores.mean()
+    print(f"k: {k:2d}  cv accuracy: {this_cv_accuracy:7.4f}")
+
+    if this_cv_accuracy > best_accuracy:
+        best_accuracy = this_cv_accuracy
+        best_k = k
+
+print(f"best_k = {best_k}   yields the highest average cv accuracy.")  # print the best one
+
+
+
+from sklearn.neighbors import kneighborsclassifier
+knn_model_tuned = kneighborsclassifier(n_neighbors=best_k)
+
+knn_model_tuned.fit(x_train, y_train)
+print(f"created + trained a knn classifier, now tuned with a (best) k of {best_k}")
+
+
+
+predicted_labels = knn_model_tuned.predict(x_test)
+actual_labels = y_test
+
+print("predicted labels:", predicted_labels)
+print("actual labels:", actual_labels)
+
+num_correct = sum(predicted_labels == actual_labels)
+total = len(actual_labels)
+print(f"\nresults on test set:  {num_correct} correct out of {total} total.\n\n")
+
+compare_labels(predicted_labels,actual_labels)
+
+
+knn_model_final = kneighborsclassifier(n_neighbors=best_k)
+knn_model_final.fit(x_all, y_all)
+print(f"created + trained a 'final' knn classifier, with a (best) k of {best_k}")
+
+
+def predictive_model( features, model ):
+    our_features = np.asarray([features[:2]])
+    predicted_median = model.predict(our_features)
+    predicted_median = int(round(predicted_median[0]))
+    return predicted_median
+
+lof = [
+[1, 1 ],
+[2, 27 ],
+[3, 7 ],
+[4, 10],
+[5, 5 ],
+[6, 5 ],
+[10, 18 ],
+[11, 6 ],
+[12, 31 ],
+]
+
+for features in lof:
+    predicted_median = predictive_model( features, knn_model_final )
+    name = median[predicted_median]
+    print(f"i predict {name} median from the features {features}")
+
+
+day = 11
+month = 1
+
+vertical = np.arange(0,10,.1)
+horizont = np.arange(0,10,.1)
+plane = np.zeros( (len(horizont),len(vertical)) )
+
+row = 0
+col = 0
+for day in vertical:
+  for month in horizont:
+    features = [ day,month]
+    output = predictive_model(features,knn_model_final)
+    plane[row,col] = output
+    col += 1
+  col = 0
+  row += 1
+  print(".", end="")
+  if row % 42 == 0: print()
+
+print("\n", plane[0:3,0:3])
+
+
+### let's see all the accuracies!
+
+import pandas as pd
+# let's create a pandas dataframe out of the above cell's data
+crossvalidation_df = pd.dataframe( {"k_value":np.asarray(range(1,84+1)),
+                                    "accuracy":np.asarray(all_accuracies)}
+                                    )
+
+import seaborn as sns
+sns.set_theme(style="darkgrid")
+# plot the responses for different events and regions
+sns.lineplot(x="k_value", y="accuracy",  #  hue="region", style="event",
+             data=crossvalidation_df)
+
+
+import seaborn as sns
+sns.set(rc = {'figure.figsize':(12,8)})
+ax = sns.heatmap(plane)
+ax.invert_yaxis()
+ax.set(xlabel="month", ylabel="day")
+ax.set_xticks(ax.get_xticks()[::4])
+ax.set_yticks(ax.get_yticks()[::4])
+
+print("remember our below/above median-to-number mapping:")
+print("0 - below")
+print("1- above")
+
+
+month = 5
+
+vertical = np.arange(0,10,.1)
+horizont = np.arange(0,10,.1)
+planev2 = np.zeros( (len(horizont),len(vertical)) )
+
+row = 0
+col = 0
+for day in vertical:
+  for month in horizont:
+    features = [ day,month ]
+    output = predictive_model(features,knn_model_final)
+    planev2[row,col] = output
+    col += 1
+  col = 0
+  row += 1
+  print(".", end="")
+  if row % 42 == 0: print()
+
+print("\n", planev2[0:3,0:3])
+
+
+import seaborn as sns
+
+sns.set(rc = {'figure.figsize':(12,8)})
+ax = sns.heatmap(planev2)
+ax.invert_yaxis()
+ax.set(xlabel="month (tenths)", ylabel="day (tenths)")
+ax.set_xticks(ax.get_xticks()[::4])
+ax.set_yticks(ax.get_yticks()[::4])
+
+print("remember our below/above median-to-number mapping:")
+print("0 - below")
+print("1- above")
+
+
