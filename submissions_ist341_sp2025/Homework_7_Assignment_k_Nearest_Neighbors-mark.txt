@@ -1,0 +1,68 @@
+## Here's our _one-cell_ version of the ML workflow <font color="Coral"><b>let's start here</b></font> &nbsp;&nbsp; <font size="-2">"amoeba version," maybe</font>
+
+This is for iris classification.  You'll run ML on the births and digits!
+### <b>Data reminder</b>
+
+In Colab, be sure to upload your <tt>.csv</tt> cleaned data file.
+
+For example, to run the cell below you will need the <tt>iris_cleaned.csv</tt> file -- it's [here](https://drive.google.com/drive/folders/1Qnie8N2VCdumwaFxFldJ_1iQmvtb40pZ?usp=drive_link)
+
+Download it to your machine and then upload it to Colab into the _folder_ &nbsp; icon at left.### Iris classification via Nearest Neighbors
+
++ Section 1: Libraries
++ Section 2: Read the already-cleaned data  (+ view, if you wish)
++ Section 3:  Drop any columns we don't want to use
++ Section 4:  create COLUMNS and SPECIES variables to show we're organized + know what's happening...
++ Section 5:  convert from pandas (spreadsheet) to numpy (array)
++ Section 6:  define our features (X_all) and our target-to-predict (y_all)
++ Section 7:  80/20 split into training and testing sets:  X_train and y_train, X_test and y_test
++ Section 8:  Here's where the model-building happens!  First, we guess at the parameters (k=84)
++ Section 9:  Let's see how our model does on the TEST data...
++ Section 10:  Let's cross-validate to find the "best" value of k, best_k
++ Section 11:  Let's build a final model + and see it!### Optional:  Let's format things more carefully...### <b><font color="DodgerBlue">We did it!</font></b>: &nbsp; Now, let's use the predictive model!
+
+We can use the predictive model to make predictions and try it out!### This feels like an excuse to plot with seaborn...### Let's use the "correct value" of k
+
+It will not always be the same, because cross-validation is randomized...### We're ready to deploy our "final + best" predictive model!### Predictive models aren't perfect!
++ Notice that the last prediction above the [0,0,0,0] is (probably) wrong
+  + It probably predicted _versicolor_, but it was actually a _virginica_
+  + In essence, it was a _virginica_ iris that "looked more like" a _versicolor_ ... ***from these four features!***
+  + A botanist would use more than these four features to classify difference species...
+
++ **Key**: Even when the modeling process runs "perfectly," the models are likely to be imperfect...
++ ... it's just that we won't know where the imperfections are -- until future observations arrive!### That's it! Our model is complete...
+
+... not perfect, but **complete**
+
+What does this mean?
+
+It means that the model -- the function (above) -- is ***already*** prepared to provide an output for every possible input!
+
+We can see this in a plot of the outputs for every input in the "sepal" plane (length vs. width) as well as the "petal" plane:We've done it!
+
+Remember that the model _thinks_ it knows everything...
+
+But it's way too confident! &nbsp;&nbsp; (This seems like an AI theme...)<br>
+<hr>
+<br># Your tasks!
+
+Based on the examples above, your task is to build a kNN model (along with the tests and visualizations) for two datasets:
+
+*   the births dataset and
+*   the digits dataset
+
+<br>
+<hr>
+<br>
+
+Suggestion:  Perhaps open this notebook twice...
+
+_Then you can copy-paste-adapt the iris workflow to each new dataset!_
+
+<br>
+<hr>
+<br>
+
+As optional EC, track down another dataset of your own choosing and build a DT+RF model  
+
+Notice that this can be an excellent final project, too! 😃# **Part 1: the births dataset**The final test set accuracy using this best k was approximately 82.12%. The predictors (month and day) may not have a very strong or direct relationship to the popularity (above or below the median). Days in different months can have very similar popularity outcomes, making it harder for kNN to distinguish between classes based only on proximity in (month, day) space.# **Part 2: the digits dataset**The model achieved over 99% accuracy, showing that just looking at a few similar examples (with k=3) is enough to make excellent predictions. As k increases, the model gets slightly worse, but stays very strong overall. This shows the dataset is very well-behaved for kNN. Therefore, kNN is an almost perfect fit for this dataset because digit patterns are very visual, repetitive, and clearly grouped in feature space. That's why kNN struggled a little more with births (accuracy ~82%) but excelled with digits (accuracy ~99%).
