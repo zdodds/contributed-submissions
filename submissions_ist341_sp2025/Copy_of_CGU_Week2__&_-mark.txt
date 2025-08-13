@@ -1,0 +1,491 @@
+# Welcome back, IST 341!
+
+### _Assignment 2 Notebook: Strings, Slicing, and Functions_
+
+Featuring!
++ Strings-as-data, including indexing and slicing
++ Python's cells: _Functions_
++ Functional control: _Recursion_!
+
+Onward!### <font color="FireBrick"><b>Overview of this week's Python Notebook</b> (this notebook)</font>
+
+Last week introduced Python's _conditionals_.
++ In fact, we "completed" them!
++ _All_ computational decision making is expressed from the building blocks of `if` `elif` and `else` !
+
+This week, we add _data transformation_
++ Processes transforming input data to output data.
++ This is "computing," most stereotypically...
+
+This notebook has three main challenges, each with a few subparts:
++ string and list operations, called _slicing_ and _indexing_
++ user-defined functions: functions are the ***cells*** of software!
++ control with functions: _recursion_ as a problem-solving strategy
+
+Let's dive in!### <font color="DodgerBlue"><b>Make your own copy of this notebook (as in each week)</b></font>
+
+**Submitting** -- When you're ready to submit, be sure to
++ **share** the notebook with me -- for maximum ease, please use two addresses:
+   + `zdodds@gmail.com`   `dodds@g.hmc.edu`
++ and also **submit** the url to your notebook at the appropriate spot on Canvas# Operations on Strings and Lists
+
+### Indexing and Slicing
+
+It's familiar to operate on numeric data.
+
+It's equally possible -- and important -- to operate on _string_ and _list_ data -- in fact, for biological and biochemical applications, string operations are more fundamental than numeric ones!
+### Examples of operating on strings
+
+The next few cells show a few examples of
++ **indexing**, which produces a single element from a string or list
++ **slicing**, which produces a substring or sublist
+
+Let's try them with strings.
+
+First, "positive" indexing:### Watch out!
++ Above, ``c[0]`` is the _string_ "c"  (Python does not show the quotes)
++ And, ``c[1]`` is the _string_ "l"  
++ And so on...
+
+## Notice that indexing starts at 0!  (Watch out!)
++ For the string named ``c``
++ The initial (first) element of ``c`` is ``c[0]``
+  + which is, in fact, ``'c'``
++ The next (second) element is ``c[1]``
+  + which is, in fact, ``'l'``
++ The next (third) element is ``c[2]``
+  + which is, in fact, ``'a'``
++ and so on...
+
+<br>
+
+Notice the difference between the _variable_ ``c`` and the literal _string_ ``'c'``
++ Python may not always print those quotes!
+
+<br>
+
+Also, Python supports "negative" indexing:### Notice that a negative index counts ***from the right end*** !
++ So, ``c[-1]``  is the last character in the string ``c``
++ And ``c[-2]``  is the second-to-last character in the string ``c``
++ And ``c[-3]``  is the third-to-last character in the string ``c``
++ And so on...### You can also add strings together...
++ for example, you can create the string ``"car"`` by adding_What if I'm both positive and negative?!_
+
+There's no problem mixing positive and negative indices:### Out-of-bounds errors...  (``IndexErrors``)
++ If an index is out of bounds, Python will give an ``IndexError``
++ Run the next cell to see this happen.
++ No problem -- good information to get...!### <font color="darkblue"><b>Your task</b></font>:  Five words from the 5C's
+
+Below, there are five strings from the 5C's
++ Your challenge is to _assemble_ a word from the letters of each string
+  + a _different_ word than the name itself, for sure
+  + you'll need to "find/construct" the word!
+  + You should find a word of _four or more letters_
++ Here, you will use _indexing_ to access each letter
+  + remember that positive indexing starts at 0
+  + negative indexing starts at -1
++ Create it by indexing into each string
++ One example is provided
++ Challenge:
+  + Can you find a five letter word in some?
+  + Six letters?
+  + (_More? This is new: we don't know the limits..._)## Slicing
++ Slicing uses a start index and an end index
+  + Notice that it captures ***up to but not including*** the end!
+  + This takes getting used to
+  + It's consistent across Python, at least
++ The next cell has five examples, using our 5C-strings:### <font color="darkblue"><b>Your task</b></font>:  Five "cross-campus" slices
+
+In a similar spirit to the per-campus indexing, above -
++ Your challeng is to create five "cross-campus slices" -- words or phrases that use two or more slices from different strings
++ Here, you will use _slicing_ to access more than one letter in each piece
++ One example is provided - it's ok to _also_ have single letters
+  + but you need at least two slices for each.
++ We look forward to seeing what's possible!?!!## I say &nbsp;&nbsp;  <tt>h[-1] + c[2] + h[-1]</tt> &nbsp; !
+
+... which is <tt>"yay"</tt> !
+
+
+We will expand on indexing and slicing in future notebooks ...
++ It's one of Python's strengths# Functions
+
+Functions are "software's cells":
++ Like cells, they are self-contained
++ Like cells, they are the essential building blocks for ~~life~~ software
++ Like cells, they carefully control how things "enter" and "exit"
++ Like cells, we can reason about their _overall function_ (ignoring their internals)
++ Like cells, we can also reason about their internal mechanisms/instructions
++ Like cells, larger structures are composed by assembling lots of them together -- in cooperation or competition
+
+Software is always an interrelated, carefully-constructed collection of functions. So, we'll be building functions throughout Sci10...
+
+<br>
+
+Let's see some... then build some!
+
+The next cell defines a function that doubles its input:Running the cell above won't do anything!
+
+The function has been _defined_, but it has not yet been ***run***
+
+Run it in the next cell:### Follow the data!
+
+A key to understanding what a function does and how it operates is _following the data_
++ For the example above, follow the ``23`` that is input, in the parens, of the cell above...
++ It is passed into the top line of the function in the previous cell -- the line with the ``def`` keyword
++ As it is passed in, ***the function names it ``x``***
++ Within the function, it computes two-times-x with ``2*x``
++ Within the function, it will ``return`` that value ``2*x``
++ That output value is double the input value
++ That output value is returned -- and used -- and shown -- when the function is called!
+
+It works with strings, too:## Signature and Docstring
+
+The first line of a Python function is called its _signature_. The function signature includes the keyword ```def``, the name of the function, and a parenthesized list of arguments (inputs) to the function.
+
+**Docstring**    
+
+Directly underneath the signature is a string inside triple quotes ``"""`` — this is called the docstring, short for "documentation string." In Sci10 we will asks you to include a docstring in all of your functions (even simple ones such as these), so that you will develop the habit early on.
+
+It's future you -- who's most often wondering what previous code does -- that most appreciates this! A docstring should describe the function's arguments and result (return value).
+
+Most importantly, Docstrings are how your functions become part of _Python's built-in help system_.  To see this, type
+
+``help(dbl)``
+
+... and you will see that Python provides the docstring as the help!
+
+In fact, Python's in-built help system _is_ docstrings! This self-documenting feature in Python is especially important for making your functions understandable, both to others and to yourself.
+
+**Syntax Warning**
+
+The first set of triple quotes of a docstring needs to be indented underneath the function definition def line, at the same level of indentation as the rest of block of code that defines the function.### <font color="darkblue"><b>Next task:  &nbsp; Function Building</b></font>
+
+Dive in!  These next few cells ask you to define -- and test -- several different functions.
++ There are a couple of extra-credit functions, as well...
+
+For each one,
++ be sure to include a docstring that describes what your function does and what its arguments are.
++ See the ``tpl`` example, next, for a reasonable starting point and guide
++ _Syntax errors_?  Inevitable!  Take a look at the message, and ask us or others.
++ Be sure to use the tests provided to check your function's behavior...
+**Example problem**:
+
+Write the function tpl(x), which accepts a numeric argument and returns three times that argument.
+
+Two tests are provided (be sure to test them - and be sure they work!)
+
+**Answer to example problem**:### <font color="darkblue"><b>Function to write #1: &nbsp; ``sq``</b></font>
+
+The function ``sq(x)`` should accept a numeric argument named ``x``.
+
+Then, ``sq`` should return the square of its argument.
+
+Note that this is the _square_, not the square root. (The square is ``x`` times itself...)### <font color="darkblue"><b>Function to write #2: &nbsp; ``checkends``</b></font>
+
+The function ``checkends(s)`` should take in one _string_ input, naming it ``s``.
++ Then, ``checkends(s)`` should return ``True`` if the first character in ``s`` is the same as the last character in ``s``. It returns False otherwise.
++ (The checkends function does not have to work on the empty string, the string ``''`` )
++ There is a hint below. Suggestion: Read through the examples first!
+
+The examples will help explain ``checkends`` — read them over now, and be sure to try them once you have a first draft of your function. Notice that the fourth, final example below is the string of **one** space character, which is different from the empty string, which contains no characters:### Hints on ``checkends``:
+
+For this function you could use an if and else construction...here is a start:
+<code><pre>
+    if s[0] == ______ :
+        return True
+    else:
+        return False
+</pre></code>
+
+Notice that
++ the key idea for the "last character" is missing in the first line above - you'll need to fill that in!
++ ``True`` and ``False`` are built-in to Python. They are a data type called "booleans."
+  + Aside: booleans are the smallest unit of data: 1 bit!
++  You might build a solution that doesn't use the ``if`` and ``else`` at all - ok. Good to continue using conditionals, too.### <font color="darkblue"><b>Function to use: &nbsp; ``len``</b></font>
+
+There are severall functions so important that they are built in to Python.
+
+Even among those, one of the most important is ``len(s)``, which
++ returns the _number of characters_ in the input string, ``s``
++ run and look over the examples below
+
+Feel free to use ``len`` wherever it is useful (which is a lot!)
++ You'll want to use it for the next function, #3
+
+<br>
+
+Here are examples of ``len`` in action:### <font color="darkblue"><b>Function to write #3: &nbsp; ``flipside``</b></font>
+
+The function ``flipside(s)`` should take in a _string_ ``s`` and
++ returns a string whose first half is ``s``'s second half and whose second half is ``s``'s first half.
++ if ``len(s)`` (the length of ``s``) is odd, the "first half" of s is considered to have one fewer character than the second half.
++ Accordingly, the second half of the returned string will be one shorter than the first half in these cases.
++ here you may want to use the built-in function ``len(s)``, which returns the length of its input string, ``s``
+
+There's also a hint after the examples below. First, check out the examples...**Note**: Python will ***not*** print the quotes around the right-hand sides (the outputs).
+
+This is ok!  They are still strings...The ``flipside`` function is simpler if you create a variable equal to ``len(s)//2`` on the first line, e.g.,
+
+<pre><code>def flipside(s):
+    """ Put your docstring here.
+    """
+    x = len(s)//2
+    return   _____________
+</code></pre>
+
+where the ``return`` statement is still needed:
++ The missing ``return`` statement will use the variable ``x`` twice
++ which is why it's nice to give it a name, rather than type and re-type it!
+
+Side comment: the name ``x`` isn't a great variable name here:
++  ``l`` (lowercase ``l``, suggesting "length") might be better
++ however, ``l`` looks too much like the number ``1`` ...
++ Optional:  _What name might be better than both ``x`` and ``l``?_
++ Leading question: what does ``x`` really _represent_ here?!### <font color="darkblue"><b>Function to write #4: &nbsp; ``transcribe_one``</b></font>
+
+The function ``transcribe_one(s)`` should take in a _string_ ``s`` and
++ if ``s`` is a single lowercase letter, ``'a'``, then ``transcribe_one`` should return the single lowercase letter ``'u'``
++ if ``s`` is a single lowercase letter, ``'c'``, then ``transcribe_one`` should return the single lowercase letter ``'g'``
++ if ``s`` is a single lowercase letter, ``'g'``, then ``transcribe_one`` should return the single lowercase letter ``'c'``
++ if ``s`` is a single lowercase letter, ``'t'``, then ``transcribe_one`` should return the single lowercase letter ``'a'``
++ if the input ``s`` is any other string or is more than one letter or is zero characters (the empty string), then ``transcribe_one`` should return the empty string
++ again, you will want to use the built-in function ``len(s)``, which returns the length of its input string, ``s``
++ again, Python won't print the quotes around the right-hand outputs:### <font color="darkblue"><b>Function to write #5: &nbsp; ``convertFromSeconds``</b></font>
+
+Next, write ``convertFromSeconds(s)``
++ Here, ``s`` is an integer input, not a string
++ ``convertFromSeconds(s)`` takes in a nonnegative integer number of seconds ``s`` and returns a list (we'll call it ``L``) of four nonnegative integers that represents that number of seconds in more conventional units of time, such that:
+  + The initial element represents a number of days.
+  + The next element represents a number of hours.
+  + The next element represents a number of minutes.
+  + The final one represents a number of seconds.
+
+You should be sure that
++ ``0 ≤ seconds < 60`` (i.e., the maximum should be 59!)
++ ``0 ≤ minutes < 60``
++ ``0 ≤ hours < 24``
++ There are no limits on the number of days.
+
+For instance, here are two examples:
++ ``convertFromSeconds(610)`` should return ``[0, 0, 10, 10]``
++ ``convertFromSeconds(100000)`` should return ``[1, 3, 46, 40]``
+  
+Think about it -- feel free to use the hint below!### Hint for ``convertFromSeconds``
+
+How to do this?    
++ Feel free to copy and paste this starter code that uses four variables:
+```
+def convertFromSeconds(s):
+    days = s // (24*60*60)  # Number of days
+    s = s % (24*60*60)      # The leftover
+    hours =
+    minutes =
+    seconds =
+    return [days, hours, minutes, seconds]
+```
+
+The idea here is that when those four variables are all correctly set, you can return them all in a list, which is the final line:
++ ``return [days, hours, minutes, seconds]``
++ For instance, the line that sets days is ``days = s // (24*60*60)``
+
+What would be other lines be?!# <font color="darkblue"><b>Recursion!</b></font>
+
+A very powerful approach to problem-solving is _recursion_
+
+It finds and uses a situation's _self-similarity_ to solve a problem:
++ self-similarity sometimes feels less "natural" than sequencing
++ however, there are problems where self-similarity is a much better fit
++ also, if a problem is solvable, it's _always_ possible to solve it with recursion
+  + to be fair, it's also always possible to solve it with sequence-based approaches (iteration)
+  + that said, _humans_ who are familiar with both -- they tend to have a much bigger set of solution-techniques!### Recursive function examples
++ A great way to build recursive problem-solving is to, first, try some complete examples
++ Here are several -- from class and beyond:### Chat GPT!
+
+Write 1-2 sentences that describe _how_ ``replace_i('icily')`` returns ``!c!ly`` - that is, what the data and function are doing...
++ _Optional:  You're welcome to "ChatGPT" this!_
++ If you do, still write a few sentences sharing the results and whether they were helpful?!
+  + It would be interesting to ChatGPT that...
+  + this is up to you, but do include a reflection!### Your description of how ``replace_i('icily')`` returns ``!c!ly``
+The function replace_i('icily') processes the string recursively, checking each character. If the character is 'i', it replaces it with '!' and calls itself with the remaining string. This continues until the base case (an empty string) is reached, then the modified characters are combined to return "!c!ly".
+<br><br>
+
+<b>Reflection:</b>  This method shows how recursion works step by step, making it easier to understand and apply to similar problems
+<br><br>
+
+### <font color="darkblue"><b>Recursive function #1</b> &nbsp; The full ``transcribe`` function!</b></font>
+
+
+The function ``transcribe(s)`` should take in a _string_ ``s`` and return a new string with all of ``s``'s transcribable characters, transcribed!
++ That is, every ``a`` becomes ``u``, every ``c`` becomes ``g`` (and vice versa), and every ``t`` becomes an ``a``
++ any non-transcribable characters should be dropped/omitted from the output
+  + or, you can replace them with an underscore: ``_``
+
+<br>
+
+How to do this?
++ Take a look at the ``replaceIs`` function above
++ Consider where you will be able to use ``transcribe_one``
+  + You wrote that, above -- you should definitely use it!
++ That said, these can get somewhat addictive...
+
+
+
+### <font color="darkblue">A ``letterScore`` function for scrabble</b></font>
+
+
+The function ``letterScore(s)`` should take in a single-character _string_ ``c`` and return it's scrabble score -- ***it only works when ``c`` is a single-character string!***
+
+Here is an image summarizing the scores:
+
+<img src="https://sandbox.dodona.be/en/activities/1515945638/description/Iy6_hxTCnswvzFz3/media/scrabble.jpg" height=200>
+
+and here are the scores, written out:
++ (1 point)-A, E, I, O, U, L, N, S, T, R
++ (2 points)-D, G.
++ (3 points)-B, C, M, P.
++ (4 points)-F, H, V, W, Y.
++ (5 points)-K.
++ (8 points)- J, X.
++ (10 points)-Q, Z.
++ these should work for uppercase or lowercase!
++ other characters - non letters, punctuation, numbers, ... should score 0 (zero points)
+
+<br>
+
+Hints!
++ use the ``in`` operator
++ For example, ``if c in "qzQz":`` is a great conditional to use!
++ In that case, the correct body would be ``return 10``
++ and so on...
+
+This ``letterScore`` function is ***not*** recursive.
++ However, the ``scrabbleScore`` function - next one - is a great example of recursion...
+### <font color="darkblue"><b>Recursive function #2</b> &nbsp; The full ``scrabbleScore`` function!</b></font>
+
+Here is ``scrabbleScore``'s description:
++ ``scrabbleScore(S)`` should take a string argument ``S``, which can have any characters, and
++ should return the Scrabble score of that string.
++ Any non-letter should contribute a ``0`` score (notice that letterScore already does this! No need to redo it!)
++ we're ignoring the fact that, in the game of Scrabble, the availability of each letter tile is limited… .
+
+<br>
+
+Hint: the ``vwl`` recursive example is a good starting point, because:
++ ``vwl`` is really a simpler scoring function...
++ it gives ``1`` to each vowel and
++ it gives ``0`` to each non-vowel!
+
+This is very similar!
++ Be sure to use ``letterScore`` -- don't rewrite it!
++ You shouldn't have more than 6 lines inside ``scrabbleScore``
++ In fact, 4 lines is possible!### <font color="darkblue"><b>Recursive function #3</b> &nbsp; Your own string-transformer </b></font>
+
+For this final (required) recursive function, write your own variation of ``replaceIs`` and the functions ``keepvwl`` and ``dropvwl`` from class.
+
+It doesn't have to be more elaborate, just personalized. Here are three ideas just to jog your own thinking:
++ You could convert all of the ``a`` characters to the at sign ``@``
++ Other familiar substitutions with punctuation, etc.
++ You could double the vowels and leave the consonants alone
++ Or, could triple the ``i``'s and leave all others alone
++ Also, ``s[0].lower()`` returns a lower-case version of ``s[0]``
++ and ``s[0].upper()`` returns an upper-case version of ``s[0]``
++ this means you could switch around different cases, etc.
++ perhaps ``spOngEbObbIfYIng`` an input string?!
+
+Many, many possibilities exist -- create one of your own
++ as well as some tests that show it off (at least 3)
+# Extra credit
+
+(of up to +8.42 points)
+
+## _Pig Latin_!
+
+This totally-optional problem asks you to write two functions that implement an English-to-Pig-Latin translator...
+
+### Warm up
++ Write ``pigletLatin(s)``, which accepts an argument that is a string s. s will be a single word consisting of lowercase letters.
++ Then, ``pigletLatin`` should return the translation of ``s`` to "piglet latin," which has these rules:
+  + If the argument has no letters at all (the empty string), your function should return the empty string
+  + If the argument begins with a vowel, the piglet latin result simply appends the string 'way' at the end. 'y' will be considered a consonant, and not a vowel, for this problem.
+  + Example: ``pigletLatin('one')`` returns ``'oneway'``
+    + Python may not print the quotes...
+  + If the argument begins with a consonant, the piglet latin result is identical to the argument, except that the argument's initial consonant is at the end of the word instead of the beginning and it's followed by the string 'ay'.
+    + Example: ``pigletLatin('be')`` returns ``'ebay'``
++ Be sure to write at least one test using print—and one using assert!
+Of course, this is not full pig Latin, because it does not handle words beginning with multiple consonants correctly.
+  + For example, ``pigletLatin('string')`` returns ``'tringsay'``
+
+
+### The full Pig Latin challenge
+
+Ok!  
+
+The full challenge is to create a function called ``pigLatin(s)`` that handles the rules above and handles more than one initial consonant correctly in the translation to pig Latin.
+
+That is, ``pigLatin`` moves all of the initial consonants to the end of the word before adding ``'ay'``. (You will want to write and use a helper function to do this—see the hint below.)
+
+Also, ``pigLatin`` should handle an initial 'y' either as a consonant OR as a vowel, depending on whether the y is followed by a vowel or consonant, respectively:
++ If an initial 'y' is followed by a vowel ('yes', 'yodel'), then the 'y' is considered a consonant.
++ If an initial 'y' is followed by a consonant ('yttrium', element #39), then the 'y' is considered a vowel.
++ That is, 'yes' has an initial y acting as a consonant. The word 'yttrium', however, (element #39) has an initial y acting as a vowel. (Admittedly, there aren't many 'y'-as-vowel instances: ylem, ytterbium, element #70, and Yggdrasil, a mythic tree.)
+
+
+We share some examples with which to put your pigLatin to the test!
+<code><pre>
+print( "pigLatin('string')             should be  'ingstray'   :",  pigLatin('string') )
+print( "pigLatin('yttrium')            should be  'yttriumway' :",  pigLatin('yttrium') )
+print( "pigLatin('yoohoo')             should be  'oohooyay'   :",  pigLatin('yoohoo') )
+print( "pigLatin('stymie')             should be  'ymiestay'   :",  pigLatin('stymie') )
+</pre></code>
+
+# Congratulations!
+
+You have created your first _computational cells_
++ At least, for IST 341...
++ Mother Nature embraces you,
+  + not only as a descendant,
+  + but as a co-author... !# Submitting...
+
+Be sure to submit the url of _your_ copy -- with the challenges, questions, and programs composed --
++ to Canvas in the appropriate spot
++ by Friday evening -- of the following week -- any time
++ shared with me (ZD)  ``zdodds@gmail.com`` and ``dodds@g.hmc.edu``
+
+Remember that there is lots of tutoring support, as well as office-hour support available...
++ Thank you, Oke!
+
+
+<br>
+
+As a reminder, our programming goals match the goals of the course -- we're  seeking, among other things:
++ creativity/novelty
++ personalization/individual context
++ exploration and understanding (does it run?)# Small Treasure Hunt
+
+Use the command line to find the hidden treasure. You can use:
++ ``cd`` to change directories
++ ``ls`` to list files in a directory
++ ``pwd`` to find out where you currently are
++ ``cat`` to print a file to the terminal
+
+Ready to get started? Open a terminal and let's go!
+
+Now, start by typing `ls` in the terminal to list files,
+and you see this output:
+
+```
+garden house README.md
+```
+
+The words ``garden`` ``house`` are bold or a different color because they are directories. ``README.md`` is a file. Type ``cat README.md`` in the terminal to see the contents of this file!
+
+Now let's go exploring. Go into the garden directory: ``cd garden``.
+Once you get there, use ``ls`` to see what's around, and use ``cat README.md`` to see your next set of instructions.
+
+```
+cd garden
+ls
+cat README.md
+```
+
+Good luck!

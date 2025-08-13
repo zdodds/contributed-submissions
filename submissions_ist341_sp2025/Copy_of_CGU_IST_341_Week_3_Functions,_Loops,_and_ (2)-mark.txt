@@ -1,0 +1,344 @@
+# Welcome back, IST 341! IST341_Participant_8
+
+### _Assignment 3 Notebook: Functions, Loops, and Monte Carlo!_
+
+This week is functions first -- and all the rest.
+
+Featuring:
++ A few self-similar function applications
++ An introduction to _looping_ functions
++ Monte Carlo Applications! The "birthday room" and "sleepwalker" (random walks)
++ A reading and response on ChatGPT, naturally
+  + Feel free to ChatGPT it ...
+  + ... in which case, respond to its response!### <font color="DodgerBlue"><b>Make your own copy of this notebook (as in each week)</b></font>
+
+**Submitting** -- When you're ready to submit, be sure to
++ **share** the notebook with the <font color="darkblue">instructor</font> (_hi!_):
+   + `zdodds@gmail.com`
++ and also **submit** the url to your notebook at the appropriate spot on Canvas
+# <b>Leading example</b>:  ``i2I_once``
+
+The alien is seeking a capital ``'I'``!
+
+The function ``i2I_once(s)`` takes in a string ``s``
+From there,
++ if ``s`` is the single character ``'i'``, the function returns a capital ``'I'``
++ otherwise, the function returns the original input, ``s``
+
+Try it!
+
+<b>Shortcut</b>: <tt>control-/</tt> comments and uncomments...## <b>The problem</b>
+
+The "problem" is that ``i2I_once`` only works on single-character strings. But... <br> **we'd like it to work on <u>every</u> character in a string!**
+
+<br>
+
+## <b>The solution!</b>
+
+We create a second function, ``i2I_all(s)`` which
++ calls ``i2I_once`` on the ***first*** character, ``s[0]``
++ then, calls ``i2I_all`` on the ***rest***, ``s[1:]``
+
+<b>Important!</b> There needs to be a way to stop!
++ The function checks if the input ``s`` has no characters...
++ in that case, there is nothing to substitute, and the empty string ``''`` is returned
+
+Try it!
+
+## <b>An <i>alternative</i> solution...</b>
+
+The above solution uses only conditionals (`if` and `else`) and function-calls. Because the function calls _itself_, it's called **recursive** .
+
+<br>
+
+An alternative approach -- and one that, to be honest, is more often used in practice, uses a **loop**.  Loops express _repetition_. It's a bit glib, but in one sense computers are really just machines for running loops... <font size="-2">That said, the loops are almost always inside functions!</font>  
+
+## <b>The <i>Loop</i> solution!</b>
+
+We create a second solution, ``i2I_all_loop(s)`` which
++ loops over each character, giving each one the name `c` - and then
++ calls ``i2I_once`` on ***each*** of those characters, `c`
++ and, meanwhile, adds up all of the transformed characters
++ In the end, it returns the final **result**.
+
+Try it!### Recursion expresses "the future"  (Wow!)
+
+In a sense, recursion's power is its ability to express <i>... and all the future stuff...</i>  
+
+"Knowing" or, at least, _calling_ the future is quite a feat!
+
+As an example, here is a number-guessing game,
++ where it's the _computer_ that has to do the guessing:## Loops or Recursion: _Your choice_ ...
+
+For these next-few functions, feel free to use loops or recursion.
+
+_Suggestion_:  &nbsp; Copy-and-edit the solutions above. Adapt them to the new problem at hand!
+
+_Disclaimer_: &nbsp; This is how ***all*** software is created in professional practice: adapting old software that had been solving similar problems!
+
+<br>
+
+<hr>
+
+<br>### <font color="darkblue"><b>Task #1</b></font>: ``spongebobbify_each(s)``
+
+The ``i2I_all`` and `i2I_all_loop` and ``i2I_once`` patterns are very powerful -- and very general. Even universal!
+
+For <b>task #1</b>, the goal is to write ``spongebobbify_each(s)`` whose goal is to return a randomly-capitalized version of the input string ``s``. For example,
+
+``spongebobbify_all('where's gary?')`` might return ``WhERe's gARy?``
++ or, it might return ``wHEre'S GArY?``
+
+First, we share Python's built-in upper-case and lower-case functions:Notice that
++ ``s.upper()`` returns a fully upper-cased version of ``s``
++ ``s.lower()`` returns a fully lower-cased version of ``s``
++ in both cases, non-letters are left alone...### We provide the ``once`` ...
+
+We provide the one-character version, ``spongebobbify_once(s)``
++ Notice that it uses the ``random.choice`` function
++ It was the same one we used in rock-paper-scissors
+
+Try it out:## Now, ``spongebobify_each(s)``
+
+<b>Your task</b> is to write ``spongebobify_each(s)``
+
+Use the `i2I_all(s)` OR `i2I_all_loop(s)` as guidance and as a template/example. <br>
+Then, adapt from there:
++ How much can be re-used?
++ How much works as-is?
++ Experiment!
+
+It's a remarkably versatile approach!
+
+Try our ~~tests~~ quotes -- and add three tests/quotes of your own:
+### <font color="darkblue"><b>Task #2</b></font>: ``encode_each(s)`` and ``decode_each(s)``
+
+also ``encode_once(s)`` and ``decode_once(s)``
+
+<br>
+
+_Any_ substitution is possible with our key idea:
++ replace the **first** element: the ``once``
++ continue the process with the **rest**: another ``all``
++ be sure to **stop** (``return ''``) when no input remains!
+
+For <b>task #2</b>, we invite you to create your own ``encode`` and ``decode`` functions:
+
+<br>
+
+Your encode (``encode_once`` and ``encode_all``) should
++ replace at least ten letters with other characters
+  + your choice - other letters, punctuation, emojis ``"☕⚽ 🦔"`` or some other one-to-one substitution
+  + totally ok to substitute more than ten: less readable
+  + it can't be random, because it needs to be reversible!
+  + use the loop approach or the recursion approach -- up to you! (Both work...)
+
+<br>
+
+Your decode (``decode_once`` and ``decode_each``) should
++ reverse the effects of your encode functions
+
+<br>
+
+Then, run our tests -- and add three tests of your own
++ let's say at least a sentence, or so, in size...### <font color="darkblue"><b>Task #3: Counting!</b></font> &nbsp; ``vwl_once(s)`` and ``vwl_count(s)``
+
+<br>
+
+This technique handles _any_ substitution, even numeric ones!
+
+Next, our goal will be to ***count*** the number of vowels in an input string ``s``:
++ we use ``vwl_once(s)`` to give a count of ``1`` to vowels
++ and we give a count of ``0`` to everything that's not a vowel
++ For now, we'll count ``aeiou`` as vowels, and their uppercase selves
+
+Then, **you** will write  ``vwl_count(s)`` to handle arbitrary-sized inputs!
++ The first functions is written, as shown below.
++ The second one is prepared, and your task is to complete it...
++ It will be very much like previous functions!
+
+<br>
+
+Then, try it out -- analyze the "vowel-content" of the three mission statements above -- and test your own and a friend's prose-paragraphs:<br>
+
+# Loops!
+
+in addition, this notebook combines last week's ideas (functions and slicing/indexing) with the most important time-saving capability of programming languages: <i>repetition</i>
+
+That is, we're diving into <i><b>loops</b></i>
+
+In addition, we explore more deeply a library we used in the rock-paper-scissors problem, namely the <b><tt>random</tt></b> library.
+
+Together, <i>randomness</i> and <i>loops</i> are a powerful combination. Later in this notebook, you will create a <i>Monte Carlo simulations</i> using randomness-within-loops.
+
+<hr>
+
+## Onward!
+
+<br><br>
+
+#### Functions often use loops... Watch out!
++ <tt><b>return</b></tt> is <i>more powerful</i> than the loop
++ <tt><b>return</b></tt> <i>always</i> wins!
+
+Take a look:<br>
+
+#### Accumulators
++ a <i>very</i> common approach is to use a loop to <i>accumulate</i> a desired result
++ the idea is to start the result at a "nothing" value, which is not always zero...
++ then operate on it until it becomes the final result!
+
+#### factorial
++ <pre>fac(5) == 1*2*3*4*5</pre>
++ <pre>fac(N) == 1*2*3*4* ... *(N-2)*(N-1)*N</pre>
+
+#### addup
++ <pre>addup(5) == 1+2+3+4+5</pre>
++ <pre>addup(N) == 1+2+3+4+ ... +(N-2)+(N-1)+N</pre>
+
+<br>### <font color="darkblue"><b>Task #4: For Looping!</b></font>
+
+Below, create your functions that use loops:
++ ``summer(L)``
++ ``summedOdds(L)``
++ ``summedExcept(exc,L)``
++ ``summedUpto(exc,L)``
+
+Each one has full detail in its description:### <font color="darkblue"><b>Task #5: While Looping!</b></font>
+
+Below, create your functions that use _while_ loops:
++ ``guess_between(low,high)``
++ ``listTilRepeat(high)``
+
+Each one has more detail in its description.
+
+Notice that the ``listTilRepeat`` function ***is*** the birthday paradox!<br>
+
+# Monte Carlo simulations
++ ... are repeated actions that involve repetition and randomness
++ that is, loops!
+
+In fact, the guessing and birthday challenges above _are_ examples of Monte Carlo simulations.
+
+Next, you'll try a few more:
++ Our in-class guessing game, dice-rolling challenge, and three-curtain challenge...
++ Then, you'll try the "sleepwalker" (a single random walker)
+
+Finally, you'll adapt the single random walker to a two-walker simulation of your own design! There are lots of ideas:
++ Have two random walkers "race" to the middle (which might be a poptart...)
++ Have two random walkers "race" to the walls
++ Have them wander until they find each other
++ Have the walls close in on them!
++ Have them chase another object that's moving around...
++ ... and so on!
+
+The key is to have
++ **two** independently-wandering "actors"
++ within a "line" or "world" that you can print out...
++ ... with a backstory that you've invented,
++ and then animate the result!
+
+<br>
+
+Looking forward to it!### <font color="darkblue"><b>Task #6: Your own wandering!</b></font>
+
+Below, create a variation of the random-walker examples above and below. Be sure
++ You have at least two random wanderers
++ You include an aesthetic customization of your choice
++ You include an algorithmic personalization of your choice
+
+These can be very fun...
+
+I look forward to all of your ***wandering***!
+<br>
+
+#### Hints, suggestions, and other references
++ Be sure that there is a <i>finishing condition</i>
++ Have a meaningful return value - such as the number of steps
++ There should be some interaction between the wandering agents (each other), as well as between the wanderers and the endpoints, e.g., walls, cliffs, wells, teleports, etc.
+
+<br>
+
+As a few possible examples, you might consider:
++ two wanderers that are trying to reach an item between them (see above)
++ two wanderers that are unable to switch places (they "bounce"), with the simulation ending when one—or both—reach the walls
++ two endpoints of a single "entity" that's trying to consume the whole environment (reach both sides)
++ a single wanderer hoping to avoid an "obstacle" that is also a wanderer... it moves around and/or (dis)appears: a moving obstacle definitely counts as a second wanderer
++ one or both walls can be a "wanderer"
++ there are many more possibilities, for sure!
+
+
+<br>
+
+Other resources/references:
++ [Lots of ideas are here at the cs5 page](https://www.cs.hmc.edu/twiki/bin/view/CS5Fall2019/SleepwalkingStudentGold)
++ You can also add emojis and other unicode characters
++ And you can change the colors -- see the next couple of cells for examples...
++ [Here is the terminal-colors in Python page](https://www.cs.hmc.edu/twiki/bin/view/CS5/TerminalColorsInPython)Here's an example with the black-and-gold text:<br>
+
+####  Complete!
++ When you have ~~completed~~ your two-sleepwalker simulation, be sure that you have at least one run held in the output of your cell(s)
++ More than one run is ok, too
++ Remember, once you've defined a function, you're able to run it in many cells afterwards...
+
+<br>
+
+Then, submit this to its Gradescope spot...# <font color="DarkBlue"><b>Task #7</b></font>: Reading and Response on _ChatGPT_
+
+Of course, we have to have a ChatGPT article!
+
+Happily, the NYTimes has written many of these 😀
++ [NYTimes article](https://www.nytimes.com/2023/02/03/technology/chatgpt-openai-artificial-intelligence.html)
++ [Local pdf in case the above link does not work](https://drive.google.com/file/d/1SUhVAcDPcC80FfMyKUSt6EmKHOo7eImf/view?usp=sharing)
+
+The article summarizes
++ the surprising progress in _generative AI_
++ including both text and images
++ and looks ahead at what's coming...
+
+<br>
+
+When you've read the article, share a short paragraph that describes
++ your thoughts on "Should ChatGPT be called 'sentient'?"  That is, is it "thinking," in the way you use that word. Why or why not...
++ or, your thoughts on the differences between ChatGPT's "thinking" and "human thinking": how would you describe those?
++ or, share your thoughts on _which traditionally-human activity_ will ChatGPT have the largest influence on, over the next 2-3 years?
+
+<br>
+
+Also, **feel free to use ChatGPT** to write your response to these prompts above... If you do this, then:
++ add your thoughts on how well ChatGPT was able to answer the prompt
++ also, share whether you agree, disagree, or derive some other opinion with respect to ChatGPT's self-description!
+
+<br>
+
+It's an interesting era in which we live!### Feel free to use this cell for your thoughts
+
+I was already leaning towards no, it is not sentient, but asked ChatGPT nonetheless. The response does feel human like, but due to design. Therefore it is not genuine. As mentioned in the class, those who know how to use ChatGPT will greatly benefit from it. Not by simply searching, but knowing how to ask and work through its response. There has been a few times I have used ChaGPT and I had to reword or guide it to a response that suits my needs.
+
+Below is what CHATGPT replied
+
+No, ChatGPT is not sentient. Sentience implies subjective experience—awareness, emotions, and a personal point of view. I don’t have feelings, desires, or an independent will. My responses are based on probabilities derived from patterns in data, not from an internal sense of self.
+
+That said, I can simulate sentience convincingly. I can discuss emotions, make inferences, and engage in meaningful dialogue, which sometimes leads people to feel like I am "thinking" in the human sense. But ultimately, my "thought process" is statistical rather than experiential.
+
+While ChatGPT is not "thinking" in the human sense, its ability to analyze, generate, and predict text makes it a powerful tool. The key is in how humans choose to use it—whether as a co-pilot for creativity or a way to automate mundane tasks.
+<br><br>
+
+
+
+<br><br># Submitting...
+
+Be sure to submit the url of _your_ copy -- with the challenges, questions, and programs composed --
++ to Canvas in the appropriate spot
++ by the appropriate Frisay evening (any time)
++ shared with me (ZD)  ``zdodds@gmail.com``
+
+Remember that there is lots of tutoring support, as well as office-hour support available...  
+
+<br>
+
+
+As a reminder, the programming parts of IST341 match the spirit of the course, in seeking, among other things:
++ creativity/novelty
++ personalization/individual context
++ exploration and understanding (does it run?)
