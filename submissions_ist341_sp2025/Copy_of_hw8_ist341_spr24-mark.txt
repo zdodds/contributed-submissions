@@ -1,0 +1,81 @@
+# Looking for the **"All-in-one"** notebook?
+
+It's located [here at this link](https://colab.research.google.com/drive/19jZDFIqD-ABndSgd1EQzSl_soQ-FU4J-#scrollTo=e-xLewmU4p0s&uniqifier=1)<br>
+
+#   Homework 8
++ clasification via decision trees and random forests...
++ which are both "the same" as k-nearest-neighbors, and
++ "the opposite" of k-nearest-neighbors!
+
+It all hinges on how we define ***near*** .
+
+Let's see how it works:
+
+# Decision Trees: Iris Example<br>
+
+#### Here is where the model-buidling begins in earnest...<br>
+
+#### That's it! :-)<br>
+
+#### The online tree-visualizer is at [http://viz-js.com/](http://viz-js.com/)<br>
+
+#### The online tree-visualizer is at [http://viz-js.com/](http://viz-js.com/)<br>
+
+#### <b>To try</b>:  showing the depth 2+ tree### The model is complete
++ and can predict _any_ future...
++ ... though not always correctly.
++ Let's plot many of them!# Random Forests: Iris Example### Let's see our predictive model!### Yay!  
+
+Next up:  Births DT and RF# DT and RF: **Births** data
+
+Next, you'll do the same thing on the births dataset...
+### Suggestion:
+
+Open this notebook twice!
+
+**One window** so that you can go cell-by-cell through the iris-cleaning and iris-modeling cells...
+
+**The second window** is to copy-paste-and-adapt the iris approach to the births data
+
+The approach is identical.
+
+The data-details are different, and that's where the adaptation is necessary and important.
+
+Onward:These are just placeholders.
+
+You'll copy-and-edit ***lots*** of cells from the iris example.# DT and RF: **Digits** data
+
+Next, you'll do the same thing on the digits dataset...
+
+Same suggestion as before!
+Notice that you're getting more and more practice with the "modeling workflow."
+
+It's not an exaggeration to say that this is, in essence, what all ML/modeling efforts look-and-feel like!<br><br>
+
+a placeholder text cell# **Next week**: Titanic or _your-own-data_
+
+Not required for this week -- but for _next_ week, IST341 will be narrowing project ideas.
+
+One of those possibilities is to choose a dataset of your own (or use the Titanic / housing dataset) and
++ be sure it's cleaned up to the point where it's "tidy"
++ the cleaning can be done in Excel/spreadsheets instead of Python, for sure
++ or, the cleaning can be done in Python -- up to you!
++ Then, model your dataset with DTs and RFs, just as above
++ and, use Neural Nets (which we will feature next week...)
+
+To gain additional insight, you'll find and show the _feature importances_ for your features in your dataset...
+
+Often, these are what generate the most value, because
++ you want to know what features have the most impact
++ you want to know the relative strengths of the features
++ you're waiting for future data on which to run your predictive model! :-)
+
+<br>
+<hr>
+<br>
+
+You can tell we're evolving into a "final-project" mindset.
+
+The final project does not have to be data-analysis at all. (That said, it's a popular option...) Big-picture, it's best if _whatever the project_ it overlaps with  your work or interests from professional/personal/other class's efforts.
+
+Onward!
