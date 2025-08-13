@@ -1,0 +1,450 @@
+# IST 341: Hi, everyone!
+
+### Assignment <u>5</u> Notebook: &nbsp; _For Lists_
+
+... and for the win, since _For Lists_ are Python's "best feature"
+
+Featuring:
++ _For Lists_, aka _List Comprehensions_
++ the <tt>for</tt> syntax, used for looping
++ _Applications_: lots!
+  + functions of many sorts
+  + estimating pi-from-pie (well, pi-from-circles-and-darts!) and other simulations...
+  + incorporating <tt>libraries</tt> into our code! Here, it's <tt>requests</tt> (Yay!)
++ plus, there is a reading-with-response that invites thinking about _algorithmic fairness and bias_
+  + a topic that is _increasingly_ important -- and pertinent!### <font color="FireBrick"><b>Overview of this week's Python Notebook</b> (this notebook)</font>
+
+**Last week** introduced the "first-rest" pattern that
++ composed functions to "process one element" and then "continue the process..."
++ this was a starting example of using loops
+
+<br>
+
+**This week** we emphasize lists and <tt>for</tt> syntax:
++ Together, these _"For Lists"_ are elegant and powerful
++ Python's official name for them is _List Comprehensions_
++ They expand the power and variety of simulation-and-analysis that we can take on ...
++ Plus, remember that the _next_ assignment will be a **Looping** challenge that uses [PythonBat](https://codingbat.com/python)
+  + You won't put the PythonBat functions into a notebook...
+
+<br>
+
+Let's dive in!### <font color="DodgerBlue"><b>Make your own copy of this notebook (as in each week)</b></font>
+
+**Submitting** -- When you're ready to submit, be sure to
++ **share** the notebook with me at
+   + `zdodds@gmail.com`
++ and also **submit** the url to your notebook at the appropriate spot on Canvas
+
+That makes it easiest to read and run!# Lists!
+
+We have done a lot with strings so far, but there is an even more general sequence datatype: **lists**.  
+
+This week, we will emphasize lists, starting with five built-in functions:
++ ``len(L)`` returns the length of a list ``L``
++ ``max(L)`` returns ``L``'s largest element and ``min`` returns ``L``'s smallest element
++ ``sum(L)`` adds up all of the elements (if they're numbers; if not, it's an error)
++ ``range(low,hi)`` creates lists from ``low`` up to but not including ``hi``
+
+Try them out:Nice! &nbsp; Let's put lists to work!
+
+<br>
+
+### <font color="Coral"><b>Task #1</b></font>: Adding from 1 to 100...
+
+In the cell below, combine some of the list functions above to add up all of the numbers from 1 to 100 and print the result.
+
+Be sure to _include_ the number 100 in your addition! (What will this require...?!)
+Now, let's _add_ another powerful element: the ``for`` keyword:# <b>Example</b>:  ``vwl_once(c) and vwl_all(s)``
+
+In last week's notebook, you used ``vwl_once`` and ``vwl_all``:
++ ``vwl_once`` scored a vowel as a ``1``, other characters as ``0``
++ ``vwl_all`` used ``vwl_once`` to count all vowles in an input string
+
+Here is ``vwl_once(c)``. Be sure to run it:
+This week, we will use a different approach to ``vwl_all``
++ The next cell has an example of a _For List_, or _List Comprehension_.
++ Try it!
++ See if you can tell what it has done**Aha!**  Line 5 has created a list ``LC`` that
++ contains the output of ``vwl_once`` for each letter in ``s``!
+
+_How does it work?_
++ it uses the ``for`` keyword to create a _loop_ inside a list
+  + notice that the whole thing is wrapped in ``[ ]`` square brackets
++ it defines a variable ``c``
++ it _assigns_ the variable ``c`` to _each element in ``s``_
++ and it runs ``vwl_once(c)`` on each
+
+``LC`` is a list of all the outputs, one for each input character ``c`` in ``s``
+
+Here is a second example:``audio`` has the vowel-pattern ``[1, 1, 0, 1, 1]``
+
+Find more!
+
+### <font color="Coral"><b>Task #2</b></font>: More vowel patterns...
+
+Below, write four more examples of list comprehensions. <br> Copy-paste-and-edit the examples above.
+
+Find English words whose vowel-patterns are
++ ``[0, 1, 0, 1, 0]``
++ ``[0, 0, 0, 1, 0, 0]``
++ ``[1, 0, 1, 1, 0, 0, 1, 0]   # I may need more of this...``
++ and one more "unusual" pattern of your choice...
+
+<br><br>
+Feel free toLet's ``sum``!
+
+Along with ``sum``, we can use these ideas to implement ``vwl_all(s)``, which returns the total number of vowels in an input string ``s``:### List comprehensions
+
+The syntax above is called a _list comprehension_ in Python
++ More evocative names might have been possible!
++ I would have preferred _For List_
++ or, even better, _Fun List_
++ (its most common use is running a function on each element)
+
+Alas, it's _List Comprehension_
++ as a reminder, I'll often use ``LC``
++ However, _any_ variable name can be used to name the result
+
+Here is a second example, using ``scrabble`` and an analysis using the results. <br> Then, you'll write two more.
+
+### **Example 2**: ``scrabble``
++ ``scrabble_one`` returns one letter's score
++ ``scrabble_all`` uses a list comprehension to score a full string``scrabble_one`` provides scores, and <br>  ``scrabble_all`` then uses the same pattern as ``vwl_all``:### <b>Example analysis</b>
+
+Using ``scrabble_all`` we analyze the scrabble-score richness of Plankton vs Patrick, both raw score and per-character:
+
+
+
+
+
+### Some more list-comprehension examples...
+
+Practice with these, then you'll develop an application for analyzing prose..._Ok!_  Now to create and apply some of our own...
+
+### <font color="Coral"><b>Task #3</b></font>: Punctuation scoring...
+
+_Stylometry_ is a field that quantifies stylistic features of language, especially to identify or characterize a specific author. Many _stylometric_ features have been proposed; one of the most persistent is _punctuation density_.
+
+Here, you'll
++ use the LC technique to write a function to measure punctuation in a string (prose)
++ compare two of your (prose) papers with two of another author's (prose) papers
++ see if the results suggest a different _punctuation density_ between your and the other author's styles!
++ similar to the sequences we're obtaining from the water-treatment plant, such a small number of samples can suggest whether/how to look further -- but isn't definitive by itself...
+### An **advantage** of LCs:
+
+... is _efficiency_, both faster and more memory-efficient.
+
+For stylometric analysis, the more text you have, the more representative the results will be.
+
+Lsat time, we used one paragraph. This time, use two full documents:
++ Copy-and-paste below two full papers you authored (if they're longer ones, great!)
++ Copy-and-paste below two full papers authored by someone else
++ Run all four to find the absolute and per-character use of punctuation in your style and the other author's style
++ Are they different enough to suggest further investigation?
+
+### Suggestions for "other" authors?
++ exchange papers/prose and compare with a friend (fun!)
++ there are lots of other opportunities, e.g.,
+  + [work by Rosalind Franklin](https://www.nature.com/articles/171740a0)  (likely need to be on campus to access this from Nature)
+  + [work by Jennifer Doudna](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6286148/)  (this one _might_ open anywhere)
+  + [copy a subset of Shakespeare's work](https://ocw.mit.edu/ans7870/6/6.006/s08/lecturenotes/files/t8.shakespeare.txt)  (this is openly available and plain-text)
+  + Don't worry about weird/unreadable characters
+    + as long as the results don't crash,
+    + those characters will likely be ignored by your scoring functionsIf you'd like to try some additional stylistic-analysis, <br> see the "Emotional Punctuation" extra crdit (at the bottom of the notebook...)
+
+
+
+### Next, we use list comprehensions for _analysis_:
++ the number-guessing game
++ the two-dice-rolling experiment (counting "doubles")
++ the birthday-room experiment
++ the Monty Hall (three-curtain) game, switch vs. stay...
++ the random-walk **you'll analyze these**
++ estimating pi **you'll _write_ and analyze these** !
+
+Onward!### Next, an example with our dice-rolling experiment...### Let's try the birthday-room...### The Monty-Hall (three-curtain) switch/stay challenge:## <b><font color="Coral">Task #4</font></b>: Analyzing random walks of radius ``r``
+
+Here, the random-walk code is complete:Your task: analyze the function ``rwalk`` for different values of the radius
+
+The next cell gets you started and asks the specific questions:#### <font color="Coral"><b>Processes to try out</b></font>
++ In the next cell, repeat the above for a radius of 6, 7, 8, 9, and 10
++ It's fast to do:  Copy and paste and edit!!#### <font color="Coral"><b>Questions to answer</b></font>
++ On average, how many steps does it seem to take to get "to the edge" when radius = r?
++ How far away from the start would you expect our walker to be after 49 steps? after 100 steps?
++ How far away from the start would you expect our walker to be after STEPS steps?
+
+<br>
+
+Feel free to answer these questions right in this cell:
+
+<br>
+<br>
+
+
+
+
+
+
+<br>
+<br>
+<br>
+<br>
+<br><br>
+<hr>
+<br>
+
+# <b>Libraries!</b>
+
+Python's deepest strength is the expanse of its _human_-community... .
+
+That is reflected, first-and-foremost, in its amazing slate of _libraries_
++ Each library is a set of Python files (and, sometimes, other languages) that humans have assembled to address a task or need (or for fun or for exploration or ...)
++ The <tt>import</tt> statement is how we access these libraries.
+
+The examples below introduce the <tt>requests</tt> library and show off its ability - using Python - to "scrape" websites and make "API calls"
++ To "scrape" usually means to "request the source of a webpage"
++ To make "API calls" usually means to "access some _advertised_ raw data"
+
+The webpage we will scrape is [this simple one I made](https://www.cs.hmc.edu/~dodds/demo.html). (Yay!)
+
+The raw data we will access is from the [International Space Station's API](http://open-notify.org/Open-Notify-API/ISS-Location-Now/)...
+
+[Here is Wikipedia's list of all HTTP response codes](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes)
++ 100's: information
++ 200's: success           
++ 300's: redirects
++ 400's + 500's: errors
+
+Perhaps familiar:  404 <br>
+Especially fun:  418How to access the data inside this object, ``result`` ?
+
+One way: [Head over to the online documentation](https://requests.readthedocs.io/en/latest/api/#requests.Response)
+
+In addition, you can "look around" in Python:
+
+Notice - the <tt>for</tt> loop! 😃Here, we will use <tt>f-strings</tt> to print four of the pieces of data inside <tt>result</tt>#### Traversing the world - and web - <i>without a browser</i>.   
+
+<b>Using the ISS APIs</b>
+
++ Here, you'll make some calls using `requests` to, first, the International Space Station API
++ and, then, the US Geological Survey's earthquake API
++ "API" is short for "Application Programming Interface"
+  + Admittedly, this is not a very informative name:
+  + The API is the set of services, which are functions and/or urls, provided by some software or siteLet's try it with the International Space Station api at [http://api.open-notify.org/iss-now.json](http://api.open-notify.org/iss-now.json)
++ [This page has documentation on the ISS API](http://open-notify.org/Open-Notify-API/ISS-Location-Now/)## JSON
+
+####  Let's make a brief JSON visit in Python
+
+In Python, the curly braces <tt>{</tt> and <tt>}</tt> show that data is in a ***dictionary***
+
+Dictionaries are much more flexible than lists!
+
+Alas, that means they are more complex:Most of the time this will be done for us by the ``requests`` library. So, we will simply receive the dictionary of data sent.
+
+Then, the trick is to "extract" the data fragments we want. (Sometimes it feels like forensics - or archaeology!) Try excavating items one **layer** at a time...#### Remember: &nbsp; <i>not</i> every url returns json data...
++ The url [https://www.cs.hmc.edu/~dodds/demo.html](https://www.cs.hmc.edu/~dodds/demo.html) returns a plain-text file with _markup_ text
++ that is to say, with HTML tags, such as `<title>Title</title>` to designate the components of its content
++ HTML stands for _hypertext markup language_   
++ Often anything with tags similar to `<b>be bold!</b>` is called "markup."
+
+Let's try our 5C homepages: they're HTML, not JSON:#### For the moment, we will focus on API calls providing JSON
++ We're reading-aligned, as we should be!
++ The open-ended problem (the finale in this notebook) offers the _option_ of using raw html -- up to you...
+
+<br>
+
+<b>Let's try another ISS "endpoint" ~ one with all of the <i>people</i> in space.</b>
+
+It's at this url:  [http://api.open-notify.org/astros.json](http://api.open-notify.org/astros.json)This is pretty intricate. Let's try unpacking this - _parsing it_ - with an in-class break-out challenge.#### <font color="Coral"><b>Astronaut challenges!</b></font>
++ use the above example to extract <tt>"Jeanette Epps"</tt> from the data in the dictionary <tt>d</tt>
++ use the above example to extract the string <tt>"ok"</tt> from the data in the dictionary <tt>d</tt>. <b>Hint</b>: use the name <tt>"Nikolai Chub"</tt>#### <font color="Coral"><b>Your-own API-call and webscraping challenge!</b></font>
++ There are two parts of this challenge:
++ find another API, and then
+  + make a programmatic call to that API
+  + and extract a piece of data -- of your choice -- from the results
+  + and print it out (with context)
++ then, find a _plain_ webpage that allows scraping
+  + scrape that page
+  + and print out the source!
+  + <b><font color="DodgerBlue">  extra credit </b></font> &nbsp;&nbsp; for extracting an interesting piece of information from the page -- for example, using slicing, or using the <tt>find</tt> function.
+
+
+<br>
+
+You've done it! You've both
++ used an API (an application programming interface, which provided a JSON), and
++ scraped a webpage (the source of a page that you'd see in a browser)
+
+Congrats!!
+
+<br>
+<hr>
+<br>
+
+The final part of the notebook investigates the ***ethics*** of API calling and webscraping.#### You have a great start with libraries!
+
+We'll return to do more in future weeks...
++ You might create a final project that involves scraping or API calls!
++ It's increasingly common as more and more of our interactions are via browsers, the path to automation is via <tt>requests</tt>, _API calls_, and "scraping" ...
+
+As one dramatic example, **ChatGPT**'s entire knowledgebase is scraped from the web!<br>
+<hr>
+<br>
+
+# <b>Reading</b> this week
+
+<i>(When) Is webscraping legal and/or ethical?</i>
+
+<br>
+
+This week's reading includes "1++" short articles - about libraries, API calls, and webscraping. They investigate _what's ethical_ and _what's not_ ...
+
+<br>
+
+The first article  is entitled, ["Is Web Scraping Ethical,"](https://scrapeops.io/web-scraping-playbook/ethics-of-web-scraping/) by ScrapeOps.io. They're not impartial: they're a webscraping-tools company!
+
+<br>
+
+The "+" is the Facebook/Meta Terms of Service. (Perhaps that makes it "+1" instead of "1+"?)  This is  ***not***  asking you to read the whole document! Rather, this is specifically [Section 3, Subsection 2 "What you can share and do on Meta Products."](https://www.facebook.com/terms/?section_id=section_3)  It's relatively short: it's one "screenful."  
+
+<br>
+
+A second "+" is the following flowchart, by Sophie Chou of the MIT Media Lab and Pro Publica. Her original article was scraped (!?) by the Wayback Machine and so is available from there, as well.
+
+<br>
+
+<img src="https://www.storybench.org/wp-content/uploads/2016/04/flowchart_final.jpeg">
+
+<br>
+
+Then, in response to these resources, reflect on any one or more of these three prompts:   
++ (Prompt A) Look over Sophie Chiu's "Should you scrape?" flowchart. Find one decision node that you particularly agree -- or disagree -- with. Elaborate on why. (Feel free to note whether you feel this hw is keeping to the chart!)  
++ (Prompt B) At the end of the first article there is a set of "Principles for Responsible Scraping" Looking that over, find one principle you particularly agree -- or disagree -- with and elaborate on why.
++ (Prompt C) Having read some of Facebook's ToS, consider its stated requirement 3.2.3:  "You may not access or collect data from our Products using automated means (without our prior permission)."  Elaborate on what you think is included in the phrase "automated means" -- as well as what that phrase doesn't include.   
+
+As with each week's reading, responses should be carefully considered, but need not be very long (~5 or so sentences is wonderful).  
+<br>
+<hr>
+<br>
+
+Feel free to use this cell for your thoughts on the ethics/fairness of webscraping:
+
+<br>
+<br>
+
+
+
+
+
+
+<br>
+<br>
+<hr>
+<br>
+
+### **Congrats!**
+
+You have pulled together some of Python's most powerful - and most popular - features:
++ to write functions that score different properties of interest
+  + vowels, scrabble scores, punctuation, ...
+  + pretty much anything you might need to measure is expressible using the list-comprehension strategy
++ to use those functions in the analysis of authentic data (the prose)
++ and to use those functions to run simulations and analyze the results!
+
+<br># Submitting...
+
+Be sure to submit the url of _your_ copy -- with the challenges, questions, and programs composed --
++ to Canvas in the appropriate spot
++ by the appropriate Friday evening at 11:42pm
++ shared with me (ZD)  ``zdodds@gmail.com``
+
+Remember that there are office-hours available, with me - and with CGU's Python tutor(s), as well!
+
+<br>
+
+
+As a reminder, the programming parts of Sci10 match the spirit of the course, in seeking, among other things:
++ creativity/novelty
++ personalization/individual context
++ exploration and understanding (does it run?)# <font color="DodgerBlue"><b>Extra Credit</b></font>: pi-estimation challenge!### <font color="darkblue"><b>Extra credit</b></font>: Estimating pi from "pie" ...
+
+
+Really, it's estimating pi from a circle!
+
+This is extra credit (up to +10) and _totally optional_ ...
+
+We'll motivate it in class, in one of the two weeks before this is due. 😀
+
+### Try it in a loop:### Expand this into <tt>forpi</tt>
+
+For a detailed explanation, see [the forpi/whilepi challenge](https://www.cs.hmc.edu/twiki/bin/view/CS5Fall2021/PiFromPieGold)### Expand this into <tt>whilepi</tt>
+
+Again, a detailed explanation is available at [the forpi/whilepi challenge](https://www.cs.hmc.edu/twiki/bin/view/CS5Fall2021/PiFromPieGold)<br>
+
+### <font color="darkblue"><b>Also Extra Credit: pi-analysis</b></font>  
+
+Now, to put these to use!
+
+To analyze these, you should first create new versions that don't print anything!
++ <b>create two new functions, below...</b>
+  + ``forpi_np(N)`` should be just like ``forpi`` but with no printing
+  + ``whilepi_np(N)`` should be just like ``whilepi`` but with no printing
+
+Reminders and guidance:
++ They will still return the appropriate value, just as they have been doing above.
++ Remember that `forpi_np(N)` returns the estimate of pi after N throws.
++ remember that `whilepi_np(err)` returns the number of throws to estimate pi within err of 𝝅
++ So, to that end, copy, paste, and rename your two functions, `forpi` and `whilepi`:
+
+<br>
+
++ Create `forpi_np(N)` — the np means no printing.
++ Similarly, create `whilepi_np(err)`
+
+<br>
+
+Then, using our List Comprehension techniques (see previous problems!) to analyze the behavior of our two pi-estimating functions:
++ Use `range(742)` so that you're running 742 trials at a time...
++ Other values are welcome    (It's surprisingly easy to give your machine much more work than it can handle!)
++ Include answers (in a markdown cell or a comment in a code cell) to answer:
+
+<br>
+
+Questions:
++ On average, how close to 𝝅 does `forpi_np(N)` get when `N = 1, 10, 100, 1000`  ?
++ On average, how many throws are needed for `whilepi_np(e)` to get within `e = 1, .1, .01, 0.001` ?
++ Note that these don't adhere to a clear function in the way that `rwalk` did...
++ Here, the goal is seeing the trends, rather than eliciting an exact relationship.
+
+<br>
+
+Bigger-picture questions:
++ Does forpi or whilepi estimate 𝝅 more efficiently? Why?
++ Does forpi or whilepi estimate 𝝅 more accurately? Why?
+
+Just one phrase suffices on these, for sure...### <font color="darkblue"><b>Alternative and also Optional</b> &nbsp; _Emotional_ punctuation differences... ?!</b></font>
+
+Totally optional, as ever, for up to +4.6 points of extra credit:
+
+The punctuation-scoring functions ``pun_one`` and ``pun_all`` were more limited than they needed to be -- in their ability to distinguish authors:
++ they were simply measuring a single dimension: the _amount_ of punctuation used
+
+However, the different punctuation marks themsleves are very idiosyncratic -- and very telling -- with respect to a particular author's style.
+
+For this extra-credit challenge, create at least two _additional_ punctuation-measuring functions (in the same manner and style as all the ones above), and then
++ measure the _relative_ frequency of certain punctuation relative to the overall amount of punctuation in a string of prose
++ do this for at least two marks - or sets of marks
+  + for example, how much of an _exclamation-point_ user are you?
+  + question marks?
+  + parens? quotes? hashtags?  There are so many!
+
+Then, compare that relative-frequence of _particular_ punctuation marks between your works (above) and the other author's works (again above).
+
+<br>
+
+Share the results: **Which punctuation usage is most telling in  distinguishing/separating the two styles?**
+
+
+
+
