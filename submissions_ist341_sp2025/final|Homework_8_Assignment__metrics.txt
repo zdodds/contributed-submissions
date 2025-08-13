@@ -1,0 +1,623 @@
+#
+# modern modeling ~ iris_modeler:  all-in-one iris clasification via dt + rf
+#
+
+
+# section 1:  libraries
+#
+import time
+import sklearn          # if not present, use a variant of  #3 install -u scikit-learn
+import numpy as np      # numpy is python's "array" library
+import pandas as pd     # pandas is python's "data" library ("dataframe" == spreadsheet)
+
+# section 2:  read the already-cleaned data  (+ view, if you wish)
+#
+cleaned_filename = "iris_cleaned.csv"     # data should be "tidy" already...
+df_tidy = pd.read_csv(cleaned_filename)   # can add encoding="utf-8" if needed
+if false:
+    print(f"{cleaned_filename} : file read into a pandas dataframe.")
+    print("df_tidy is\n", df_tidy)
+    print("df_tidy.info() is"); df_tidy.info()
+
+# section 3:  drop any columns we don't want to use
+row = 0
+column = 1
+df_model1 = df_tidy.drop('irisname', axis=column )
+if false:  print("df_model1 is\n", df_model1)
+
+# section 4:  create columns and species variables to show we're organized + know what's happening...
+columns = df_model1.columns                     # int to str
+species = ['setosa','versicolor','virginica']   # int to str
+species_index = { s:i for i,s in enumerate(species) }  # str to int   {'setosa':0,'versicolor':1,'virginica':2}
+columns_index = { c:i for i,c in enumerate(columns) }  # str to int   {'sepallen':0,'sepalwid':1,'petallen':2, <more> }
+if false:  print(f"{columns = } \n {columns_index = } \n {species = } \n {species_index = }")
+
+# section 5:  convert from pandas (spreadsheet) to numpy (array)
+a = df_model1.to_numpy()    # yields the underlying numpy array
+a = a.astype('float64')     # make sure everything is floating-point
+num_rows, num_cols = a.shape   # let's have num_rows and num_cols around
+if false:  print(f"\nthe dataset has {num_rows} rows and {num_cols} cols")
+
+# section 6:  define our features (x_all) and our target-to-predict (y_all)
+x_all = a[:,0:4]  # x (features) watch out! this is likely to change from model to model...
+y_all = a[:,4]    # y (labels) watch out! this is likely to change from model to model...
+if false:
+    print(f"the labels/species are \n {y_all} \n ");
+    print(f"the first few data rows are \n {x_all[0:5,:]}")
+
+# section 7:  80/20 split into training and testing sets:  x_train and y_train, x_test and y_test
+from sklearn.model_selection import train_test_split      # this function splits into training + testing sets
+x_train, x_test, y_train, y_test = train_test_split(x_all, y_all, test_size=0.20)  # random_state=42 # 20% testing
+if false:
+    print(f"training with {len(y_train)} rows;  testing with {len(y_test)} rows\n" )
+    print(f"held-out testing data... (testing data: {len(y_test)} rows)")
+    print(f"y_test: {y_test}")
+    print(f"x_test (first few rows): {x_test[0:5,:]}\n")
+    print(f"training data used for modeling... (training data: {len(y_train)} rows)")
+    print(f"y_train: {y_train}")
+    print(f"x_train (first few rows): {x_train[0:5,:]}")  # 5 rows
+
+# section 8:  here's where the model-building happens!  first, we guess at the parameters
+from sklearn import tree      # for decision trees
+best_depth = 1   # we don't know what depth to use, so let's guess 1 (not a good guess)
+dtree_model = tree.decisiontreeclassifier(max_depth=best_depth)
+dtree_model.fit(x_train, y_train)      # we train the model ... it's one line!
+if false:  print("created and trained a classifier with best_depth =", best_depth)
+
+# section 9:  let's see how our naive model does on the test data!
+predicted_labels = dtree_model.predict(x_test)      # this is the key line:  predict
+actual_labels = y_test
+if false:
+    print("predicted labels:", predicted_labels)
+    print("actual  labels  :", actual_labels)
+    num_correct = sum(predicted_labels == actual_labels)
+    total = len(actual_labels)
+    print(f"\nresults on test set:  {num_correct} correct out of {total} total, for {num_correct*100/total}%\n")
+
+# section 10:  let's cross-validate to find the "best" value of k, best_k:
+print("cross-validating...")
+from sklearn.model_selection import cross_val_score
+all_accuracies = []
+best_depth = 1   # we don't know what depth to use, so let's guess 1 (not a good guess)
+best_accuracy = 0.0  # also not correct...
+for depth in range(1,6):    # note that we are cross-validating using only our training data!
+    dtree_cv_model = tree.decisiontreeclassifier(max_depth=depth)   # build a knn_model for every k
+    cv_scores = cross_val_score( dtree_cv_model, x_train, y_train, cv=5 )  # cv=5 means 80/20
+    this_cv_accuracy = cv_scores.mean()               # mean() is numpy's built-in average function
+    if false: print(f"depth: {depth:2d}  cv accuracy: {this_cv_accuracy:7.4f}")
+    if this_cv_accuracy > best_accuracy:  # is this one better?
+        best_accuracy = this_cv_accuracy  # track the best accuracy
+        best_depth = depth                        # with the best k
+    all_accuracies.append(this_cv_accuracy)
+    time.sleep(0.002)   # dramatic pauses!
+if true: print(f"best_depth = {best_depth}  \n    yields the highest cv accuracy: {best_accuracy}\n")  # print the best one
+
+# section 11:  here's where the model-building happens with the best-found parameters:
+dtree_model_final = tree.decisiontreeclassifier(max_depth=best_depth)
+dtree_model_final.fit(x_all, y_all)      # we train the model ... on _all_ the data!
+if true:  print("created and trained a classifier with best_depth =", best_depth)
+# print the feature importances...
+if false:  print("\nthe feature importances are", dtree_model_final.feature_importances_)
+
+
+#
+# let's print things in a vertical table
+#
+
+def compare_labels(predicted_labels, actual_labels):
+    """ a more neatly formatted comparison """
+    num_labels = len(predicted_labels)
+    num_correct = 0
+
+    print()
+    print(f'row {"#":>3s} : {"predicted":>12s} {"actual":<12s}   {"result"}')
+
+    for i in range(num_labels):
+        p = int(round(predicted_labels[i]))         # round protects from fp error
+        a = int(round(actual_labels[i]))
+        result = "incorrect"
+        if p == a:  # if they match,
+            result = ""       # no longer incorrect
+            num_correct += 1  # and we count a match!
+
+        print(f"row {i:>3d} : {species[p]:>12s} {species[a]:<12s}   {result}")
+
+    print()
+    print("correct:", num_correct, "out of", num_labels)
+    return num_correct
+
+# let's try it out!  use the model you want:
+predicted_labels = dtree_model_final.predict(x_test)      # this is the key line:  predict
+compare_labels(predicted_labels,actual_labels)
+
+
+import matplotlib.pyplot as plt
+
+features = columns[0:4]
+
+#
+# now, let's see the tree!
+#
+
+filename = 'tree_data.gv'    # sometimes .dot is used, instead of .gv
+model = dtree_model_final
+
+tree.export_graphviz(model, out_file=filename,  # the filename constructed above...!
+                            feature_names=columns[:-1], # actual feature names, not species
+                            filled=true,              # fun!
+                            rotate=false,             # false for up/down; true for l/r
+                            class_names=species,      # good to have
+                            leaves_parallel=true )    # lots of options!
+
+print(f"file {filename} written. try pasting its contents to  http://viz-js.com/\n")
+
+with open(filename, "r") as f:
+    all_file_text = f.read()
+    print(all_file_text)
+
+#
+# tree display...
+#
+fig = plt.figure(figsize=(12,8))
+tree_plot = tree.plot_tree(model,
+                   feature_names=features,   # glad to have these!
+                   class_names=species,      # and these!!
+                   filled=true)
+
+plt.show()
+
+
+#
+# ok!  we have our model, let's use it...
+#
+# ... in a data-trained predictive model (k-nearest-neighbors), using scikit-learn
+#
+# warning: this model has not yet been tuned to its "best k"
+#
+def predictive_model( features, model ):
+    """ input: a list of four features
+                [ sepallen, sepalwid, petallen, petalwid ]
+        output: the predicted species of iris, from
+                  setosa (0), versicolor (1), virginica (2)
+    """
+    our_features = np.asarray([features])                      # extra brackets needed so it's 2d
+    predicted_species_list = model.predict(our_features)   # predict!
+
+    predicted_species = int(round(predicted_species_list[0]))  # unpack the one element it contains
+    return predicted_species
+
+#
+# try it!
+#
+# features = eval(input("enter new features: "))
+#
+listoffeatures = [ [4.2,3.1,2.0,0.4],
+                   [5.8,2.7,4.1,1.0],
+                   [4.6,3.6,3.0,2.2],
+                   [6.7,3.3,5.7,2.1],
+                   [4.2,4.2,4.2,4.2],
+                   [1.0,42,4.7,0.01],        # -4.7? .01?  0?
+                   ]
+
+for features in listoffeatures:
+    predicted_species = predictive_model( features, dtree_model_final )
+    name = species[predicted_species]                          # look up the species
+    print(f"from the features {features}, i predict : {name}")
+
+
+# we can only plot 2 dimensions at a time!
+# these two will be our constants:
+sepallen = 4.0
+sepalwid = 2.0
+# petallen =
+# petalwid =
+
+vertical = np.arange(0,8,.1) # array of vertical input values
+horizont = np.arange(0,8,.1) # array of horizontal input values
+plane = np.zeros( (len(horizont),len(vertical)) ) # the output array
+model = dtree_model_final
+
+
+col = 0
+row = 0
+for petallen in vertical: # for every sepal length
+  for petalwid in horizont: # for every sepal width
+    features = [ sepallen, sepalwid, petallen, petalwid ]
+    output = predictive_model(features,model)
+    #print(f"input {features} output: {output}")
+    plane[row,col] = output
+    row += 1
+  row = 0
+  col += 1
+  print(".", end="")  # so we know it's running
+  if col % 42 == 0: print() # same...
+
+print("\n", plane[0:3,0:3]) # small bit of the lower-left corner
+
+
+import seaborn as sns
+# sns.heatmap(plane)
+
+sns.set(rc = {'figure.figsize':(12,8)})  # figure size!
+ax = sns.heatmap(plane)
+ax.invert_yaxis() # to match our usual direction
+ax.set(xlabel="petalwid (tenths)", ylabel="petallen (tenths)")
+ax.set_xticks(ax.get_xticks()[::4])
+ax.set_yticks(ax.get_yticks()[::4])
+ax.set_title("dt: prediction landscape for sepallen = 5.0 and sepalwid = 3.0", fontsize=18)
+
+
+print("remember our species-to-number mapping:")
+print("0 - setosa")
+print("1 - versicolor")
+print("2 - virginica")
+
+
+# section 1:  libraries
+#
+import time
+import sklearn          # if not present, use a variant of  #3 install -u scikit-learn
+import numpy as np      # numpy is python's "array" library
+import pandas as pd     # pandas is python's "data" library ("dataframe" == spreadsheet)
+
+# section 2:  read the already-cleaned data  (+ view, if you wish)
+#
+cleaned_filename = "iris_cleaned.csv"     # data should be "tidy" already...
+df_tidy = pd.read_csv(cleaned_filename)   # can add encoding="utf-8" if needed
+if false:
+    print(f"{cleaned_filename} : file read into a pandas dataframe.")
+    print("df_tidy is\n", df_tidy)
+    print("df_tidy.info() is"); df_tidy.info()
+
+# section 3:  drop any columns we don't want to use
+row = 0
+column = 1
+df_model1 = df_tidy.drop('irisname', axis=column )
+if false:  print("df_model1 is\n", df_model1)
+
+# section 4:  create columns and species variables to show we're organized + know what's happening...
+columns = df_model1.columns                     # int to str
+species = ['setosa','versicolor','virginica']   # int to str
+species_index = { s:i for i,s in enumerate(species) }  # str to int   {'setosa':0,'versicolor':1,'virginica':2}
+columns_index = { c:i for i,c in enumerate(columns) }  # str to int   {'sepallen':0,'sepalwid':1,'petallen':2, <more> }
+if false:  print(f"{columns = } \n {columns_index = } \n {species = } \n {species_index = }")
+
+# section 5:  convert from pandas (spreadsheet) to numpy (array)
+a = df_model1.to_numpy()    # yields the underlying numpy array
+a = a.astype('float64')     # make sure everything is floating-point
+num_rows, num_cols = a.shape   # let's have num_rows and num_cols around
+if false:  print(f"\nthe dataset has {num_rows} rows and {num_cols} cols")
+
+# section 6:  define our features (x_all) and our target-to-predict (y_all)
+x_all = a[:,0:4]  # x (features) watch out! this is likely to change from model to model...
+y_all = a[:,4]    # y (labels) watch out! this is likely to change from model to model...
+if false:
+    print(f"the labels/species are \n {y_all} \n ");
+    print(f"the first few data rows are \n {x_all[0:5,:]}")
+
+# section 7:  80/20 split into training and testing sets:  x_train and y_train, x_test and y_test
+from sklearn.model_selection import train_test_split      # this function splits into training + testing sets
+x_train, x_test, y_train, y_test = train_test_split(x_all, y_all, test_size=0.20)  # random_state=42 # 20% testing
+if false:
+    print(f"training with {len(y_train)} rows;  testing with {len(y_test)} rows\n" )
+    print(f"held-out testing data... (testing data: {len(y_test)} rows)")
+    print(f"y_test: {y_test}")
+    print(f"x_test (first few rows): {x_test[0:5,:]}\n")
+    print(f"training data used for modeling... (training data: {len(y_train)} rows)")
+    print(f"y_train: {y_train}")
+    print(f"x_train (first few rows): {x_train[0:5,:]}")  # 5 rows
+
+# section 8:  here's where the model-building happens!  first, we guess at the parameters
+from sklearn import tree      # for decision trees
+from sklearn import ensemble  # for random forests, an ensemble classifier
+best_d = 1            # we don't know what depth to use, so let's guess 1 (not a good guess)
+best_num_trees = 42   # we don't know how many trees to use, so let's guess 42
+rforest_model = ensemble.randomforestclassifier(max_depth=best_d, n_estimators=best_num_trees, max_samples=0.5)  # 0.5 of the data each tree
+rforest_model.fit(x_train, y_train)      # we train the model ... it's one line!
+if false:  print(f"built a random forest with depth={best_d} and number of trees={best_num_trees}")
+
+# section 9:  let's see how our naive model does on the test data!
+predicted_labels = rforest_model.predict(x_test)      # this is the key line:  predict
+actual_labels = y_test
+if false:
+    print("predicted labels:", predicted_labels)
+    print("actual  labels  :", actual_labels)
+    num_correct = sum(predicted_labels == actual_labels)
+    total = len(actual_labels)
+    print(f"\nresults on test set:  {num_correct} correct out of {total} total, for {num_correct*100/total}%\n")
+
+# section 10:  let's cross-validate to find the "best" value of k, best_k:
+print("cross-validating...")
+from sklearn.model_selection import cross_val_score
+all_accuracies = []
+best_d = 1         # range(1,6)
+best_num_trees = 50   # [50,150,250]
+best_accuracy = 0
+for d in range(1,6):
+    for ntrees in [50,150,250]:
+        rforest_model = ensemble.randomforestclassifier(max_depth=d, n_estimators=ntrees,max_samples=0.5)
+        cv_scores = cross_val_score( rforest_model, x_train, y_train, cv=5 ) # 5 means 80/20 split
+        average_cv_accuracy = cv_scores.mean()  # more likely, only their average
+        if true: print(f"depth: {d:2d} ntrees: {ntrees:3d} cv accuracy: {average_cv_accuracy:7.4f}")
+        if average_cv_accuracy > best_accuracy:
+            best_accuracy = average_cv_accuracy;   best_d = d;      best_num_trees = ntrees
+if true: print(f"best_depth: {best_depth} and best_num_trees: {best_num_trees} are our choices. acc: {best_accuracy}")
+
+# section 11:  here's where the model-building happens with the best-found parameters:
+rforest_model_tuned = ensemble.randomforestclassifier(max_depth=best_depth, n_estimators=best_num_trees, max_samples=0.5)
+rforest_model_tuned.fit(x_all, y_all)      # we train the model ... on _all_ the data!
+if true:  print("created and trained a classifier with best_depth =", best_depth)
+# print the feature importances...
+if false:  print("\nthe feature importances are", rforest_model_tuned.feature_importances_)
+
+
+#
+# we can get the individual trees, if we want...  let's try it on tree #28
+#
+tree_index = 28   # which tree
+one_rf_tree = rforest_model_tuned.estimators_[tree_index]
+print(f"one of the forest's trees is {one_rf_tree}")
+
+# from there, it's possible to create a graphical version...
+filename = f'rf_tree_{tree_index:03d}.gv'             # f strings! could save all trees, but we won't do so here.
+tree.export_graphviz(one_rf_tree, out_file=filename,  # the filename constructed above...!
+                            feature_names=features, # actual feature names, not species
+                            filled=true,              # fun!
+                            rotate=false,             # false for up/down; true for l/r
+                            class_names=species,      # good to have
+                            leaves_parallel=true )    # lots of options!
+
+print(f"file {filename} written. try copying the result to http://viz-js.com/ \n")
+with open(filename, "r") as f:
+    file_text = f.read()
+    print(file_text)
+
+# one tree:
+fig = plt.figure(figsize=(10,8))
+tree_plot = tree.plot_tree(one_rf_tree,
+                   feature_names=features,   # glad to have these!
+                   class_names=species,      # and these!!
+                   filled=true)
+
+
+#
+# final predictive model (random forests), with tuned parameters + all data incorporated
+#
+
+def predictive_model( features, model ):
+    """ input: a list of four features
+                [ sepallen, sepalwid, petallen, petalwid ]
+        output: the predicted species of iris, from
+                  setosa (0), versicolor (1), virginica (2)
+    """
+    our_features = np.asarray([features])                 # extra brackets needed
+    predicted_species = model.predict(our_features)       # the model's prediction!
+    predicted_species = int(round(predicted_species[0]))  # unpack the extra brackets
+    return predicted_species
+
+#
+# try it!
+#
+# features = eval(input("enter new features: "))
+#
+features = [6.7,3.3,5.7,0.1]  # [5.8,2.7,4.1,1.0] [4.6,3.6,3.0,2.2] [6.7,3.3,5.7,2.1]
+
+lof = [
+[4.8, 3.1, 1.6, 0.2 ],   # actually setosa
+[5.7, 2.9, 4.2, 1.3 ],   # actually versicolor
+[5.8, 2.7, 5.1, 1.9 ],   # actually virginica
+[5.2, 4.1, 1.5, 0.1 ],   # actually setosa
+[5.4, 3.4, 1.5, 0.4 ],   # actually setosa
+[5.1, 2.5, 3.0, 1.1 ],   # actually versicolor
+[6.2, 2.9, 4.3, 1.3 ],   # actually versicolor
+[6.3, 3.3, 6.0, 2.5 ],   # actually virginica
+[5.7, 2.8, 4.1, 1.3 ],   # actually virginica  <-- almost always wrong!
+]
+
+# run on each one:
+for features in lof:
+    predicted_species = predictive_model( features, rforest_model_tuned )  # pass in the model, too!
+    name = species[predicted_species]
+    print(f"from the features {features} i predict {name}")    # answers in the assignment...
+
+
+# we can only plot 2 dimensions at a time!
+# these two will be our constants:
+sepallen = 5.0
+sepalwid = 3.0
+# petallen =
+# petalwid =
+
+vertical = np.arange(0,8,.1) # array of vertical input values
+horizont = np.arange(0,8,.1) # array of horizontal input values
+plane = np.zeros( (len(horizont),len(vertical)) ) # the output array
+model = rforest_model_tuned
+
+col = 0
+row = 0
+for petallen in vertical: # for every sepal length
+  for petalwid in horizont: # for every sepal width
+    features = [ sepallen, sepalwid, petallen, petalwid ]
+    output = predictive_model(features,model)
+    #print(f"input {features} output: {output}")
+    plane[row,col] = output
+    row += 1
+  row = 0
+  col += 1
+  print(".", end="")  # so we know it's running
+  if col % 42 == 0: print() # same...
+
+print("\n", plane[0:3,0:3]) # small bit of the upper-left corner
+
+
+import seaborn as sns
+# sns.heatmap(plane)
+
+#sns.set(rc = {'figure.figsize':(18,12)})  # figure size!
+
+fig, ax = plt.subplots(figsize=(12,8))
+
+# create the heatmap
+im = ax.imshow(plane, cmap="viridis", extent=[horizont.min(), horizont.max(), vertical.min(), vertical.max()], origin="lower", aspect="auto")
+
+# set axis labels and ticks
+ax.set_xlabel("petalwid", fontsize=14)
+ax.set_ylabel("petallen", fontsize=14)
+
+ax.set_title(f"rf: petallen vs petalwid with sepallen == {sepallen:.1f} and sepalwid == {sepalwid:.1f}\n", fontsize=18)
+# calculate the indices for reduced ticks and labels
+reduced_tick_indices = np.arange(0, len(horizont), len(horizont)//8)
+# ensure that the last index is included
+# if reduced_tick_indices[-1] != len(horizont)-1:
+#   reduced_tick_indices = np.append(reduced_tick_indices, len(horizont)-1)
+
+
+# set ticks and tick labels with correct values
+ax.set_xticks(horizont[reduced_tick_indices]) # display ticks every 0.4 unit
+ax.set_yticks(vertical[reduced_tick_indices])
+ax.set_xticklabels([f"{x:.1f}" for x in horizont[reduced_tick_indices]], fontsize=12)  # format x-axis labels
+ax.set_yticklabels([f"{y:.1f}" for y in vertical[reduced_tick_indices]], fontsize=12)  # format y-axis labels
+
+# add a colorbar
+cbar = plt.colorbar(im)
+cbar.set_label('predicted species (0: setosa, 1: versicolor, 2: virginica)', rotation=270, labelpad=25)
+
+plt.show()
+
+print("remember our species-to-number mapping:")
+print("0 - setosa")
+print("1 - versicolor")
+print("2 - virginica")
+
+
+rforest_model_tuned.feature_importances_
+
+
+# import libraries
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.tree import decisiontreeclassifier
+from sklearn.ensemble import randomforestclassifier
+from sklearn.metrics import accuracy_score
+
+# load the births dataset
+births = pd.read_csv('births_cleaned.csv')
+
+# set up features and target
+x_births = births[['month', 'day']]  # predictors: month and day
+y_births = births['popularity']      # target: popularity (0 or 1)
+
+# split into train and test sets
+xb_train, xb_test, yb_train, yb_test = train_test_split(x_births, y_births, test_size=0.3, random_state=42)
+
+# 1. decision tree classifier
+dt_births = decisiontreeclassifier(random_state=42)
+dt_births.fit(xb_train, yb_train)
+
+# predict and evaluate
+yb_pred_dt = dt_births.predict(xb_test)
+print("decision tree accuracy (births):", accuracy_score(yb_test, yb_pred_dt))
+
+# 2. random forest classifier
+rf_births = randomforestclassifier(random_state=42)
+rf_births.fit(xb_train, yb_train)
+
+# predict and evaluate
+yb_pred_rf = rf_births.predict(xb_test)
+print("random forest accuracy (births):", accuracy_score(yb_test, yb_pred_rf))
+
+
+
+# import the visualization libraries
+from sklearn.tree import plot_tree
+import matplotlib.pyplot as plt
+
+# plot the decision tree
+plt.figure(figsize=(12, 8))
+plot_tree(dt_births, feature_names=x_births.columns, class_names=['below median', 'above median'], filled=true)
+plt.title("decision tree for births dataset")
+plt.show()
+
+
+
+# plot feature importances for random forest
+import seaborn as sns
+
+# get feature importances
+importances_births = rf_births.feature_importances_
+features_births = x_births.columns
+
+# create a bar plot
+plt.figure(figsize=(8, 6))
+sns.barplot(x=importances_births, y=features_births)
+plt.title("random forest feature importances (births dataset)")
+plt.xlabel("importance score")
+plt.ylabel("feature")
+plt.show()
+
+
+
+# load the digits dataset
+digits = pd.read_csv('digits_cleaned.csv')
+
+# set up features and target
+x_digits = digits.drop('actual_digit', axis=1)  # drop the target column to get only features
+y_digits = digits['actual_digit']               # target: actual_digit (0–9)
+
+# split into train and test sets
+xd_train, xd_test, yd_train, yd_test = train_test_split(x_digits, y_digits, test_size=0.3, random_state=42)
+
+# 1. decision tree classifier
+dt_digits = decisiontreeclassifier(random_state=42)
+dt_digits.fit(xd_train, yd_train)
+
+# predict and evaluate
+yd_pred_dt = dt_digits.predict(xd_test)
+print("decision tree accuracy (digits):", accuracy_score(yd_test, yd_pred_dt))
+
+# 2. random forest classifier
+rf_digits = randomforestclassifier(random_state=42)
+rf_digits.fit(xd_train, yd_train)
+
+# predict and evaluate
+yd_pred_rf = rf_digits.predict(xd_test)
+print("random forest accuracy (digits):", accuracy_score(yd_test, yd_pred_rf))
+
+
+
+# visualization of decision tree for digits dataset
+from sklearn import tree
+import matplotlib.pyplot as plt
+
+plt.figure(figsize=(20, 10))
+tree.plot_tree(
+    dt_digits,
+    feature_names=x_digits.columns,
+    class_names=[str(i) for i in range(10)],  # digits 0 to 9
+    filled=true,
+    fontsize=8
+)
+plt.title("decision tree for digits dataset")
+plt.show()
+
+
+
+# get importances
+importances_digits = rf_digits.feature_importances_
+features_digits = x_digits.columns
+
+# sort and get top 10 features
+top10_idx = importances_digits.argsort()[-10:]
+top10_features = features_digits[top10_idx]
+top10_importances = importances_digits[top10_idx]
+
+# plot
+plt.figure(figsize=(8, 6))
+sns.barplot(x=top10_importances, y=top10_features)
+plt.title("top 10 feature importances (digits dataset)")
+plt.xlabel("importance score")
+plt.ylabel("pixel feature")
+plt.show()
+
+
+

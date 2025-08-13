@@ -1,0 +1,23 @@
+### data training ###
+#
+# all labeled photos have been uploaded to the link below on my google drive.
+# after the data training finishes, the best weights model will be downloaded in order to use it
+# with the local machine environment that allows for live cam capture.
+
+
+from ultralytics import yolo
+
+
+data_yaml = '/content/drive/mydrive/smartcamassistant/data.yaml'
+
+model = yolo('yolov5s.pt')  # or yolov5n.pt for a tiny model
+model.train(data=data_yaml, epochs=30, imgsz=640)
+
+
+
+# download the best weights
+from google.colab import files
+files.download('runs/detect/train/weights/best.pt')
+
+
+
