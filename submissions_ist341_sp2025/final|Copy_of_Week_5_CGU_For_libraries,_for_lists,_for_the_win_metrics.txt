@@ -1,0 +1,3202 @@
+#
+# live demo
+#
+
+print("start to guess...")
+
+guess = 41
+
+while true:   # just like an if... except it repeats!
+    print("not the right guess")
+
+print("guessing done!")
+
+
+l = [ 'cgu', 'cmc', 'pit', 'scr', 'pom', 'hmc' ]
+print("len(l) is", len(l))     # just for fun, try max and min of this l:  we win! (why?!)
+
+
+l = [1, 2, 40, 3 ]
+print("max(l) is", max(l))
+print("min(l) is", min(l))
+print("sum(l) is", sum(l))
+
+
+l = range(1,43)
+print("l is", l)   # uh oh... it won't create the list unless we tell it to...
+
+
+l = list(range(1,367))  # ask it to create the list values...
+print("l is", l)  # aha!
+
+
+print("max(l) is", max(l))    # ... up to but _not_ including the endpoint!
+
+
+#
+# gauss's number: adding from 1 to 100
+#
+
+l = range(1,101)
+print("sum(l) is", sum(l))
+
+
+
+# single-character substitution:
+
+def vwl_once(c):
+  """ vwl_once returns 1 for a single vowel, 0 otherwise
+  """
+  if c in 'aeiou': return 1
+  else: return 0
+
+# two tests:
+print("vwl_once('a') should be 1 <->", vwl_once('a'))
+print("vwl_once('b') should be 0 <->", vwl_once('b'))
+
+
+s = "claremont"
+print("s is", s)
+print()
+
+lc = [ vwl_once(c) for c in s ]
+print("lc is", lc)
+
+
+s = "audio"
+print("s is", s)
+print()
+
+lc = [ vwl_once(c) for c in s ]
+print("lc is", lc)
+
+
+#
+# feel free to use this cell to check your vowel-patterns.
+#      this example is a starting point.
+#      you'll want to copy-paste-and-change it:
+s = "audio"
+lc = [ vwl_once(c) for c in s ]
+print("lc is", lc)
+
+
+s = "below"
+lc = [ vwl_once(c) for c in s ]
+print("lc is", lc)
+
+
+s = "splits"
+lc = [ vwl_once(c) for c in s ]
+print("lc is", lc)
+
+
+s = "aboarded" # i cant find a real word
+lc = [ vwl_once(c) for c in s ]
+print("lc is", lc)
+
+
+s = "omega"
+lc = [ vwl_once(c) for c in s ]
+print("lc is", lc)
+
+
+#
+# vwl_all using this technique
+#
+
+def vwl_all(s):
+  """ returns the total # of vowels in s, a string
+  """
+  lc = [ vwl_once(c) for c in s ]
+  total = sum(lc)  # add them all up!
+  return total
+
+# two tests:
+print("vwl_all('claremont') should be 3 <->", vwl_all('claremont'))
+print("vwl_all('caffeine') should be 4 <->", vwl_all('caffeine'))
+
+
+
+# scrabble-scoring
+
+def scrabble_one(c):
+  """ returns the scrabble score of one character, c
+  """
+  c = c.lower()
+  if c in 'aeilnorstu':   return 1
+  elif c in 'dg':         return 2
+  elif c in 'bcmp':       return 3
+  elif c in 'fhvwy':      return 4
+  elif c in 'k':          return 5
+  elif c in 'jx':         return 8
+  elif c in 'qz':         return 10
+  else:                   return 0
+
+# tests:
+print("scrabble_one('q') should be 10 <->", scrabble_one('q'))
+print("scrabble_one('!') should be 0 <->", scrabble_one('!'))
+print("scrabble_one('u') should be 1 <->", scrabble_one('u'))
+
+
+#
+# scrabble_all using this technique
+#
+
+def scrabble_all(s):
+  """ returns the total scrabble score of s
+  """
+  lc = [ scrabble_one(c) for c in s ]
+  total = sum(lc)  # add them all up!
+  return total
+
+
+# two tests:
+print("scrabble_all('zany sci ten quiz') should be 46 <->", scrabble_all('zany sci ten quiz'))
+print("scrabble_all('claremont') should be 13 <->", scrabble_all('claremont'))
+print("scrabble_all('abcdefghijklmnopqrstuvwxyz!') should be 87 <->", scrabble_all('abcdefghijklmnopqrstuvwxyz!'))
+
+
+# here are the two texts:
+
+plankton = """i'm as evil as ever. i'll prove it
+right now by stealing the krabby patty secret formula."""
+
+patrick = """i can't hear you.
+it's too dark in here."""
+
+
+#
+# raw scrabble comparison
+#
+
+print("plankton, total score:", scrabble_all(plankton))
+print("patrick, total score:", scrabble_all(patrick))
+
+
+#
+# per-character ("average/expected") scrabble comparison
+#
+
+print("plankton, per-char score:", scrabble_all(plankton)/len(plankton))
+print("patrick, per-char score:", scrabble_all(patrick)/len(patrick))
+
+
+
+# let's see a "plain"  lc   (list comprehension)
+
+[ 2*x for x in [0,1,2,3,4,5] ]
+
+# it _should_ result in     [0, 2, 4, 6, 8, 10]
+
+
+
+# let's see a few more  list comprehensions.  for sure, we can name them:
+
+a  =  [ 10*x for x in [0,1,2,3,4,5] if x%2==0]   # notice the "if"! (there's no else...)
+print(a)
+
+
+
+b = [ y*21 for y in list(range(0,3)) ]    # remember what range does?
+print(b)
+
+
+c = [ s[1] for s in ["hi", "7cs!"] ]      # doesn't have to be numbers...
+print(c)
+
+
+
+# let's try thinking about these...
+
+
+a = [ n+2 for n in   range(40,42) ]
+b = [ 42 for z in [0,1,2] ]
+c = [ z for z in [42,42] ]
+d = [ s[::-2] for s in ['fungic','y!a!y!'] ]
+l = [ [len(w),w] for w in  ['hi','ist'] ]
+
+
+# then, see if they work the way you predict...
+print("a is", a)
+print("b is", b)
+print("c is", c)
+print("d is", d)
+print("l is", l)
+
+
+#
+# here, [1] create a function that scores punctuation as 1 and non-punctuation as 0, pun_one
+#       [2] use the list-comprehension technique to create a punctuation-scoring function, pun_all
+
+# use the above examples as a starting point!
+
+def pun_one(p):
+  """ pun_one returns 1 for a single punctuation, 0 otherwise
+  """
+  if p in '".,?!:;\'()[]{}—-.../': return 1
+  else: return 0
+
+def pun_all(s):
+  """ returns the total # of puncuation in s, a string
+  """
+  lc = [ pun_one(p) for p in s ]
+  total = sum(lc)  # add them all up!
+  return total
+
+
+# tests
+print("pun_all(plankton) should be 4 <->", pun_all(plankton))
+print("pun_all(patrick) should be 4 <->", pun_all(patrick))
+# they're more similar, punctuation-wise than scrabble-wise
+
+
+#
+# the two works of yours and two of another author's ("theirs")
+#     these can - and should - be large
+#
+
+yours1 = """ist341_participant_7
+predicting child support payment delinquency using sas® enterprise miner™ 5.1 case study
+introduction (provide an overview of how you plan to structure the case study report, and a quick summary of what your understanding of crisp-dm is)
+this paper focuses on two separate case studies and how they utilize data mining tools and predictive modeling to help predict child support payment delinquency. as we have learned from the crisp-dm framework, there are six phases that should be implemented when conducting a data mining project. these phases are:
+business understanding: determine business objectives, assess situation, determine data mining goals, produce project plan
+data understanding: collect initial data, describe data, explore data, verify data quality
+data preparation: data set, select data, clean data, construct data, integrate data, format data
+modeling: select modeling technique, generate test design, build model, assess model
+evaluation: evaluate results, review process, determine next steps
+deployment: plan deployment, plan monitoring and maintenance, produce final report, review project
+this model is extremely helpful for anyone who is looking to complete a data mining project to reach their business goals. it is important to note that the model and its phases are visualized in a cycle. as noted in the paper, “the arrows indicate the most important and frequent dependencies between the phases, while the outer circle symbolizes the cyclical nature of data mining itself and illustrates that the lessons learned during the data mining process and from the deployed solution can trigger new, often more focused business questions” (shearer 14). this means that this model emphasizes that in data mining, we can learn new things along the way, so we might have to go back to a previous phase to ensure we are completing our project in an effective and efficient manner.
+in each of the case studies, some of the sections described to completing this project aligns with the crisp-dm framework, while some of the steps taken happen at a different time than described in the framework. thus, in this report, i will be organizing each of the case studies in a manner that matches the crisp-dm framework and its order of the phases. i will be using evidence from the text to discuss the issues covered and issues not covered in each phase listed above. after doing this, i will summarize the benefits and weaknesses revealed in each case study. lastly, i will conclude what i have learned from the case studies and how it aligns with the crisp-dm framework.
+
+
+case study 1
+business understanding
+issues covered (including evidence from case study text)
+“our overall objective was to reduce the delinquency in child care payments through the design of intervention policies and programs. our analytic objective in support of this effort was two-fold:
+use historical data with actual payment information to train and fine tune a predictive model.
+apply this model to data with an unknown target in order to assign a probability of payment” (2).
+in this text, it is evident that the business objective and data mining goals are defined. the overall objective is to reduce delinquency in child care payments. the plan is to design intervention policies and programs that can help improve compliance of completing child care payments. the paper also states that historical data will be utilized to train and fine tune a predictive model making it clear that using data mining can help with decision-making and improving enforcement strategies. another issue that is covered is that key stakeholders and their impact are mentioned. agencies and policymakers involved with child support enforcement will use the insights gained from the project to help in the reduction of delinquency in child care payments by creating the most efficient and effective policies and programs possible.
+“the intent is to identify what factors contribute to an ncp becoming delinquent in making child support payments”
+this text shows that the goal is to identify factors contributing to delinquency, which aligns with the business understanding phase as it highlights key business factors, such as root causes to the initial problem that needs to be solved.
+“domain experts subsequently review and analyze significant parameters to identify non-payment trends and develop intervention policies and programs to address the issues uncovered.”
+by utilizing domain experts in this data mining project, it ensures that the model is aligned with real-world enforcement practices and not purely based on data insights.
+
+
+“as new data becomes available, we score the new data in an effort to identify those individuals with a high probability of non-payment. where possible, child support counselors work with the high-risk ncps to enroll them in a program, or take other action to avoid nonpayment.”
+
+
+
+
+in this case study, child support counselors are taking action, using data-driven insights to enroll them individuals in programs or follow policies, demonstrating how data mining translates into solving real-world problems.
+issues not covered
+some issues that were not covered in the business understanding phase of case study 1 are:
+success metrics are undefined. there is no mention of how success and effectiveness will be measured.
+potential risks, challenges, and resource constraints not mentioned. there is no mention of issues such as privacy concerns, bias/fairness. there is also no mention about potential constraints, including data reliability issues or legal constraints.
+data understanding
+issues covered (including evidence from case study text)
+“data issues to be considered included the following:
+how do we combine multiple records?
+which records do we include?
+do we need additional variables?
+what is the relevant date range?”
+in this text, the issues that are covered are data integration challenges and defining important information, such as relevant date range. the questions listed above highlight the need for understanding data structure and consistency. moreover, having a clear date range established, historical data in this case, ensures that the dataset represents and aligns with business objectives.
+“an ncp was considered delinquent the first time they had a case in which arrears were greater than 100% of their monthly child support obligation; in other words, the point at which the member went 30 days or more without paying the full obligation”
+here, having a definition for when an ncp is considered delinquent, the target variable, makes sure that the dataset captures relevant information regarding delinquency trends.
+“the transaction data contained multiple records for each ncp (member). each row in the original data represented a unique child support order and member id combination. a child support order is also referred to as a “case” and is defined by a single custodial parent (cp) but may represent multiple dependents”
+here, the dataset is briefly described and how the transactional data represents child support cases, custodial parents, and dependents. this provides insight into the data sources and covers the issue of exploratory data analysis.
+issues not covered
+issues that were not covered in the data understanding section of case study 1 are:
+there was no discussion of if there were any biases presented in the data. for example, if there was bias towards certain payer demographics or specific enforcement actions.
+there was also no justification for data inclusion and exclusion. there was no information about why records, features, and time periods were used or not.
+the issue of sensitive data was not brought and how they were ensuring compliance to handling such data.
+lastly, it is not clear that the data is entirely valid or reliable.
+
+data preparation
+issues covered (including evidence from case study text)
+“as part of the data preparation, these transactional records were combined at the member level”
+the text states that transactional records were combined at the member level in the data preparation phase. doing this shows that the case study covers the issue of ensuring proper structuring of the dataset for the predictive model.
+“additional metrics were created from the transaction (case) level data:
+frequent mover flag
+job jumper flag
+various counters (number of employers, number of children born out-of-wedlock)
+indicator flags (home phone, work phone, e-mail address, employment status)”
+there were new variables/features created, which helps the predictive model perform better in the modeling phase.
+“once the data mining database was created at the member level and target correlations examined, additional data exploration and data preparation were required to address the following:
+missing values
+filter outliers, establish reasonable caps
+transformation into grouped variables
+skewed variable distribution”
+this ensures that data quality issues are handled.
+issues not covered
+while data quality issues are handled, it is not explained how this will be done.
+we are unsure if the data is balanced for fair predictions
+other issues not covered are feature selection validation, normalization, justification for feature choices
+issues covered (including evidence from case study text)
+“this combination of increased dimension and complexity results in decreased generalization-- which is counter to our goal. in training the model, it is important to look out for three types of variables that do not provide value-add:
+proxy variable is a variable whose effect mirrors that of another variable already included in the model
+extraneous input is a variable that provides no additional predictive value to the model
+variables with known data quality issues are omitted from the modeling process”
+ensuring the model is able to generalize and decrease its complexity, the first issue that's covered is by removing redundant and unimportant variables that can negatively affect the model’s performance.
+“because we had a target variable, we initially began applying supervised modeling techniques such as decision trees and regression. we soon discovered that the data collected did not support these. as previously mentioned, this client was in the initial stages of integrating data mining processes into their decision support systems. as such, they were also in the initial stages of both collecting and cleansing data. one of the main benefits of mining at this stage is recognizing what data is available, necessary, and useful. because most of the data available to us was demographic in nature, we speculated that if we clustered the data prior to any predictive modeling attempts, we might increase the robustness of our model”
+the issue covered here is choosing a modeling technique. supervised modeling techniques were initially picked and limitations were revealed. thus, a new modeling technique was introduced, which will be discussed in the next point.
+“we decided to explore unsupervised modeling methods, which do not use the target variable. we obtained mild improvements by clustering the data prior to any predictive modeling attempts. “
+by using a different modeling technique, unsupervised learning techniques, there were some improvements in the modeling process.
+other issues covered in this section were cluster analysis, which helped identify important patterns. the supervised and unsupervised methods were combined to help with the accuracy of the model.
+moreover, "using lift charts, misclassification rates, and averaged squared error as our assessment criteria, we determined that decision trees provided the best fit for this data with respect to performance" shows that reasoning behind using decision trees and describes the model. another issue covered was the assessment of the model. the text states that "the following parameters were deemed significant in our final models: maximum number of consecutive months paid, total monthly obligation, job jumper flag, total number of months ever paid, count of cases for each ncp where initial arrears existed."
+issues not covered
+there was no reasoning behind why other models besides decision trees were not considered.
+hyperparameter tuning and model optimization
+detecting and mitigating biases in predictive modeling
+
+issues covered (including evidence from case study text)
+"using lift charts, misclassification rates, and averaged squared error as our assessment criteria, we determined that decision trees provided the best fit for this data with respect to performance."
+by using performance metrics, the issue that is being covered is assessing the model’s accuracy.
+"child support agencies generally have limited funds to invest toward identifying potential delinquent payers. the fact that a decision tree will identify more non-payers up front is desirable. trees also consistently provided slightly lower misclassification rates"
+the model is being evaluated on how suitable it is for child support agencies. here, we see that decision trees are the most practical and cost-effective model for implementation.
+issues not covered
+robustness and generalization of the model
+no mention of how to model will perform long-term and what will be done to keep track of this.
+there was no mention on how the model can affect those involved (ethical issues).
+
+issues covered (including evidence from case study text)
+"over the long term, this state will move towards deployment as follows: apply the model to new data as it becomes available, determine a threshold probability for potential delinquency, identify ncps who are above the threshold."
+the case mentions their approach to deployment and that it will be used long-term.
+“determine which policy/program will be most effective, engage the ncp in a delinquency prevention program."
+the model will be utilized and integrated with policy and decision-making.
+"in the future they plan to further explore the use of predictive modeling techniques, especially as they are able to add data about the agency’s interactions with the ncps."
+there is mention that there is a commitment to data improvement over time.
+issues not covered
+no mention of how the model’s performance will be monitored and updated
+no discussion on ethical and legal considerations in deployment
+no mention of scalability and resource allocation
+no discussion of how false positives and false negatives will be handled.
+no mention of how stakeholders will be involved.
+
+summary comments
+the business objective and the goals of the data mining project were clearly outlined. it was also clear that they would be utilizing data mining techniques.
+the case study aligns with the crisp-dm framework for the most part. this is helpful in meeting the goals of the project.
+the combined use of supervised and unsupervised learning techniques for clustering helped with prediction accuracy.
+adding and modifying features also improved the predictive model.
+decision trees were used as it was the most cost-effective and practical model for this case.
+using lift charts, misclassification rates, and averaged square area helped in the evaluation phase, which ensured the most effective approach was selected.
+failures or weaknesses
+although there was a brief discussion on model selection, there was no comparison made with other model options.
+there was no discussion on handling or detecting bias, which can negatively impact certain groups of people.
+there is no plan on how the model will perform over time and how this will be monitored.
+there is no discussion on how this project can impact people socially and legally, especially with false positives.
+
+
+case study 2
+business understanding
+issues covered
+“the state wanted to use data mining to resolve issues including: what cases have the highest probability of paying continuously? for cases in which the children are supported by welfare, how can they increase the probability of finding and requiring the ncps to pay? what child support enforcement activities are the most productive?”
+here, the case study defines and outlines the business objectives of the data mining project.
+“initially, the most important data issue for the problem definition for state b was whether to model at the case level or at the ncp level. this state can only take legal actions on an ncp by case. however, because we were ultimately trying to model the behavior of an individual and not a case, we decided to compile the data at the ncp level.”
+in this text, the situation of the case is assessed and risks/constraints are identified. doing this helps with deciding which model will be most effective.
+“we quickly determined that defining who was delinquent was not a simple task... an ncp could be classified as ‘not delinquent’ only if they had paid the full amount for six months.”
+delinquency in this project is defined as the target variable.
+“this strict definition resulted in the ‘non-delinquency’ classification being quite a rare event and could possibly confound model effects looking for differences between delinquent and non-delinquent payers.”
+in this study, it is recognized that potential challenges in the data understanding and preparation phases may arise.
+“for this reason, we constructed an additional target variable in our model for testing. our second target variable was an interval variable that contained the number of months paid in full by the ncp in the time period t1 to t6.”
+the study ensures that additional target variables are defined, which helps the model consider different cases of delinquency.
+issues not covered
+there is no mention on how cost-effective predictive modeling would be compared to other strategies.
+there is no discussion on potential biases in the data and how they will handle ethical considerations.
+compared to case study 1, there is no discussion about stakeholders, policies, and their impact on the project.
+the study heavily focuses on predictive modeling, but does not discuss alternative strategies on improving compliance.
+similarly to the lack of mention of bias detection, there is no discussion on how false positives and false negatives can impact certain groups involved.
+data understanding
+issues covered
+a comprehensive list of data sources, such as tables, and variables.
+"in contrast to state a, we had more information on the behavior of the ncp and their interactions with the child support collection agency and legal system."
+data based on behavior and interactions is included, which is key information in enhancing the predictive model’s accuracy.
+"for many variables, we were able to calculate not only the current value, but also whether any changes had occurred in the month previous to t7."
+here, we see that the dataset being used tracks changes over time, which is helpful in uncovering evolving patterns in delinquency.
+issues not covered
+the quality of data is not assessed/considered. for example, missing data and inconsistencies are not discussed.
+no reasoning behind why specific data is included and excluded.
+no discussion of potential biases in the data being collected.
+no mention on how sensitive information is being handled
+no discussion on compliance considerations regarding privacy.
+data preparation
+issues covered
+"as outlined in case study 1, data cleansing was also necessary. for example, ncps with more than three employers on file were given a count value = 33 in the system, which would unnecessarily skew results."
+there is a focus on data cleaning and handling errors. this helps with accuracy and precision in the predictions.
+the study also incorporated multiple data sources into one dataset. this data preparation step is crucial in helping the model perform better.
+issues not covered
+there was no discussion on how missing/incomplete data would be handled.
+no mention of the standardization and normalization of variables, which can negatively affect the model’s performance.
+similar to case study 1, there is no mention on how data would be balanced for fair representation.
+no reasoning behind why variables are selected/transformed.
+modeling phase
+issues covered
+“non-delinquent payers as defined by the binary target were very rare, so we over-sampled our data to create a modeling data set with approximately 1/3 non-delinquent payers and 2/3 delinquent payers.”
+the issue of class imbalance is acknowledged, so oversampling techniques are utilized to avoid biases in the model.
+“based on our model development using the binary target versus the interval target, we found significant improvement in model accuracy using the target variable that describes the number of months paid consecutively in the six-month period.”
+to improve the accuracy of the predictions, alternative target variable definitions are tested and refined.
+“state b sought to gain additional data points. the state enforcement agency was able to purchase a financial score from a major credit reporting agency for a number of their cases. also, they were able to create an indicator variable on whether the ncp is receiving any benefits at the federal level.”
+the project uses additional data sources as a way to revise the model and improve its accuracy.
+the type of model used for the project is also mentioned, which is a logistic regression model.
+issues not covered
+no justification on why logistic regression was picked over other models
+there is no mention of hyperparameter tuning for model optimization
+there is no discussion on how biases in the model will be handled
+no discussion on maintenance of the model over long periods of time.
+evaluation phase
+issues covered
+“beyond using validation and test data sets to validate the model, state b wanted to implement a field test of the results.”
+the model is tested in real-world situations, which helps validate the model’s performance.
+ “rather than scoring a new set of cases and sending top scoring cases to the field, they tested the model on the delinquent cases in the model. they took the cases with the highest predicted probability to not be delinquent, but who were actually delinquent as defined by the target variable.”
+by looking at and testing false negatives, it helps identify where the model went wrong and people who were incorrectly classified.
+ “in all, they sent 218 cases to three offices in the field to investigate. in 60% of those cases, the field offices were able to work the case resulting in some next action such as filing new legal actions or issuing an automatic withholding.”
+the model’s success rate was measured and acknowledged.
+issues not covered
+there is no discussion on the details of performance metrics
+there is no discussion on if the model is cost-effective.
+deployment phase
+issues covered
+“the results of this effort were successful enough that the agency felt confident in two things: purchasing financial scores was worth the monetary investment and the model was appropriate for continued use.”
+the model was implemented in a real-world scenario showing that the model is practical.
+“the agency could first use the sequence analysis node in sas enterprise miner to determine all implemented legal action paths.”
+ this discusses and considers future enhancements and adjustments to the model.
+issues not covered
+there is no mention of how the model will be monitored and maintained.
+no discussion on how stakeholders will be involved.
+
+summary comments
+the project aligns with the crisp-dm framework.
+class imbalance is addressed by using oversampling techniques.
+additional data sources integrated further improving predictive accuracy.
+refinement to target variable definitions helped with model performance by reducing misclassification errors.
+model was used in a real-world scenario validating its practicality.
+mention of future enhancements and improvements to model
+failures/weaknesses
+no reasoning behind choosing a logistic regression model over other models.
+no discussion on handling and detecting biases
+there was no plan on how the model will be monitored and maintained over time.
+no discussion on how false positives and false negatives will be handled and how it can impact certain individuals.
+resource allocation was unclear.
+no mention on how stakeholders will be involved.
+
+
+conclusion (what have you learned from these two cases)
+after reading through the case studies and aligning them with the crisp-dm framework, it is clear that data mining projects must be handled differently. by using predictive modeling for real-world situations, such as child support enforcement, it is important that models should be continuously refined, monitored, and maintained. while each project covered many important issues regarding each phase, there were several that were not mentioned. these projects must implement and consider things like privacy and bias and fairness concerns.
+
+
+"""
+
+yours2 = """ist341_participant_7
+huiru hu
+jiadi liu
+nitipon (tony) moonwichit
+
+marvel universe social network analysis and report
+
+introduction and research question(s)
+the marvel universe is one of the most interconnected fictional worlds ever created, encompassing over 6,000 characters across comics, films, television, and other media. its complex narrative structure, characterized by a web of alliances, rivalries, and collaborations, provides a unique opportunity to study network dynamics within a fictional framework. while it may initially appear as mere entertainment, the marvel universe functions as a dynamic social network where characters are the nodes, and their interactions form the edges. this intricate structure is not just a storytelling mechanism but also a reflection of real-world social systems. analyzing this network enables researchers to uncover patterns of influence, hierarchy, and community, much like those observed in human societies.this study focuses on two pivotal research questions:
+
+who are the most influential and central characters in the marvel universe based on centrality measures?
+what clusters of superheroes emerge using community detection algorithms?
+
+the first research question seeks to identify key characters who serve as connectors or hubs within the network. centrality measures such as degree, betweenness, and eigenvector centrality offer insights into the importance of specific nodes in a network. characters like spider-man and iron man, for example, are known to interact with diverse groups across the marvel universe, making them central figures in terms of influence and connectivity. identifying these central characters allows us to understand which superheroes act as bridges between different communities, enabling collaboration and driving the overarching narrative. these insights can reveal the storytelling strategies employed by marvel’s writers, who often design central characters to play pivotal roles in uniting disparate groups during major crossover events or conflicts.
+the second research question delves into the natural clustering of superheroes within the marvel universe. using community detection algorithms, we can uncover groups or clusters of characters that form based on shared traits, missions, or narrative arcs. these clusters often represent well-known superhero teams such as the avengers, x-men, or guardians of the galaxy, each characterized by dense internal connections and distinct roles within the broader network. for example, the x-men cluster frequently highlights themes of inclusion and fighting for civil rights, while the avengers cluster focuses on leadership, teamwork, and the challenges of managing powerful personalities. beyond established teams, community detection can reveal unexpected alliances or subgroups, providing insights into how marvel’s creators structure relationships to enhance narrative complexity and depth.
+the rationale for this research lies in the parallel between fictional superhero networks and real-world social systems. just as human social networks exhibit certain patterns—such as small-world phenomena, preferential attachment, and high transitivity—these patterns are likely mirrored in the marvel universe. for instance, small-world networks are characterized by short path lengths, allowing for efficient communication and interaction among nodes. similarly, preferential attachment explains why certain nodes, such as popular characters, attract more connections over time, reinforcing their centrality in the network. high transitivity, or the tendency for nodes to form tightly connected clusters, mirrors the cohesive nature of superhero teams. by analyzing these features within the marvel universe, we can gain insights into the storytelling mechanisms that make these narratives so compelling and relatable to audiences.
+furthermore, this research contributes to a broader understanding of how fictional networks are crafted to resonate with real-world social dynamics. marvel’s writers often use interconnected narratives to create a sense of continuity and interdependence, emphasizing themes of teamwork, leadership, and the balance of individual and collective goals. these themes are central to human experiences, making the marvel universe a mirror of the societies we live in. by exploring how characters interact and influence one another, this study not only enhances our appreciation of the marvel universe but also illustrates the relevance of network theory in analyzing both fictional and real-world systems.
+ultimately, the analysis of the marvel universe as a superhero network bridges the gap between entertainment and academic inquiry. it underscores the value of applying social network theory to understand the dynamics of fictional worlds and their reflection of societal structures. by answering the proposed research questions, this study aims to illuminate the roles of central characters, the formation of superhero clusters, and the broader implications of these dynamics for storytelling and cultural representation. in doing so, it demonstrates how the marvel universe serves as a fascinating microcosm for exploring the complexity of human and superhuman relationships.
+
+popularity and cultural impact of comics
+comics, especially superhero narratives, have captivated audiences for decades due to their ability to combine action, moral dilemmas, and relatable themes. they provide escapism while tackling universal issues such as justice, resilience, and societal conflict. scholars like mccloud (1993) emphasize the unique power of comics to blend visual and textual storytelling, creating immersive experiences that resonate emotionally with readers. superheroes themselves serve as cultural icons, embodying the ideals, struggles, and aspirations of the eras in which they were created. from captain america's patriotic symbolism during world war ii to the inclusive narratives surrounding heroes like black panther and ms. marvel, these characters have provided a platform for societal commentary and the representation of diverse perspectives. moreover, the appeal of superhero narratives lies in their emphasis on community and connection—heroes rarely work in isolation but are part of larger networks of allies and adversaries. also, superhero stories often extend beyond entertainment, offering nuanced critiques of social issues. the x-men, for example, are frequently interpreted as allegories for marginalized communities, exploring themes of acceptance and prejudice. similarly, avengers storylines highlight themes of teamwork and leadership, while inter-team rivalries reflect real-world political and ideological conflicts. these elements make the marvel universe not only a fictional narrative but also a lens through which societal dynamics are examined.
+
+social network theory and its application to marvel
+social network theory offers a robust framework for analyzing the complex relationships within the marvel universe. at its core, the theory posits that individual actors (nodes) are interconnected through relationships (edges), forming networks that influence behaviors, roles, and outcomes. within the superhero network, centrality measures such as degree, betweenness, and eigenvector centrality help identify influential characters who act as connectors or hubs, linking disparate groups and facilitating collaboration.
+furthermore, community detection algorithms, grounded in modularity optimization, uncover clusters of superheroes—groups of characters with dense internal connections but fewer ties to the rest of the network. these clusters often reflect narrative dynamics, such as teams like the avengers or x-men, and provide insights into the storytelling strategies that highlight collaboration and conflict.
+the study of the marvel superhero network through these lenses allows us to explore how fictional worlds emulate real-world social structures. just as individuals in human social networks play distinct roles—leaders, brokers, or peripheral actors—superheroes fulfill similar functions within their universe. this analysis not only deepens our understanding of the marvel universe but also illustrates the power of social network theory in unraveling the complexity of human (and superhuman) relationships.
+
+description of the dataset
+obtaining from kaggle (https://www.kaggle.com/datasets/csanhueza/the-marvel-universe-social-network), this is how the data set looks like:
+
+the data set is a 574,467 by 2 table which contains the network of heroes which appear together in the comics. this structure suggests that the dataset could be used to construct a social network, where each hero serves as a node, and the interactions between them form edges connecting these nodes. this format is particularly suitable for studying various network-based attributes, such as five-number summary, key influences, or community detection.
+
+network visualization(s)
+we found that, after creating a social network using the data set, our network has four connected components where one of them is particularly large and the other three are negligible as they only have 18 vertices combined. the following is the largest connected component of the network and another one below it is the same network with community detection.
+
+social network analysis of the marvel universe
+as mentioned before, the marvel universe is a fictional realm made up of hundreds of characters, storylines, and relationships. the network is filled with characters that interact with each other through different movies, comics, and series, which we can explore through social network analysis tools in r. in our social network analysis, we computed the five-number summary, centrality measures, and community detection. we can utilize these tools to answer our questions about who the most influential superheroes are and what community detection can tell us about the marvel universe.
+the first thing we did was import the necessary data to analyze the marvel universe. then, we needed to convert the csv to a graph, which allows us to do the necessary computations.
+# import data
+hero_network <- read.csv("hero-network.csv")
+# convert network to graph
+hero_graph <- graph_from_data_frame(hero_network, directed = false)
+
+five-number summary
+after importing and converting the data, we focused on writing code to compile the five-number summary. to be specific, the five-number summary consists of the network size, density, number of components, diameter, and the clustering coefficient. this gives us information about the overall structural properties of the marvel universe.
+the network size is the total number of nodes in the network.
+# network size
+network_size <- vcount(hero_graph)
+
+the density is the proportion of edges to all possible edges in the network. this information tells us how interconnected the network is.
+# density
+density <- edge_density(hero_graph)
+
+the next property we looked at was the number of components, which tell us the total number of disconnected subgraphs.
+# components
+components <- components(hero_graph)$no
+
+the diameter of the largest component in the marvel universe which is the longest shortest path between any two heroes in the largest component.
+# diameter
+largest_component <- induced_subgraph(hero_graph, which(components(hero_graph)$membership == which.max(components(hero_graph)$csize)))
+
+diameter <- diameter(largest_component, directed = false)
+
+here, we measured the clustering coefficient, which is the fraction of closed triplets over all connected triplets, both open and closed. in other words, how likely it is that two heroes connected to one hero also have a relationship with each other.
+clustering_coefficient <- transitivity(hero_graph)
+
+here, we compiled all of the computations together, so the results are returned in an organized list.
+# five number summary
+list(
+  network_size = network_size,
+  density = density,
+  components = components,
+  diameter = diameter,
+  clustering_coefficient = clustering_coefficient
+)
+## $network_size
+## [1] 6426
+##
+## $density
+## [1] 0.02782795
+##
+## $components
+## [1] 4
+##
+## $diameter
+## [1] 5
+##
+## $clustering_coefficient
+## [1] 0.1945397
+
+centrality measures and correlation matrix
+the second part of the social network analysis focuses on calculating the following centrality measures: degree, betweenness, closeness, and eigenvector. the degree centrality is the number of edges connected to a hero. then, we looked at betweenness centrality, which measures how often a hero lies on the shortest paths between other heroes. we also computed closeness centrality to measure how close a hero is to all other heroes in the marvel universe. lastly, we computed the eigenvector centrality, which measures a hero’s influence based on the importance of its neighbors.
+# centrality calculations
+# degree centrality
+degree_cent <- degree(hero_graph)
+
+# betweenness centrality
+betweenness_cent <- betweenness(hero_graph, normalized = true)
+
+# closeness centrality
+closeness_cent <- closeness(hero_graph, normalized = true)
+
+# eigenvector centrality
+eigenvector_cent <- eigen_centrality(hero_graph)$vector
+
+after writing the code to calculate each centrality measure, we created a dataframe of each of them and ordered the heroes based on centrality measures to easily identify the most influential and central nodes in the marvel universe.
+# create dataframe of centralities
+centrality_df <- data.frame(
+  node = names(degree_cent),
+  degree = degree_cent,
+  betweenness = betweenness_cent,
+  closeness = closeness_cent,
+  eigenvector = eigenvector_cent
+)
+# order heroes by importance based on degree
+degree_df <- centrality_df[order(-centrality_df$degree), ]
+head(degree_df, 5)
+##                                      node degree betweenness closeness
+## captain america           captain america  16499  0.09400364 0.5853280
+## spider-man/peter par spider-man/peter par  13717  0.12981558 0.5757031
+## iron man/tony stark  iron man/tony stark   11817  0.05176861 0.5630053
+## thor/dr. donald blak thor/dr. donald blak  11427  0.03736845 0.5524228
+## thing/benjamin j. gr thing/benjamin j. gr  10681  0.03308810 0.5593191
+##                      eigenvector
+## captain america        1.0000000
+## spider-man/peter par   0.4428942
+## iron man/tony stark    0.7726545
+## thor/dr. donald blak   0.6848890
+## thing/benjamin j. gr   0.7991839
+# order heroes by importance based on betweenness
+betweenness_df <- centrality_df[order(-centrality_df$betweenness), ]
+head(betweenness_df, 5)
+##                                      node degree betweenness closeness
+## spider-man/peter par spider-man/peter par  13717  0.12981558 0.5757031
+## captain america           captain america  16499  0.09400364 0.5853280
+## iron man/tony stark  iron man/tony stark   11817  0.05176861 0.5630053
+## wolverine/logan          wolverine/logan   10353  0.05156761 0.5564530
+## dr. strange/stephen  dr. strange/stephen    5576  0.04107434 0.5387656
+##                      eigenvector
+## spider-man/peter par   0.4428942
+## captain america        1.0000000
+## iron man/tony stark    0.7726545
+## wolverine/logan        0.4507776
+## dr. strange/stephen    0.2247140
+# order heroes by importance based on closeness
+closeness_df <- centrality_df[order(-centrality_df$closeness), ]
+head(closeness_df, 5)
+##                          node degree  betweenness closeness eigenvector
+## ludlum, ross     ludlum, ross     13 1.615214e-08         1           0
+## orwell                 orwell     13 1.615214e-08         1           0
+## asher, michael asher, michael     13 1.615214e-08         1           0
+## fagin                   fagin     13 1.615214e-08         1           0
+## hoffman               hoffman     13 1.615214e-08         1           0
+# order heroes by importance based on eigenvector
+eigen_df <- centrality_df[order(-centrality_df$eigenvector), ]
+head(eigen_df, 5)
+##                                      node degree betweenness closeness
+## captain america           captain america  16499  0.09400364 0.5853280
+## thing/benjamin j. gr thing/benjamin j. gr  10681  0.03308810 0.5593191
+## human torch/johnny s human torch/johnny s  10237  0.02616542 0.5564047
+## iron man/tony stark  iron man/tony stark   11817  0.05176861 0.5630053
+## mr. fantastic/reed r mr. fantastic/reed r   9775  0.02743416 0.5576153
+##                      eigenvector
+## captain america        1.0000000
+## thing/benjamin j. gr   0.7991839
+## human torch/johnny s   0.7850654
+## iron man/tony stark    0.7726545
+## mr. fantastic/reed r   0.7715652
+
+based on the centrality measures, we also created a correlation matrix where each cell represents the correlation between two centrality measures. the numbers in each cell reveal the relationships between centrality measures. doing this helps us identify relationships by understanding which centrality measures are aligned and which are distinct.
+# correlation matrix
+cor_matrix <- cor(centrality_df[, -1])
+cor_matrix
+##                degree betweenness closeness eigenvector
+## degree      1.0000000   0.7959734 0.4207373   0.9549524
+## betweenness 0.7959734   1.0000000 0.2413997   0.7220559
+## closeness   0.4207373   0.2413997 1.0000000   0.3597889
+## eigenvector 0.9549524   0.7220559 0.3597889   1.0000000
+
+community detection algorithm: walktrap
+the last section of our social network analysis is community detection to identify clusters of heroes in the network. we used the walktrap algorithm, which is based on the principle that random walks on the graph are more likely to stay within densely connected communities than to move between them. this algorithm uses short random walks for community detection, provides multiple community levels, is ideal for strongly cohesive clusters, and considers modularity for partitioning.
+walktrap_comm <- cluster_walktrap(hero_graph)
+walktrap_num_comm <- length(unique(membership(walktrap_comm)))
+walktrap_mod <- modularity(walktrap_comm)
+walktrap_num_comm
+## [1] 273
+walktrap_mod
+## [1] 0.437035
+
+
+results and implications for theory and practice in the marvel superhero network
+the marvel universe superhero network provides a unique lens for exploring network theory, centrality, and community dynamics. through network analysis, we have uncovered key structural properties, identified influential characters, and analyzed hero group formation. this essay discusses our findings and their implications for theoretical understanding and practical applications in real-world leadership, collaboration, and community-building.
+
+network overview
+the marvel universe comprises 6,426 unique heroes, forming a moderately sparse network with a density of 2.78%. the network's diameter is 5, reflecting a small-world effect where any hero can connect to another in at most five steps. the clustering coefficient of 0.1945 indicates limited local clustering, suggesting that heroes connected to the same central figure are less likely to collaborate directly. despite this, the network remains cohesive, with only four disconnected components.
+
+centrality analysis
+key centrality measures reveal the most influential heroes:
+spider-man: high degree and eigenvector centrality position him as a global connector and influencer.
+iron man: high betweenness centrality highlights his role as a bridge linking disparate groups.
+captain america: high closeness centrality underscores his efficiency in reaching other nodes.
+wolverine: high team-up frequencies make him a critical connector across teams.
+these characters are pivotal in maintaining network cohesion and driving intergroup collaborations.
+
+community detection
+using the walktrap algorithm, we identified 273 communities, each representing groups of heroes with frequent interactions. examples include:
+avengers: led by iron man and captain america.
+x-men: centered around wolverine, cyclops, and storm.
+fantastic four: featuring mr. fantastic, invisible woman, human torch, and the thing.
+a modularity score of 0.437 indicates a reasonably well-defined community structure, though crossovers blur boundaries between groups, reflecting marvel's dynamic storytelling.
+
+implications for theory
+
+leadership and centrality
+the high centrality values of characters like captain america and iron man demonstrate that leadership traits—such as the ability to inspire and unite—are integral to network influence. this supports theories emphasizing the role of connectors and bridges in sustaining network cohesion and facilitating communication.
+
+community formation and modularity
+the detection of 273 communities aligns with theories of modular networks, where tightly connected subgroups coexist within larger systems. marvel's communities reflect real-world dynamics, such as shared goals, geographic proximity, and common traits or experiences. this supports the homophily principle, which posits that individuals with similar characteristics or goals are more likely to form connections.
+
+small-world effect
+the small diameter and reliance on central nodes confirm the small-world phenomenon, where information or influence can spread efficiently across even sparse networks. this theoretical concept is vital for understanding social systems, emphasizing the importance of global connectivity over dense local clustering.
+
+implications for practice
+leadership development
+understanding the traits of central heroes can inform leadership training:
+encouraging leaders to act as connectors by bridging isolated groups.
+fostering traits like inspiration and collaboration, seen in captain america's ability to unite diverse teams.
+organizations can cultivate leaders who not only excel in direct interactions but also influence and connect broader systems.
+team building
+marvel's community dynamics offer insights into group formation:
+teams formed around shared goals or geographic proximity are likely to perform well.
+crossovers between groups reflect the importance of inter-team communication in fostering innovation and resilience.
+practically, this can guide workplace collaboration strategies, such as forming project teams with complementary skill sets or encouraging inter-departmental networking.
+marketing and storytelling
+marvel's network structure provides a blueprint for engaging audiences:
+characters like spider-man and wolverine, who frequently collaborate, can anchor cross-team storylines or marketing campaigns.
+community overlaps suggest opportunities for bundled products or events appealing to fans of multiple teams.
+digital and organizational networks
+insights from marvel's network can inform digital platforms and organizational structures:
+social media recommendation algorithms can mimic the small-world effect to connect users efficiently.
+organizations can design structures that balance modularity (team specialization) with global connectivity (inter-department collaboration).
+
+the analysis of the marvel superhero network bridges theory and practice, offering insights into leadership, group dynamics, and efficient connectivity. heroes like captain america and spider-man exemplify key roles as connectors and influencers, reflecting traits valued in real-world leaders. the modular community structure mirrors how human groups form around shared traits or goals, emphasizing universal principles of collaboration. these findings not only deepen our understanding of network science but also provide actionable strategies for enhancing leadership, storytelling, and organizational efficiency in various fields.
+"""
+
+theirs1 = """
+
+     to sherlock holmes she is always the woman. i have seldom heard him
+     mention her under any other name. in his eyes she eclipses and
+     predominates the whole of her sex. it was not that he felt any
+     emotion akin to love for irene adler. all emotions, and that one
+     particularly, were abhorrent to his cold, precise but admirably
+     balanced mind. he was, i take it, the most perfect reasoning and
+     observing machine that the world has seen, but as a lover he would
+     have placed himself in a false position. he never spoke of the softer
+     passions, save with a gibe and a sneer. they were admirable things
+     for the observer--excellent for drawing the veil from men's motives
+     and actions. but for the trained reasoner to admit such intrusions
+     into his own delicate and finely adjusted temperament was to
+     introduce a distracting factor which might throw a doubt upon all his
+     mental results. grit in a sensitive instrument, or a crack in one of
+     his own high-power lenses, would not be more disturbing than a strong
+     emotion in a nature such as his. and yet there was but one woman to
+     him, and that woman was the late irene adler, of dubious and
+     questionable memory.
+
+     i had seen little of holmes lately. my marriage had drifted us away
+     from each other. my own complete happiness, and the home-centred
+     interests which rise up around the man who first finds himself master
+     of his own establishment, were sufficient to absorb all my attention,
+     while holmes, who loathed every form of society with his whole
+     bohemian soul, remained in our lodgings in baker street, buried among
+     his old books, and alternating from week to week between cocaine and
+     ambition, the drowsiness of the drug, and the fierce energy of his
+     own keen nature. he was still, as ever, deeply attracted by the study
+     of crime, and occupied his immense faculties and extraordinary powers
+     of observation in following out those clues, and clearing up those
+     mysteries which had been abandoned as hopeless by the official
+     police. from time to time i heard some vague account of his doings:
+     of his summons to odessa in the case of the trepoff murder, of his
+     clearing up of the singular tragedy of the atkinson brothers at
+     trincomalee, and finally of the mission which he had accomplished so
+     delicately and successfully for the reigning family of holland.
+     beyond these signs of his activity, however, which i merely shared
+     with all the readers of the daily press, i knew little of my former
+     friend and companion.
+
+     one night--it was on the twentieth of march, 1888--i was returning
+     from a journey to a patient (for i had now returned to civil
+     practice), when my way led me through baker street. as i passed the
+     well-remembered door, which must always be associated in my mind with
+     my wooing, and with the dark incidents of the study in scarlet, i was
+     seized with a keen desire to see holmes again, and to know how he was
+     employing his extraordinary powers. his rooms were brilliantly lit,
+     and, even as i looked up, i saw his tall, spare figure pass twice in
+     a dark silhouette against the blind. he was pacing the room swiftly,
+     eagerly, with his head sunk upon his chest and his hands clasped
+     behind him. to me, who knew his every mood and habit, his attitude
+     and manner told their own story. he was at work again. he had risen
+     out of his drug-created dreams and was hot upon the scent of some new
+     problem. i rang the bell and was shown up to the chamber which had
+     formerly been in part my own.
+
+     his manner was not effusive. it seldom was; but he was glad, i think,
+     to see me. with hardly a word spoken, but with a kindly eye, he waved
+     me to an armchair, threw across his case of cigars, and indicated a
+     spirit case and a gasogene in the corner. then he stood before the
+     fire and looked me over in his singular introspective fashion.
+
+     "wedlock suits you," he remarked. "i think, watson, that you have put
+     on seven and a half pounds since i saw you."
+
+     "seven!" i answered.
+
+     "indeed, i should have thought a little more. just a trifle more, i
+     fancy, watson. and in practice again, i observe. you did not tell me
+     that you intended to go into harness."
+
+     "then, how do you know?"
+
+     "i see it, i deduce it. how do i know that you have been getting
+     yourself very wet lately, and that you have a most clumsy and
+     careless servant girl?"
+
+     "my dear holmes," said i, "this is too much. you would certainly have
+     been burned, had you lived a few centuries ago. it is true that i had
+     a country walk on thursday and came home in a dreadful mess, but as i
+     have changed my clothes i can't imagine how you deduce it. as to mary
+     jane, she is incorrigible, and my wife has given her notice, but
+     there, again, i fail to see how you work it out."
+
+     he chuckled to himself and rubbed his long, nervous hands together.
+
+     "it is simplicity itself," said he; "my eyes tell me that on the
+     inside of your left shoe, just where the firelight strikes it, the
+     leather is scored by six almost parallel cuts. obviously they have
+     been caused by someone who has very carelessly scraped round the
+     edges of the sole in order to remove crusted mud from it. hence, you
+     see, my double deduction that you had been out in vile weather, and
+     that you had a particularly malignant boot-slitting specimen of the
+     london slavey. as to your practice, if a gentleman walks into my
+     rooms smelling of iodoform, with a black mark of nitrate of silver
+     upon his right forefinger, and a bulge on the right side of his
+     top-hat to show where he has secreted his stethoscope, i must be
+     dull, indeed, if i do not pronounce him to be an active member of the
+     medical profession."
+
+     i could not help laughing at the ease with which he explained his
+     process of deduction. "when i hear you give your reasons," i
+     remarked, "the thing always appears to me to be so ridiculously
+     simple that i could easily do it myself, though at each successive
+     instance of your reasoning i am baffled until you explain your
+     process. and yet i believe that my eyes are as good as yours."
+
+     "quite so," he answered, lighting a cigarette, and throwing himself
+     down into an armchair. "you see, but you do not observe. the
+     distinction is clear. for example, you have frequently seen the steps
+     which lead up from the hall to this room."
+
+     "frequently."
+
+     "how often?"
+
+     "well, some hundreds of times."
+
+     "then how many are there?"
+
+     "how many? i don't know."
+
+     "quite so! you have not observed. and yet you have seen. that is just
+     my point. now, i know that there are seventeen steps, because i have
+     both seen and observed. by-the-way, since you are interested in these
+     little problems, and since you are good enough to chronicle one or
+     two of my trifling experiences, you may be interested in this." he
+     threw over a sheet of thick, pink-tinted note-paper which had been
+     lying open upon the table. "it came by the last post," said he. "read
+     it aloud."
+
+     the note was undated, and without either signature or address.
+
+     "there will call upon you to-night, at a quarter to eight o'clock,"
+     it said, "a gentleman who desires to consult you upon a matter of the
+     very deepest moment. your recent services to one of the royal houses
+     of europe have shown that you are one who may safely be trusted with
+     matters which are of an importance which can hardly be exaggerated.
+     this account of you we have from all quarters received. be in your
+     chamber then at that hour, and do not take it amiss if your visitor
+     wear a mask."
+
+     "this is indeed a mystery," i remarked. "what do you imagine that it
+     means?"
+
+     "i have no data yet. it is a capital mistake to theorize before one
+     has data. insensibly one begins to twist facts to suit theories,
+     instead of theories to suit facts. but the note itself. what do you
+     deduce from it?"
+
+     i carefully examined the writing, and the paper upon which it was
+     written.
+
+     "the man who wrote it was presumably well to do," i remarked,
+     endeavouring to imitate my companion's processes. "such paper could
+     not be bought under half a crown a packet. it is peculiarly strong
+     and stiff."
+
+     "peculiar--that is the very word," said holmes. "it is not an english
+     paper at all. hold it up to the light."
+
+     i did so, and saw a large "e" with a small "g," a "p," and a large
+     "g" with a small "t" woven into the texture of the paper.
+
+     "what do you make of that?" asked holmes.
+
+     "the name of the maker, no doubt; or his monogram, rather."
+
+     "not at all. the 'g' with the small 't' stands for 'gesellschaft,'
+     which is the german for 'company.' it is a customary contraction like
+     our 'co.' 'p,' of course, stands for 'papier.' now for the 'eg.' let
+     us glance at our continental gazetteer." he took down a heavy brown
+     volume from his shelves. "eglow, eglonitz--here we are, egria. it is
+     in a german-speaking country--in bohemia, not far from carlsbad.
+     'remarkable as being the scene of the death of wallenstein, and for
+     its numerous glass-factories and paper-mills.' ha, ha, my boy, what
+     do you make of that?" his eyes sparkled, and he sent up a great blue
+     triumphant cloud from his cigarette.
+
+     "the paper was made in bohemia," i said.
+
+     "precisely. and the man who wrote the note is a german. do you note
+     the peculiar construction of the sentence--'this account of you we
+     have from all quarters received.' a frenchman or russian could not
+     have written that. it is the german who is so uncourteous to his
+     verbs. it only remains, therefore, to discover what is wanted by this
+     german who writes upon bohemian paper and prefers wearing a mask to
+     showing his face. and here he comes, if i am not mistaken, to resolve
+     all our doubts."
+
+     as he spoke there was the sharp sound of horses' hoofs and grating
+     wheels against the curb, followed by a sharp pull at the bell. holmes
+     whistled.
+
+     "a pair, by the sound," said he. "yes," he continued, glancing out of
+     the window. "a nice little brougham and a pair of beauties. a hundred
+     and fifty guineas apiece. there's money in this case, watson, if
+     there is nothing else."
+
+     "i think that i had better go, holmes."
+
+     "not a bit, doctor. stay where you are. i am lost without my boswell.
+     and this promises to be interesting. it would be a pity to miss it."
+
+     "but your client--"
+
+     "never mind him. i may want your help, and so may he. here he comes.
+     sit down in that armchair, doctor, and give us your best attention."
+
+     a slow and heavy step, which had been heard upon the stairs and in
+     the passage, paused immediately outside the door. then there was a
+     loud and authoritative tap.
+
+     "come in!" said holmes.
+
+     a man entered who could hardly have been less than six feet six
+     inches in height, with the chest and limbs of a hercules. his dress
+     was rich with a richness which would, in england, be looked upon as
+     akin to bad taste. heavy bands of astrakhan were slashed across the
+     sleeves and fronts of his double-breasted coat, while the deep blue
+     cloak which was thrown over his shoulders was lined with
+     flame-coloured silk and secured at the neck with a brooch which
+     consisted of a single flaming beryl. boots which extended halfway up
+     his calves, and which were trimmed at the tops with rich brown fur,
+     completed the impression of barbaric opulence which was suggested by
+     his whole appearance. he carried a broad-brimmed hat in his hand,
+     while he wore across the upper part of his face, extending down past
+     the cheekbones, a black vizard mask, which he had apparently adjusted
+     that very moment, for his hand was still raised to it as he entered.
+     from the lower part of the face he appeared to be a man of strong
+     character, with a thick, hanging lip, and a long, straight chin
+     suggestive of resolution pushed to the length of obstinacy.
+
+     "you had my note?" he asked with a deep harsh voice and a strongly
+     marked german accent. "i told you that i would call." he looked from
+     one to the other of us, as if uncertain which to address.
+
+     "pray take a seat," said holmes. "this is my friend and colleague,
+     dr. watson, who is occasionally good enough to help me in my cases.
+     whom have i the honour to address?"
+
+     "you may address me as the count von kramm, a bohemian nobleman. i
+     understand that this gentleman, your friend, is a man of honour and
+     discretion, whom i may trust with a matter of the most extreme
+     importance. if not, i should much prefer to communicate with you
+     alone."
+
+     i rose to go, but holmes caught me by the wrist and pushed me back
+     into my chair. "it is both, or none," said he. "you may say before
+     this gentleman anything which you may say to me."
+
+     the count shrugged his broad shoulders. "then i must begin," said he,
+     "by binding you both to absolute secrecy for two years; at the end of
+     that time the matter will be of no importance. at present it is not
+     too much to say that it is of such weight it may have an influence
+     upon european history."
+
+     "i promise," said holmes.
+
+     "and i."
+
+     "you will excuse this mask," continued our strange visitor. "the
+     august person who employs me wishes his agent to be unknown to you,
+     and i may confess at once that the title by which i have just called
+     myself is not exactly my own."
+
+     "i was aware of it," said holmes dryly.
+
+     "the circumstances are of great delicacy, and every precaution has to
+     be taken to quench what might grow to be an immense scandal and
+     seriously compromise one of the reigning families of europe. to speak
+     plainly, the matter implicates the great house of ormstein,
+     hereditary kings of bohemia."
+
+     "i was also aware of that," murmured holmes, settling himself down in
+     his armchair and closing his eyes.
+
+     our visitor glanced with some apparent surprise at the languid,
+     lounging figure of the man who had been no doubt depicted to him as
+     the most incisive reasoner and most energetic agent in europe. holmes
+     slowly reopened his eyes and looked impatiently at his gigantic
+     client.
+
+     "if your majesty would condescend to state your case," he remarked,
+     "i should be better able to advise you."
+
+     the man sprang from his chair and paced up and down the room in
+     uncontrollable agitation. then, with a gesture of desperation, he
+     tore the mask from his face and hurled it upon the ground. "you are
+     right," he cried; "i am the king. why should i attempt to conceal
+     it?"
+
+     "why, indeed?" murmured holmes. "your majesty had not spoken before i
+     was aware that i was addressing wilhelm gottsreich sigismond von
+     ormstein, grand duke of cassel-felstein, and hereditary king of
+     bohemia."
+
+     "but you can understand," said our strange visitor, sitting down once
+     more and passing his hand over his high white forehead, "you can
+     understand that i am not accustomed to doing such business in my own
+     person. yet the matter was so delicate that i could not confide it to
+     an agent without putting myself in his power. i have come incognito
+     from prague for the purpose of consulting you."
+
+     "then, pray consult," said holmes, shutting his eyes once more.
+
+     "the facts are briefly these: some five years ago, during a lengthy
+     visit to warsaw, i made the acquaintance of the well-known
+     adventuress, irene adler. the name is no doubt familiar to you."
+
+     "kindly look her up in my index, doctor," murmured holmes without
+     opening his eyes. for many years he had adopted a system of docketing
+     all paragraphs concerning men and things, so that it was difficult to
+     name a subject or a person on which he could not at once furnish
+     information. in this case i found her biography sandwiched in between
+     that of a hebrew rabbi and that of a staff-commander who had written
+     a monograph upon the deep-sea fishes.
+
+     "let me see!" said holmes. "hum! born in new jersey in the year 1858.
+     contralto--hum! la scala, hum! prima donna imperial opera of
+     warsaw--yes! retired from operatic stage--ha! living in london--quite
+     so! your majesty, as i understand, became entangled with this young
+     person, wrote her some compromising letters, and is now desirous of
+     getting those letters back."
+
+     "precisely so. but how--"
+
+     "was there a secret marriage?"
+
+     "none."
+
+     "no legal papers or certificates?"
+
+     "none."
+
+     "then i fail to follow your majesty. if this young person should
+     produce her letters for blackmailing or other purposes, how is she to
+     prove their authenticity?"
+
+     "there is the writing."
+
+     "pooh, pooh! forgery."
+
+     "my private note-paper."
+
+     "stolen."
+
+     "my own seal."
+
+     "imitated."
+
+     "my photograph."
+
+     "bought."
+
+     "we were both in the photograph."
+
+     "oh, dear! that is very bad! your majesty has indeed committed an
+     indiscretion."
+
+     "i was mad--insane."
+
+     "you have compromised yourself seriously."
+
+     "i was only crown prince then. i was young. i am but thirty now."
+
+     "it must be recovered."
+
+     "we have tried and failed."
+
+     "your majesty must pay. it must be bought."
+
+     "she will not sell."
+
+     "stolen, then."
+
+     "five attempts have been made. twice burglars in my pay ransacked her
+     house. once we diverted her luggage when she travelled. twice she has
+     been waylaid. there has been no result."
+
+     "no sign of it?"
+
+     "absolutely none."
+
+     holmes laughed. "it is quite a pretty little problem," said he.
+
+     "but a very serious one to me," returned the king reproachfully.
+
+     "very, indeed. and what does she propose to do with the photograph?"
+
+     "to ruin me."
+
+     "but how?"
+
+     "i am about to be married."
+
+     "so i have heard."
+
+     "to clotilde lothman von saxe-meningen, second daughter of the king
+     of scandinavia. you may know the strict principles of her family. she
+     is herself the very soul of delicacy. a shadow of a doubt as to my
+     conduct would bring the matter to an end."
+
+     "and irene adler?"
+
+     "threatens to send them the photograph. and she will do it. i know
+     that she will do it. you do not know her, but she has a soul of
+     steel. she has the face of the most beautiful of women, and the mind
+     of the most resolute of men. rather than i should marry another
+     woman, there are no lengths to which she would not go--none."
+
+     "you are sure that she has not sent it yet?"
+
+     "i am sure."
+
+     "and why?"
+
+     "because she has said that she would send it on the day when the
+     betrothal was publicly proclaimed. that will be next monday."
+
+     "oh, then we have three days yet," said holmes with a yawn. "that is
+     very fortunate, as i have one or two matters of importance to look
+     into just at present. your majesty will, of course, stay in london
+     for the present?"
+
+     "certainly. you will find me at the langham under the name of the
+     count von kramm."
+
+     "then i shall drop you a line to let you know how we progress."
+
+     "pray do so. i shall be all anxiety."
+
+     "then, as to money?"
+
+     "you have carte blanche."
+
+     "absolutely?"
+
+     "i tell you that i would give one of the provinces of my kingdom to
+     have that photograph."
+
+     "and for present expenses?"
+
+     the king took a heavy chamois leather bag from under his cloak and
+     laid it on the table.
+
+     "there are three hundred pounds in gold and seven hundred in notes,"
+     he said.
+
+     holmes scribbled a receipt upon a sheet of his note-book and handed
+     it to him.
+
+     "and mademoiselle's address?" he asked.
+
+     "is briony lodge, serpentine avenue, st. john's wood."
+
+     holmes took a note of it. "one other question," said he. "was the
+     photograph a cabinet?"
+
+     "it was."
+
+     "then, good-night, your majesty, and i trust that we shall soon have
+     some good news for you. and good-night, watson," he added, as the
+     wheels of the royal brougham rolled down the street. "if you will be
+     good enough to call to-morrow afternoon at three o'clock i should
+     like to chat this little matter over with you."
+
+
+
+
+
+          chapter ii
+
+
+
+     at three o'clock precisely i was at baker street, but holmes had not
+     yet returned. the landlady informed me that he had left the house
+     shortly after eight o'clock in the morning. i sat down beside the
+     fire, however, with the intention of awaiting him, however long he
+     might be. i was already deeply interested in his inquiry, for, though
+     it was surrounded by none of the grim and strange features which were
+     associated with the two crimes which i have already recorded, still,
+     the nature of the case and the exalted station of his client gave it
+     a character of its own. indeed, apart from the nature of the
+     investigation which my friend had on hand, there was something in his
+     masterly grasp of a situation, and his keen, incisive reasoning,
+     which made it a pleasure to me to study his system of work, and to
+     follow the quick, subtle methods by which he disentangled the most
+     inextricable mysteries. so accustomed was i to his invariable success
+     that the very possibility of his failing had ceased to enter into my
+     head.
+
+     it was close upon four before the door opened, and a drunken-looking
+     groom, ill-kempt and side-whiskered, with an inflamed face and
+     disreputable clothes, walked into the room. accustomed as i was to my
+     friend's amazing powers in the use of disguises, i had to look three
+     times before i was certain that it was indeed he. with a nod he
+     vanished into the bedroom, whence he emerged in five minutes
+     tweed-suited and respectable, as of old. putting his hands into his
+     pockets, he stretched out his legs in front of the fire and laughed
+     heartily for some minutes.
+
+     "well, really!" he cried, and then he choked and laughed again until
+     he was obliged to lie back, limp and helpless, in the chair.
+
+     "what is it?"
+
+     "it's quite too funny. i am sure you could never guess how i employed
+     my morning, or what i ended by doing."
+
+     "i can't imagine. i suppose that you have been watching the habits,
+     and perhaps the house, of miss irene adler."
+
+     "quite so; but the sequel was rather unusual. i will tell you,
+     however. i left the house a little after eight o'clock this morning
+     in the character of a groom out of work. there is a wonderful
+     sympathy and freemasonry among horsey men. be one of them, and you
+     will know all that there is to know. i soon found briony lodge. it is
+     a bijou villa, with a garden at the back, but built out in front
+     right up to the road, two stories. chubb lock to the door. large
+     sitting-room on the right side, well furnished, with long windows
+     almost to the floor, and those preposterous english window fasteners
+     which a child could open. behind there was nothing remarkable, save
+     that the passage window could be reached from the top of the
+     coach-house. i walked round it and examined it closely from every
+     point of view, but without noting anything else of interest.
+
+     "i then lounged down the street and found, as i expected, that there
+     was a mews in a lane which runs down by one wall of the garden. i
+     lent the ostlers a hand in rubbing down their horses, and received in
+     exchange twopence, a glass of half and half, two fills of shag
+     tobacco, and as much information as i could desire about miss adler,
+     to say nothing of half a dozen other people in the neighbourhood in
+     whom i was not in the least interested, but whose biographies i was
+     compelled to listen to."
+
+     "and what of irene adler?" i asked.
+
+     "oh, she has turned all the men's heads down in that part. she is the
+     daintiest thing under a bonnet on this planet. so say the
+     serpentine-mews, to a man. she lives quietly, sings at concerts,
+     drives out at five every day, and returns at seven sharp for dinner.
+     seldom goes out at other times, except when she sings. has only one
+     male visitor, but a good deal of him. he is dark, handsome, and
+     dashing, never calls less than once a day, and often twice. he is a
+     mr. godfrey norton, of the inner temple. see the advantages of a
+     cabman as a confidant. they had driven him home a dozen times from
+     serpentine-mews, and knew all about him. when i had listened to all
+     they had to tell, i began to walk up and down near briony lodge once
+     more, and to think over my plan of campaign.
+
+     "this godfrey norton was evidently an important factor in the matter.
+     he was a lawyer. that sounded ominous. what was the relation between
+     them, and what the object of his repeated visits? was she his client,
+     his friend, or his mistress? if the former, she had probably
+     transferred the photograph to his keeping. if the latter, it was less
+     likely. on the issue of this question depended whether i should
+     continue my work at briony lodge, or turn my attention to the
+     gentleman's chambers in the temple. it was a delicate point, and it
+     widened the field of my inquiry. i fear that i bore you with these
+     details, but i have to let you see my little difficulties, if you are
+     to understand the situation."
+
+     "i am following you closely," i answered.
+
+     "i was still balancing the matter in my mind when a hansom cab drove
+     up to briony lodge, and a gentleman sprang out. he was a remarkably
+     handsome man, dark, aquiline, and moustached--evidently the man of
+     whom i had heard. he appeared to be in a great hurry, shouted to the
+     cabman to wait, and brushed past the maid who opened the door with
+     the air of a man who was thoroughly at home.
+
+     "he was in the house about half an hour, and i could catch glimpses
+     of him in the windows of the sitting-room, pacing up and down,
+     talking excitedly, and waving his arms. of her i could see nothing.
+     presently he emerged, looking even more flurried than before. as he
+     stepped up to the cab, he pulled a gold watch from his pocket and
+     looked at it earnestly, 'drive like the devil,' he shouted, 'first to
+     gross & hankey's in regent street, and then to the church of st.
+     monica in the edgeware road. half a guinea if you do it in twenty
+     minutes!'
+
+     "away they went, and i was just wondering whether i should not do
+     well to follow them when up the lane came a neat little landau, the
+     coachman with his coat only half-buttoned, and his tie under his ear,
+     while all the tags of his harness were sticking out of the buckles.
+     it hadn't pulled up before she shot out of the hall door and into it.
+     i only caught a glimpse of her at the moment, but she was a lovely
+     woman, with a face that a man might die for.
+
+     "'the church of st. monica, john,' she cried, 'and half a sovereign
+     if you reach it in twenty minutes.'
+
+     "this was quite too good to lose, watson. i was just balancing
+     whether i should run for it, or whether i should perch behind her
+     landau when a cab came through the street. the driver looked twice at
+     such a shabby fare, but i jumped in before he could object. 'the
+     church of st. monica,' said i, 'and half a sovereign if you reach it
+     in twenty minutes.' it was twenty-five minutes to twelve, and of
+     course it was clear enough what was in the wind.
+
+     "my cabby drove fast. i don't think i ever drove faster, but the
+     others were there before us. the cab and the landau with their
+     steaming horses were in front of the door when i arrived. i paid the
+     man and hurried into the church. there was not a soul there save the
+     two whom i had followed and a surpliced clergyman, who seemed to be
+     expostulating with them. they were all three standing in a knot in
+     front of the altar. i lounged up the side aisle like any other idler
+     who has dropped into a church. suddenly, to my surprise, the three at
+     the altar faced round to me, and godfrey norton came running as hard
+     as he could towards me.
+
+     "'thank god,' he cried. 'you'll do. come! come!'
+
+     "'what then?' i asked.
+
+     "'come, man, come, only three minutes, or it won't be legal.'
+
+     "i was half-dragged up to the altar, and before i knew where i was i
+     found myself mumbling responses which were whispered in my ear, and
+     vouching for things of which i knew nothing, and generally assisting
+     in the secure tying up of irene adler, spinster, to godfrey norton,
+     bachelor. it was all done in an instant, and there was the gentleman
+     thanking me on the one side and the lady on the other, while the
+     clergyman beamed on me in front. it was the most preposterous
+     position in which i ever found myself in my life, and it was the
+     thought of it that started me laughing just now. it seems that there
+     had been some informality about their license, that the clergyman
+     absolutely refused to marry them without a witness of some sort, and
+     that my lucky appearance saved the bridegroom from having to sally
+     out into the streets in search of a best man. the bride gave me a
+     sovereign, and i mean to wear it on my watch-chain in memory of the
+     occasion."
+
+     "this is a very unexpected turn of affairs," said i; "and what then?"
+
+     "well, i found my plans very seriously menaced. it looked as if the
+     pair might take an immediate departure, and so necessitate very
+     prompt and energetic measures on my part. at the church door,
+     however, they separated, he driving back to the temple, and she to
+     her own house. 'i shall drive out in the park at five as usual,' she
+     said as she left him. i heard no more. they drove away in different
+     directions, and i went off to make my own arrangements."
+
+     "which are?"
+
+     "some cold beef and a glass of beer," he answered, ringing the bell.
+     "i have been too busy to think of food, and i am likely to be busier
+     still this evening. by the way, doctor, i shall want your
+     co-operation."
+
+     "i shall be delighted."
+
+     "you don't mind breaking the law?"
+
+     "not in the least."
+
+     "nor running a chance of arrest?"
+
+     "not in a good cause."
+
+     "oh, the cause is excellent!"
+
+     "then i am your man."
+
+     "i was sure that i might rely on you."
+
+     "but what is it you wish?"
+
+     "when mrs. turner has brought in the tray i will make it clear to
+     you. now," he said as he turned hungrily on the simple fare that our
+     landlady had provided, "i must discuss it while i eat, for i have not
+     much time. it is nearly five now. in two hours we must be on the
+     scene of action. miss irene, or madame, rather, returns from her
+     drive at seven. we must be at briony lodge to meet her."
+
+     "and what then?"
+
+     "you must leave that to me. i have already arranged what is to occur.
+     there is only one point on which i must insist. you must not
+     interfere, come what may. you understand?"
+
+     "i am to be neutral?"
+
+     "to do nothing whatever. there will probably be some small
+     unpleasantness. do not join in it. it will end in my being conveyed
+     into the house. four or five minutes afterwards the sitting-room
+     window will open. you are to station yourself close to that open
+     window."
+
+     "yes."
+
+     "you are to watch me, for i will be visible to you."
+
+     "yes."
+
+     "and when i raise my hand--so--you will throw into the room what i
+     give you to throw, and will, at the same time, raise the cry of fire.
+     you quite follow me?"
+
+     "entirely."
+
+     "it is nothing very formidable," he said, taking a long cigar-shaped
+     roll from his pocket. "it is an ordinary plumber's smoke-rocket,
+     fitted with a cap at either end to make it self-lighting. your task
+     is confined to that. when you raise your cry of fire, it will be
+     taken up by quite a number of people. you may then walk to the end of
+     the street, and i will rejoin you in ten minutes. i hope that i have
+     made myself clear?"
+
+     "i am to remain neutral, to get near the window, to watch you, and at
+     the signal to throw in this object, then to raise the cry of fire,
+     and to wait you at the corner of the street."
+
+     "precisely."
+
+     "then you may entirely rely on me."
+
+     "that is excellent. i think, perhaps, it is almost time that i
+     prepare for the new role i have to play."
+
+     he disappeared into his bedroom and returned in a few minutes in the
+     character of an amiable and simple-minded nonconformist clergyman.
+     his broad black hat, his baggy trousers, his white tie, his
+     sympathetic smile, and general look of peering and benevolent
+     curiosity were such as mr. john hare alone could have equalled. it
+     was not merely that holmes changed his costume. his expression, his
+     manner, his very soul seemed to vary with every fresh part that he
+     assumed. the stage lost a fine actor, even as science lost an acute
+     reasoner, when he became a specialist in crime.
+
+     it was a quarter past six when we left baker street, and it still
+     wanted ten minutes to the hour when we found ourselves in serpentine
+     avenue. it was already dusk, and the lamps were just being lighted as
+     we paced up and down in front of briony lodge, waiting for the coming
+     of its occupant. the house was just such as i had pictured it from
+     sherlock holmes' succinct description, but the locality appeared to
+     be less private than i expected. on the contrary, for a small street
+     in a quiet neighbourhood, it was remarkably animated. there was a
+     group of shabbily dressed men smoking and laughing in a corner, a
+     scissors-grinder with his wheel, two guardsmen who were flirting with
+     a nurse-girl, and several well-dressed young men who were lounging up
+     and down with cigars in their mouths.
+
+     "you see," remarked holmes, as we paced to and fro in front of the
+     house, "this marriage rather simplifies matters. the photograph
+     becomes a double-edged weapon now. the chances are that she would be
+     as averse to its being seen by mr. godfrey norton, as our client is
+     to its coming to the eyes of his princess. now the question is--where
+     are we to find the photograph?"
+
+     "where, indeed?"
+
+     "it is most unlikely that she carries it about with her. it is
+     cabinet size. too large for easy concealment about a woman's dress.
+     she knows that the king is capable of having her waylaid and
+     searched. two attempts of the sort have already been made. we may
+     take it, then, that she does not carry it about with her."
+
+     "where, then?"
+
+     "her banker or her lawyer. there is that double possibility. but i am
+     inclined to think neither. women are naturally secretive, and they
+     like to do their own secreting. why should she hand it over to anyone
+     else? she could trust her own guardianship, but she could not tell
+     what indirect or political influence might be brought to bear upon a
+     business man. besides, remember that she had resolved to use it
+     within a few days. it must be where she can lay her hands upon it. it
+     must be in her own house."
+
+     "but it has twice been burgled."
+
+     "pshaw! they did not know how to look."
+
+     "but how will you look?"
+
+     "i will not look."
+
+     "what then?"
+
+     "i will get her to show me."
+
+     "but she will refuse."
+
+     "she will not be able to. but i hear the rumble of wheels. it is her
+     carriage. now carry out my orders to the letter."
+
+     as he spoke the gleam of the side-lights of a carriage came round the
+     curve of the avenue. it was a smart little landau which rattled up to
+     the door of briony lodge. as it pulled up, one of the loafing men at
+     the corner dashed forward to open the door in the hope of earning a
+     copper, but was elbowed away by another loafer, who had rushed up
+     with the same intention. a fierce quarrel broke out, which was
+     increased by the two guardsmen, who took sides with one of the
+     loungers, and by the scissors-grinder, who was equally hot upon the
+     other side. a blow was struck, and in an instant the lady, who had
+     stepped from her carriage, was the centre of a little knot of flushed
+     and struggling men, who struck savagely at each other with their
+     fists and sticks. holmes dashed into the crowd to protect the lady;
+     but just as he reached her he gave a cry and dropped to the ground,
+     with the blood running freely down his face. at his fall the
+     guardsmen took to their heels in one direction and the loungers in
+     the other, while a number of better-dressed people, who had watched
+     the scuffle without taking part in it, crowded in to help the lady
+     and to attend to the injured man. irene adler, as i will still call
+     her, had hurried up the steps; but she stood at the top with her
+     superb figure outlined against the lights of the hall, looking back
+     into the street.
+
+     "is the poor gentleman much hurt?" she asked.
+
+     "he is dead," cried several voices.
+
+     "no, no, there's life in him!" shouted another. "but he'll be gone
+     before you can get him to hospital."
+
+     "he's a brave fellow," said a woman. "they would have had the lady's
+     purse and watch if it hadn't been for him. they were a gang, and a
+     rough one, too. ah, he's breathing now."
+
+     "he can't lie in the street. may we bring him in, marm?"
+
+     "surely. bring him into the sitting-room. there is a comfortable
+     sofa. this way, please!"
+
+     slowly and solemnly he was borne into briony lodge and laid out in
+     the principal room, while i still observed the proceedings from my
+     post by the window. the lamps had been lit, but the blinds had not
+     been drawn, so that i could see holmes as he lay upon the couch. i do
+     not know whether he was seized with compunction at that moment for
+     the part he was playing, but i know that i never felt more heartily
+     ashamed of myself in my life than when i saw the beautiful creature
+     against whom i was conspiring, or the grace and kindliness with which
+     she waited upon the injured man. and yet it would be the blackest
+     treachery to holmes to draw back now from the part which he had
+     intrusted to me. i hardened my heart, and took the smoke-rocket from
+     under my ulster. after all, i thought, we are not injuring her. we
+     are but preventing her from injuring another.
+
+     holmes had sat up upon the couch, and i saw him motion like a man who
+     is in need of air. a maid rushed across and threw open the window. at
+     the same instant i saw him raise his hand and at the signal i tossed
+     my rocket into the room with a cry of "fire!" the word was no sooner
+     out of my mouth than the whole crowd of spectators, well dressed and
+     ill--gentlemen, ostlers, and servant-maids--joined in a general
+     shriek of "fire!" thick clouds of smoke curled through the room and
+     out at the open window. i caught a glimpse of rushing figures, and a
+     moment later the voice of holmes from within assuring them that it
+     was a false alarm. slipping through the shouting crowd i made my way
+     to the corner of the street, and in ten minutes was rejoiced to find
+     my friend's arm in mine, and to get away from the scene of uproar. he
+     walked swiftly and in silence for some few minutes until we had
+     turned down one of the quiet streets which lead towards the edgeware
+     road.
+
+     "you did it very nicely, doctor," he remarked. "nothing could have
+     been better. it is all right."
+
+     "you have the photograph?"
+
+     "i know where it is."
+
+     "and how did you find out?"
+
+     "she showed me, as i told you she would."
+
+     "i am still in the dark."
+
+     "i do not wish to make a mystery," said he, laughing. "the matter was
+     perfectly simple. you, of course, saw that everyone in the street was
+     an accomplice. they were all engaged for the evening."
+
+     "i guessed as much."
+
+     "then, when the row broke out, i had a little moist red paint in the
+     palm of my hand. i rushed forward, fell down, clapped my hand to my
+     face, and became a piteous spectacle. it is an old trick."
+
+     "that also i could fathom."
+
+     "then they carried me in. she was bound to have me in. what else
+     could she do? and into her sitting-room, which was the very room
+     which i suspected. it lay between that and her bedroom, and i was
+     determined to see which. they laid me on a couch, i motioned for air,
+     they were compelled to open the window, and you had your chance."
+
+     "how did that help you?"
+
+     "it was all-important. when a woman thinks that her house is on fire,
+     her instinct is at once to rush to the thing which she values most.
+     it is a perfectly overpowering impulse, and i have more than once
+     taken advantage of it. in the case of the darlington substitution
+     scandal it was of use to me, and also in the arnsworth castle
+     business. a married woman grabs at her baby; an unmarried one reaches
+     for her jewel-box. now it was clear to me that our lady of to-day had
+     nothing in the house more precious to her than what we are in quest
+     of. she would rush to secure it. the alarm of fire was admirably
+     done. the smoke and shouting were enough to shake nerves of steel.
+     she responded beautifully. the photograph is in a recess behind a
+     sliding panel just above the right bell-pull. she was there in an
+     instant, and i caught a glimpse of it as she half-drew it out. when i
+     cried out that it was a false alarm, she replaced it, glanced at the
+     rocket, rushed from the room, and i have not seen her since. i rose,
+     and, making my excuses, escaped from the house. i hesitated whether
+     to attempt to secure the photograph at once; but the coachman had
+     come in, and as he was watching me narrowly it seemed safer to wait.
+     a little over-precipitance may ruin all."
+
+     "and now?" i asked.
+
+     "our quest is practically finished. i shall call with the king
+     to-morrow, and with you, if you care to come with us. we will be
+     shown into the sitting-room to wait for the lady, but it is probable
+     that when she comes she may find neither us nor the photograph. it
+     might be a satisfaction to his majesty to regain it with his own
+     hands."
+
+     "and when will you call?"
+
+     "at eight in the morning. she will not be up, so that we shall have a
+     clear field. besides, we must be prompt, for this marriage may mean a
+     complete change in her life and habits. i must wire to the king
+     without delay."
+
+     we had reached baker street and had stopped at the door. he was
+     searching his pockets for the key when someone passing said:
+
+     "good-night, mister sherlock holmes."
+
+     there were several people on the pavement at the time, but the
+     greeting appeared to come from a slim youth in an ulster who had
+     hurried by.
+
+     "i've heard that voice before," said holmes, staring down the dimly
+     lit street. "now, i wonder who the deuce that could have been."
+
+
+
+
+
+          chapter iii
+
+
+
+     i slept at baker street that night, and we were engaged upon our
+     toast and coffee in the morning when the king of bohemia rushed into
+     the room.
+
+     "you have really got it!" he cried, grasping sherlock holmes by
+     either shoulder and looking eagerly into his face.
+
+     "not yet."
+
+     "but you have hopes?"
+
+     "i have hopes."
+
+     "then, come. i am all impatience to be gone."
+
+     "we must have a cab."
+
+     "no, my brougham is waiting."
+
+     "then that will simplify matters." we descended and started off once
+     more for briony lodge.
+
+     "irene adler is married," remarked holmes.
+
+     "married! when?"
+
+     "yesterday."
+
+     "but to whom?"
+
+     "to an english lawyer named norton."
+
+     "but she could not love him."
+
+     "i am in hopes that she does."
+
+     "and why in hopes?"
+
+     "because it would spare your majesty all fear of future annoyance. if
+     the lady loves her husband, she does not love your majesty. if she
+     does not love your majesty, there is no reason why she should
+     interfere with your majesty's plan."
+
+     "it is true. and yet--well! i wish she had been of my own station!
+     what a queen she would have made!" he relapsed into a moody silence,
+     which was not broken until we drew up in serpentine avenue.
+
+     the door of briony lodge was open, and an elderly woman stood upon
+     the steps. she watched us with a sardonic eye as we stepped from the
+     brougham.
+
+     "mr. sherlock holmes, i believe?" said she.
+
+     "i am mr. holmes," answered my companion, looking at her with a
+     questioning and rather startled gaze.
+
+     "indeed! my mistress told me that you were likely to call. she left
+     this morning with her husband by the 5.15 train from charing cross
+     for the continent."
+
+     "what!" sherlock holmes staggered back, white with chagrin and
+     surprise. "do you mean that she has left england?"
+
+     "never to return."
+
+     "and the papers?" asked the king hoarsely. "all is lost."
+
+     "we shall see." he pushed past the servant and rushed into the
+     drawing-room, followed by the king and myself. the furniture was
+     scattered about in every direction, with dismantled shelves and open
+     drawers, as if the lady had hurriedly ransacked them before her
+     flight. holmes rushed at the bell-pull, tore back a small sliding
+     shutter, and, plunging in his hand, pulled out a photograph and a
+     letter. the photograph was of irene adler herself in evening dress,
+     the letter was superscribed to "sherlock holmes, esq. to be left till
+     called for." my friend tore it open and we all three read it
+     together. it was dated at midnight of the preceding night and ran in
+     this way:
+
+     "my dear mr. sherlock holmes:
+     "you really did it very well. you took me in completely. until after
+     the alarm of fire, i had not a suspicion. but then, when i found how
+     i had betrayed myself, i began to think. i had been warned against
+     you months ago. i had been told that if the king employed an agent it
+     would certainly be you. and your address had been given me. yet, with
+     all this, you made me reveal what you wanted to know. even after i
+     became suspicious, i found it hard to think evil of such a dear, kind
+     old clergyman. but, you know, i have been trained as an actress
+     myself. male costume is nothing new to me. i often take advantage of
+     the freedom which it gives. i sent john, the coachman, to watch you,
+     ran up stairs, got into my walking-clothes, as i call them, and came
+     down just as you departed.
+     "well, i followed you to your door, and so made sure that i was
+     really an object of interest to the celebrated mr. sherlock holmes.
+     then i, rather imprudently, wished you good-night, and started for
+     the temple to see my husband.
+     "we both thought the best resource was flight, when pursued by so
+     formidable an antagonist; so you will find the nest empty when you
+     call to-morrow. as to the photograph, your client may rest in peace.
+     i love and am loved by a better man than he. the king may do what he
+     will without hindrance from one whom he has cruelly wronged. i keep
+     it only to safeguard myself, and to preserve a weapon which will
+     always secure me from any steps which he might take in the future. i
+     leave a photograph which he might care to possess; and i remain, dear
+     mr. sherlock holmes,
+     "very truly yours,
+     "irene norton, nã©e adler."
+
+     "what a woman--oh, what a woman!" cried the king of bohemia, when we
+     had all three read this epistle. "did i not tell you how quick and
+     resolute she was? would she not have made an admirable queen? is it
+     not a pity that she was not on my level?"
+
+     "from what i have seen of the lady she seems indeed to be on a very
+     different level to your majesty," said holmes coldly. "i am sorry
+     that i have not been able to bring your majesty's business to a more
+     successful conclusion."
+
+     "on the contrary, my dear sir," cried the king; "nothing could be
+     more successful. i know that her word is inviolate. the photograph is
+     now as safe as if it were in the fire."
+
+     "i am glad to hear your majesty say so."
+
+     "i am immensely indebted to you. pray tell me in what way i can
+     reward you. this ring--" he slipped an emerald snake ring from his
+     finger and held it out upon the palm of his hand.
+
+     "your majesty has something which i should value even more highly,"
+     said holmes.
+
+     "you have but to name it."
+
+     "this photograph!"
+
+     the king stared at him in amazement.
+
+     "irene's photograph!" he cried. "certainly, if you wish it."
+
+     "i thank your majesty. then there is no more to be done in the
+     matter. i have the honour to wish you a very good-morning." he bowed,
+     and, turning away without observing the hand which the king had
+     stretched out to him, he set off in my company for his chambers.
+
+     and that was how a great scandal threatened to affect the kingdom of
+     bohemia, and how the best plans of mr. sherlock holmes were beaten by
+     a woman's wit. he used to make merry over the cleverness of women,
+     but i have not heard him do it of late. and when he speaks of irene
+     adler, or when he refers to her photograph, it is always under the
+     honourable title of the woman.
+"""
+
+theirs2 = """
+
+
+
+                               a case of identity
+
+                               arthur conan doyle
+
+
+
+     "my dear fellow," said sherlock holmes as we sat on either side of
+     the fire in his lodgings at baker street, "life is infinitely
+     stranger than anything which the mind of man could invent. we would
+     not dare to conceive the things which are really mere commonplaces of
+     existence. if we could fly out of that window hand in hand, hover
+     over this great city, gently remove the roofs, and peep in at the
+     queer things which are going on, the strange coincidences, the
+     plannings, the cross-purposes, the wonderful chains of events,
+     working through generations, and leading to the most outrã© results,
+     it would make all fiction with its conventionalities and foreseen
+     conclusions most stale and unprofitable."
+
+     "and yet i am not convinced of it," i answered. "the cases which come
+     to light in the papers are, as a rule, bald enough, and vulgar
+     enough. we have in our police reports realism pushed to its extreme
+     limits, and yet the result is, it must be confessed, neither
+     fascinating nor artistic."
+
+     "a certain selection and discretion must be used in producing a
+     realistic effect," remarked holmes. "this is wanting in the police
+     report, where more stress is laid, perhaps, upon the platitudes of
+     the magistrate than upon the details, which to an observer contain
+     the vital essence of the whole matter. depend upon it, there is
+     nothing so unnatural as the commonplace."
+
+     i smiled and shook my head. "i can quite understand your thinking
+     so." i said. "of course, in your position of unofficial adviser and
+     helper to everybody who is absolutely puzzled, throughout three
+     continents, you are brought in contact with all that is strange and
+     bizarre. but here"--i picked up the morning paper from the
+     ground--"let us put it to a practical test. here is the first heading
+     upon which i come. 'a husband's cruelty to his wife.' there is half a
+     column of print, but i know without reading it that it is all
+     perfectly familiar to me. there is, of course, the other woman, the
+     drink, the push, the blow, the bruise, the sympathetic sister or
+     landlady. the crudest of writers could invent nothing more crude."
+
+     "indeed, your example is an unfortunate one for your argument," said
+     holmes, taking the paper and glancing his eye down it. "this is the
+     dundas separation case, and, as it happens, i was engaged in clearing
+     up some small points in connection with it. the husband was a
+     teetotaler, there was no other woman, and the conduct complained of
+     was that he had drifted into the habit of winding up every meal by
+     taking out his false teeth and hurling them at his wife, which, you
+     will allow, is not an action likely to occur to the imagination of
+     the average story-teller. take a pinch of snuff, doctor, and
+     acknowledge that i have scored over you in your example."
+
+     he held out his snuffbox of old gold, with a great amethyst in the
+     centre of the lid. its splendour was in such contrast to his homely
+     ways and simple life that i could not help commenting upon it.
+
+     "ah," said he, "i forgot that i had not seen you for some weeks. it
+     is a little souvenir from the king of bohemia in return for my
+     assistance in the case of the irene adler papers."
+
+     "and the ring?" i asked, glancing at a remarkable brilliant which
+     sparkled upon his finger.
+
+     "it was from the reigning family of holland, though the matter in
+     which i served them was of such delicacy that i cannot confide it
+     even to you, who have been good enough to chronicle one or two of my
+     little problems."
+
+     "and have you any on hand just now?" i asked with interest.
+
+     "some ten or twelve, but none which present any feature of interest.
+     they are important, you understand, without being interesting.
+     indeed, i have found that it is usually in unimportant matters that
+     there is a field for the observation, and for the quick analysis of
+     cause and effect which gives the charm to an investigation. the
+     larger crimes are apt to be the simpler, for the bigger the crime the
+     more obvious, as a rule, is the motive. in these cases, save for one
+     rather intricate matter which has been referred to me from
+     marseilles, there is nothing which presents any features of interest.
+     it is possible, however, that i may have something better before very
+     many minutes are over, for this is one of my clients, or i am much
+     mistaken."
+
+     he had risen from his chair and was standing between the parted
+     blinds gazing down into the dull neutral-tinted london street.
+     looking over his shoulder, i saw that on the pavement opposite there
+     stood a large woman with a heavy fur boa round her neck, and a large
+     curling red feather in a broad-brimmed hat which was tilted in a
+     coquettish duchess of devonshire fashion over her ear. from under
+     this great panoply she peeped up in a nervous, hesitating fashion at
+     our windows, while her body oscillated backward and forward, and her
+     fingers fidgeted with her glove buttons. suddenly, with a plunge, as
+     of the swimmer who leaves the bank, she hurried across the road, and
+     we heard the sharp clang of the bell.
+
+     "i have seen those symptoms before," said holmes, throwing his
+     cigarette into the fire. "oscillation upon the pavement always means
+     an affaire de coeur. she would like advice, but is not sure that the
+     matter is not too delicate for communication. and yet even here we
+     may discriminate. when a woman has been seriously wronged by a man
+     she no longer oscillates, and the usual symptom is a broken bell
+     wire. here we may take it that there is a love matter, but that the
+     maiden is not so much angry as perplexed, or grieved. but here she
+     comes in person to resolve our doubts."
+
+     as he spoke there was a tap at the door, and the boy in buttons
+     entered to announce miss mary sutherland, while the lady herself
+     loomed behind his small black figure like a full-sailed merchant-man
+     behind a tiny pilot boat. sherlock holmes welcomed her with the easy
+     courtesy for which he was remarkable, and, having closed the door and
+     bowed her into an armchair, he looked her over in the minute and yet
+     abstracted fashion which was peculiar to him.
+
+     "do you not find," he said, "that with your short sight it is a
+     little trying to do so much typewriting?"
+
+     "i did at first," she answered, "but now i know where the letters are
+     without looking." then, suddenly realising the full purport of his
+     words, she gave a violent start and looked up, with fear and
+     astonishment upon her broad, good-humoured face. "you've heard about
+     me, mr. holmes," she cried, "else how could you know all that?"
+
+     "never mind," said holmes, laughing; "it is my business to know
+     things. perhaps i have trained myself to see what others overlook. if
+     not, why should you come to consult me?"
+
+     "i came to you, sir, because i heard of you from mrs. etherege, whose
+     husband you found so easy when the police and everyone had given him
+     up for dead. oh, mr. holmes, i wish you would do as much for me. i'm
+     not rich, but still i have a hundred a year in my own right, besides
+     the little that i make by the machine, and i would give it all to
+     know what has become of mr. hosmer angel."
+
+     "why did you come away to consult me in such a hurry?" asked sherlock
+     holmes, with his finger-tips together and his eyes to the ceiling.
+
+     again a startled look came over the somewhat vacuous face of miss
+     mary sutherland. "yes, i did bang out of the house," she said, "for
+     it made me angry to see the easy way in which mr. windibank--that is,
+     my father--took it all. he would not go to the police, and he would
+     not go to you, and so at last, as he would do nothing and kept on
+     saying that there was no harm done, it made me mad, and i just on
+     with my things and came right away to you."
+
+     "your father," said holmes, "your stepfather, surely, since the name
+     is different."
+
+     "yes, my stepfather. i call him father, though it sounds funny, too,
+     for he is only five years and two months older than myself."
+
+     "and your mother is alive?"
+
+     "oh, yes, mother is alive and well. i wasn't best pleased, mr.
+     holmes, when she married again so soon after father's death, and a
+     man who was nearly fifteen years younger than herself. father was a
+     plumber in the tottenham court road, and he left a tidy business
+     behind him, which mother carried on with mr. hardy, the foreman; but
+     when mr. windibank came he made her sell the business, for he was
+     very superior, being a traveller in wines. they got â£4700 for the
+     goodwill and interest, which wasn't near as much as father could have
+     got if he had been alive."
+
+     i had expected to see sherlock holmes impatient under this rambling
+     and inconsequential narrative, but, on the contrary, he had listened
+     with the greatest concentration of attention.
+
+     "your own little income," he asked, "does it come out of the
+     business?"
+
+     "oh, no, sir. it is quite separate and was left me by my uncle ned in
+     auckland. it is in new zealand stock, paying 4â½ per cent. two
+     thousand five hundred pounds was the amount, but i can only touch the
+     interest."
+
+     "you interest me extremely," said holmes. "and since you draw so
+     large a sum as a hundred a year, with what you earn into the bargain,
+     you no doubt travel a little and indulge yourself in every way. i
+     believe that a single lady can get on very nicely upon an income of
+     about â£60."
+
+     "i could do with much less than that, mr. holmes, but you understand
+     that as long as i live at home i don't wish to be a burden to them,
+     and so they have the use of the money just while i am staying with
+     them. of course, that is only just for the time. mr. windibank draws
+     my interest every quarter and pays it over to mother, and i find that
+     i can do pretty well with what i earn at typewriting. it brings me
+     twopence a sheet, and i can often do from fifteen to twenty sheets in
+     a day."
+
+     "you have made your position very clear to me," said holmes. "this is
+     my friend, dr. watson, before whom you can speak as freely as before
+     myself. kindly tell us now all about your connection with mr. hosmer
+     angel."
+
+     a flush stole over miss sutherland's face, and she picked nervously
+     at the fringe of her jacket. "i met him first at the gasfitters'
+     ball," she said. "they used to send father tickets when he was alive,
+     and then afterwards they remembered us, and sent them to mother. mr.
+     windibank did not wish us to go. he never did wish us to go anywhere.
+     he would get quite mad if i wanted so much as to join a sunday-school
+     treat. but this time i was set on going, and i would go; for what
+     right had he to prevent? he said the folk were not fit for us to
+     know, when all father's friends were to be there. and he said that i
+     had nothing fit to wear, when i had my purple plush that i had never
+     so much as taken out of the drawer. at last, when nothing else would
+     do, he went off to france upon the business of the firm, but we went,
+     mother and i, with mr. hardy, who used to be our foreman, and it was
+     there i met mr. hosmer angel."
+
+     "i suppose," said holmes, "that when mr. windibank came back from
+     france he was very annoyed at your having gone to the ball."
+
+     "oh, well, he was very good about it. he laughed, i remember, and
+     shrugged his shoulders, and said there was no use denying anything to
+     a woman, for she would have her way."
+
+     "i see. then at the gasfitters' ball you met, as i understand, a
+     gentleman called mr. hosmer angel."
+
+     "yes, sir. i met him that night, and he called next day to ask if we
+     had got home all safe, and after that we met him--that is to say, mr.
+     holmes, i met him twice for walks, but after that father came back
+     again, and mr. hosmer angel could not come to the house any more."
+
+     "no?"
+
+     "well, you know father didn't like anything of the sort. he wouldn't
+     have any visitors if he could help it, and he used to say that a
+     woman should be happy in her own family circle. but then, as i used
+     to say to mother, a woman wants her own circle to begin with, and i
+     had not got mine yet."
+
+     "but how about mr. hosmer angel? did he make no attempt to see you?"
+
+     "well, father was going off to france again in a week, and hosmer
+     wrote and said that it would be safer and better not to see each
+     other until he had gone. we could write in the meantime, and he used
+     to write every day. i took the letters in in the morning, so there
+     was no need for father to know."
+
+     "were you engaged to the gentleman at this time?"
+
+     "oh, yes, mr. holmes. we were engaged after the first walk that we
+     took. hosmer--mr. angel--was a cashier in an office in leadenhall
+     street--and--"
+
+     "what office?"
+
+     "that's the worst of it, mr. holmes, i don't know."
+
+     "where did he live, then?"
+
+     "he slept on the premises."
+
+     "and you don't know his address?"
+
+     "no--except that it was leadenhall street."
+
+     "where did you address your letters, then?"
+
+     "to the leadenhall street post office, to be left till called for. he
+     said that if they were sent to the office he would be chaffed by all
+     the other clerks about having letters from a lady, so i offered to
+     typewrite them, like he did his, but he wouldn't have that, for he
+     said that when i wrote them they seemed to come from me, but when
+     they were typewritten he always felt that the machine had come
+     between us. that will just show you how fond he was of me, mr.
+     holmes, and the little things that he would think of."
+
+     "it was most suggestive," said holmes. "it has long been an axiom of
+     mine that the little things are infinitely the most important.  can
+     you remember any other little things about mr. hosmer angel?"
+
+     "he was a very shy man, mr. holmes. he would rather walk with me in
+     the evening than in the daylight, for he said that he hated to be
+     conspicuous. very retiring and gentlemanly he was. even his voice was
+     gentle. he'd had the quinsy and swollen glands when he was young, he
+     told me, and it had left him with a weak throat, and a hesitating,
+     whispering fashion of speech. he was always well dressed, very neat
+     and plain, but his eyes were weak, just as mine are, and he wore
+     tinted glasses against the glare."
+
+     "well, and what happened when mr. windibank, your stepfather,
+     returned to france?"
+
+     "mr. hosmer angel came to the house again and proposed that we should
+     marry before father came back. he was in dreadful earnest and made me
+     swear, with my hands on the testament, that whatever happened i would
+     always be true to him. mother said he was quite right to make me
+     swear, and that it was a sign of his passion. mother was all in his
+     favour from the first and was even fonder of him than i was. then,
+     when they talked of marrying within the week, i began to ask about
+     father; but they both said never to mind about father, but just to
+     tell him afterwards, and mother said she would make it all right with
+     him. i didn't quite like that, mr. holmes. it seemed funny that i
+     should ask his leave, as he was only a few years older than me; but i
+     didn't want to do anything on the sly, so i wrote to father at
+     bordeaux, where the company has its french offices, but the letter
+     came back to me on the very morning of the wedding."
+
+     "it missed him, then?"
+
+     "yes, sir; for he had started to england just before it arrived."
+
+     "ha! that was unfortunate. your wedding was arranged, then, for the
+     friday. was it to be in church?"
+
+     "yes, sir, but very quietly. it was to be at st. saviour's, near
+     king's cross, and we were to have breakfast afterwards at the st.
+     pancras hotel. hosmer came for us in a hansom, but as there were two
+     of us he put us both into it and stepped himself into a four-wheeler,
+     which happened to be the only other cab in the street. we got to the
+     church first, and when the four-wheeler drove up we waited for him to
+     step out, but he never did, and when the cabman got down from the box
+     and looked there was no one there! the cabman said that he could not
+     imagine what had become of him, for he had seen him get in with his
+     own eyes. that was last friday, mr. holmes, and i have never seen or
+     heard anything since then to throw any light upon what became of
+     him."
+
+     "it seems to me that you have been very shamefully treated," said
+     holmes.
+
+     "oh, no, sir! he was too good and kind to leave me so. why, all the
+     morning he was saying to me that, whatever happened, i was to be
+     true; and that even if something quite unforeseen occurred to
+     separate us, i was always to remember that i was pledged to him, and
+     that he would claim his pledge sooner or later. it seemed strange
+     talk for a wedding-morning, but what has happened since gives a
+     meaning to it."
+
+     "most certainly it does. your own opinion is, then, that some
+     unforeseen catastrophe has occurred to him?"
+
+     "yes, sir. i believe that he foresaw some danger, or else he would
+     not have talked so. and then i think that what he foresaw happened."
+
+     "but you have no notion as to what it could have been?"
+
+     "none."
+
+     "one more question. how did your mother take the matter?"
+
+     "she was angry, and said that i was never to speak of the matter
+     again."
+
+     "and your father? did you tell him?"
+
+     "yes; and he seemed to think, with me, that something had happened,
+     and that i should hear of hosmer again. as he said, what interest
+     could anyone have in bringing me to the doors of the church, and then
+     leaving me? now, if he had borrowed my money, or if he had married me
+     and got my money settled on him, there might be some reason, but
+     hosmer was very independent about money and never would look at a
+     shilling of mine. and yet, what could have happened? and why could he
+     not write? oh, it drives me half-mad to think of it, and i can't
+     sleep a wink at night." she pulled a little handkerchief out of her
+     muff and began to sob heavily into it.
+
+     "i shall glance into the case for you," said holmes, rising, "and i
+     have no doubt that we shall reach some definite result. let the
+     weight of the matter rest upon me now, and do not let your mind dwell
+     upon it further. above all, try to let mr. hosmer angel vanish from
+     your memory, as he has done from your life."
+
+     "then you don't think i'll see him again?"
+
+     "i fear not."
+
+     "then what has happened to him?"
+
+     "you will leave that question in my hands. i should like an accurate
+     description of him and any letters of his which you can spare."
+
+     "i advertised for him in last saturday's chronicle," said she. "here
+     is the slip and here are four letters from him."
+
+     "thank you. and your address?"
+
+     "no. 31 lyon place, camberwell."
+
+     "mr. angel's address you never had, i understand. where is your
+     father's place of business?"
+
+     "he travels for westhouse & marbank, the great claret importers of
+     fenchurch street."
+
+     "thank you. you have made your statement very clearly. you will leave
+     the papers here, and remember the advice which i have given you. let
+     the whole incident be a sealed book, and do not allow it to affect
+     your life."
+
+     "you are very kind, mr. holmes, but i cannot do that. i shall be true
+     to hosmer. he shall find me ready when he comes back."
+
+     for all the preposterous hat and the vacuous face, there was
+     something noble in the simple faith of our visitor which compelled
+     our respect. she laid her little bundle of papers upon the table and
+     went her way, with a promise to come again whenever she might be
+     summoned.
+
+     sherlock holmes sat silent for a few minutes with his fingertips
+     still pressed together, his legs stretched out in front of him, and
+     his gaze directed upward to the ceiling. then he took down from the
+     rack the old and oily clay #e, which was to him as a counsellor,
+     and, having lit it, he leaned back in his chair, with the thick blue
+     cloud-wreaths spinning up from him, and a look of infinite languor in
+     his face.
+
+     "quite an interesting study, that maiden," he observed. "i found her
+     more interesting than her little problem, which, by the way, is
+     rather a trite one. you will find parallel cases, if you consult my
+     index, in andover in '77, and there was something of the sort at the
+     hague last year. old as is the idea, however, there were one or two
+     details which were new to me. but the maiden herself was most
+     instructive."
+
+     "you appeared to read a good deal upon her which was quite invisible
+     to me," i remarked.
+
+     "not invisible but unnoticed, watson. you did not know where to look,
+     and so you missed all that was important. i can never bring you to
+     realise the importance of sleeves, the suggestiveness of thumb-nails,
+     or the great issues that may hang from a boot-lace. now, what did you
+     gather from that woman's appearance? describe it."
+
+     "well, she had a slate-coloured, broad-brimmed straw hat, with a
+     feather of a brickish red. her jacket was black, with black beads
+     sewn upon it, and a fringe of little black jet ornaments. her dress
+     was brown, rather darker than coffee colour, with a little purple
+     plush at the neck and sleeves. her gloves were greyish and were worn
+     through at the right forefinger. her boots i didn't observe. she had
+     small round, hanging gold earrings, and a general air of being fairly
+     well-to-do in a vulgar, comfortable, easy-going way."
+
+     sherlock holmes clapped his hands softly together and chuckled.
+
+     "'pon my word, watson, you are coming along wonderfully. you have
+     really done very well indeed. it is true that you have missed
+     everything of importance, but you have hit upon the method, and you
+     have a quick eye for colour. never trust to general impressions, my
+     boy, but concentrate yourself upon details. my first glance is always
+     at a woman's sleeve. in a man it is perhaps better first to take the
+     knee of the trouser. as you observe, this woman had plush upon her
+     sleeves, which is a most useful material for showing traces. the
+     double line a little above the wrist, where the typewritist presses
+     against the table, was beautifully defined. the sewing-machine, of
+     the hand type, leaves a similar mark, but only on the left arm, and
+     on the side of it farthest from the thumb, instead of being right
+     across the broadest part, as this was. i then glanced at her face,
+     and, observing the dint of a pince-nez at either side of her nose, i
+     ventured a remark upon short sight and typewriting, which seemed to
+     surprise her."
+
+     "it surprised me."
+
+     "but, surely, it was obvious. i was then much surprised and
+     interested on glancing down to observe that, though the boots which
+     she was wearing were not unlike each other, they were really odd
+     ones; the one having a slightly decorated toe-cap, and the other a
+     plain one. one was buttoned only in the two lower buttons out of
+     five, and the other at the first, third, and fifth. now, when you see
+     that a young lady, otherwise neatly dressed, has come away from home
+     with odd boots, half-buttoned, it is no great deduction to say that
+     she came away in a hurry."
+
+     "and what else?" i asked, keenly interested, as i always was, by my
+     friend's incisive reasoning.
+
+     "i noted, in passing, that she had written a note before leaving home
+     but after being fully dressed. you observed that her right glove was
+     torn at the forefinger, but you did not apparently see that both
+     glove and finger were stained with violet ink. she had written in a
+     hurry and dipped her pen too deep. it must have been this morning, or
+     the mark would not remain clear upon the finger. all this is amusing,
+     though rather elementary, but i must go back to business, watson.
+     would you mind reading me the advertised description of mr. hosmer
+     angel?"
+
+     i held the little printed slip to the light.
+
+     "missing," it said, "on the morning of the fourteenth, a gentleman
+     named hosmer angel. about five ft. seven in. in height; strongly
+     built, sallow complexion, black hair, a little bald in the centre,
+     bushy, black side-whiskers and moustache; tinted glasses, slight
+     infirmity of speech. was dressed, when last seen, in black frock-coat
+     faced with silk, black waistcoat, gold albert chain, and grey harris
+     tweed trousers, with brown gaiters over elastic-sided boots. known to
+     have been employed in an office in leadenhall street. anybody
+     bringing--"
+
+     "that will do," said holmes. "as to the letters," he continued,
+     glancing over them, "they are very commonplace. absolutely no clue in
+     them to mr. angel, save that he quotes balzac once. there is one
+     remarkable point, however, which will no doubt strike you."
+
+     "they are typewritten," i remarked.
+
+     "not only that, but the signature is typewritten. look at the neat
+     little 'hosmer angel' at the bottom. there is a date, you see, but no
+     superscription except leadenhall street, which is rather vague. the
+     point about the signature is very suggestive--in fact, we may call it
+     conclusive."
+
+     "of what?"
+
+     "my dear fellow, is it possible you do not see how strongly it bears
+     upon the case?"
+
+     "i cannot say that i do unless it were that he wished to be able to
+     deny his signature if an action for breach of promise were
+     instituted."
+
+     "no, that was not the point. however, i shall write two letters,
+     which should settle the matter. one is to a firm in the city, the
+     other is to the young lady's stepfather, mr. windibank, asking him
+     whether he could meet us here at six o'clock tomorrow evening. it is
+     just as well that we should do business with the male relatives. and
+     now, doctor, we can do nothing until the answers to those letters
+     come, so we may put our little problem upon the shelf for the
+     interim."
+
+     i had had so many reasons to believe in my friend's subtle powers of
+     reasoning and extraordinary energy in action that i felt that he must
+     have some solid grounds for the assured and easy demeanour with which
+     he treated the singular mystery which he had been called upon to
+     fathom. once only had i known him to fail, in the case of the king of
+     bohemia and of the irene adler photograph; but when i looked back to
+     the weird business of the sign of four, and the extraordinary
+     circumstances connected with the study in scarlet, i felt that it
+     would be a strange tangle indeed which he could not unravel.
+
+     i left him then, still puffing at his black clay #e, with the
+     conviction that when i came again on the next evening i would find
+     that he held in his hands all the clues which would lead up to the
+     identity of the disappearing bridegroom of miss mary sutherland.
+
+     a professional case of great gravity was engaging my own attention at
+     the time, and the whole of next day i was busy at the bedside of the
+     sufferer. it was not until close upon six o'clock that i found myself
+     free and was able to spring into a hansom and drive to baker street,
+     half afraid that i might be too late to assist at the dã©nouement of
+     the little mystery. i found sherlock holmes alone, however, half
+     asleep, with his long, thin form curled up in the recesses of his
+     armchair. a formidable array of bottles and test-tubes, with the
+     pungent cleanly smell of hydrochloric acid, told me that he had spent
+     his day in the chemical work which was so dear to him.
+
+     "well, have you solved it?" i asked as i entered.
+
+     "yes. it was the bisulphate of baryta."
+
+     "no, no, the mystery!" i cried.
+
+     "oh, that! i thought of the salt that i have been working upon. there
+     was never any mystery in the matter, though, as i said yesterday,
+     some of the details are of interest. the only drawback is that there
+     is no law, i fear, that can touch the scoundrel."
+
+     "who was he, then, and what was his object in deserting miss
+     sutherland?"
+
+     the question was hardly out of my mouth, and holmes had not yet
+     opened his lips to reply, when we heard a heavy footfall in the
+     passage and a tap at the door.
+
+     "this is the girl's stepfather, mr. james windibank," said holmes.
+     "he has written to me to say that he would be here at six. come in!"
+
+     the man who entered was a sturdy, middle-sized fellow, some thirty
+     years of age, clean-shaven, and sallow-skinned, with a bland,
+     insinuating manner, and a pair of wonderfully sharp and penetrating
+     grey eyes. he shot a questioning glance at each of us, placed his
+     shiny top-hat upon the sideboard, and with a slight bow sidled down
+     into the nearest chair.
+
+     "good-evening, mr. james windibank," said holmes. "i think that this
+     typewritten letter is from you, in which you made an appointment with
+     me for six o'clock?"
+
+     "yes, sir. i am afraid that i am a little late, but i am not quite my
+     own master, you know. i am sorry that miss sutherland has troubled
+     you about this little matter, for i think it is far better not to
+     wash linen of the sort in public. it was quite against my wishes that
+     she came, but she is a very excitable, impulsive girl, as you may
+     have noticed, and she is not easily controlled when she has made up
+     her mind on a point. of course, i did not mind you so much, as you
+     are not connected with the official police, but it is not pleasant to
+     have a family misfortune like this noised abroad. besides, it is a
+     useless expense, for how could you possibly find this hosmer angel?"
+
+     "on the contrary," said holmes quietly; "i have every reason to
+     believe that i will succeed in discovering mr. hosmer angel."
+
+     mr. windibank gave a violent start and dropped his gloves. "i am
+     delighted to hear it," he said.
+
+     "it is a curious thing," remarked holmes, "that a typewriter has
+     really quite as much individuality as a man's handwriting. unless
+     they are quite new, no two of them write exactly alike. some letters
+     get more worn than others, and some wear only on one side. now, you
+     remark in this note of yours, mr. windibank, that in every case there
+     is some little slurring over of the 'e,' and a slight defect in the
+     tail of the 'r.' there are fourteen other characteristics, but those
+     are the more obvious."
+
+     "we do all our correspondence with this machine at the office, and no
+     doubt it is a little worn," our visitor answered, glancing keenly at
+     holmes with his bright little eyes.
+
+     "and now i will show you what is really a very interesting study, mr.
+     windibank," holmes continued. "i think of writing another little
+     monograph some of these days on the typewriter and its relation to
+     crime. it is a subject to which i have devoted some little attention.
+     i have here four letters which purport to come from the missing man.
+     they are all typewritten. in each case, not only are the 'e's'
+     slurred and the 'r's' tailless, but you will observe, if you care to
+     use my magnifying lens, that the fourteen other characteristics to
+     which i have alluded are there as well."
+
+     mr. windibank sprang out of his chair and picked up his hat. "i
+     cannot waste time over this sort of fantastic talk, mr. holmes," he
+     said. "if you can catch the man, catch him, and let me know when you
+     have done it."
+
+     "certainly," said holmes, stepping over and turning the key in the
+     door. "i let you know, then, that i have caught him!"
+
+     "what! where?" shouted mr. windibank, turning white to his lips and
+     glancing about him like a rat in a trap.
+
+     "oh, it won't do--really it won't," said holmes suavely. "there is no
+     possible getting out of it, mr. windibank. it is quite too
+     transparent, and it was a very bad compliment when you said that it
+     was impossible for me to solve so simple a question. that's right!
+     sit down and let us talk it over."
+
+     our visitor collapsed into a chair, with a ghastly face and a glitter
+     of moisture on his brow. "it--it's not actionable," he stammered.
+
+     "i am very much afraid that it is not. but between ourselves,
+     windibank, it was as cruel and selfish and heartless a trick in a
+     petty way as ever came before me. now, let me just run over the
+     course of events, and you will contradict me if i go wrong."
+
+     the man sat huddled up in his chair, with his head sunk upon his
+     breast, like one who is utterly crushed. holmes stuck his feet up on
+     the corner of the mantelpiece and, leaning back with his hands in his
+     pockets, began talking, rather to himself, as it seemed, than to us.
+
+     "the man married a woman very much older than himself for her money,"
+     said he, "and he enjoyed the use of the money of the daughter as long
+     as she lived with them. it was a considerable sum, for people in
+     their position, and the loss of it would have made a serious
+     difference. it was worth an effort to preserve it. the daughter was
+     of a good, amiable disposition, but affectionate and warm-hearted in
+     her ways, so that it was evident that with her fair personal
+     advantages, and her little income, she would not be allowed to remain
+     single long. now her marriage would mean, of course, the loss of a
+     hundred a year, so what does her stepfather do to prevent it? he
+     takes the obvious course of keeping her at home and forbidding her to
+     seek the company of people of her own age. but soon he found that
+     that would not answer forever. she became restive, insisted upon her
+     rights, and finally announced her positive intention of going to a
+     certain ball. what does her clever stepfather do then? he conceives
+     an idea more creditable to his head than to his heart. with the
+     connivance and assistance of his wife he disguised himself, covered
+     those keen eyes with tinted glasses, masked the face with a moustache
+     and a pair of bushy whiskers, sunk that clear voice into an
+     insinuating whisper, and doubly secure on account of the girl's short
+     sight, he appears as mr. hosmer angel, and keeps off other lovers by
+     making love himself."
+
+     "it was only a joke at first," groaned our visitor. "we never thought
+     that she would have been so carried away."
+
+     "very likely not. however that may be, the young lady was very
+     decidedly carried away, and, having quite made up her mind that her
+     stepfather was in france, the suspicion of treachery never for an
+     instant entered her mind. she was flattered by the gentleman's
+     attentions, and the effect was increased by the loudly expressed
+     admiration of her mother. then mr. angel began to call, for it was
+     obvious that the matter should be pushed as far as it would go if a
+     real effect were to be produced. there were meetings, and an
+     engagement, which would finally secure the girl's affections from
+     turning towards anyone else. but the deception could not be kept up
+     forever. these pretended journeys to france were rather cumbrous. the
+     thing to do was clearly to bring the business to an end in such a
+     dramatic manner that it would leave a permanent impression upon the
+     young lady's mind and prevent her from looking upon any other suitor
+     for some time to come. hence those vows of fidelity exacted upon a
+     testament, and hence also the allusions to a possibility of something
+     happening on the very morning of the wedding. james windibank wished
+     miss sutherland to be so bound to hosmer angel, and so uncertain as
+     to his fate, that for ten years to come, at any rate, she would not
+     listen to another man. as far as the church door he brought her, and
+     then, as he could go no farther, he conveniently vanished away by the
+     old trick of stepping in at one door of a four-wheeler and out at the
+     other. i think that was the chain of events, mr. windibank!"
+
+     our visitor had recovered something of his assurance while holmes had
+     been talking, and he rose from his chair now with a cold sneer upon
+     his pale face.
+
+     "it may be so, or it may not, mr. holmes," said he, "but if you are
+     so very sharp you ought to be sharp enough to know that it is you who
+     are breaking the law now, and not me. i have done nothing actionable
+     from the first, but as long as you keep that door locked you lay
+     yourself open to an action for assault and illegal constraint."
+
+     "the law cannot, as you say, touch you," said holmes, unlocking and
+     throwing open the door, "yet there never was a man who deserved
+     punishment more. if the young lady has a brother or a friend, he
+     ought to lay a whip across your shoulders. by jove!" he continued,
+     flushing up at the sight of the bitter sneer upon the man's face, "it
+     is not part of my duties to my client, but here's a hunting crop
+     handy, and i think i shall just treat myself to--" he took two swift
+     steps to the whip, but before he could grasp it there was a wild
+     clatter of steps upon the stairs, the heavy hall door banged, and
+     from the window we could see mr. james windibank running at the top
+     of his speed down the road.
+
+     "there's a cold-blooded scoundrel!" said holmes, laughing, as he
+     threw himself down into his chair once more. "that fellow will rise
+     from crime to crime until he does something very bad, and ends on a
+     gallows. the case has, in some respects, been not entirely devoid of
+     interest."
+
+     "i cannot now entirely see all the steps of your reasoning," i
+     remarked.
+
+     "well, of course it was obvious from the first that this mr. hosmer
+     angel must have some strong object for his curious conduct, and it
+     was equally clear that the only man who really profited by the
+     incident, as far as we could see, was the stepfather. then the fact
+     that the two men were never together, but that the one always
+     appeared when the other was away, was suggestive. so were the tinted
+     spectacles and the curious voice, which both hinted at a disguise, as
+     did the bushy whiskers. my suspicions were all confirmed by his
+     peculiar action in typewriting his signature, which, of course,
+     inferred that his handwriting was so familiar to her that she would
+     recognise even the smallest sample of it. you see all these isolated
+     facts, together with many minor ones, all pointed in the same
+     direction."
+
+     "and how did you verify them?"
+
+     "having once spotted my man, it was easy to get corroboration. i knew
+     the firm for which this man worked. having taken the printed
+     description, i eliminated everything from it which could be the
+     result of a disguise--the whiskers, the glasses, the voice, and i
+     sent it to the firm, with a request that they would inform me whether
+     it answered to the description of any of their travellers. i had
+     already noticed the peculiarities of the typewriter, and i wrote to
+     the man himself at his business address asking him if he would come
+     here. as i expected, his reply was typewritten and revealed the same
+     trivial but characteristic defects. the same post brought me a letter
+     from westhouse & marbank, of fenchurch street, to say that the
+     description tallied in every respect with that of their employee,
+     james windibank. voilã  tout!"
+
+     "and miss sutherland?"
+
+     "if i tell her she will not believe me. you may remember the old
+     persian saying, 'there is danger for him who taketh the tiger cub,
+     and danger also for whoso snatches a delusion from a woman.' there is
+     as much sense in hafiz as in horace, and as much knowledge of the
+     world."
+"""
+
+
+len(theirs2)
+
+
+#
+# here, run your punctuation-comparisons (absolute counts)
+#
+print(pun_all(yours1))
+print(pun_all(yours2))
+print(pun_all(theirs1))
+print(pun_all(theirs2))
+
+
+#
+# here, run your punctuation-comparisons (relative, per-character counts)
+#
+print(pun_all(yours1)/len(yours1))
+print(pun_all(yours2)/len(yours2))
+print(pun_all(theirs1)/len(theirs1))
+print(pun_all(theirs2)/len(theirs2))
+
+
+
+#
+# example while loop: the "guessing game"
+#
+
+from random import *
+
+def guess( hidden ):
+    """
+        have the computer guess numbers until it gets the "hidden" value
+        return the number of guesses
+    """
+    guess = hidden - 1      # start with a wrong guess + don't count it as a guess
+    number_of_guesses = 0   # start with no guesses made so far...
+
+    while guess != hidden:
+        #print("i guess", guess)  # comment this out - avoid printing when analyzing!
+        guess = choice( range(0,100) )  # 0 to 99, inclusive
+        number_of_guesses += 1
+
+    return number_of_guesses
+
+# test our function!
+guess(42)
+
+
+# let's run 10 number-guessing experiments!
+
+l = [ guess(42) for i in range(10) ]
+print(l)
+
+# 10 experiments: let's see them!!
+
+
+# let's see what the average results were
+print("len(l) is", len(l))
+ave = sum(l)/len(l)
+print("average is", ave )
+
+# try min and max, count of 42's, count of 92's, etc.
+
+
+#
+# let's try again... with the dice-rolling experiment
+#
+
+from random import choice
+
+def count_doubles( num_rolls ):
+    """
+        have the computer roll two six-sided dice, counting the # of doubles
+        (same value on both dice)
+        then, return the number of doubles...
+    """
+    numdoubles = 0       # start with no doubles so far...
+
+    for i in range(0,num_rolls):   # roll repeatedly: i keeps track
+        d1 = choice( [1,2,3,4,5,6] )  # 0 to 6, inclusive
+        d2 = choice( range(1,7) )     # 0 to 6, inclusive
+        if d1 == d2:
+            numdoubles += 1
+            you = "🙂"
+        else:
+            you = " "
+
+        #print("run", i, "roll:", d1, d2, you, flush=true)
+        #time.sleep(.01)
+
+    return numdoubles
+
+# test our function!
+count_doubles(300)
+
+
+l = [ count_doubles(300) for i in range(1000) ]
+print("doubles-counting: l[0:5] are", l[0:5])
+print("doubles-counting: l[-5:] are", l[-5:])
+#
+# let's see what the average results were
+# print("len(l) is", len(l))
+# ave = sum(l)/len(l)
+# print("average is", ave )
+
+# try min and max, count of 42's, count of 92's, etc.
+
+
+
+# let's try our birthday-room experiment:
+
+from random import choice
+
+def birthday_room( days_in_year = 365 ):    # note: default input!
+    """
+        run the birthday room experiment once!
+    """
+    b = []
+    next_bday = choice( range(0,days_in_year) )
+
+    while next_bday not in b:
+        b += [ next_bday ]
+        next_bday = choice( range(0,days_in_year) )
+
+    b += [ next_bday ]
+    return b
+
+
+
+# test our three-curtain-game, many times:
+result = birthday_room()   # use the default value
+print(len(result))
+
+
+sum([ 2, 3, 4 ]) / len([2,3,4])
+
+
+lc = [ len(birthday_room()) for i in range(100) ]
+print(lc)
+sum(lc) / len(lc)
+
+
+
+l = [ len(birthday_room()) for i in range(100000) ]
+print("birthday room: l[0:5] are", l[0:5])
+print("birthday room: l[-5:] are", l[-5:])
+#
+# let's see what the average results were
+print("len(l) is", len(l))
+ave = sum(l)/len(l)
+print("average is", ave )
+print("max is", max(l))
+# try min and max, count of 42's, count of 92's, etc.
+
+
+[ x**2 for x in [3,5,7] ]
+
+
+s = "ash"
+s[2]
+
+
+[  s[-1] for s in ["ash", "ist341_participant_8", "mohammed"] ]
+
+
+max(l)
+
+
+#
+# example monte carlo simulation: the monte-carlo monte hall paradox
+#
+
+from random import choice
+
+def count_wins( n, original_choice, stay_or_switch ):
+    """
+        run the monte hall paradox n times, with
+        original_choice, which can be 1, 2, or 3 and
+        stay_or_switch, which can be "stay" or "switch"
+        count the number of wins and return that number.
+    """
+    numwins = 0       # start with no wins so far...
+
+    for i in range(1,n+1):      # run repeatedly: i keeps track
+        win_curtain = choice([1,2,3])   # the curtain with the grand prize
+        original_choice = original_choice      # just a reminder that we have this variable
+        stay_or_switch = stay_or_switch        # a reminder that we have this, too
+
+        result = ""
+        if original_choice == win_curtain and stay_or_switch == "stay": result = " win!!!"
+        elif original_choice == win_curtain and stay_or_switch == "switch": result = "lose..."
+        elif original_choice != win_curtain and stay_or_switch == "stay": result = "lose..."
+        elif original_choice != win_curtain and stay_or_switch == "switch": result = " win!!!"
+
+        #print("run", i, "you", result, flush=true)
+        #time.sleep(.025)
+
+        if result == " win!!!":
+            numwins += 1
+
+
+    return numwins
+
+# test our three-curtain-game, many times:
+count_wins(300, 1, "stay")
+
+
+
+l = [ count_wins(300,1,"stay") for i in range(1000) ]
+print("curtain game: l[0:5] are", l[0:5])
+print("curtain game: l[-5:] are", l[-5:])
+#
+# let's see what the average results were
+# print("len(l) is", len(l))
+# ave = sum(l)/len(l)
+# print("average is", ave )
+
+# try min and max, count of 42's, count of 92's, etc.
+
+
+#
+# first, the random-walking code:
+#
+
+import random
+
+def rs():
+    """one random step"""
+    return random.choice([-1, 1])
+
+def rwalk(radius):
+    """random walk between -radius and +radius  (starting at 0 by default)"""
+    totalsteps = 0          # starting value of totalsteps (_not_ final value!)
+    start = 0               # start location (_not_ the total # of steps)
+
+    while true:             # run "forever" (really, until a return or break)
+        if start == -radius or start == radius:
+            return totalsteps # phew!  return totalsteps (stops the while loop)
+
+        start = start + rs()
+        totalsteps += 1     # addn totalsteps 1 (for all who miss hmmm :-)
+
+        #print("at:", start, flush=true) # to see what's happening / debugging
+        # ascii = "|" + "_"*(start- -radius) + "s" + "_"*(radius-start) + "|"
+        # print(ascii, flush=true) # to see what's happening / debugging
+
+    # it can never get here!
+
+# let's test it:
+rwalk(5)   # walk randomly within our radius... until we hit a wall!
+
+
+
+# analyze!
+# create list comprehensions that run rwalk(5) for 1000 times
+
+# here is a starting example:
+l = [ rwalk(5) for i in range(1000) ]
+
+# then, find the average of those 1000 experiments for rwalk(5)
+average = sum(l)/len(l)
+print("the average for radius==5 (for 1000 trials) was", average)
+
+
+# next, try it for more values...
+# then, you'll create a hypothesis about what's happening!
+
+
+
+
+# repeat the above for a radius of 6, 7, 8, 9, and 10
+# it's fast to do:  copy and paste and edit!!
+l = [ rwalk(6) for i in range(1000) ]
+
+# then, find the average of those 1000 experiments for rwalk(5)
+average = sum(l)/len(l)
+print("the average for radius==6 (for 1000 trials) was", average)
+
+
+
+l = [ rwalk(7) for i in range(1000) ]
+
+# then, find the average of those 1000 experiments for rwalk(5)
+average = sum(l)/len(l)
+print("the average for radius==7 (for 1000 trials) was", average)
+
+
+
+l = [ rwalk(8) for i in range(1000) ]
+
+# then, find the average of those 1000 experiments for rwalk(5)
+average = sum(l)/len(l)
+print("the average for radius==8 (for 1000 trials) was", average)
+
+
+
+#
+# see if we have the requests library...
+#
+
+import requests
+
+
+#
+# let's try it on a simple webpage
+#
+
+#
+# we assign the url and obtain the api-call result into result
+#    note that result will be an object that contains many fields (not a simple string)
+#
+
+url = "https://www.cs.hmc.edu/~dodds/demo.html"
+#url = "https://www.cgu.edu/"
+url = "https://www.facebook.com/terms?section_id=section_3"
+result = requests.get(url)
+
+# if it succeeded, you should see <response [200]>
+# see the list of http reponse codes for the full set!
+
+
+#
+# when exploring, you'll often obtain an unfamiliar object.
+# here, we'll ask what type it is
+type(result)
+
+
+# we can print all of the data members in an object with dir
+# since dir returns a list, we will grab that list and loop over it:
+all_fields = dir(result)
+
+for field in all_fields:
+    if "_" not in field:
+        print(field)
+
+
+#
+# let's try printing a few of those fields (data members):
+print(f"result.url         is {result.url}")  # the original url
+print(f"result.raw         is {result.raw}")  # another object!
+print(f"result.encoding    is {result.encoding}")  # utf-8 is very common
+print(f"result.status_code is {result.status_code}")  # 200 is success!
+
+
+# http://api.open-notify.org/iss-now.json
+
+
+
+# in this case, the result is a text file (html) let's see it!
+contents = result.text
+print(contents)
+
+
+# yay!
+# this shows that you are able to "scrape" an arbitrary html page...
+
+# now, we're off to more _structured_ data-gathering...
+
+
+#
+# we assign the url and obtain the api-call result into result
+#    note that result will be an object that contains many fields (not a simple string)
+#
+
+import requests
+
+url = "http://api.open-notify.org/iss-now.json"   # this is sometimes called an "endpoint" ...
+result = requests.get(url)
+
+# if it succeeds, you should see <response [200]>
+
+
+#
+# let's try printing those shorter fields from before:
+print(f"result.url         is {result.url}")  # the original url
+print(f"result.raw         is {result.raw}")  # another object!
+print(f"result.encoding    is {result.encoding}")  # utf-8 is very common
+print(f"result.status_code is {result.status_code}")  # 200 is success!
+
+
+#
+# in this case, we know the result is a json file, and we can obtain it that way:
+json_contents = result.json()
+print(json_contents)
+
+# remember:  json_contents will be a _dictionary_
+
+
+#
+# let's see how dictionaries work:
+
+json_contents['message']
+
+# thought experiment:  could we access the other components? what _types_ are they?!!
+
+
+# json is a javascript dictionary format -- almost the same as a python dictionary:
+data = { 'key':'value',  'fave':42,  'list':[5,6,7,{'mascot':'aliiien'}] }
+print(data)
+
+
+#
+# here, we will obtain plain-text results from a request
+url = "https://www.cs.hmc.edu/~dodds/demo.html"  # try it + source
+# url = "https://www.scrippscollege.edu/"          # another possible site...
+# url = "https://www.pitzer.edu/"                  # another possible site...
+# url = "https://www.cmc.edu/"                     # and another!
+# url = "https://www.cgu.edu/"                       # yay cgu!
+result = requests.get(url)
+print(f"result is {result}")        # question: is the result a "200" response?!
+
+
+#
+# we assign the url and use requests.get to obtain the result into result_astro
+#
+#    remember, result_astro will be an object that contains many fields (not a simple string)
+#
+
+import requests
+
+url = "http://api.open-notify.org/astros.json"   # this is sometimes called an "endpoint" ...
+result_astro = requests.get(url)
+result_astro
+
+# if it succeeded, you should see <response [200]>
+
+
+# if the request succeeded, we know the result is a json file, and we can obtain it that way.
+# let's call our dictionary something more specific:
+
+astronauts = result_astro.json()
+print(astronauts)
+
+d = astronauts     # shorter to type
+
+# remember:  astronauts will be a _dictionary_
+
+note = """ here's yesterday evening's result - it _should_ be the same this morning!
+
+{"people": [{"craft": "iss", "name": "oleg kononenko"}, {"craft": "iss", "name": "nikolai chub"},
+{"craft": "iss", "name": "tracy caldwell dyson"}, {"craft": "iss", "name": "matthew dominick"},
+{"craft": "iss", "name": "michael barratt"}, {"craft": "iss", "name": "jeanette epps"},
+{"craft": "iss", "name": "alexander grebenkin"}, {"craft": "iss", "name": "butch wilmore"},
+{"craft": "iss", "name": "sunita williams"}, {"craft": "tiangong", "name": "li guangsu"},
+{"craft": "tiangong", "name": "li cong"}, {"craft": "tiangong", "name": "ye guangfu"}],
+"number": 12, "message": "success"}
+"""
+
+
+# use this cell for the in-class challenges, which will be
+#    (1) to extract the value 12 from the dictionary d
+#    (2) to extract the name "sunita williams" from the dictionary d
+
+print(d['number'])
+print(d['people'][8]['name'])
+
+
+# use this cell - based on the example above - to share your solutions to the astronaut challenges...
+print(d['people'][5]['name'])
+print(d['people'][1]['name'][3] + d['people'][1]['name'][2])
+
+
+#
+# use this cell for your api call - and data-extraction
+#
+import requests
+
+url = "https://jsonplaceholder.typicode.com/users"
+result = requests.get(url)
+
+d = result.json()
+print(d)
+print()
+last_user = d[-1]
+print(f"name: {last_user['name']}")
+print(f"address: {last_user['address']}")
+print(f"email: {last_user['email']}")
+
+
+#
+# use this cell for your webscraping call - optional data-extraction
+#
+import requests
+
+url = "http://books.toscrape.com/"
+result = requests.get(url)
+
+print(f"result is {result}")
+
+print(result.text)
+
+webpage = result.text
+
+start = webpage.find("<h1>") + len("<h1>")  # move start position to after "<h1>"
+end = webpage.find("</h1>", start)  # find closing </h1> tag
+heading = webpage[start:end]  # extract text between <h1> and </h1>
+
+print(f"extracted heading: {heading}")
+
+
+
+#
+# throwing a single dart
+#
+
+import random
+
+def dart():
+    """throws one dart between (-1,-1) and (1,1).
+       returns true if it lands in the unit circle; otherwise, false.
+    """
+    x = random.uniform(-1, 1)
+    y = random.uniform(-1, 1)
+    print("(x,y) are", (x,y))   # you'll want to comment this out...
+
+    if x**2 + y**2 < 1:
+        return true  # hit (within the unit circle)
+    else:
+        return false # missed (landed in one of the corners)
+
+# try it!
+result = dart()
+print("result is", result)
+
+
+
+
+# try it ten times in a loop:
+
+for i in range(10):
+    result = dart()
+    if result == true:
+        print("   hit the circle!")
+    else:
+        print("   missed...")
+
+
+# try adding up the number of hits, the number of total throws
+# remember that pi is approximately 4*hits/throws   (cool!)
+
+
+
+#
+# write forpi(n)
+#
+
+#
+# for the full explanation, see https://www.cs.hmc.edu/twiki/bin/view/cs5fall2021/pifrompiegold
+#
+
+
+# this is only a starting point
+def forpi(n):
+    """throws n darts, estimating pi."""
+    pi = 42     # a suitably poor initial estimate
+    throws = 0  # no throws yet
+    hits = 0    # no "hits" yet  (hits ~ in the circle)
+
+    return hits
+
+# try it!
+forpi(10)
+
+
+
+#
+# write whilepi(n)
+#
+
+#
+# for the full explanation, see https://www.cs.hmc.edu/twiki/bin/view/cs5fall2021/pifrompiegold
+#
+
+
+# this is only a starting point
+def whilepi(err):
+    """throws n darts, estimating pi."""
+    pi = 42     # a suitably poor initial estimate
+    throws = 0  # no throws yet
+    hits = 0    # no "hits" yet  (hits ~ in the circle)
+
+    return throws
+
+
+# try it!
+whilepi(.01)
+
+
+#
+# your additional punctuation-style explorations (optional!)
+#
+
+
+
+
+

@@ -1,0 +1,911 @@
+l = [ 'cgu', 'cmc', 'pit', 'scr', 'pom', 'hmc' ]
+print("len(l) is", len(l))
+print(max(l), min(l))     # just for fun, try max and min of this l:  we win! (why?!)
+
+
+l = [1, 2, 40, 3 ]
+print("max(l) is", max(l))
+print("min(l) is", min(l))
+print("sum(l) is", sum(l))
+
+
+l = range(1,43)
+print("l is", l)   # uh oh... it won't create the list unless we tell it to...
+
+
+l = list(range(1,367))  # ask it to create the list values...
+print("l is", l)  # aha!
+
+
+print("max(l) is", max(l))    # ... up to but _not_ including the endpoint!
+
+
+#
+# gauss's number: adding from 1 to 100
+#
+print(sum(list(range(101))))
+
+
+# single-character substitution:
+
+def vwl_once(c):
+  """ vwl_once returns 1 for a single vowel, 0 otherwise
+  """
+  if c in 'aeiou': return 1
+  else: return 0
+
+# two tests:
+print("vwl_once('a') should be 1 <->", vwl_once('a'))
+print("vwl_once('b') should be 0 <->", vwl_once('b'))
+
+
+s = "claremont"
+print("s is", s)
+print()
+
+lc = [ vwl_once(c) for c in s ]
+print("lc is", lc)
+
+
+s = "audio"
+print("s is", s)
+print()
+
+lc = [ vwl_once(c) for c in s ]
+print("lc is", lc)
+
+
+#
+# feel free to use this cell to check your vowel-patterns.
+#      this example is a starting point.
+#      you'll want to copy-paste-and-change it:
+s = "state"
+lc = [ vwl_once(c) for c in s ]
+print("lc is", lc)
+
+s = "shrink"
+lc = [ vwl_once(c) for c in s ]
+print("lc is", lc)
+
+s = "amounted"
+lc = [ vwl_once(c) for c in s ]
+print("lc is", lc)
+
+s = "manipulative"
+lc = [ vwl_once(c) for c in s ]
+print("lc is", lc)
+
+s = "strengths"
+lc = [ vwl_once(c) for c in s ]
+print("lc is", lc)
+
+
+
+#
+# vwl_all using this technique
+#
+
+def vwl_all(s):
+  """ returns the total # of vowels in s, a string
+  """
+  lc = [ vwl_once(c) for c in s ]
+  total = sum(lc)  # add them all up!
+  return total
+
+# two tests:
+print("vwl_all('claremont') should be 3 <->", vwl_all('claremont'))
+print("vwl_all('caffeine') should be 4 <->", vwl_all('caffeine'))
+
+
+
+# scrabble-scoring
+
+def scrabble_one(c):
+  """ returns the scrabble score of one character, c
+  """
+  c = c.lower()
+  if c in 'alienorstu':   return 1
+  elif c in 'dg':         return 2
+  elif c in 'bcmp':       return 3
+  elif c in 'fhvwy':      return 4
+  elif c in 'k':          return 5
+  elif c in 'jx':         return 8
+  elif c in 'qz':         return 10
+  else:                   return 0
+
+# tests:
+print("scrabble_one('q') should be 10 <->", scrabble_one('q'))
+print("scrabble_one('!') should be 0 <->", scrabble_one('!'))
+print("scrabble_one('u') should be 1 <->", scrabble_one('u'))
+
+
+#
+# scrabble_all using this technique
+#
+
+def scrabble_all(s):
+  """ returns the total scrabble score of s
+  """
+  lc = [ scrabble_one(c) for c in s ]
+  total = sum(lc)  # add them all up!
+  return total
+
+
+# two tests:
+print("scrabble_all('zany sci ten quiz') should be 46 <->", scrabble_all('zany sci ten quiz'))
+print("scrabble_all('claremont') should be 13 <->", scrabble_all('claremont'))
+print("scrabble_all('abcdefghijklmnopqrstuvwxyz!') should be 87 <->", scrabble_all('abcdefghijklmnopqrstuvwxyz!'))
+
+
+# here are the two texts:
+
+plankton = """i'm as evil as ever. i'll prove it
+right now by stealing the krabby patty secret formula."""
+
+patrick = """i can't hear you.
+it's too dark in here."""
+
+
+#
+# raw scrabble comparison
+#
+
+print("plankton, total score:", scrabble_all(plankton))
+print("patrick, total score:", scrabble_all(patrick))
+
+
+#
+# per-character ("average/expected") scrabble comparison
+#
+
+print("plankton, per-char score:", scrabble_all(plankton)/len(plankton))
+print("patrick, per-char score:", scrabble_all(patrick)/len(patrick))
+
+
+
+# let's see a "plain"  lc   (list comprehension)
+
+[ 2*x for x in [0,1,2,3,4,5] ]
+
+# it _should_ result in     [0, 2, 4, 6, 8, 10]
+
+
+
+# let's see a few more  list comprehensions.  for sure, we can name them:
+
+a  =  [ 10*x for x in [0,1,2,3,4,5] if x%2==0]   # notice the "if"! (there's no else...)
+print(a)
+
+
+
+b = [ y*21 for y in list(range(0,3)) ]    # remember what range does?
+print(b)
+
+
+
+
+
+c = [ s[1] for s in ["hi", "7cs!"] ]      # doesn't have to be numbers...
+print(c)
+
+
+
+# let's try thinking about these...
+
+"""
+a = [ n+2 for n in   range(40,42) ]
+b = [ 42 for z in [0,1,2] ]
+c = [ z for z in [42,42] ]
+d = [ s[::-2] for s in ['fungic','y!a!y!'] ]
+l = [ [len(w),w] for w in  ['hi','ist'] ]
+
+a: [42, 43]
+b; [43, 43, 43]
+c: [42, 42]
+d: ['cgu', '!!!']
+l: [['2', 'hi'], ['3', 'ist']]
+"""
+
+# then, see if they work the way you predict...
+a = [ n+2 for n in   range(40,42) ]
+b = [ 42 for z in [0,1,2] ]
+c = [ z for z in [42,42] ]
+d = [ s[::-2] for s in ['fungic','y!a!y!'] ]
+l = [ [len(w),w] for w in  ['hi','ist'] ]
+
+print(a, '\n' , b, '\n', c, '\n', d, '\n', l, sep='')
+
+
+#
+# here, [1] create a function that scores punctuation as 1 and non-punctuation as 0, pun_one
+#       [2] use the list-comprehension technique to create a punctuation-scoring function, pun_all
+
+# use the above examples as a starting point!
+def pun_one(c):
+  if c in '.,(){}[]?!-–—\'":;…':
+    return 1
+  else:
+    return 0
+
+
+def pun_all(s):
+  lc = [pun_one(c) for c in s]
+  return sum(lc)
+
+
+
+
+
+# tests
+print("pun_all(plankton) should be 4 <->", pun_all(plankton))
+print("pun_all(patrick) should be 4 <->", pun_all(patrick))
+# they're more similar, punctuation-wise than scrabble-wise
+
+
+#
+# the two works of yours and two of another author's ("theirs")
+#     these can - and should - be large
+#
+
+yours1 = """ i would have pulled away then, if i could, but small, firm, fingers pulled me forward unrelentingly into the dark.
+     “you should always be prepared for the unexpected.” he said. “otherwise the click clacks will come for you.”
+     “well, how am i supposed to prepare for the unexpected if it’s, well,  unexpected?”
+     i could feel, but not see, the boy’s hand move as he shrugged. “i don’t know. the unexpected should be expected, no?”
+     click. clack.
+     i wondered how children even came up with these things. i certainly wouldn’t have been able to come up with something so illogical and far-fetched. at least they definitely aren’t lacking in creativity.
+     the boy had sat down on the bed now, pulling me down with him. i asked, “then, how come everyone hasn’t been “drank” by the click clacks? i’m sure not everyone always expects the unexpected.”
+     “they just got lucky.” he said ominously.
+     i couldn’t think of anything else to say, so i let the silence drape over us like a curtain of darkness. it was quiet. too quiet.
+     click. clack.
+     i blinked and tried to will away the thought of the click clacks. the house was old, and the click clacks were probably just the creaks of the old house in the wind. the story had made me more apprehensive than i would admit. it was even making me hear things.
+     i felt a prickle along my spine, like spiders crawling. i had a feeling the boy was staring at me, even in the pitch blackness of the attic. there was a rustle as he moved, then i could feel his breath against my ear.
+     “but you didn’t.”
+     it was but a whisper, but it chilled me to my core. my heart pounded, and i couldn’t say a word. reaching out towards the boy, i tried to grab him, but my hand just passed through air. the darkness seemed even more suffocating now.
+     click. clack.
+     i heard the tip-tap of footsteps, deafening in the silence. they came from all around me, cocooning me with the roar. it almost sounded like millions of spiders crawling towards me. i felt a huge presence emanating from behind me, but i couldn’t turn around. even if i did, i wouldn’t have been able to see what it was. my instincts screamed at me to run, to hide, to do something to escape. but i knew i wouldn’t be able to make it through the door. i knew i had to stay still. i knew i wouldn’t be able to escape anyways.
+     click. clack.
+     thousands of tiny eyes surrounded me, barely noticeable. the moment seemed to drag out for an eternity. anticipation flooded my mind with horrifying images. my heart pounded. my eyes strained. my stomach roiled and i was hyper aware of every sound, every touch, every glint of light reflecting off the eyes. then, i heard a whoosh. and the moment shattered.
+     the thing grabbed my arm just as i tried to get up and flee. it pulled me towards it and the spiders, yes, the eyes were spiders, closing in on me. i struggled. i twisted. i tried to bite. but nothing could get me out of its cold embrace.
+     click. clack.
+     the lights flickered on for a moment, and i saw a dark shadow, vaguely humanoid. shadowy tendrils that were the spiders radiated off of it. that shadow was the thing. that, i now knew for certain, was a click clack. the lights flickered off again and i felt the click clack reach down its ‘head’. a bite. a scream. it hurt. i was scared. i was terrified. light flooded the room. then, all i could see was darkness.
+
+"""
+# click clack the rattlebag my ending
+yours2 = """ mahmoud opened his eyes, still burning from the tear gas, and looked around. the hungarian soldiers were still there, but the crowd had dispersed. he spotted many people heading away from the border, and those that didn’t, were taken by the soldiers to who-knows-where. scanning his surroundings, he looked for waleed and his parents, but they were nowhere to be seen.
+     there! he saw them, unconscious, being taken into hungary by the soldiers. mahmoud stood up with shaky knees and ran over, shouting “wait! please! where are you taking them?”
+     as he approached, a soldier pushed him away, making mahmoud stumble. “why don’t you just let us go through hungary? we don’t even want to stay! please!” he shouted.
+     the soldier sighed, as if exasperated, and grabbed mahmoud, pulling him to where they were taking his family. he noticed waleed twitch, signaling that he was probably waking up.
+     “waleed! can you try to wake mom and dad up? i don’t know where they’re taking us!”
+     waleed just shrugged, nodding towards his bound arms. “who knows? maybe they’re taking us to austria.”
+     mahmoud glared at his brother. “do you think they would willingly help us?” he only received a halfhearted grunt in response. defeated, mahmoud struggled against the soldier who was half dragging, half leading him, but the soldier was far stronger and healthier than mahmoud.
+     he ignored mahmoud and led him towards a group of people who were also being detained. they were tied up and thrown into a van, and so was mahmoud’s family. struggling again, mahmoud tried to free his hands unsuccessfully. he was manhandled into the van, and behind him, the door closed. through the small window, he could see his surroundings move. they were headed back over the border.
+     over the border, out of hungary, and away from germany.
+
+"""
+# when we were reading refugee
+
+theirs1 = """ after the movie was over it suddenly came to us that cherry and marcia
+didn't have a way to get home. two-bit gallantly offered to walk them home--- the west
+side of town was only about twenty miles away--- but they wanted to call their parents
+and have them come and get them. two-bit finally talked them into letting us drive them
+home in his car. i think they were still half-scared of us. they were getting over it,
+though, as we walked to two-bit's house to pick up the car. it seemed funny to me that
+socs--- if these girls were any example--- were just like us. they liked the beatles and
+thought elvis presley was out, and we thought the beatles were rank and that elvis was
+tuff, but that seemed the only difference to me. of course greasy girls would have acted a
+lot tougher, but there was a basic sameness. i thought maybe it was money that separated
+us.
+"no," cherry said slowly when i said this. "it's not just money. part of it is, but
+not all. you greasers have a different set of values. you're more emotional. we're
+sophisticated--- cool to the point of not feeling anything. nothing is real with us. you
+know, sometimes i'll catch myself talking to a girl-friend, and realize i don't mean half of
+what i'm saying. i don't really think a beer blast on the river bottom is super-cool, but i'll
+rave about one to a girl-friend just to be saying something." she smiled at me. "i never
+told anyone that. i think you're the first person i've ever really gotten through to."
+she was coming through to me all right, probably because i was a greaser, and
+younger; she didn't have to keep her guard up with me.
+"rat race is a perfect name for it," she said. "we're always going and going and
+going, and never asking where. did you ever hear of having more than you wanted? so
+that you couldn't want anything else and then started looking for something else to want?
+it seems like we're always searching for something to satisfy us, and never finding it.
+maybe if we could lose our cool. we could."
+"""
+
+theirs2 = """ i woke up late in the afternoon. for a second i didn't know where i was.
+you know how it is, when you wake up in a strange place and wonder where in the world
+you are, until memory comes rushing over you like a wave. i half convinced myself that i
+had dreamed everything that had happened the night before. i'm really home in bed, i
+thought. it's late and both darry and sodapop are up. darry's cooking breakfast, and in a
+minute he and soda will come in and drag me out of bed and wrestle me down and tickle
+me until i think i'll die if they don't stop. it's me and soda's turn to do the dishes after we
+eat, and then we'll all go outside and play football. johnny and two-bit and i will get
+darry on our side, since johnny and i are so small and darry's the best player. it'll go like
+the usual weekend morning. i tried telling myself that while i lay on the cold rock floor,
+wrapped up in dally's jacket and listening to the wind rushing through the trees' dry
+leaves outside.
+finally i quit pretending and pushed myself up. i was stiff and sore from sleeping
+on that hard floor, but i had never slept so soundly. i was still groggy. i pushed off
+johnny's jeans jacket, which had somehow got thrown across me, and blinked, scratching
+my head. it was awful quiet, with just the sound of rushing wind in the trees. suddenly i
+realized that johnny wasn't there.
+"johnny?" i called loudly, and that old wooden church echoed me, onny onny... i
+looked around wildly, almost panic-stricken, but then caught sight of some crooked
+lettering written in the dust of the floor. went to get supplies. be back soon. j.c.
+i sighed, and went to the pump to get a drink. the water from it was like liquid ice
+and it tasted funny, but it was water. i splashed some on my face and that woke me up
+pretty quick. i wiped my face off on johnny's jacket and sat down on the back steps. the
+hill the church was on dropped off suddenly about twenty feet from the back door, and
+you could see for miles and miles. it was like sitting on the top of the world.
+"""
+# reading the outsiders for english right now...
+# why is everything here from e n g l i s h
+
+
+len(theirs2)
+
+
+#
+# here, run your punctuation-comparisons (absolute counts)
+#
+
+print("pun_all(yours1) is", pun_all(yours1))
+print("pun_all(yours2) is", pun_all(yours2))
+print("pun_all(theirs1) is", pun_all(theirs1))
+print("pun_all(theirs2) is", pun_all(theirs2))
+
+
+#
+# here, run your punctuation-comparisons (relative, per-character counts)
+#
+print("punctuation per character in yours1 is", pun_all(yours1)/len(yours1))
+print("punctuation per character in yours2 is", pun_all(yours2)/len(yours2))
+print("punctuation per character in theirs1 is", pun_all(theirs1)/len(theirs1))
+print("punctuation per character in theirs2 is", pun_all(theirs2)/len(theirs2))
+
+
+#
+# example while loop: the "guessing game"
+#
+
+from random import *
+
+def guess( hidden ):
+    """
+        have the computer guess numbers until it gets the "hidden" value
+        return the number of guesses
+    """
+    guess = hidden - 1      # start with a wrong guess + don't count it as a guess
+    number_of_guesses = 0   # start with no guesses made so far...
+
+    while guess != hidden:
+        #print("i guess", guess)  # comment this out - avoid printing when analyzing!
+        guess = choice( range(0,100) )  # 0 to 99, inclusive
+        number_of_guesses += 1
+
+    return number_of_guesses
+
+# test our function!
+guess(42)
+
+
+# let's run 10 number-guessing experiments!
+
+l = [ guess(42) for i in range(10) ]
+print(l)
+
+# 10 experiments: let's see them!!
+
+
+# let's see what the average results were
+print("len(l) is", len(l))
+ave = sum(l)/len(l)
+print("average is", ave )
+
+# try min and max, count of 42's, count of 92's, etc.
+print("min(l) is", min(l), "and max(l) is", max(l))
+has3 = ['3' for i in l if '3' in str(i)]
+print("number of numbers with 3 is", len(has3))
+
+
+#
+# let's try again... with the dice-rolling experiment
+#
+
+from random import choice
+
+def count_doubles( num_rolls ):
+    """
+        have the computer roll two six-sided dice, counting the # of doubles
+        (same value on both dice)
+        then, return the number of doubles...
+    """
+    numdoubles = 0       # start with no doubles so far...
+
+    for i in range(0,num_rolls):   # roll repeatedly: i keeps track
+        d1 = choice( [1,2,3,4,5,6] )  # 0 to 6, inclusive
+        d2 = choice( range(1,7) )     # 0 to 6, inclusive
+        if d1 == d2:
+            numdoubles += 1
+            you = "🙂"
+        else:
+            you = " "
+
+        #print("run", i, "roll:", d1, d2, you, flush=true)
+        #time.sleep(.01)
+
+    return numdoubles
+
+# test our function!
+count_doubles(300)
+
+
+l = [ count_doubles(300) for i in range(1000) ]
+print("doubles-counting: l[0:5] are", l[0:5])
+print("doubles-counting: l[-5:] are", l[-5:])
+#
+# let's see what the average results were
+print("len(l) is", len(l))
+ave = sum(l)/len(l)
+print("average is", ave )
+
+# try min and max, count of 42's, count of 92's, etc.
+print("min(l) is", min(l), "and max(l) is", max(l))
+more = ['m' for i in l if i > 60]
+print('# of #\'s more than 60 is', len(more))
+
+
+
+# let's try our birthday-room experiment:
+
+from random import choice
+
+def birthday_room( days_in_year = 365 ):    # note: default input!
+    """
+        run the birthday room experiment once!
+    """
+    b = []
+    next_bday = choice( range(0,days_in_year) )
+
+    while next_bday not in b:
+        b += [ next_bday ]
+        next_bday = choice( range(0,days_in_year) )
+
+    b += [ next_bday ]
+    return b
+
+
+
+# test our three-curtain-game, many times:
+result = birthday_room()   # use the default value
+print(result)
+
+
+
+l = [ len(birthday_room()) for i in range(1000) ]
+print("birthday room: l[0:5] are", l[0:5])
+print("birthday room: l[-5:] are", l[-5:])
+#
+# let's see what the average results were
+print("len(l) is", len(l))
+ave = sum(l)/len(l)
+print("average is", ave )
+
+# try min and max, count of 42's, count of 92's, etc.
+print("min(l) is", min(l), "and max(l) is", max(l))
+ten = ['t' for i in l if i < 10]
+print('less than 10:', len(ten))
+print('percentage less than 10:', (len(ten)/len(l))*100, '%')
+fifty = ['f' for i in l if i > 50]
+print('more than 50:', len(fifty))
+print('percentage more than 50:', (len(fifty)/len(l))*100, '%')
+
+
+#
+# example monte carlo simulation: the monte-carlo monte hall paradox
+#
+
+from random import choice
+
+def count_wins( n, original_choice, stay_or_switch ):
+    """
+        run the monte hall paradox n times, with
+        original_choice, which can be 1, 2, or 3 and
+        stay_or_switch, which can be "stay" or "switch"
+        count the number of wins and return that number.
+    """
+    numwins = 0       # start with no wins so far...
+
+    for i in range(1,n+1):      # run repeatedly: i keeps track
+        win_curtain = choice([1,2,3])   # the curtain with the grand prize
+        original_choice = original_choice      # just a reminder that we have this variable
+        stay_or_switch = stay_or_switch        # a reminder that we have this, too
+
+        result = ""
+        if original_choice == win_curtain and stay_or_switch == "stay": result = " win!!!"
+        elif original_choice == win_curtain and stay_or_switch == "switch": result = "lose..."
+        elif original_choice != win_curtain and stay_or_switch == "stay": result = "lose..."
+        elif original_choice != win_curtain and stay_or_switch == "switch": result = " win!!!"
+
+        #print("run", i, "you", result, flush=true)
+        #time.sleep(.025)
+
+        if result == " win!!!":
+            numwins += 1
+
+
+    return numwins
+
+# test our three-curtain-game, many times:
+count_wins(300, 1, "stay")
+
+
+
+l = [ count_wins(300,1,"stay") for i in range(1000) ]
+print("curtain game: l[0:5] are", l[0:5])
+print("curtain game: l[-5:] are", l[-5:])
+#
+# let's see what the average results were
+print("len(l) is", len(l))
+ave = sum(l)/len(l)
+print("average is", ave )
+
+# try min and max, count of 42's, count of 92's, etc.
+print("min(l) is", min(l), "and max(l) is", max(l))
+third = ['h' for i in l if i < 100]
+print('less than a third won:', len(third))
+print('percentage less than a third won:', (len(third)/len(l))*100, '%')
+half = ['f' for i in l if i > 150]
+print('more than half won', len(half))
+print('percentage more than half won:', (len(half)/len(l))*100, '%')
+
+
+#
+# first, the random-walking code:
+#
+
+import random
+
+def rs():
+    """one random step"""
+    return random.choice([-1, 1])
+
+def rwalk(radius):
+    """random walk between -radius and +radius  (starting at 0 by default)"""
+    totalsteps = 0          # starting value of totalsteps (_not_ final value!)
+    start = 0               # start location (_not_ the total # of steps)
+
+    while true:             # run "forever" (really, until a return or break)
+        if start == -radius or start == radius:
+            return totalsteps # phew!  return totalsteps (stops the while loop)
+
+        start = start + rs()
+        totalsteps += 1     # addn totalsteps 1 (for all who miss hmmm :-)
+
+        # print("at:", start, flush=true) # to see what's happening / debugging
+        # ascii = "|" + "_"*(start- -radius) + "s" + "_"*(radius-start) + "|"
+        # print(ascii, flush=true) # to see what's happening / debugging
+
+    # it can never get here!
+
+# let's test it:
+rwalk(5)   # walk randomly within our radius... until we hit a wall!
+
+
+
+# analyze!
+# create list comprehensions that run rwalk(5) for 1000 times
+
+# here is a starting example:
+l = [ rwalk(5) for i in range(1000) ]
+
+# then, find the average of those 1000 experiments for rwalk(5)
+average = sum(l)/len(l)
+print("the average for radius==5 (for 1000 trials) was", average)
+
+
+# next, try it for more values...
+# then, you'll create a hypothesis about what's happening!
+
+
+
+
+# repeat the above for a radius of 6, 7, 8, 9, and 10
+# it's fast to do:  copy and paste and edit!!
+
+l = [ rwalk(5) for i in range(1000) ]
+average = sum(l)/len(l)
+print("the average for radius==5 (for 1000 trials) was", average)
+
+
+l = [ rwalk(6) for i in range(1000) ]
+average = sum(l)/len(l)
+print("the average for radius==6 (for 1000 trials) was", average)
+
+
+#
+# see if we have the requests library...
+#
+
+import requests
+
+
+#
+# let's try it on a simple webpage
+#
+
+#
+# we assign the url and obtain the api-call result into result
+#    note that result will be an object that contains many fields (not a simple string)
+#
+
+url = "https://www.cs.hmc.edu/~dodds/demo.html"
+result = requests.get(url)
+
+# if it succeeded, you should see <response [200]>
+# see the list of http reponse codes for the full set!
+
+
+#
+# when exploring, you'll often obtain an unfamiliar object.
+# here, we'll ask what type it is
+type(result)
+
+
+# we can print all of the data members in an object with dir
+# since dir returns a list, we will grab that list and loop over it:
+all_fields = dir(result)
+
+for field in all_fields:
+    if "_" not in field:
+        print(field)
+
+
+#
+# let's try printing a few of those fields (data members):
+print(f"result.url         is {result.url}")  # the original url
+print(f"result.raw         is {result.raw}")  # another object!
+print(f"result.encoding    is {result.encoding}")  # utf-8 is very common
+print(f"result.status_code is {result.status_code}")  # 200 is success!
+
+
+# in this case, the result is a text file (html) let's see it!
+contents = result.text
+print(contents)
+
+
+# yay!
+# this shows that you are able to "scrape" an arbitrary html page...
+
+# now, we're off to more _structured_ data-gathering...
+
+
+#
+# we assign the url and obtain the api-call result into result
+#    note that result will be an object that contains many fields (not a simple string)
+#
+
+import requests
+
+url = "http://api.open-notify.org/iss-now.json"   # this is sometimes called an "endpoint" ...
+result = requests.get(url)
+
+# if it succeeds, you should see <response [200]>
+
+
+#
+# let's try printing those shorter fields from before:
+print(f"result.url         is {result.url}")  # the original url
+print(f"result.raw         is {result.raw}")  # another object!
+print(f"result.encoding    is {result.encoding}")  # utf-8 is very common
+print(f"result.status_code is {result.status_code}")  # 200 is success!
+
+
+#
+# in this case, we know the result is a json file, and we can obtain it that way:
+json_contents = result.json()
+print(json_contents)
+
+# remember:  json_contents will be a _dictionary_
+
+
+#
+# let's see how dictionaries work:
+
+json_contents['message']
+
+# thought experiment:  could we access the other components? what _types_ are they?!!
+
+
+# json is a javascript dictionary format -- almost the same as a python dictionary:
+data = { 'key':'value',  'fave':42,  'list':[5,6,7,{'mascot':'aliiien'}] }
+print(data)
+
+
+data['list']
+
+
+
+data['list'][3]['mascot']
+
+
+
+#
+# here, we will obtain plain-text results from a request
+# url = "https://www.cs.hmc.edu/~dodds/demo.html"  # try it + source
+# url = "https://www.scrippscollege.edu/"          # another possible site... 403
+# url = "https://www.pitzer.edu/"                  # another possible site... 200
+# url = "https://www.cmc.edu/"                     # and another!             200
+# url = "https://www.cgu.edu/"                       # yay cgu!               403
+result = requests.get(url)
+print(f"result is {result}")        # question: is the result a "200" response?!
+
+
+#
+# we assign the url and use requests.get to obtain the result into result_astro
+#
+#    remember, result_astro will be an object that contains many fields (not a simple string)
+#
+
+import requests
+
+url = "http://api.open-notify.org/astros.json"   # this is sometimes called an "endpoint" ...
+result_astro = requests.get(url)
+result_astro
+
+# if it succeeded, you should see <response [200]>
+
+
+# if the request succeeded, we know the result is a json file, and we can obtain it that way.
+# let's call our dictionary something more specific:
+
+astronauts = result_astro.json()
+print(astronauts)
+
+d = astronauts     # shorter to type
+
+# remember:  astronauts will be a _dictionary_
+
+note = """ here's yesterday evening's result - it _should_ be the same this morning!
+
+{"people": [{"craft": "iss", "name": "oleg kononenko"}, {"craft": "iss", "name": "nikolai chub"},
+{"craft": "iss", "name": "tracy caldwell dyson"}, {"craft": "iss", "name": "matthew dominick"},
+{"craft": "iss", "name": "michael barratt"}, {"craft": "iss", "name": "jeanette epps"},
+{"craft": "iss", "name": "alexander grebenkin"}, {"craft": "iss", "name": "butch wilmore"},
+{"craft": "iss", "name": "sunita williams"}, {"craft": "tiangong", "name": "li guangsu"},
+{"craft": "tiangong", "name": "li cong"}, {"craft": "tiangong", "name": "ye guangfu"}],
+"number": 12, "message": "success"}
+"""
+
+
+# use this cell for the in-class challenges, which will be
+#    (1) to extract the value 12 from the dictionary d
+d['number']
+#    (2) to extract the name "sunita williams" from the dictionary d
+d['people'][8]['name']
+
+
+# use this cell - based on the example above - to share your solutions to the astronaut challenges...
+d['people'][5]['name']
+d['people'][0]['name'][:-3:-1]
+
+
+#
+# use this cell for your api call - and data-extraction
+#
+url = 'https://catfact.ninja/facts?page=31'
+result_url = requests.get(url)
+result_url
+cat = result_url.json()
+print('why happy cats are good: "', cat['data'][9]['fact'], '"', sep='')
+
+
+#
+# use this cell for your webscraping call - optional data-extraction
+#
+url = 'https://tilde.pt/~fimdomeio/index2.html'
+result_url = requests.get(url)
+type(result_url)
+contents = result_url.text
+print(contents)
+
+
+print('this is what happened when i clicked on it twt:', contents[292:389])
+print('amazing advice:', contents[2032:2083])
+
+
+
+#
+# throwing a single dart
+#
+
+import random
+
+def dart():
+    """throws one dart between (-1,-1) and (1,1).
+       returns true if it lands in the unit circle; otherwise, false.
+    """
+    x = random.uniform(-1, 1)
+    y = random.uniform(-1, 1)
+    print("(x,y) are", (x,y))   # you'll want to comment this out...
+
+    if x**2 + y**2 < 1:
+        return true  # hit (within the unit circle)
+    else:
+        return false # missed (landed in one of the corners)
+
+# try it!
+result = dart()
+print("result is", result)
+
+
+
+
+# try it ten times in a loop:
+
+for i in range(10):
+    result = dart()
+    if result == true:
+        print("   hit the circle!")
+    else:
+        print("   missed...")
+
+
+# try adding up the number of hits, the number of total throws
+# remember that pi is approximately 4*hits/throws   (cool!)
+
+
+
+#
+# write forpi(n)
+#
+
+#
+# for the full explanation, see https://www.cs.hmc.edu/twiki/bin/view/cs5fall2021/pifrompiegold
+#
+
+
+# this is only a starting point
+def forpi(n):
+    """throws n darts, estimating pi."""
+    pi = 42     # a suitably poor initial estimate
+    throws = 0  # no throws yet
+    hits = 0    # no "hits" yet  (hits ~ in the circle)
+
+    return hits
+
+# try it!
+forpi(10)
+
+
+
+#
+# write whilepi(n)
+#
+
+#
+# for the full explanation, see https://www.cs.hmc.edu/twiki/bin/view/cs5fall2021/pifrompiegold
+#
+
+
+# this is only a starting point
+def whilepi(err):
+    """throws n darts, estimating pi."""
+    pi = 42     # a suitably poor initial estimate
+    throws = 0  # no throws yet
+    hits = 0    # no "hits" yet  (hits ~ in the circle)
+
+    return throws
+
+
+# try it!
+whilepi(.01)
+
+
+#
+# your additional punctuation-style explorations (optional!)
+#
+
+
+
+
+
