@@ -1,0 +1,92 @@
+### <b>Data reminder  IST341_Participant_8 HMWK 8</b>
+
+In Colab, be sure to upload your <tt>.csv</tt> cleaned data file.
+
+For example, to run the cell below you will need the <tt>iris_cleaned.csv</tt> file -- it's [here](https://drive.google.com/drive/folders/1Qnie8N2VCdumwaFxFldJ_1iQmvtb40pZ?usp=drive_link)
+
+Download it to your machine and then upload it to Colab into the _folder_ &nbsp; icon at left.### Iris classification via <b>Decision Trees</b> (here) and Random Forests (below)
+
+This is the whole ML workflow! You can show/no-show parts with <tt>if True</tt> and <tt>if False</tt>
+
++ Section 1: Library imports
++ Section 2: Read the already-cleaned iris data  (it's [here](https://drive.google.com/drive/folders/1Qnie8N2VCdumwaFxFldJ_1iQmvtb40pZ?usp=drive_link) as <tt>iris_cleaned.csv</tt>)
++ Section 3:  Drop any columns we don't want to use
++ Section 4:  create COLUMNS and SPECIES variables to show we're organized + know what's happening...
++ Section 5:  convert from pandas (spreadsheet) to numpy (array)
++ Section 6:  define our features (X_all) and our target-to-predict (y_all)
++ Section 7:  80/20 split into training and testing sets:  X_train and y_train, X_test and y_test
++ Section 8:  Here's where the model-building happens!  First, we guess at the parameters (k=84)
++ Section 9:  Let's see how our model does on the TEST data...
++ Section 10:  Let's cross-validate to find the "best" depth
++ Section 11:  Let's build a final model + find _feature importances_## First, <b>Decision Trees</b>### Optional:  Let's format things more carefully...Optional: See the Decision tree...### Optional:  Use the predictive model!
+
+We can use the predictive model to make predictions and try it out!### Predictive models aren't perfect!
++ Notice that the fourth prediction above is (probably) wrong
+  + It probably predicted _versicolor_, but it was actually a _virginica_
+  + In essence, it was a _virginica_ iris that "looked more like" a _versicolor_ ... ***from these four features!***
+  + A botanist would use more than these four features to classify difference species...
+
++ **Key**: Even when the modeling process runs "perfectly," the models are likely to be imperfect...
++ ... it's just that we won't know where the imperfections are -- until future observations arrive!### That's it! Our model is complete...
+
+... not perfect, but **complete**
+
+What does this mean?
+
+It means that the model -- the function (above) -- is ***already*** prepared to provide an output for every possible input!
+
+We can see this in a plot of the outputs for every input in the "sepal" plane (length vs. width) as well as the "petal" plane:<br>
+<hr>
+<br>## Next, <b>Random Forests</b>
+
+Random Forests are simply a LOT of decision trees...
+
+After you have a lot of decision trees, they all vote on how to classify a new input observation!
+
+The Machine Learning workflow is exactly the same: only the algorithm name changes:### Iris classification via Decision Trees (above) and <b>Random Forests</b> (here)
+
+This is simply a repeat of whole ML workflow, because it's an amazing advantage to have the whole process in mind! (No harm in repeating it here!) You can show/no-show parts with <tt>if True</tt> and <tt>if False</tt>
+
++ Section 1: Library imports
++ Section 2: Read the already-cleaned iris data  (you're set - you used it above)
++ Section 3:  Drop any columns we don't want to use
++ Section 4:  create COLUMNS and SPECIES variables to show we're organized + know what's happening...
++ Section 5:  convert from pandas (spreadsheet) to numpy (array)
++ Section 6:  define our features (X_all) and our target-to-predict (y_all)
++ Section 7:  80/20 split into training and testing sets:  X_train and y_train, X_test and y_test
++ Section 8:  Here's where the model-building happens!  First, we guess at the parameters (k=84)
++ Section 9:  Let's see how our model does on the TEST data...
++ Section 10:  Let's cross-validate to find the "best" depth
++ Section 11:  Let's build a final model + find _feature importances_#### We can visualize parameter space...
+
+_for any model_ &nbsp; Let's "see inside" our Random Forest:
+
++ first by computing all of the predictions in two dimensions
++ then by showing them as a heatmap!We've done it!
+
+Remember that the model _thinks_ it knows everything...
+
+The _feature importances_ are probably what it knows the best:<br>
+<hr>
+<br># Your tasks!
+
+Based on the examples above, your task is to build a DT+RF model (along with the tests and visualizations) for two datasets:
+
+*   the births dataset and
+*   the digits dataset
+
+<br>
+<hr>
+<br>
+
+Suggestion:  Perhaps open this notebook twice...
+
+_Then you can copy-paste-adapt the iris workflow to each new dataset!_
+
+<br>
+<hr>
+<br>
+
+As optional EC, track down another dataset of your own choosing and build a DT+RF model  
+
+Notice that this can be an excellent final project, too! 😃
