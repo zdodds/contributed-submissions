@@ -1,0 +1,11 @@
+IST341_Participant_8 FINAL PROJECT IST 341  07MAY2025I found data sets on Las Vegas visitors starting in 1970 and how much revenue the casinos have had year after year. Since I lived there for over 2 years, I am curious to play with the data. See what correlations I can find. I also found data sets that break it down by month starting in 2020.
+
+I was not entirely sure where to take it. Some initial ideas I had were to see the correlation between visitors and how much the casinos win in revenue. I felt it may have been something new and different. Professor Dodds helped point me in the right direction, and I just had fun with it from there.
+
+I used RNN, NBEATS, ARMIA, LightGBMModel, Random Forest, and decision trees to play with the dataset.  RNN on paper was the better stallion, but I couldn’t get it to forecast into 2025 when I narrowed its focus.  The data set I had, in my opinion, had irrelevant data. Therefore, I narrowed its focus to 4 covariates, and ignored COVID years, but I could not figure out how to get the script to plot past the end of 2024. The only way I managed to make it work was by not focusing on 4 covariates and letting RNN use the entire data set.
+
+NBEATS offered me a better solution based on 2025 actuals that were already available.  With that being said, I must note, when RNN was trained against the actuals. It was able to come a lot closer to the actuals than NBEATS.
+
+To take it to the next level. I simply need to figure out RNN.  The easy solution is to simply delete irrelevant data and keep what I want in the .csv file, but I want to challenge myself and figure it out.  I strongly believe, after noticing how well it performed predicting 2024, it is much better than NBEATS.
+
+I don’t think I would have talked it any differently; I was exploring, learning, and I went down rabbit holes constantly. I had a lot of fun with this one. I still have a long way to go to feel extremely confident with python,  but I feel confident enough to figure out anything asked from me.

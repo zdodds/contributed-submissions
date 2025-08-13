@@ -1,0 +1,41 @@
+# Import
+(the sections are because of my mother)# Data
+
+* Beak.Length_Culmen (mm): Length from the tip of the beak to the base of the skull
+* Beak.Length_Nares (mm): Length from the anterior edge of the nostrils to the tip of the beak
+* Beak.Width (mm): Width of the beak at the anterior edge of the nostrils
+* Beak.Depth (mm): Depth of the beak at the anterior edge of the nostrils
+* Tarsus.Length (mm): Length of the tarsus from the posterior notch between tibia and tarsus, to the end of the last scale of acrotarsium (at the bend of the foot)
+* Wing.Length (mm): Length from the carpal joint (bend of the wing) to the tip of the longest primary on the unflattened wing
+* Kipps.Distance,Length from the tip of the first secondary feather to the tip of the longest primary      
+* Secondary1 (mm): Length from the carpal joint (bend of the wing) to the tip of the first secondary. Secondary1 is roughly equivalent to Wing length minus Kipp’s distance (measured in a fully folded and flat wing)"
+* Hand-Wing.Index (index value): 100*DK/Lw, where DK is Kipp’s distance and Lw is wing length (i.e., Kipp’s distance corrected for wing size).
+* Tail.Length (mm): Distance between the tip of the longest rectrix and the point at which the two central rectrices protrude from the skin.
+* Mass (gram): Body mass given as species average (incorporating both male and female body mass)
+# Data Preparation
+K-means clustering uses Euclidean distance to measure similarity. If features have very different scales (e.g., Mass in grams vs. Beak length in mm), the larger-scale features will dominate the distance computation. For example:
+* Mass: range from 1.9 - 547
+* Beak_depth: range from 1.0 - 27.6<br>
+Scaling ensures that each feature contributes equally to the clustering process, avoiding bias toward high-variance features.# Clustering
+K-means clustering using Sklearn.
+## Determine number of clusters
+The optimal number of clusters (k) can be determined using the elbow method. As number of clusters increase, the sum of squares error (SSE) within the cluster decreases because the data points gets closer to their respective cluster center. The elbow method aims to find k where SSE decreases most rapidly.
+
+Use KElbowVisualizer from ``Yellowbrick cluster module to visualize the cluster.
+
+The Elbow score used is Within-Cluster Sum of Squares (WCSS). This is the sum of squared distances between each point in a cluster and the centroid of that cluster. As the number of clusters increases, the WCSS decreases because the clusters are smaller and their centroids are closer to the points in the cluster.## Four Clusters
+1. Create four clusters.
+2. Add cluster labels to the features
+3. Explore if there are outlier clusters.# Evaluation## 4 Cluster Normalized Cluster Means Plot
+1. Copy the original dataframe
+2. Add cluster label to the original dataframe
+3. Save the labeled file to csv for inspection## 3 Cluster Normalized Cluster Means Plot
+Exclude cluster 3 which is an outlier cluster.
+## 4 Cluster Feature Importance
+Use tree-based models to convert the clustering results into supervised classification problem. The classification model can then use to extract feature importances or describe each cluster using explantory rules.
+
+* Change the cluster labels into a target variable
+* Train a random forest classifier using the cluster labels as the target.
+* Extract the feature importances from the model.## 3 Cluster Feature **Importance**## Describe 4 clusters using Decision Tree## Describe 3 clusters using Decision Tree# Clustering with beak length only
+
+(testing things out)
