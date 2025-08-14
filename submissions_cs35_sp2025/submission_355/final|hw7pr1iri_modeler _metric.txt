@@ -1,0 +1,759 @@
+#
+# hw7pr1iris_modeler:  nnets! 
+#
+#   including _both_ clasification + regression for iris modeling
+#
+
+
+# libraries...
+import numpy as np      # numpy is python's "array" library
+import pandas as pd     # pandas is python's "data" library ("dataframe" == spreadsheet)
+
+
+# let's read in our flower data...
+# 
+# iris_cleaned.csv should be in this folder
+# 
+filename = 'iris_cleaned.csv' # neighborhoods
+df_tidy = pd.read_csv(filename)      # encoding = "utf-8", "latin1"
+print(f"{filename} : file read into a pandas dataframe.")
+
+
+#
+# different version vary on how to see all rows (adapt to suit your system!)
+#
+print(f"df_tidy.shape is {df_tidy.shape}\n")
+df_tidy.info()  # prints column information
+df_tidy
+
+
+#
+# we need to make sure the categories are handed as categories!
+#    scikit-learn calls these "dummy" variables:
+
+df_tidy_cat = pd.get_dummies(data=df_tidy,prefix="is",columns=['irisname'])
+df_tidy_cat
+
+
+#
+# we've removed the irisname column, and with our "" 
+# we don't need the irisnum of the columns need to be numeric, we'll drop irisname
+row = 0
+column = 1
+df_model1 = df_tidy_cat.drop('irisnum', axis=column )
+df_model1
+
+
+#
+# once we have all the columns we want, let's create an index of their names...
+
+
+#
+# fix this!
+#
+
+#
+# let's make sure we have all of our helpful variables in one place 
+#       to be adapted if we drop/add more columns...
+#
+
+#
+# let's keep our column names in variables, for reference
+#
+columns = df_model1.columns            # "list" of columns
+print(f"columns is {columns}\n")  
+  # it's a "pandas" list, called an index
+  # use it just as a python list of strings:
+print(f"columns[0] is {columns[0]}\n")
+
+# let's create a dictionary to look up any column index by name
+col_index = {}
+for i, name in enumerate(columns):
+    col_index[name] = i  # using the name (as key), look up the value (i)
+print(f"col_index is {col_index}\n\n")
+
+
+#
+# and our "species" names
+#
+
+# all of scikit-learn's ml routines need numbers, not strings
+#   ... even for categories/classifications (like species!)
+#   so, we will convert the flower-species to numbers:
+
+species = ['setosa','versicolor','virginica']   # int to str
+species_index = {'setosa':0,'versicolor':1,'virginica':2}  # str to int
+
+# let's try it out...
+for name in species:
+    print(f"{name} maps to {species_index[name]}")
+
+
+#
+# we _could_ reweight our columns...
+# for exmaple, if petalwid were "worth" 20x more than the others?
+# 
+
+# df_model1['petalwid'] *= 20
+# df_model1
+
+#
+# but, with nnets, the whole goal of the network is to _adaptively_ weight each feature...
+#
+#      that's really all the network is doing... !?!!
+#      let's see it in action:
+#
+
+
+#
+# let's convert our dataframe to a numpy array, named a
+#
+a = df_model1.to_numpy()   
+a = a.astype('float64')    # many types:  www.tutorialspoint.com/numpy/numpy_data_types.htm
+print(a[0:5,:])
+
+# print(a)  # the five rows above is probably enough...   
+
+
+#
+# nice to have num_rows and num_cols around
+#
+num_rows, num_cols = a.shape
+print(f"\nthe dataset has {num_rows} rows and {num_cols} cols")
+
+
+# let's use all of our variables, to reinforce that we have
+# (1) names...
+# (2) access and control...
+
+# choose a row index, n:
+n = 42
+print(f"flower #{n} is {a[n]}")
+species = ""
+
+for i in range(len(columns)):
+    colname = columns[i]
+    value = a[n][i]
+    print(f"  its {colname} is {value}")
+    if "setosa" in colname: species = "setosa"
+    elif "versicolor" in colname: species = "versicolor"
+    elif "virginica" in colname: species = "virginica"
+
+print()
+print(f"  and its species name: {species}")
+
+
+print("+++ start of data definitions +++\n")
+
+#
+# we could do this at the data-frame level, too!
+#
+
+x_all = a[:,0:4]   # x (features) ... is all rows, columns 0, 1, 2, 3
+y_all = a[:,4:]    # y (labels) ... is all rows, columns 4, 5, and 6
+
+print(f"y_all (just the labels/species, first few rows) are \n {y_all[0:5]}")
+print()
+print(f"x_all (just the features, first few rows) are \n {x_all[0:5]}")
+
+
+#
+# we can scramble the data, to remove (potential) dependence on its ordering: 
+# 
+indices = np.random.permutation(len(y_all))  # indices is a permutation-list
+
+# we scramble both x and y, necessarily with the same permutation
+x_all = x_all[indices]              # we apply the _same_ permutation to each!
+y_all = y_all[indices]              # again...
+print(f"the scrambled labels/species are \n {y_all[0:5]}")
+print()
+print(f"the corresponding data rows are \n {x_all[0:5]}")
+
+
+#
+# we next separate into test data and training data ... 
+#    + we will train on the training data...
+#    + we will _not_ look at the testing data to build the model
+#
+# then, afterward, we will test on the testing data -- and see how well we do!
+#
+
+#
+# a common convention:  train on 80%, test on 20%    let's define the test_percent
+#
+
+from sklearn.model_selection import train_test_split
+
+x_train, x_test, y_train, y_test = train_test_split(x_all, y_all, test_size=0.2)
+
+print(f"training with {len(y_train)} rows;  testing with {len(y_test)} rows\n" )
+
+print(f"+++ testing +++   held-out data... (testing data: {len(y_test)})\n")
+print(f"y_test: {y_test[0:5,:]}\n")
+print(f"x_test (few rows): {x_test[0:5,:]}")  # 5 rows
+print("\n")
+print(f"+++ training +++   data used for modeling... (training data: {len(y_train)})\n")
+print(f"y_train: {y_train[0:5,:]}\n")
+print(f"x_train (few rows): {x_train[0:5,:]}")  # 5 rows
+
+
+#
+# for nnets, it's important to keep the feature values near 0, say -1. to 1. or so
+#    this is done through the "standardscaler" in scikit-learn
+# 
+from sklearn.preprocessing import standardscaler
+
+#
+# do we want to use a scaler?
+#
+use_scaler = false   # this variable is important! it tracks if we need to use the scaler...
+
+# we "train the scaler"  (computes the mean and standard deviation)
+if use_scaler == true:
+    scaler = standardscaler()
+    scaler.fit(x_train)  # scale with the training data! ave becomes 0; stdev becomes 1
+else:
+    # this one does no scaling!  we still create it to be consistent:
+    scaler = standardscaler(copy=true, with_mean=false, with_std=false) # no scaling
+    scaler.fit(x_train)  # still need to fit, though it does not change...
+
+scaler   # is now defined and ready to use...
+
+# ++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+# here are our scaled training and testing sets:
+
+x_train_scaled = scaler.transform(x_train) # scale!
+x_test_scaled = scaler.transform(x_test) # scale!
+
+y_train_scaled = y_train.copy()  # the predicted/desired labels are not scaled
+y_test_scaled = y_test.copy()  # not using the scaler
+
+
+
+
+#
+# let's create a table for showing our data and its predictions...
+#
+def ascii_table(x,y,scaler_to_invert=none):
+    """ print a table of inputs and outputs """
+    np.set_printoptions(precision=2)  # let's use less precision
+    if scaler_to_invert == none:  # don't use the scaler
+        x = x
+    else:
+        x = scaler_to_invert.inverse_transform(x)
+    print(f"{'input ':>58s} -> {'pred':^7s} {'des':<5s}") 
+    for i in range(len(y)):
+        # whoa! serious f-string formatting:
+        print(f"{str(x[i,0:4]):>58s} -> {'?':^7s} {str(y[i]):<21s}")   # !s is str ...
+    print()
+    
+# to show the table with the scaled data:
+ascii_table(x_train_scaled[0:5,:],y_train_scaled[0:5],none)
+
+# to show the table with the original data:
+ascii_table(x_train_scaled[0:5,:],y_train_scaled[0:5],scaler_to_invert=scaler)
+
+
+from sklearn.neural_network import mlpclassifier
+
+#
+# here's where you can change the number of hidden layers
+# and number of neurons!  it's in the tuple  hidden_layer_sizes:
+#
+nn_classifier = mlpclassifier(hidden_layer_sizes=(6,7),  
+                    # hidden_layer_sizes=(6,7)   means   4 inputs -> 6 hidden -> 7 hidden -> 3 outputs
+                    max_iter=500,      # how many times to train
+                    # activation="tanh", # the "activation function" input -> output
+                    # solver='sgd',      # the algorithm for optimizing weights
+                    verbose=true,      # false to "mute" the training
+                    shuffle=true,      # reshuffle the training epochs?
+                    random_state=none, # set for reproduceability
+                    learning_rate_init=.1,       # learning rate: the amt of error to backpropagate!
+                    learning_rate = 'adaptive')  # soften feedback as it converges
+
+# documentation:
+# scikit-learn.org/stable/modules/generated/sklearn.neural_network.mlpclassifier.html 
+#     try other network sizes / other parameters ...
+
+print("\n\n++++++++++  training:  begin  +++++++++++++++\n\n")
+nn_classifier.fit(x_train_scaled, y_train_scaled)
+print("\n++++++++++  training:   end  +++++++++++++++")
+print(f"the analog prediction error (the loss) is {nn_classifier.loss_}")
+
+
+#
+# how did it do on the testing data?
+#
+
+def get_species(a):
+    """ returns the species for a ~ [1 0 0] or [0 1 0] or ... """
+    for i in range(len(species)):
+        if a[i] == 1: 
+            return species[i]  # note that this "takes the first one"
+    return "no species" 
+
+see_probs = false
+
+def ascii_table_for_classifier(xsc,y,nn,scaler):
+    """ a table including predictions using nn.predict """
+    predictions = nn.predict(xsc)            # all predictions
+    prediction_probs = nn.predict_proba(xsc) # all prediction probabilities
+    xpr = scaler.inverse_transform(xsc)      # xpr is the "x to print": the unscaled data
+    # count correct
+    num_correct = 0
+    # printing
+    print(f"{'input ':>28s} -> {'pred':^12s} {'des.':^12s}") 
+    for i in range(len(y)):
+        pred = predictions[i]
+        pred_probs = str(prediction_probs[i,:])
+        desired = y[i].astype(int)
+        # print(pred, desired, pred_probs)
+        pred_species = get_species(pred)
+        des_species  = get_species(desired)
+        if pred_species != des_species: result = "  incorrect: " + pred_probs
+        else: result = "  correct" + (": "+pred_probs if see_probs else "") ; num_correct += 1
+        # xpr = xsc  # if you want to see the scaled versions
+        print(f"{xpr[i,0:4]!s:>28s} -> {pred_species:^12s} {des_species:12s} {result:^10s}") 
+    print(f"\ncorrect predictions: {num_correct} out of {len(y)}")
+    
+#
+# let's see how it did on the test data (also the training data!)
+#
+ascii_table_for_classifier(x_test_scaled,
+                           y_test_scaled,
+                           nn_classifier,
+                           scaler)   
+
+
+
+#
+# we don't usually look inside the nnet, but we can: it's open-box modeling...
+#
+if true:  # do we want to see all of the parameters?
+    np.set_printoptions(precision=2)  # let's use less precision
+    nn = nn_classifier  # less to type?
+    print("\n\n+++++ parameters, weights, etc. +++++\n")
+    print(f"\nweights/coefficients:\n")
+    for i, wts in enumerate(nn.coefs_):
+        print(f"[[ layer {i} ]]\n   has shape = {wts.shape} and weights =\n{wts}")
+        print(f"   with intercepts:\n {nn.intercepts_[i]}\n")
+    print()
+    print(f"\nall parameters: {nn.get_params()}")
+
+
+#
+# final predictive model (random forests), with tuned parameters + all data incorporated
+#
+
+def get_species(a):
+    """ returns the species for a ~ [1 0 0] or [0 1 0] or ... """
+    for i in range(len(species)):
+        if a[i] == 1: 
+            return species[i]  # note that this "takes the first one"
+    return "no species" 
+
+
+def predictive_model( features, model, scaler ):
+    """ input: a list of four features 
+                [ sepallen, sepalwid, petallen, petalwid ]
+        output: the predicted species of iris, from
+                  setosa (0), versicolor (1), virginica (2)
+    """
+    our_features = np.asarray([features])                 # extra brackets needed
+    scaled_features = scaler.transform(our_features)      # we have to scale the features into "scaled space"
+    predicted_cat = model.predict(scaled_features)        # then, the nnet can predict our "cat" variables
+    prediction_probs = nn.predict_proba(scaled_features) # all prediction probabilities
+    # our_features = scaler.inverse_transform(scaled_features)  # we can convert back (optional!)
+    predicted_species = get_species(predicted_cat[0])     # (it's extra-nested) get the species name
+    return predicted_species, prediction_probs
+   
+#
+# try it!
+# 
+# features = eval(input("enter new features: "))
+#
+features = [6.7,3.3,5.7,0.1]  # [5.8,2.7,4.1,1.0] [4.6,3.6,3.0,2.2] [6.7,3.3,5.7,2.1]
+
+lof = [
+[4.8, 3.1, 1.6, 0.2 ],   # actually setosa
+[5.7, 2.9, 4.2, 1.3 ],   # actually versicolor
+[5.8, 2.7, 5.1, 1.9 ],   # actually virginica
+[5.2, 4.1, 1.5, 0.1 ],   # actually setosa
+[5.4, 3.4, 1.5, 0.4 ],   # actually setosa
+[5.1, 2.5, 3.0, 1.1 ],   # actually versicolor
+[6.2, 2.9, 4.3, 1.3 ],   # actually versicolor
+[6.3, 3.3, 6.0, 2.5 ],   # actually virginica
+[5.7, 2.8, 4.1, 1.3 ],   # actually virginica  <-- almost always wrong!
+]
+
+see_probs = false
+
+# run on each one:
+for features in lof:
+    model = nn_classifier
+    scaler = scaler
+    name, probs = predictive_model( features, model, scaler )  # pass in the model, too!
+    prob_str = "   with probs: " + str(probs) if see_probs == true else ""
+    print(f"i predict {name:>12s} from the features {features}  {prob_str}")    # answers in the assignment...
+
+
+#
+# what shall we predict today?
+print(col_index)
+print()
+print(columns)
+
+# let's first predict sepal length ('sepallen', column index 0)
+
+
+#
+# here we set up for a regression model that will predict 'sepallen'  (column index 0)
+#
+#   sepal length  'sepallen' (column index 0)  <-- our target for _regression_
+
+# we will use
+#
+#   sepal width   'sepalwid' (column index 1)
+#   petal length  'petallen' (column index 2)
+#   petal width   'petalwid' (column index 3)
+#   _and_
+#   species       'irisnum'  (column index 4)    # no problem - we can use this as a feature!
+
+print("+++ start of data-assembly for feature-regression! +++\n")
+# construct the correct x_all from the columns we want
+# we use np.concatenate to combine parts of the dataset to get all-except-column 0:
+# 
+#                     exclude 0  , include 1 to the end
+
+
+x_all = np.concatenate( (a[:,0:0], a[:,1:]), axis=1)    # includes columns 1, 2, 3, and 4
+
+# if we wanted all-except-column 1:   x_all = np.concatenate( (a[:,0:1], a[:,2:]),axis=1)  # columns 0, 2, 3, and 4
+# if we wanted all-except-column 2:   x_all = np.concatenate( (a[:,0:2], a[:,3:]),axis=1)  # columns 0, 1, 3, and 4
+# if we wanted all-except-column 3:   x_all = np.concatenate( (a[:,0:3], a[:,4:]),axis=1)  # columns 0, 1, 2, and 4
+# if we wanted all-except-column 4:   x_all = np.concatenate( (a[:,0:4], a[:,5:]),axis=1)  # columns 0, 1, 2, and 3
+# (slicing is forgiving)
+
+
+y_all = a[:,0]                    # y (labels) ... is all of column 0, sepallen (sepal length) 
+#                                 # change the line above to make other columns the target (y_all)
+print(f"y_all is \n {y_all}")
+print() 
+print(f"x_all (the features, first few rows) is \n {x_all[:5,:]}")
+
+
+
+#
+# we scramble the data, to give a different train/test split each time...
+# 
+indices = np.random.permutation(len(y_all))  # indices is a permutation-list
+
+# we scramble both x and y, necessarily with the same permutation
+x_all = x_all[indices]              # we apply the _same_ permutation to each!
+y_all = y_all[indices]              # again...
+print("target values to predict: \n",y_all)
+print("\nfeatures (a few)\n", x_all[0:5,:])
+
+
+#
+# we next separate into test data and training data ... 
+#    + we will train on the training data...
+#    + we will _not_ look at the testing data to build the model
+#
+# then, afterward, we will test on the testing data -- and see how well we do!
+#
+
+from sklearn.model_selection import train_test_split
+
+x_train, x_test, y_train, y_test = train_test_split(x_all, y_all, test_size=0.2)
+
+print(f"training with {len(y_train)} rows;  testing with {len(y_test)} rows\n" )
+
+print(f"held-out data... (testing data: {len(y_test)})")
+print(f"y_test: {y_test}\n")
+print(f"x_test (few rows): {x_test[0:5,:]}")  # 5 rows
+print()
+print(f"data used for modeling... (training data: {len(y_train)})")
+print(f"y_train: {y_train}\n")
+print(f"x_train (few rows): {x_train[0:5,:]}")  # 5 rows
+
+
+#
+# for nnets, it's important to keep the feature values near 0, say -1. to 1. or so
+#    this is done through the "standardscaler" in scikit-learn
+#
+from sklearn.preprocessing import standardscaler
+
+use_scaler = true   # this variable is important! it tracks if we need to use the scaler...
+
+# we "train the scaler"  (computes the mean and standard deviation)
+if use_scaler == true:
+    scaler = standardscaler()
+    scaler.fit(x_train)  # scale with the training data! ave becomes 0; stdev becomes 1
+else:
+    # this one does no scaling!  we still create it to be consistent:
+    scaler = standardscaler(copy=true, with_mean=false, with_std=false) # no scaling
+    scaler.fit(x_train)  # still need to fit, though it does not change...
+
+scaler   # is now defined and ready to use...
+
+# ++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+# here are our scaled training and testing sets:
+
+x_train_scaled = scaler.transform(x_train) # scale!
+x_test_scaled = scaler.transform(x_test) # scale!
+
+y_train_scaled = y_train  # the predicted/desired labels are not scaled
+y_test_scaled = y_test  # not using the scaler
+
+# reused from above - seeing the scaled data 
+ascii_table(x_train_scaled[0:5,:],y_train_scaled[0:5],none)
+
+# reused from above - seeing the unscaled data (inverting the scaler)
+ascii_table(x_train_scaled[0:5,:],y_train_scaled[0:5],scaler)
+
+
+#
+# mlpregressor predicts _floating-point_ outputs
+#
+
+from sklearn.neural_network import mlpregressor
+
+nn_regressor = mlpregressor(hidden_layer_sizes=(6,7), 
+                    max_iter=500,          # how many training epochs
+                    verbose=true,          # do we want to watch as it trains?
+                    shuffle=true,          # shuffle each epoch?
+                    random_state=none,     # use for reproducibility
+                    learning_rate_init=.1, # how much of each error to back-propagate
+                    learning_rate = 'adaptive')  # how to handle the learning_rate
+
+print("\n\n++++++++++  training:  begin  +++++++++++++++\n\n")
+nn_regressor.fit(x_train_scaled, y_train_scaled)
+print("++++++++++  training:   end  +++++++++++++++")
+print(f"the (squared) prediction error (the loss) is {nn_regressor.loss_:<6.3f}")
+print(f"and, its square root:         {nn_regressor.loss_ ** 0.5:<6.3f}")
+print()
+
+
+#
+# note that square-root of the mean-squared-error is an "expected error" in predicting our feature
+#
+# it's not the only estimate of expected error, but it's easier to think about than the squared error (which has the wrong units)
+#
+
+
+#
+# how did it do? try out the test data...
+#
+
+def ascii_table_for_regressor(xsc,y,nn,scaler):
+    """ a table including predictions using nn.predict """
+    predictions = nn.predict(xsc) # all predictions
+    xpr = scaler.inverse_transform(xsc)  # xpr is the "x to print": unscaled data!
+    # measure error
+    error = 0.0
+    # printing
+    print(f"{'input ':>35s} ->  {'pred':^6s}  {'des.':^6s}   {'absdiff':^10s}") 
+    for i in range(len(y)):
+        pred = predictions[i]
+        desired = y[i]
+        result = abs(desired - pred)
+        error += result
+        # xpr = xsc   # if you'd like to see the scaled values
+        print(f"{xpr[i,:]!s:>35s} ->  {pred:<+6.2f}  {desired:<+6.2f}   {result:^10.2f}") 
+
+    print("\n" + "+++++   +++++   +++++           ")
+    print(f"average abs diff error:   {error/len(y):<6.3f}")
+    print("+++++   +++++   +++++           ")
+    
+#
+# let's see how it did on the test data (also the training data!)
+#
+ascii_table_for_regressor(x_test_scaled,
+                          y_test_scaled,
+                          nn_regressor,
+                          scaler)   # this is our own f'n, above
+
+
+
+# we will use
+#
+#   sepal width   'sepalwid' (column index 1)
+#   petal length  'petallen' (column index 2)
+#   petal width   'petalwid' (column index 3)
+#   _and_
+#   species       'irisnum'  (column index 4)    # no problem - we can use this as a feature!
+
+print("+++ start of data-assembly for feature-regression! +++\n")
+# construct the correct x_all from the columns we want
+# we use np.concatenate to combine parts of the dataset to get all-except-column 0:
+#                     exclude 0  , include 1 to the end
+
+errorslist = []
+
+
+for i in [0,1,2,3]:
+
+
+    # when i = 0: sepallen, i = 1: sepalwid, i = 2: petallen, i = 3: petalwid
+
+    x_all = np.concatenate( (a[:,0:i], a[:,i+1:]), axis=1)    # includes columns 1, 2, 3, and 4
+
+    # if we wanted all-except-column 1:   x_all = np.concatenate( (a[:,0:1], a[:,2:]),axis=1)  # columns 0, 2, 3, and 4
+    # if we wanted all-except-column 2:   x_all = np.concatenate( (a[:,0:2], a[:,3:]),axis=1)  # columns 0, 1, 3, and 4
+    # if we wanted all-except-column 3:   x_all = np.concatenate( (a[:,0:3], a[:,4:]),axis=1)  # columns 0, 1, 2, and 4
+    # if we wanted all-except-column 4:   x_all = np.concatenate( (a[:,0:4], a[:,5:]),axis=1)  # columns 0, 1, 2, and 3
+    # (slicing is forgiving)
+
+
+    y_all = a[:,i]                    # y (labels) ... is all of column 0, sepallen (sepal length) 
+    #                                 # change the line above to make other columns the target (y_all)
+
+
+    # we scramble the data, to give a different train/test split each time...
+    # 
+    indices = np.random.permutation(len(y_all))  # indices is a permutation-list
+
+    # we scramble both x and y, necessarily with the same permutation
+    x_all = x_all[indices]              # we apply the _same_ permutation to each!
+    y_all = y_all[indices]              # again...
+
+
+    from sklearn.model_selection import train_test_split
+
+    x_train, x_test, y_train, y_test = train_test_split(x_all, y_all, test_size=0.2)
+
+    # for nnets, it's important to keep the feature values near 0, say -1. to 1. or so
+    #    this is done through the "standardscaler" in scikit-learn
+    #
+    from sklearn.preprocessing import standardscaler
+
+    use_scaler = true   # this variable is important! it tracks if we need to use the scaler...
+
+    # we "train the scaler"  (computes the mean and standard deviation)
+    if use_scaler == true:
+        scaler = standardscaler()
+        scaler.fit(x_train)  # scale with the training data! ave becomes 0; stdev becomes 1
+    else:
+        # this one does no scaling!  we still create it to be consistent:
+        scaler = standardscaler(copy=true, with_mean=false, with_std=false) # no scaling
+        scaler.fit(x_train)  # still need to fit, though it does not change...
+
+    scaler   # is now defined and ready to use...
+
+    # ++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+    # here are our scaled training and testing sets:
+
+    x_train_scaled = scaler.transform(x_train) # scale!
+    x_test_scaled = scaler.transform(x_test) # scale!
+
+    y_train_scaled = y_train  # the predicted/desired labels are not scaled
+    y_test_scaled = y_test  # not using the scaler
+
+    # reused from above - seeing the scaled data 
+    ascii_table(x_train_scaled[0:5,:],y_train_scaled[0:5],none)
+
+    # reused from above - seeing the unscaled data (inverting the scaler)
+    ascii_table(x_train_scaled[0:5,:],y_train_scaled[0:5],scaler)
+
+    # mlpregressor predicts _floating-point_ outputs
+
+
+    from sklearn.neural_network import mlpregressor
+
+    nn_regressor = mlpregressor(hidden_layer_sizes=(6,7), 
+                        max_iter=500,          # how many training epochs
+                        verbose=true,          # do we want to watch as it trains?
+                        shuffle=true,          # shuffle each epoch?
+                        random_state=none,     # use for reproducibility
+                        learning_rate_init=.1, # how much of each error to back-propagate
+                        learning_rate = 'adaptive')  # how to handle the learning_rate
+
+    nn_regressor.fit(x_train_scaled, y_train_scaled)
+
+
+    def ascii_table_for_regressor(xsc,y,nn,scaler):
+        """ a table including predictions using nn.predict """
+        predictions = nn.predict(xsc) # all predictions
+        xpr = scaler.inverse_transform(xsc)  # xpr is the "x to print": unscaled data!
+        # measure error
+        error = 0.0
+        # printing
+        # print(f"{'input ':>35s} ->  {'pred':^6s}  {'des.':^6s}   {'absdiff':^10s}") 
+        for i in range(len(y)):
+            pred = predictions[i]
+            desired = y[i]
+            result = abs(desired - pred)
+            error += result
+            # xpr = xsc   # if you'd like to see the scaled values
+            # print(f"{xpr[i,:]!s:>35s} ->  {pred:<+6.2f}  {desired:<+6.2f}   {result:^10.2f}") 
+
+        print("\n" + "+++++   +++++   +++++           ")
+        print(f"average abs diff error:   {error/len(y):<6.3f}")
+        print("+++++   +++++   +++++           ")
+        errorslist.append(f"average abs diff error:   {error/len(y):<6.3f}")
+
+
+
+
+
+
+        
+    # let's see how it did on the test data (also the training data!)
+    #
+    ascii_table_for_regressor(x_test_scaled,
+                            y_test_scaled,
+                            nn_regressor,
+                            scaler)   # this is our own f'n, above
+    
+
+
+
+
+# i = 0: sepallen, i = 1: sepalwid, i = 2: petallen, i = 3: petalwid
+
+print(errorslist)
+    
+
+
+
+"""
+your task!
+
+just as above, find the average abs. error in the other three botanical features:
+  + sepalwid
+  + petallen
+  + petalwid
+  + above is sepallen!
+  
+looping option:
+  + run a loop over the columns... (see the concatenate call, above)
+  + when you use concatenate, be sure all are _slices_, not single columns
+  
+copy-and-paste option:
+  + copy-and-paste a lot!
+  + you will feel like regressing is second nature (this isn't a bad thing!)
+  + you might also feel you've regressed... if so, try the looping approach, instead!
+  
+then, include a text (or markdown) cell with your _four_ av. abs. errors on the test set
+  + this is one average absolute error for each of the four botanical features
+
+just as some features are more important than others,
+  + so, too are some features more _predictable_ than others...
+  
+not required...  but interesting:
+  how much do different network-shapes matter here?
+
+not required... but also interesting:  
+  you could _then_ drop the species column: species is now a feature! 
+
+  ... in order to estimate how much "value" is added, by knowing the flower-species, 
+  when predicting each botanical measurement...
+
+"""
+
+
+

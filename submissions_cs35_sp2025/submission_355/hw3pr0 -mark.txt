@@ -1,0 +1,45 @@
+#### week3 ~ meta-programming of prose:  <i>What guidelines?</i>
+
+[the google doc with hw3's details](https://docs.google.com/document/d/17bJfQIeuNGVh5vP8Y2BjRbVSDyDUNTpIrH0lgYubiUU/edit?tab=t.0)
+
+<hr>#### Reading for hw3...     (hw3pr0.ipynb)
+
+<br>
+
+Problem 0:   <i>LLMs as prose "meta-programming" </i>   (hw3pr0.ipynb)  
+
+Today's article:
++ [linked here as a local pdf](https://drive.google.com/file/d/1Amd-9YLfYfZH4Q8e4q7ncz3LyS2zafvB/view?usp=drive_link) and 
++ [here from the original source (the Economist, June 26, 2024)](https://www.economist.com/science-and-technology/2024/06/26/at-least-10-of-research-may-already-be-co-authored-by-ai) 
+
+<br>
+
+Titled <u>At least 10% of research may already be co-authored by AI</u>, this Economist article reports on the extent LLMs are being used as "meta-programming" tools for research prose, comparing disciplines, languages, and - fun - particular words that LLMs seem to use disproportionally much. Take a look and then...
+
+<br>
+
+Consider the pros, cons, and evolving policies:
++ <b><font color="DodgerBlue">pros</font></b> &nbsp;&nbsp;   "They can breathe life into dense scientific prose and speed up the drafting process, especially for non-native English speakers."  <br><br>
++ <b><font color="DodgerBlue">cons</font></b> &nbsp;&nbsp;  "Scientific papers rely on the precise communication of uncertainty, where the capabilities of LLMs remain murky. Hallucinations -- whereby LLMs confidently assert fantasies -- remain common, as does a tendency to regurgitate other people’s words, verbatim, [unchecked](https://arstechnica.com/ai/2025/02/not-gouda-nough-google-removes-ai-generated-cheese-error-from-super-bowl-ad/), and without attribution." <br><br>
++ <b><font color="DodgerBlue">policies</font></b> &nbsp;&nbsp;  "Some journals ban it outright. Others have changed their minds." 
+
+<br>
+
+From there, create a short reflection, drawing from your own experiences, on a personally interesting subset of these prompts:
++ **(a)** where you think norms for meta-programmed prose  will converge in the coming 2-3 years?   and/or 
++ **(b)** where you think norms for meta-programmed prose  should converge in the coming 2-3 years?  and/or
++ **(c)** whether or not you feel different when encountering human-vs-GPT written prose?     and/or
++ **(d)** what strategies you, personally, use to distinguish work by a human vs work by AI... ?
+
+<br>
+
+<b><font color="Coral">Extra!</font></b> &nbsp;&nbsp; You're encouraged to use as many of the GPT-popular words as possible in your response!  🙂
+
+
+<br>
+
+As with each week's reading, responses should be carefully considered, but need not be very CS35_Participant_2 (~5 or so sentences is wonderful).  
+
+<hr>#### Reading response
+
+(Feel free to use the above cell or this cell for your response.)

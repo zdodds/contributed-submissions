@@ -1,0 +1,1196 @@
+# where are we?
+
+
+
+# what's here?
+
+
+
+# to move around:  cd stands for "change directory" (a directory is a folder)
+#    # intro_first    would move into the intro_first folder
+#    # .. moves "up" to the containing directory
+#    # .  doesn't move at all:  .  represents the current directory    
+
+# for now, let's not move anywhere
+
+
+
+# we will use a few file-handling "system" libraries. 
+# these are built-in to python, so nothing to install - just to import:
+import os
+import os.path
+
+
+#
+# in fact, we can read it - it's just not a .ipynb file!
+#
+# try it here, for your system:
+
+print("+++ contents of the file nottrue.ipynb: +++\n")
+
+# mac:    !cat  <filepath>  using forward slashes
+#
+# !cat ./intro_first/nottrue.ipynb       
+
+# windows:  type <filepath>  using backslashes
+
+# <c:\\users\\cs35_participant_12\\onedrive\\desktop\\cs35\\week1\\starting_notebooks\\starting_notebooks>
+
+#
+# 
+# !type c:\\users\\cs35_participant_12\\onedrive\\desktop\\cs35\\week1\\starting_notebooks\\starting_notebooks\\intro_first\\nottrue.ipynb
+
+
+#
+# function to return the contents of a file (as one-big-string)
+#
+
+def get_string_from_file(filename_as_string):
+    """ return all of the contents from the file, filename
+        will error if the file is not present, then return the empty string ''
+    """
+    try:
+        # the encoding below is a common default, but not universal...
+        file_object = open(filename_as_string, "r", encoding='utf-8')    # open! (other encodings: 'latin-1', 'utf-16', 'utf-32') 
+        file_data = file_object.read()                                   # and get all its contents
+        file_object.close()                                              # close the file (optional)
+        #print(data)                                                     # if we want to see it
+        return file_data                                                 # definitely want to return it!
+    except filenotfounderror:                             # it wasn't there
+        print(f"file not found: {filename_as_string}")    # print error
+        return ''                                         # return empty string ''
+    except unicodedecodeerror:
+        print(f"decoding error: {filename_as_string}")    # encoding/decoding error  
+        return ''                                         # return empty string ''
+
+
+full_file_path = "./intro_first/nottrue.ipynb"
+file_contents = get_string_from_file(full_file_path)      # reminder: file_contents = file_data from above
+
+# let's print only some of this potentially large string, adapting as needed:
+print("file_contents:\n\n", file_contents[0:42])          # let's then increase the 42...
+
+
+####  let's try one of the other files!  (or a non-existent file!)
+
+full_file_path = "./intro_first/cs/file35.txt"    # how about the others?!
+file_contents = get_string_from_file(full_file_path)     
+print("file_contents:\n\n", file_contents[0:42])
+
+
+#
+# steppingstone, version 0: does python work?
+#
+
+import os
+import os.path
+
+def file_walker(path):
+    """ starting from the input, named path
+        
+        this function "walks" the whole path, including subfolders
+        and then... explores any questions we might want :)
+
+        call, for example, with    file_walker("./intro_first") 
+    """
+    return 42  # just to check that it's working (v0)    
+
+#
+# when discovering, keep your data close (and your functions closer!)
+#
+if true:
+    """ overall script that runs examples """
+    print(f"[[ start! ]]\n")     # sign on
+
+    path = "./intro_first"       # remember: . means the current directory
+    result = file_walker(path)   # run!
+
+    print(f"result = {result}")  # yay for f-strings!
+
+    print("\n[[ fin. ]]")        # sign off
+
+
+
+# os.walk returns the structure of a folder (directory)
+
+# here, we "walk" the intro_examples subfolder:
+all_files = os.walk("./intro_first")
+
+all_files     # oops! it's a "generator object"
+
+
+import os
+l = list( os.walk( "./intro_first" ) )  
+print(f"{len(l) = }")
+print(f"{l = }")
+
+
+from ipython import display
+#
+# this is in the hw1pr1 folder
+#
+display.image("./intro_first_ss_small.png")   # local image
+
+
+path = "./intro_first"          # any path to any folder
+result = list(os.walk(path))    # this will "walk" all of the subfolders and files
+
+print(f"{len(result) = }")      # try c:/  (it took my machine 12.7 seconds!)
+print(f"{result = }")
+
+
+#
+# steppingstone, version 1: call os.walk, return length, optionally print
+#
+
+import os
+import os.path
+
+def file_walker(path):
+    """ starting from the input, named path
+        
+        this function "walks" the whole path, including subfolders
+        and then... explores any questions we might want :)
+
+        call, for example, with    file_walker("./intro_first") 
+    """
+    result = list(os.walk(path))     # perhaps try w/o converting to a list...
+    # print(f"{len(result) = }")
+    # print(f"{result = }")
+    num_folders = len(result)        # the len is the number of folders...
+    return num_folders
+
+#
+# when discovering, keep your data close (and your functions closer!)
+#
+if true:
+    """ overall script that runs examples """
+    print(f"[[ start! ]]\n")     # sign on
+
+    path = "./intro_first"       # remember: . means the current directory
+    result = file_walker(path)   # run!
+
+    print(f"result = {result}")  # yay for f-strings!
+
+    print("\n[[ fin. ]]")        # sign off
+
+
+
+#
+# steppingstone, version 2: print all of the folder names!
+#
+
+import os
+import os.path
+
+def file_walker(path):
+    """ starting from the input, named path
+        
+        this function "walks" the whole path, including subfolders
+        and then... explores any questions we might want :)
+
+        call, for example, with    file_walker("./intro_first") 
+    """
+    result = list(os.walk(path))     # perhaps try w/o converting to a list...
+
+    for folder_tuple in result:
+        currentpath, subfolders, files = folder_tuple  # always three items, always these...
+        print(f"{currentpath = }")   # try non-f printing: it's worse!
+
+    num_folders = len(result)        # the len is the number of currentpaths...
+    return num_folders
+
+#
+# when discovering, keep your data close (and your functions closer!)
+#
+if true:
+    """ overall script that runs examples """
+    print(f"[[ start! ]]\n")     # sign on
+
+    path = "./intro_first"       # remember: . means the current directory
+    result = file_walker(path)   # run!
+
+    print(f"result = {result}")  # yay for f-strings!
+
+    print("\n[[ fin. ]]")        # sign off
+
+
+
+#
+# steppingstone, version 3: walk all of the files, printing each one's fullpath
+#
+
+import os
+import os.path
+
+def file_walker(path):
+    """ starting from the input, named path
+        
+        this function "walks" the whole path, including subfolders
+        and then... explores any questions we might want :)
+
+        call, for example, with    file_walker("./intro_first") 
+    """
+    result = list(os.walk(path))     # perhaps try w/o converting to a list...
+
+    for folder_tuple in result:
+        currentpath, subfolders, files = folder_tuple  # always three items, always these...
+
+        if '__macosx' in currentpath: continue         # skip the rest of _this_ loop iteration: back to top
+
+        print(f"{currentpath = }") 
+        
+        for file in files:       # remember, files is a list of filenames!
+            fullpath = currentpath + "/" + file           # construct the full path, or, better: os.path.join(currentpath,file)  
+            print(f"   {fullpath = }")
+            #contents = get_string_from_file(fullpath)     # use the fullpath!
+            #print(f"{contents[0:42] = }")
+
+    num_folders = len(result)        # the len is the number of currentpaths...
+    return num_folders
+
+#
+# when discovering, keep your data close (and your functions closer!)
+#
+if true:
+    """ overall script that runs examples """
+    print(f"[[ start! ]]\n")     # sign on
+
+    path = "./intro_first"       # remember: . means the current directory
+    result = file_walker(path)   # run!
+
+    print(f"result = {result}")  # yay for f-strings!
+
+    print("\n[[ fin. ]]")        # sign off
+
+
+
+os.path.join("/root/users/secret_stuff" , "file_name")
+
+
+#
+# steppingstone, version 4: walk all of the files, printing (bits of) each one's contents!
+#
+
+import os
+import os.path
+
+def file_walker(path):
+    """ starting from the input, named path
+        
+        this function "walks" the whole path, including subfolders
+        and then... explores any questions we might want :)
+
+        call, for example, with    file_walker("./intro_first") 
+    """
+    result = list(os.walk(path))     # perhaps try w/o converting to a list...
+
+    for folder_tuple in result:
+        currentpath, subfolders, files = folder_tuple  # always three items, always these...
+        if '__macosx' in currentpath:  continue
+
+        print(f"{currentpath = }") 
+
+        for file in files:       # remember, files is a list of filenames!
+            fullpath = currentpath + "/" + file        # construct the full path, or, better: os.path.join(currentpath,file)
+            if '.' == file[0] == '.': continue             
+            print(f"   {fullpath = }")
+            contents = get_string_from_file(fullpath)     # use the fullpath!
+            print(f"   {contents[0:42] = }")
+
+    num_folders = len(result)        # the len is the number of currentpaths...
+    return num_folders
+
+#
+# when discovering, keep your data close (and your functions closer!)
+#
+if true:
+    """ overall script that runs examples """
+    print(f"[[ start! ]]\n")     # sign on
+
+    path = "./intro_first"       # remember: . means the current directory
+    result = file_walker(path)   # run!
+
+    print(f"result = {result}")  # yay for f-strings!
+
+    print("\n[[ fin. ]]")        # sign off
+
+
+
+#
+# rolodex lead-in, example1: counting the number of .txt files...
+#
+
+import os
+import os.path
+
+def file_walker(path):
+    """ starting from the input, named path
+        
+        this function "walks" the whole path, including subfolders
+        and then... explores any questions we might want :)
+
+        call, for example, with    file_walker("./intro_first") 
+    """
+    result = list(os.walk(path))     # perhaps try w/o converting to a list...
+    
+    count_txt = 0    # keep count of our .txt files
+
+    for folder_tuple in result:
+        currentpath, subfolders, files = folder_tuple  # always three items, always these...
+        if '__macosx' in currentpath:  continue
+        print(f"{currentpath = }") 
+
+        for file in files:       # remember, files is a list of filenames!
+            fullpath = currentpath + "/" + file           # construct the full path, or, better: os.path.join(currentpath,file)  
+            print(f"   {fullpath = }")
+            if file[0] == ".": continue      # skip files that start with dot
+            if file[-4:] == ".txt":
+                print("found a .txt file! adding one...")
+                count_txt += 1
+            #contents = get_string_from_file(fullpath)     # use the fullpath!
+            #print(f"   {contents[0:42] = }")
+
+    return count_txt   # phew, we're finally returning something else!
+
+#
+# when discovering, keep your data close (and your functions closer!)
+#
+if true:
+    """ overall script that runs examples """
+    print(f"[[ start! ]]\n")     # sign on
+
+    path = "./intro_first"       # remember: . means the current directory
+    result = file_walker(path)   # run!
+
+    print(f"num txt files = {result}")  # yay for f-strings!
+
+    print("\n[[ fin. ]]")        # sign off
+
+
+
+#
+# rolodex lead-in, example2: counting the number of .txt files containing 'cs' ...
+#
+
+import os
+import os.path
+
+def file_walker(path):
+    """ starting from the input, named path
+        
+        this function "walks" the whole path, including subfolders
+        and then... explores any questions we might want :)
+
+        call, for example, with    file_walker("./intro_first") 
+    """
+    result = list(os.walk(path))     # perhaps try w/o converting to a list...
+    
+    count_txt = 0    # keep count of our .txt files
+    count_cs = 0     # keep count of 'cs' substrings found
+
+    for folder_tuple in result:
+        currentpath, subfolders, files = folder_tuple  # always three items, always these...
+        if '__macosx' in currentpath:  continue
+        print(f"{currentpath = }") 
+
+        for file in files:       # remember, files is a list of filenames!
+            fullpath = currentpath + "/" + file           # construct the full path, or, better: os.path.join(currentpath,file)  
+            print(f"   {fullpath = }")
+            if file[0] == ".": continue      # skip files that start with dot
+
+            if file[-4:] == ".txt":
+                # print("found a .txt file! adding one...")
+                count_txt += 1
+                contents = get_string_from_file(fullpath)     # use the fullpath!
+                if 'cs' in contents:
+                    print("        *** found a 'cs' ... adding 1    (aka 2-true)")
+                    count_cs += 1
+                # print(f"   {contents[0:42] = }")
+
+    return count_cs, count_txt   # oooh... we can return two things!
+
+#
+# when discovering, keep your data close (and your functions closer!)
+#
+if true:
+    """ overall script that runs examples """
+    print(f"[[ start! ]]\n")     # sign on
+
+    path = "./intro_first"       # remember: . means the current directory
+    result = file_walker(path)   # run!
+
+    count_cs, count_txt = result
+    print()
+    print(f"num txt files       = {count_txt}")  
+    print(f"num containing cs   = {count_cs}")  
+    perc = count_cs*100/count_txt
+    print(f"for a cs percentage of {perc:5.2f}%")   # :5.2f means width of 5, 2 dec. places, for a _floating pt value
+
+    print("\n[[ fin. ]]")        # sign off
+
+
+
+path = "./intro_first"          # any path to any folder?!  intro_first contains _5_ folders total
+# path = "./intro_second"       # any path to any folder?!  intro_second contains _12_ folders total
+# path = "./files_challenge"    # this is the really large folder: it contains _23_ folders total
+
+# path = "c:/"                  # could use c:/  on windows or "/" on macos  
+# path = "."                    # could use "." for the current directory
+
+result = list(os.walk(path))    # this will "walk" all of the subfolders and files
+
+print(f"{len(result) = }")      # this took my machine 2m 47.4s seconds (for "/" with total 555695 folders)
+                                # and, it asked for permission a couple of times (i said no.)
+#print(f"{result = }")          # let's _not_ print it out...
+
+
+# how many .txt files are in the entire folder? (starting w/ modifying code from example 1)
+
+import os
+import os.path
+
+def file_walker(path):
+    """ starting from the input, named path
+        
+        this function "walks" the whole path, including subfolders and counts .txt files, returns an integer count of .txt files
+    """
+    result = list(os.walk(path))    
+    count_txt = 0    # keep count of our .txt files
+
+    for folder_tuple in result:
+        currentpath, subfolders, files = folder_tuple  # always three items, always these...
+        if '__macosx' in currentpath:  continue
+        # print(f"{currentpath = }") 
+
+        for file in files:      
+            fullpath = currentpath + "/" + file           # construct the full path, or, better: os.path.join(currentpath,file)  
+            # print(f"   {fullpath = }")
+            if file[0] == ".": continue      # skip files that start with dot
+            if file[-4:] == ".txt":
+                count_txt += 1
+
+    return count_txt
+
+if true:
+    """ overall script that runs examples """
+
+    path1 = "./intro_first"
+    path2 = "./intro_second"
+    path3 = "./files_challenge"
+    result1 = file_walker(path1)   # run!
+    result2 = file_walker(path2)
+    result3 = file_walker(path3)
+
+    print(f"num txt files in intro_first = {result1}")  # yay for f-strings!
+    print(f"num txt files in intro_second = {result2}")
+    print(f"num txt files in files_challenge = {result3}")
+
+
+# what is the maximum depth of directories in the entire folder?
+
+def file_walker(path):
+    """ starting from the input, named path
+        this function "walks" the whole path, including subfolders and counts forward and backslashes (counting double slashes as 1 slash) to 
+        find the maximum depth of a directory in files_challenge (or other paths). it adds the depth of each file to a list and returns the maximum depth
+    """
+    result = list(os.walk(path))    
+    depth_count = 0  
+    depths = []
+
+    for folder_tuple in result:
+        currentpath, subfolders, files = folder_tuple  # always three items, always these...
+        if '__macosx' in currentpath:  continue
+        # print(f"{currentpath = }") 
+
+        for file in files:      
+            fullpath = currentpath + "/" + file           # construct the full path, or, better: os.path.join(currentpath,file)  
+            # print(f"   {fullpath = }")
+            # if file[0] == ".": continue      # skip files that start with dot
+            for char in str(fullpath):
+                if char == '/' or char == '\\':
+                    depth_count += 1
+            depths.append(depth_count)
+            depth_count = 0
+
+    return max(depths)
+
+if true:
+    """ overall script that runs examples """
+
+    path1 = "./intro_first"
+    path2 = "./intro_second"
+    path3 = "./files_challenge"
+    result1 = file_walker(path1)   # run!
+    result2 = file_walker(path2)
+    result3 = file_walker(path3)
+
+    print(f"max depth in intro_first = {result1}")  # yay for f-strings!
+    print(f"max depth in intro_second = {result2}")
+    print(f"max depth in files_challenge = {result3}")
+
+
+
+# of all the files, how many of the phone numbers contain exactly ten digits?
+
+import string
+
+def file_walker(path):
+    """ starting from the input, named path
+        this function "walks" the whole path, including subfolders and counts the number of digits in every .txt phonebook file. 
+        it tallies the total number of these files with exactly ten digits and returns that total count
+    """
+    result = list(os.walk(path))    
+    phone10_count = 0
+    phone7_count = 0
+    phone11_count = 0
+
+    for folder_tuple in result:
+        currentpath, subfolders, files = folder_tuple  # always three items, always these...
+        if '__macosx' in currentpath:  continue
+        # print(f"{currentpath = }") 
+
+        for file in files:      
+            fullpath = currentpath + "/" + file           # construct the full path, or, better: os.path.join(currentpath,file)  
+            # print(f"   {fullpath = }")
+            # if file[0] == ".": continue      # skip files that start with dot
+            if file[-4:] == ".txt": # only looking at txt files 
+                contents = get_string_from_file(fullpath)
+                for x in contents:
+                    if x in string.digits:
+                        count += 1
+                if count == 10:
+                    phone10_count += 1
+                if count == 11:
+                    phone11_count += 1
+                if count == 7:
+                    phone7_count += 1
+            count = 0
+
+    return phone10_count, phone11_count, phone7_count
+
+if true:
+    """ overall script that runs examples """
+
+    path1 = "./intro_first"
+    result1 = file_walker(path1)
+
+    path2 = "./intro_second"
+    result2 = file_walker(path2)
+
+    path3 = "./files_challenge"
+    result3 = file_walker(path3)
+
+    print("for files_challenge:")
+    print(f"10 digit phone number count = {result3[0]}")  
+    print(f"11 digit phone number count = {result3[1]}")
+    print(f"7 digit phone number count = {result3[2]}")
+
+    print()
+    print(f"for {path2}:")
+    print(f"10 digit phone number count = {result2[0]}") 
+    print(f"11 digit phone number count = {result2[1]}")
+    print(f"7 digit phone number count = {result2[2]}")
+
+    print()
+    print("for intro_first:")
+    print(f"10 digit phone number count = {result1[0]}")  
+    print(f"11 digit phone number count = {result1[1]}")
+    print(f"7 digit phone number count = {result1[2]}")
+
+
+
+# how many of the 10 digits phone numbers start with 909?
+
+def file_walker(path):
+    """ starting from the input, named path
+        this function "walks" the whole path, including subfolders and creates a string of just the digits in every .txt file. 
+        it counts the total instances where the digit string is 10 digits cs35_participant_2 and starts with 909, and returns that integer count
+    """
+    result = list(os.walk(path))    
+    area909_count = 0
+
+    for folder_tuple in result:
+        currentpath, subfolders, files = folder_tuple  # always three items, always these...
+        if '__macosx' in currentpath:  continue
+        # print(f"{currentpath = }") 
+
+        for file in files:      
+            fullpath = currentpath + "/" + file           # construct the full path, or, better: os.path.join(currentpath,file)  
+            # print(f"   {fullpath = }")
+            # if file[0] == ".": continue      # skip files that start with dot
+            if file[-4:] == ".txt": # only looking at txt files
+                justdigits = '' 
+                contents = get_string_from_file(fullpath)
+                for x in contents:
+                    if x in string.digits:
+                        justdigits = justdigits + x
+                # print(justdigits)
+                # print(justdigits[0:3])
+                if len(justdigits) == 10 and justdigits[0:3] == '909':
+                    area909_count += 1    
+                
+    return area909_count
+
+if true:
+    """ overall script that runs examples """
+
+    path1 = "./intro_first"
+    result1 = file_walker(path1)
+
+    path2 = "./intro_second"
+    result2 = file_walker(path2)
+
+    path3 = "./files_challenge"
+    result3 = file_walker(path3)
+
+    print(f"for {path3}:")
+    print(f"909 count = {result3}")  
+
+    print()
+    print(f"for {path2}:")
+    print(f"909 count = {result2}") 
+
+    print()
+    print(f"for {path1}:")
+    print(f"909 count = {result1}") 
+
+
+
+# how many people have 3 i's/i's somewhere in their name?
+# what is the maximum number of is in someone's name?
+
+
+def file_walker(path):
+    """ starting from the input, named path
+        this function "walks" the whole path, including subfolders and counts the number of i/i's in every .txt file. 
+        it counts the total instances where there are exactly 3 i/i's, and returns that integer count. it also keeps track of the maximum number of is found in 
+        any file in a folder and returns that maximum value.
+    """
+    result = list(os.walk(path))    
+    threei_count = 0
+    maxis = 0
+
+    for folder_tuple in result:
+        currentpath, subfolders, files = folder_tuple
+        if '__macosx' in currentpath:  continue
+
+        for file in files:      
+            fullpath = currentpath + "/" + file           
+            if file[-4:] == ".txt":
+                icount = 0
+                contents = get_string_from_file(fullpath)
+                # print(contents)
+                line_count = len(contents.splitlines())
+                # print(line_count)
+                if line_count < 5: # estimate of a cut off for where a .txt file is not a contact file
+                    for x in contents:
+                        if x in 'ii':
+                            icount += 1
+                    if icount == 3:
+                        threei_count += 1
+                    if icount > maxis:
+                        maxis = icount    
+                
+    return threei_count, maxis
+
+if true:
+    """ overall script that runs examples """
+
+    path1 = "./intro_first"
+    result1 = file_walker(path1)
+
+    path2 = "./intro_second"
+    result2 = file_walker(path2)
+
+    path3 = "./files_challenge"
+    result3 = file_walker(path3)
+
+    print(f"for {path3}:")
+    print(f"3 ii count = {result3[0]}")
+    print(f"max ii count in {path3}: {result3[1]}")  
+
+    
+    print()
+    print(f"for {path2}:")
+    print(f"3 ii count = {result2[0]}")
+    print(f"max ii count in {path2}: {result2[1]}") 
+
+    print()
+    print(f"for {path1}:")
+    print(f"3 ii count = {result1[0]}") 
+    print(f"max ii count in {path1}: {result1[1]}")
+
+    overallmax = max(result1[1], result2[1], result3[1])
+    print()
+    print(f"overall max ii count of all folders: {overallmax}")
+
+
+
+
+
+# how many people have the string 'khaby' somewhere in their name, case insensitive?
+
+def file_walker(path):
+    """ starting from the input, named path
+        this function "walks" the whole path, including subfolders and counts the number of files that contain the string 'khaby' (case insensitive), 
+        and does the same for files with 'd'amelio. 
+        it returns those count values.
+    """
+    result = list(os.walk(path))    
+    khabycount = 0
+    damcount = 0 # using this total in next part, not relevant for this block
+
+    for folder_tuple in result:
+        currentpath, subfolders, files = folder_tuple
+        if '__macosx' in currentpath:  continue
+
+        for file in files:      
+            fullpath = currentpath + "/" + file           
+            if file[-4:] == ".txt":
+                justletters = ''
+                contents = get_string_from_file(fullpath)
+                line_count = len(contents.splitlines())
+                if line_count < 5: # estimate of a cut off for where a .txt file is not a contact file
+                    for x in contents:
+                        if x in string.ascii_letters or x == "'":
+                            justletters = justletters + x
+                    if 'khaby' in justletters.lower(): # lowercase contents so that cases don't matter
+                        khabycount += 1
+                    if "d'amelio" in justletters.lower(): # lowercase contents so that cases don't matter
+                        damcount += 1    
+                
+    return khabycount, damcount
+
+if true:
+    """ overall script that runs examples """
+
+    path1 = "./intro_first"
+    result1 = file_walker(path1)
+
+    path2 = "./intro_second"
+    result2 = file_walker(path2)
+
+    path3 = "./files_challenge"
+    result3 = file_walker(path3)
+
+    print(f"for {path3}:")
+    print(f"khaby count = {result3[0]}")
+    
+    print()
+    print(f"for {path2}:")
+    print(f"khaby count = {result2[0]}")
+ 
+    print()
+    print(f"for {path1}:")
+    print(f"khaby count = {result1[0]}") 
+
+
+    print()
+    print(f"for next block, will use d'amelio total from this also: d'amelio count = {result3[1]}")
+
+
+
+# how many people have the last name khaby or d'amelio (case insensitive)? 
+
+import os
+import string
+
+def file_walker(path):
+    """ starting from the input, named path
+        this function "walks" the whole path, including subfolders and counts the number of files that contain the string 'khaby' or 'd'amelio (case insensitive) as a last name, 
+        i.e. if khaby or d'amelio is the second word with no comma present, or the first word if the words (names) are separated by a comma.
+        it returns those count values.
+    """
+    result = list(os.walk(path))    
+    khabycount_l = 0 # l for last
+    damcount_l = 0 
+    khabycount_f = 0 # f for first
+    damcount_f = 0
+
+    for folder_tuple in result:
+        currentpath, subfolders, files = folder_tuple
+        if '__macosx' in currentpath:  continue
+
+        for file in files:      
+            fullpath = currentpath + "/" + file           
+            if file[-4:] == ".txt":
+                cleanedversion = ''
+                contents = get_string_from_file(fullpath)
+                line_count = len(contents.splitlines())
+                if line_count < 5: # estimate of a cut off for where a .txt file is not a contact file
+                    if ',' in contents: # the case where the contact format is last, first
+                        for x in contents:
+                            if x in string.ascii_letters or x == "'":
+                                cleanedversion = cleanedversion + x
+                        cleanedversion = cleanedversion.lower() # lowercase contents so that cases don't matter
+                        if 'khaby' in cleanedversion[0:5]: 
+                            khabycount_l += 1
+                        if "d'amelio" in cleanedversion[0:8]:
+                            damcount_l += 1
+
+
+                    else: # case where format is first last
+                        for x in contents:
+                            if x in string.ascii_letters or x == ' ' or x == "'": # keep letters, apostrophes, and spaces to keep names separate
+                                cleanedversion = cleanedversion + x
+                        cleanedversion = cleanedversion.lower() # lowercase contents so that cases don't matter
+                        words = cleanedversion.split()
+                        if len(words) > 1 and 'khaby' == words[1]: 
+                            khabycount_l += 1
+                        if len(words) > 1 and "d'amelio" == words[1]: 
+                            damcount_l += 1
+
+    khabycount_f = 27 - khabycount_l # total khaby's minus khaby last names = khaby first names (total count computed in preceding block)
+    damcount_f = 53 - damcount_l # same as above line
+
+    return khabycount_l, damcount_l, khabycount_f, damcount_f
+
+if true:
+    """ overall script that runs examples """
+
+    path1 = "./intro_first"
+    result1 = file_walker(path1)
+
+    path2 = "./intro_second"
+    result2 = file_walker(path2)
+
+    path3 = "./files_challenge"
+    result3 = file_walker(path3)
+
+    print(f"for {path3}:")
+    print(f"khaby last name count = {result3[0]}, khaby first  name count = {result3[2]}, d'amelio last name count = {result3[1]}, d'amelio last name count = {result3[3]}")
+    
+    print()
+    print(f"for {path2}:")
+    print(f"khaby count = {result2[0]}, d'amelio count = {result2[1]} for both first and last names")
+ 
+    print()
+    print(f"for {path1}:")
+    print(f"khaby count = {result1[0]}, d'amelio count = {result1[1]} for both first and last names") 
+
+
+
+
+# how many people have your last name (cs35_participant_12)?    
+# choose another last name present (moore):  how many people have that last name?
+# how many people have your first name (cs35_participant_12)? 
+# choose another first name present (lucas): how many people have that first name?
+
+def file_walker(path):
+    """ starting from the input, named path
+        this function "walks" the whole path, including subfolders and counts the number of files that contain the string 'khaby' or 'd'amelio (case insensitive) as a last name, 
+        i.e. if khaby or d'amelio is the second word with no comma present, or the first word if the words (names) are separated by a comma.
+        it returns those count values.
+    """
+    result = list(os.walk(path))    
+    cs35_participant_12 = 0
+    moore = 0
+    cs35_participant_12 = 0
+    lucas = 0
+
+    for folder_tuple in result:
+        currentpath, subfolders, files = folder_tuple
+        if '__macosx' in currentpath:  continue
+
+        for file in files:      
+            fullpath = currentpath + "/" + file           
+            if file[-4:] == ".txt":
+                cleanedversion = ''
+                contents = get_string_from_file(fullpath)
+                line_count = len(contents.splitlines())
+                if line_count < 5: # estimate of a cut off for where a .txt file is not a contact file
+                    if ',' in contents: # the case where the contact format is last, first
+                        for x in contents:
+                            if x in string.ascii_letters:
+                                cleanedversion = cleanedversion + x
+                        cleanedversion = cleanedversion.lower() # lowercase contents so that cases don't matter
+                        if 'cs35_participant_12' in cleanedversion[0:6]: 
+                            cs35_participant_12 += 1
+                        if "moore" in cleanedversion[0:5]:
+                            moore += 1
+                        words = cleanedversion.split()
+                        if len(words) > 1 and 'cs35_participant_12' == words[1]: 
+                            cs35_participant_12 += 1
+                        if len(words) > 1 and "lucas" == words[1]: 
+                            lucas += 1
+
+                    else: # case where format is first last
+                        for x in contents:
+                            if x in string.ascii_letters or x == ' ': # keep letters and spaces to keep names separate
+                                cleanedversion = cleanedversion + x
+                        cleanedversion = cleanedversion.lower() # lowercase contents so that cases don't matter
+                        words = cleanedversion.split()
+                        if len(words) > 1 and 'cs35_participant_12' == words[1]: 
+                            cs35_participant_12 += 1
+                        if len(words) > 1 and "moore" == words[1]: 
+                            moore += 1
+                        if 'cs35_participant_12' in cleanedversion[0:5]: 
+                            cs35_participant_12 += 1
+                        if "lucas" in cleanedversion[0:5]:
+                            lucas += 1
+
+
+    return cs35_participant_12, moore, cs35_participant_12, lucas
+
+
+if true:
+    """ overall script that runs examples """
+
+    path1 = "./intro_first"
+    result1 = file_walker(path1)
+
+    path2 = "./intro_second"
+    result2 = file_walker(path2)
+
+    path3 = "./files_challenge"
+    result3 = file_walker(path3)
+
+
+print(f"for {path3}:")
+print(f"cs35_participant_12 (last) count = {result3[0]}, moore (last) count = {result3[1]}, cs35_participant_12 (first) count = {result3[2]}, lucas (first) count = {result3[3]}")
+    
+print()
+print(f"for {path2}:")
+print(f"cs35_participant_12 (last) count = {result2[0]}, moore (last) count = {result2[1]}, cs35_participant_12 (first) count = {result2[2]}, lucas (first) count = {result2[3]}")
+ 
+print()
+print(f"for {path1}:")
+print(f"cs35_participant_12 (last) count = {result1[0]}, moore (last) count = {result1[1]}, cs35_participant_12 (first) count = {result1[2]}, lucas (first) count = {result1[3]}")
+
+
+
+# 3 more questions (for files in files_challenge):
+
+# 1. are there more ne or sw phone numbers across the whole dataset (meaning, area codes beginning with "2" or "9" respectively)?
+# 2. what is the earliest name alphabetically?
+# 3. what is the lowest and highest number of letters in someone's name?
+
+def file_walker(path):
+    """ starting from the input, named path
+        this function "walks" the whole path, including subfolders and
+        1. counts the area codes starting with 2, and those starting with 9, and returns those counts
+        2. returns the earliest alphabetical name, alphabetized by last name
+        3. couunts the min and max number of letters in each name and returns the highest and lowest found letters counts
+    """
+    result = list(os.walk(path))    
+    necount = 0
+    swcount = 0
+    mincount = 10000000000
+    maxcount = 0
+    alphabetfirst = 'zzzzzzzzzzzzz'
+    longest_name = ''
+    shortest_name = ''
+    name = ''
+
+    for folder_tuple in result:
+        currentpath, subfolders, files = folder_tuple
+        if '__macosx' in currentpath:  continue
+
+        for file in files:      
+            fullpath = currentpath + "/" + file           
+            if file[-4:] == ".txt":
+                digitversion = ''
+                letterversion = ''
+                contents = get_string_from_file(fullpath)
+                line_count = len(contents.splitlines())
+                if line_count < 5: # estimate of a cut off for where a .txt file is not a contact file
+                    
+                    # start w/ ne vs sw counting
+                    for x in contents:
+                        if x in string.digits:
+                            digitversion = digitversion + x
+                            # print(digitversion)
+                    if digitversion[0:1] == '9': 
+                        necount += 1
+                    if digitversion[0:1] == '2': 
+                        swcount += 1
+
+                    # then max/min letter counting
+                    for x in contents:
+                        if x in string.ascii_letters or x in ' ':
+                            letterversion = letterversion + x
+                        words = letterversion.split() 
+                        for word in words:
+                            if len(word) > maxcount:
+                                maxcount = len(word)
+                                longest_name = word
+                            if len(word) < mincount and len(word) > 1: #word needs to be a name
+                                mincount = len(word)
+                                shortest_name = word
+
+                    # then finding first alphabetical name accounting for contact file formats
+                    if ',' in contents: # the case where the contact format is last, first
+                        for x in contents:
+                            if x in string.ascii_letters:
+                                letterversion = letterversion + x
+                            # letterversion = letterversion.lower() 
+                            words = letterversion.split()
+                            if len(words) > 1 and words[1] < alphabetfirst:
+                                alphabetfirst = words[1]
+                                name = contents
+
+                    else: # case where format is first last
+                        for x in contents:
+                            if x in string.ascii_letters or x == ' ': # keep letters and spaces to keep names separate
+                                letterversion = letterversion + x
+                            # letterversion = letterversion.lower() 
+                            words = letterversion.split()
+                            if len(words) > 1 and words[0] < alphabetfirst:
+                                alphabetfirst = words[0]
+                        
+
+
+    return maxcount, mincount, necount, swcount, alphabetfirst, longest_name, shortest_name, name
+
+
+if true:
+    """ overall script that runs examples """
+
+    path3 = "./files_challenge"
+    result3 = file_walker(path3)
+
+
+    print(f"the minimum letter count in a name is {result3[1]} for {result3[6]}, the maximum count is {result3[0]} for {result3[5]}.")
+
+    print(f"there are {result3[2]} ne area codes and {result3[3]} sw area codes, so there are more sw area codes.")
+
+    print(f"the alphabetically earliest name is {result3[4]}.")
+
+
+
+
+
+
+
+
+# moving to my own folders:
+
+# how many files are there total?  (choose somewhere with at least 42 files.)
+# how many files of a particular type are there, in total...
+# how deep was the deepest path present?  i.e.,  what's the folder's "nesting depth"
+
+import os
+import string
+
+def file_walker(path):
+    """ walks all files in an input path to count total file number, find the maximum depth of a directory, and count the total matlab files.
+    returns counts of the above
+    """
+    result = list(os.walk(path))
+    total_files = 0
+    matlab_files = 0
+    max_depth = 0
+
+    for folder_tuple in result:
+        currentpath, subfolders, files = folder_tuple
+        if '__macosx' in currentpath: continue
+
+        # calculate the depth based on the path
+        depth = currentpath.count(os.path.sep) - path.count(os.path.sep) + 1
+        if depth > max_depth:
+            max_depth = depth
+
+        for file in files:
+            fullpath = os.path.join(currentpath, file)
+            if file.startswith("."): continue  # skip files that start with dot
+            total_files += 1  # counting towards file total
+            if file.endswith(".m"):
+                matlab_files += 1
+
+    return max_depth, total_files, matlab_files
+
+# usage example
+path = "./spring 2023"
+max_depth, total_files, matlab_files = file_walker(path)
+
+print(f"for my {path} folder:")
+print()
+print(f"maximum directory depth: {max_depth}")
+print(f"total number of files: {total_files}")
+print(f"total number of matlab files: {matlab_files}")
+
+
+    
+
+
+# 3 more questions on spring 2023 folder:
+
+# 1. what is the most common file type i have and how many of this file type are there?
+# 2. what is the largest file size here?
+# 3. are there any duplicate file names and if so how many?
+
+import os
+
+def file_walker(path):
+    """walks all files in an input path to find the three most common file types,
+    the size of the largest file, the count of duplicate file names, and the most duplicated file name.
+    
+    returns:
+    common_file_types (list of tuples): a list of tuples with the three most common file types and their counts.
+    largest_file_size (int): the size of the largest file in bytes.
+    duplicate_count (int): the number of duplicate file names found.
+    most_duplicated_file (str): the name of the most duplicated file.
+    """
+    
+    file_type_counts = {}
+    largest_file_size = 0
+    file_names = {}
+    duplicate_count = 0
+    most_duplicated_file = ""
+
+    for currentpath, subfolders, files in os.walk(path):
+        if '__macosx' in currentpath: continue
+
+        for file in files:
+            if file.startswith("."): continue  # skip files that start with dot
+
+            # file extension
+            file_extension = os.path.splitext(file)[1]
+            if file_extension in file_type_counts:
+                file_type_counts[file_extension] += 1
+            else:
+                file_type_counts[file_extension] = 1
+
+            # file size
+            fullpath = os.path.join(currentpath, file)
+            file_size = os.path.getsize(fullpath)
+            if file_size > largest_file_size:
+                largest_file_size = file_size
+
+            # duplicate file name check
+            if file in file_names:
+                file_names[file] += 1
+            else:
+                file_names[file] = 1
+
+    # count duplicates and find the most duplicated file
+    max_duplicate_count = 0
+    for file_name, count in file_names.items():
+        if count > 1:
+            duplicate_count += (count - 1)
+            if count > max_duplicate_count:
+                max_duplicate_count = count
+                most_duplicated_file = file_name
+
+    # find the three most common file types
+    sorted_file_types = sorted(file_type_counts.items(), key=lambda item: item[1], reverse=true)
+    common_file_types = sorted_file_types[:3]
+
+    return common_file_types, largest_file_size, duplicate_count, most_duplicated_file
+
+# usage example
+path = './spring 2023'
+common_file_types, largest_file_size, duplicate_count, most_duplicated_file = file_walker(path)
+print(f"three most common file types: {common_file_types}")
+print(f"largest file size: {largest_file_size} bytes")
+print(f"number of duplicate file names: {duplicate_count}")
+print(f"most duplicated file name: {most_duplicated_file}")
+
+
+
+
+
+
+
+

@@ -1,0 +1,25 @@
+<br>
+
+###  <font color="Coral">hw8pr1digits_dreamer</font>   
+
+For this hw8pr1digits_dreamer challenge, you'll leverage how NNets are the most capable model for imputing - or "hallucinating" - or _generating_ missing data 
+
+Here, we'll put them to the test, to <font color="DodgerBlue"><b>dream</b></font> the unseen portion of a digit, only part of which is visible:
+
+<br>
+
+## Your first task:
++ create regressors for _all_ of the pixels on the bottom two rows
++ Use a loop! 16 times is too many for copy-paste-edit!
+
+#### Second, create a slight variation on the visualization above, so that 
++ your system "dreams" all 16 of the bottom two rows of pixels
++ You will be able to see the dreamt digit alongside the real digit
++ <font color="Coral"><b>Show three examples (real and hallucinated!)</b></font> &nbsp;&nbsp; Choose three digits from the dataset and show the original vs. the digit-dreamt version alongside each other / side-by-side in this way. 
+## Second task:
+
+#### Then, predict __four__ rows, instead of two
++ Then, repeat/expand this process so that your code predicts the bottom **four** rows, instead of two
++ This time, you'll train and create 32 regressors (wow!)
++ Again, choose three digits (perhaps the same ones) and show what the system dreams for their four bottom rows vs. the actual!
++ For EC, try the bottom <b>six</b> rows -- or try the actually-unknown digits in <tt>partial_digits.csv</tt> -- and, perhaps, then try to classify the full digits the system generates from those partial ones... !

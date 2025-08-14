@@ -1,0 +1,169 @@
+#
+# hw5pr1births_cleaner:  birth classification by month + day    (above/below median: 190942)
+#
+
+
+# libraries!
+import numpy as np      # numpy is python's "array" library
+import pandas as pd     # pandas is python's "data" library ("dataframe" == spreadsheet)
+
+
+#
+# *** suggestion ***  
+# 
+#       +++ copy-paste-and-alter from the iris-cleaning notebook to here +++
+#
+# this approach has the advantage of more deeply "digesting" the iris workflow...
+#      ... altering the parts that don't transfer, and taking the parts that do!
+#
+
+# eventually you'll get rid of the _births_ column, that can be here or in the modeling notebook
+
+
+# read in our spreadsheet (csv)
+filename = 'births.csv'
+df = pd.read_csv(filename)        # encoding="utf-8" et al.
+print(f"{filename} : file read into a pandas dataframe.")
+
+
+# let's look at the dataframe's "info":
+df.info()
+
+
+df.columns
+
+
+row = 0        
+column = 1     
+
+# we are dropping this final column - it was just a citation...
+df_clean1 = df.drop('from http://chmullig.com/2012/06/births-by-day-of-year/', axis=column)
+df_clean1
+
+
+df_clean1.info() 
+
+
+df_clean3 = df_clean1.dropna()  # drop na rows (nan, not-a-number)
+df_clean3.info()
+
+
+df_clean4 = df_clean3.drop('births', axis=column)
+df_clean4
+
+
+# let's keep our column names in variables, for reference
+#
+columns = df_clean4.columns            # "list" of columns
+print(f"columns is {columns}")  
+  # it's a "pandas" list, called an index
+  # use it just as a python list of strings:
+print(f"columns[0] is {columns[0]}\n")
+
+# let's create a dictionary to look up an index from its name:
+col_index = {}
+for i, name in enumerate(columns):
+    col_index[name] = i  # using the name (as key), look up the value (i)
+print(f"col_index is {col_index}")
+print(f"col_index[ 'month' ] is {col_index[ 'month' ]}")
+
+
+# make the above/below object a numeric 0/1
+
+species = ['above','below']   # int to str
+species_index = {'above':0,'below':1}  # str to int
+
+def convert_species(speciesname):
+    """ return the species index (a unique integer/category) """
+    return species_index[speciesname]
+
+# let's try it out...
+for name in species:
+    print(f"{name} maps to {convert_species(name)}")
+
+
+df_clean5 = df_clean4.copy()  # copy everything and...
+
+# add a new column
+df_clean5['above/below_num'] = df_clean4['above/below median'].apply(convert_species)
+
+# let's see...
+df_clean5
+
+
+(nrows, ncols) = df_clean5.shape
+print(f"there are {nrows = } and {ncols = }")
+print()
+
+for row in range(0,nrows,5):
+    print(df_clean4[row:row+5])    # let's print 5 at a time...
+
+
+df_tidy =  df_clean5
+
+
+#
+# that's it!  then, and write it out to births_cleaned.csv
+
+# we'll construct the new filename:
+old_filename_without_extension = filename[:-4]                      # remove the ".csv"
+
+cleaned_filename = old_filename_without_extension + "_cleaned.csv"  # name-creating
+print(f"cleaned_filename is {cleaned_filename}")
+
+# now, save the dataframe names df_tidy
+df_tidy.to_csv(cleaned_filename, index_label=false)  # no "index" column...
+
+
+#
+# let's make sure this worked, by re-reading in the data...
+#
+
+# let's re-read that file and take a look...
+df_tidy_reread = pd.read_csv(cleaned_filename)   # encoding="utf-8" et al.
+print(f"{cleaned_filename} : file read into a pandas dataframe.")
+df_tidy_reread
+
+
+#
+# let's make sure we have all of our helpful variables in one place 
+#
+#   since we changed the columns, this will have changed from above!
+#
+
+#
+# let's keep our column names (features) in variables, for reference
+#
+columns = df_tidy_reread.columns            # "list" of columns
+print(f"columns is {columns}\n")  
+  # it's a "pandas" list, called an index
+  # use it just as a python list of strings:
+print(f"columns[0] is {columns[0]}\n")
+
+# let's create a dictionary to look up any column index by name
+col_index = {}
+for i, name in enumerate(columns):
+    col_index[name] = i  # using the name (as key), look up the value (i)
+print(f"col_index is {col_index}\n\n")
+
+
+#
+# and our "species" names - these aren't columns, nor rows. they're the target classifications!
+#
+
+# all of scikit-learn's ml routines need numbers, not strings
+#   ... even for categories/classifications (like species!)
+#   so, we will convert the flower-species to numbers:
+
+species = ['above','below']   # int to str
+species_index = {'above':0,'below':1}  # str to int
+
+def convert_species(speciesname):
+    """ return the species index (a unique integer/category) """
+    return species_index[speciesname]
+
+# let's try it out...
+for name in species:
+    print(f"{name} maps to {convert_species(name)}")
+
+
