@@ -1,0 +1,119 @@
+### Jupyter Notebooks and Markdown!
++ At heart, cs35 is about bridge-building between human expression and executable expression
++ markdown is a popular language for human expression  (this cell is markdown)
+  + control-enter renders the Markdown  ("runs" it)
++ python is a popular language for executable expression (see cells below!)#### This is a Markdown cell, a <i>fourth-level</i> header
++ If you've already used Markdown, e.g., in Discord, wiki editing, etc., wonderful!
++ If you haven't used it, [this Markdown link](https://www.markdownguide.org/basic-syntax/) is a reference...
++ Equally or more welcome: &nbsp; Dive in! &nbsp; Share! &nbsp; Ask!#### <font color="Coral">First task</font> -- is "to markdown":
++ Here, use your markdown knowledge or research to...
++ **bold** this item
++ *italicize* this item
++ ~~strikethrough~~ this item
++ use `fixed-width formatting` for this item, i.e., code-style
++ and then do
+
+#something else (your choice) with this item
+
++ BUT... <i><b><u>don't</u></b></i> use mark<u>up</u>, as this item does. Use mark<u>down</u>!
++ That is to say, don't use tags like <tt>\<i\>this\</i\></tt> for any of the challenges above...#### <font color="Coral">Second task</font> -- Be sure to
++ Change this list so that it uses <u>your</u> name and includes at least three "fun facts" about yourself, including at least two links and at least one link to a picture of you somewhere...
++ For example, my answers are
++ CS35_Participant_5 and CS35_Participant_6
++ CS35_Participant_6 rides bike all the time
++ CS35_Participant_5 love [fleabag](https://www.imdb.com/title/tt5687612/) and probably follow the <font color="DodgerBlue">Dodgers</font> too closely, as well as <font color="Purple">Wimbledon</font>.
++ In particular, CS35_Participant_5 loves [Andrew Scott](https://www.imdb.com/name/nm0778831/)
++ CS35_Participant_5 also believes that 0 is not a real number
++ This is a photo of [CS35_Participant_6] (https://en.wikipedia.org/wiki/Peppa_Pig#/media/File:Peppa_Pig_logo.svg)#### <font color="Coral">Third task</font> include a linked image via url: This is a _different_ Zach Dodds...
+This is another photo of CS35_Participant_6 reading
+
+<img src="data:image/jpeg;base64,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" height=142>### Onward to Python!#### Python review in about 5-10 cells!
+
+cs5 in one day!#### Let's use f-strings more carefully ...
+#### Notice that variables persist from cell to cell...
+
+Here, ``L`` and ``colleges`` are variables defined above.
+Their values are still present:
+#### ``split`` is a _really_ useful function
+
+Notice that it is called <i>by</i> the string being split.
+
+It returns a list!
+
+(Q'n: <i>How in the input being used?</i>)
+#### ``join`` is the _opposite_ of split#### <font color="Coral">Fourth task</font>: &nbsp; add another example in the spirit of the one below...
++ create (at least) three more variables and
++ a sentence using all of them and
++ render them in a single strings using f-strings...    
+
+Experiment!#### **Remember**  _list comprehensions_  ?
++ they are "loops-in-lists"
++ or "lists-with-loops"
+
+#### <font color="Coral">Fifth task</font>: &nbsp; <b>LC Challenge</b>
+
+Use list comprehensions to find how many of the first 1000 integers, _when squared_, contain the digit 4?
++ Remember: ``str(x)`` converts ``x`` to a string
+
+Then, create a variation of this question -- of your own design -- and answer it! For example,
++ what about checking for ``'4'`` and ``'2'`` ?
++ what about checking for ``'4'`` or ``'2'`` ?
++ even better: something else you've devised!
+
+Then , in a sentence-ish, explain your thinking:
+  + <i>why that question</i>
+  + <i>how did you answer it computationally?</i>
+  + <i>does the answer seem reasonable?</i>It might be interesting to manipulate the length instead of the content, so I change the if statemnt a little and used comparision. It does seem like a reasonable answer as I also tested that from 100 to 316, the square of it is 5 digit.  #### Let's function!  A first example, `plus1` and  its tests...### Let's loop!
+
+Below,
++ run this infinite loop - a while loop
++ practice using the "Interrupt" (the square at the upper left of the cell) to kill it
++ then, use the three-dots menu at the lower left to delete the cell's output...
+#### For-loop reminders....#### The next cell shows a larger <b>script</b>, which calls the previous two functions:#### The two mystery functions from our in-class exercise:#### Let's show two more functions:  
++ ``count_eyes( s )`` and
++ ``just_eyes( s )``#### Now, let's test our ``count_eyes`` function on all of the Sonnets:#### Now, let's <i>maximize</i> our ``count_eyes`` across all Sonnet lines:#### Thoughts on the most i-y line:
+
+The line with the most 'i's was ``So CS35_Participant_2 lives this and this gives life to thee.``
+
+Of all the sonnets, I'm surprised that no line contained more than 5 "i"s.
+
+But, trying it again looking for 't's, the result was again 5! It was
+
+``When in eternal lines to time thou growest:``
+
+Maybe 5 is a more reasonable maximum than originally thought. (There are fewer than 50 characters per line, after all...).#### <b><font color="Coral">Functions</font></b> to write for hw0pr1
++ Python's <tt>str</tt> functions are documented at this [str documentation page](https://docs.python.org/3/library/stdtypes.html#text-sequence-type-str)
+  + find and read over how <tt>split</tt> works... (that way, too, you'll have a feel for the documentation)
++ Python's <tt>string</tt> library, used via <tt>import string</tt> is at [the string library documentation page](https://docs.python.org/3/library/string.html)
+  + this has some useful constants and other capabilities. Most functionality is in the <tt>str</tt> datatype (class)
+  + not needed but fun: [all of Python's built-in modules](https://docs.python.org/3/py-modindex.html)
++ Be sure to include at least two tests that run - and work - for each of these functions.#### Then, add two functions that you brainstorm, implement, and test...
+
+Here are a couple of examples - one of mine and one from a prior cs35 - to help the brainstorming.
+
+The key is that yours should be, well, yours! That is, something that would only have been created by you/your team -- explain the reasoning, the process you went through, and the process that ended up working.
+
+Here, both algorithmic creativity and content creativity are equally the goal. That said, the aim is 15-20 minutes. (Remember you can always adapt the individualized outcome you're aiming for!)
+#### Example stolen from the past...
++ And Kenneth + Charlie's function, as well...
+  + K+C's is more representative of what's imagined...
+  + Up to you!#### <b><font color="Coral">Reflections</font></b>
+
+In a short 4-6 sentence markdown cell, share
++ Did you use AI?  (We hope so!)
++ If so, which one(s)? was it helpful?
++ Was there anything surprising about what it could help with?
++ Was there anything surprising about what it _couldn't_ help with?
+
+Key question:
++ Did you feel there was more reinforcement -- or more tension --    between "helping accomplish" and "helping understand"?1. I did use AI!
+2. it helps me with some specific things like bolding etc.
+3. no...
+4. no...
+
+5. I think there is a great balance because I make it explain to me a lot. In addition, it helps me catch small errors that I am too blind to see. However, when I am working on harder projects, it tends to not do very well.#### <b><font color="Coral">Submitting</font></b>
++ _Do_ keep your cell outputs intact: <i>Don't clear them</i>
++ If needed, use your choice of "commenting out":
++ `if False:` , `# hashes` , `''' triple quotes '''`   for code that does not work
++ _Do_ add context in comments or markdown both for things that worked (optional and welcome) and for things that you didn't get working (it shows you _know_ it's not working!)
+

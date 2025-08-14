@@ -1,0 +1,426 @@
+#
+# hw5pr1births_modeler:  birth classification model-building 
+#
+# the relationship:  using features month + day, how well can we predict "birth-popularity" 
+#
+#     to keep this as _classification_, we will use the binary above/below median as the target (the median is 190942)
+#
+
+
+#
+# suggestion:  
+# 
+#       +++ copy-paste-and-alter from the iris-modeling notebook to here +++
+#
+# this approach has the advantage of more deeply "digesting" the iris workflow...
+#      ...altering the parts that don't transfer, and taking the parts that do
+#
+
+#
+# warning:    be _sure_ to remove the "births" column.    (it allows the modeling to "cheat"...)
+#           
+
+
+# you'll insert (or copy-paste-edit) lots of cells!
+
+
+# libraries!
+import numpy as np      # numpy is python's "array" library
+import pandas as pd     # pandas is python's "data" library ("dataframe" == spreadsheet)
+import sklearn
+
+
+# let's read in our flower data...
+# 
+column =1
+cleaned_filename = "births_cleaned.csv"
+df_tidy = pd.read_csv(cleaned_filename)   # encoding="utf-8" et al.
+print(f"{cleaned_filename} : file read into a pandas dataframe.")
+df_model1 = df_tidy.drop('births', axis=column)
+df_model1 = df_model1.drop('above/below median', axis=column)
+df_model1
+
+
+
+df_model1.info()
+
+
+#
+# once we have all the columns we want, let's create an index of their names...
+
+#
+# let's make sure we have all of our helpful variables in one place 
+#       to be adapted if we drop/add more columns...
+#
+
+#
+# let's keep our column names in variables, for reference
+#
+columns = df_model1.columns            # "list" of columns
+print(f"columns is {columns}\n")  
+  # it's a "pandas" list, called an index
+  # use it just as a python list of strings:
+print(f"columns[0] is {columns[0]}\n")
+
+# let's create a dictionary to look up any column index by name
+col_index = {}
+for i, name in enumerate(columns):
+    col_index[name] = i  # using the name (as key), look up the value (i)
+print(f"col_index is {col_index}\n\n")
+
+
+#
+# and our "species" names
+#
+
+# all of scikit-learn's ml routines need numbers, not strings
+#   ... even for categories/classifications (like species!)
+#   so, we will convert the flower-species to numbers:
+
+species = ['above','below']   # int to str
+species_index = {'above':0,'below':1}  # str to int
+
+# let's try it out...
+for name in species:
+    print(f"{name} maps to {species_index[name]}")
+
+
+a = df_model1.to_numpy()    # yields the underlying numpy array
+print(a)
+
+
+
+
+#
+# let's make sure it's all floating-point, so we can multiply and divide
+#
+#       this is not needed here, but it can be important if some features are integer and floating point is needed
+
+
+a = a.astype('float64')  # so many numpy types!   here is a list:  www.tutorialspoint.com/numpy/numpy_data_types.htm
+print(a)
+
+
+
+#
+# also, nice to have num_rows and num_cols around
+#
+num_rows, num_cols = a.shape
+print(f"\nthe dataset has {num_rows} rows and {num_cols} cols")
+
+
+print("+++ start of data definitions +++\n")
+
+#
+# we could do this at the data-frame level, too!
+#
+
+#
+# watch out!  between datasets, this cell is one that often needs to be carefully changed...
+#
+
+x_all = a[:,0:2]  # x (features) ... is all rows, columns 0, 1, 2, 3
+y_all = a[:,2]    # y (labels) ... is all rows, column 4 only
+
+print(f"y_all (just the labels/species)   are all here: \n {y_all}")
+print()
+print(f"x_all (just the features, 5 rows worth) are \n {x_all[0:5]}")
+
+
+
+#
+# we scramble the data, to remove (potential) dependence on the data ordering:
+# 
+indices = np.random.permutation(len(y_all))  # indices is a permutation-list
+
+# we scramble both x and y, necessarily with the same permutation
+x_labeled = x_all[indices]              # we apply the _same_ permutation to each!
+y_labeled = y_all[indices]              # again...
+print(f"the scrambled labels/species are \n {y_labeled}")
+print()
+print(f"the corresponding data rows are \n {x_labeled}")
+
+
+
+#
+# we next separate into test data and training data ... 
+#    + we will train on the training data...
+#    + we will _not_ look at the testing data at all when building the model
+#
+# then, afterward, we will test on the testing data -- and see how well we do!
+#
+
+#
+# a common convention:  train on 80%, test on 20%    to do so, let's define test_percent as 0.2
+#
+
+test_percent = 0.2
+
+from sklearn.model_selection import train_test_split      # this function splits into training + testing sets
+
+# here we create four numpy arrays:
+#    x_train are a 2d array of features and observations for training
+#    y_train are a single-column of the correct species for x_train (that's how it trains!)
+#
+#    x_test are a 2d array of features and observations for testing (unseen during training)
+#    y_test are a single-column of the correct species for x_test (so we can measure how well the testing goes...) 
+
+x_train, x_test, y_train, y_test = train_test_split(x_all, y_all, test_size=test_percent)  # random_state=42
+
+# done!  let's confirm these match our intution:
+
+print(f"training with {len(y_train)} rows;  testing with {len(y_test)} rows\n" )
+
+print(f"held-out data... (testing data: {len(y_test)} rows)")
+print(f"y_test: {y_test}")
+print(f"x_test (first few rows): {x_test[0:5,:]}")  # 5 rows
+print()
+print(f"data used for modeling... (training data: {len(y_train)} rows)")
+print(f"y_train: {y_train}")
+print(f"x_train (first few rows): {x_train[0:5,:]}")  # 5 rows
+
+
+# k =84 model, not reliable
+
+#
+# +++ this is the "model-building and model-training cell"
+#       
+# create a knn model and train it! 
+#
+from sklearn.neighbors import kneighborsclassifier
+
+k = 84   # we don't know what k to use, so we guess!  (this will _not_ be a good value)
+
+knn_model = kneighborsclassifier(n_neighbors=k)       # here, k is the "k" in knn
+
+# we train the model ... it's one line!
+knn_model.fit(x_train, y_train)                              # yay!  trained!
+print("created and trained a knn classifier with k =", k)  
+
+
+#
+# +++ this cell is our "model-testing cell"
+#
+# now, let's see how well our model does on our "held-out data" (the testing data)
+#
+
+# we run our test set:
+
+# the function knn_model.predict is the instantiation of our model
+# it's what runs the k-nearest-neighbors algorithm:
+predicted_labels = knn_model.predict(x_test)      # this is the key line:  predict
+actual_labels = y_test
+
+# let's print them so we can compare...
+print("predicted labels:", predicted_labels)
+print("actual  labels  :", actual_labels)
+
+# and, some overall results
+num_correct = sum(predicted_labels == actual_labels)
+total = len(actual_labels)
+print(f"\nresults on test set:  {num_correct} correct out of {total} total.")
+
+
+#
+# let's print things in a vertical table
+#
+
+def compare_labels(predicted_labels, actual_labels):
+    """ a more neatly formatted comparison """
+    num_labels = len(predicted_labels)
+    num_correct = 0
+
+    print()
+    print(f'row {"#":>3s} : {"predicted":>12s} {"actual":<12s}   {"result"}')   
+    
+    for i in range(num_labels):
+        p = int(round(predicted_labels[i]))         # round protects from fp error 
+        a = int(round(actual_labels[i]))
+        result = "incorrect"
+        if p == a:  # if they match,
+            result = ""       # no longer incorrect
+            num_correct += 1  # and we count a match!
+
+        print(f"row {i:>3d} : {species[p]:>12s} {species[a]:<12s}   {result}")   
+
+    print()
+    print("correct:", num_correct, "out of", num_labels)
+    return num_correct
+
+# let's try it out!
+compare_labels(predicted_labels,actual_labels)
+
+
+#
+# ok!  we have our knn model, let's use it...
+#
+# ... in a data-trained predictive model (k-nearest-neighbors), using scikit-learn
+#
+# warning: this model has not yet been tuned to its "best k"
+#
+def predictive_model( features ):
+    """ input: a list of mon/day
+                
+        output: the predicted above/below, from
+                  
+    """
+    our_features = np.asarray([features])                      # extra brackets needed so it's 2d
+    predicted_species_list = knn_model.predict(our_features)   # predict!
+
+    predicted_species = int(round(predicted_species_list[0]))  # unpack the one element it contains
+    name = species[predicted_species]                          # look up the species
+    return name        
+    
+#
+# try it!
+# 
+# features = eval(input("enter new features: "))
+#
+listoffeatures = [ 
+[10,4.2],
+[1.5,1.5],
+[2,-1],
+[-10,0],
+[0,0],
+[2,32],
+[9.2,6.5],
+[3.14159,2.71828],
+[42,42]]         
+
+for features in listoffeatures:
+    result = predictive_model( features )
+    print(f"from the features {features}, i predict {result}")
+
+
+#
+# here, we use "cross validation" to find the "best" k...
+#
+
+import time
+from sklearn.model_selection import cross_val_score
+
+#
+# cross-validation splits the training set into two pieces:
+#   + model-building and model-validation. we'll use "build" and "validate"
+#
+all_accuracies = []
+best_k = 84  # not correct!
+best_accuracy = 0.0  # also not correct...
+
+# note that we are cross-validating using only our test data!
+for k in range(1,85):
+    knn_cv_model = kneighborsclassifier(n_neighbors=k)   # build a knn_model for every k
+    cv_scores = cross_val_score( knn_cv_model, x_train, y_train, cv=5 )  # cv=5 means 80/20
+    this_cv_accuracy = cv_scores.mean()               # mean() is numpy's built-in average function 
+    print(f"k: {k:2d}  cv accuracy: {this_cv_accuracy:7.4f}")
+
+    if this_cv_accuracy > best_accuracy:  # is this one better?
+        best_accuracy = this_cv_accuracy  # track the best accuracy
+        best_k = k                        # with the best k
+
+    all_accuracies.append(this_cv_accuracy)
+    time.sleep(0.002)   # dramatic pauses!
+
+    
+# use best_k!
+print(f"best_k = {best_k}   yields the highest average cv accuracy: {best_accuracy}")  # print the best one
+
+
+
+### let's see all the accuracies!
+
+import pandas as pd
+
+# let's create a new pandas dataframe using the data from the above cell
+crossvalidation_df = pd.dataframe( {"k_value":np.asarray(range(1,84+1)),
+                                    "accuracy":np.asarray(all_accuracies)}
+                                    )
+
+import seaborn as sns
+sns.set_theme(style="whitegrid", rc = {'figure.figsize':(12,8)})  # other options: darkgrid, whitegrid, dark, white, ticks
+sns.lineplot(x="k_value", y="accuracy", data=crossvalidation_df)
+
+
+#
+# with the best k, we build and train a new model:
+#
+# now using best_k instead of the original, randomly-guessed value:   
+#
+best_k = best_k   # not needed, but nice to remind ourselves of the variable name
+from sklearn.neighbors import kneighborsclassifier
+knn_model_tuned = kneighborsclassifier(n_neighbors=best_k)   # here, we use the best_k!
+
+# we train the model (one line!)
+knn_model_tuned.fit(x_train, y_train)                              # yay!  trained!
+print(f"created + trained a knn classifier, now tuned with a (best) k of {best_k}")  
+
+# how does it do?!  the next cell will show...
+
+
+#
+# re-create and re-run the  "model-testing cell"     how does it do with best_k?!
+#
+predicted_labels = knn_model_tuned.predict(x_test)
+actual_labels = y_test
+
+# let's print them so we can compare...
+print("predicted labels:", predicted_labels)
+print("actual labels:", actual_labels)
+
+# and, the overall results
+num_correct = sum(predicted_labels == actual_labels)
+total = len(actual_labels)
+print(f"\nresults on test set:  {num_correct} correct out of {total} total.\n\n")
+
+# plus, we'll print our nicer table...
+compare_labels(predicted_labels,actual_labels)
+
+
+# indeed better than 84,
+# with 84, it only got 52 correct
+
+
+#
+# ok!  we tuned our knn modeling to use the "best" value of k...
+#
+# and, we should now use all available data to train our final predictive model:
+#
+knn_model_final = kneighborsclassifier(n_neighbors=best_k)     # here, we use the best_k
+knn_model_final.fit(x_all, y_all)                              # key difference:  we use all the data!
+print(f"created + trained a 'final' knn classifier, with a (best) k of {best_k}") 
+
+
+#
+# final predictive model (k-nearest-neighbor), with tuned k + all data incorporated
+#
+
+def predictive_model( features, model ):                 # to allow the input of any model
+    """ input: a list of mon/day
+                
+        output: the predicted above/below, from
+                  
+    """
+    our_features = np.asarray([features])                 # extra brackets needed for 2d
+    predicted_species = model.predict(our_features)       # the model's prediction!
+    predicted_species = int(round(predicted_species[0]))  # unpack the extra brackets
+    return predicted_species
+   
+#
+# try it!
+# 
+
+lof = [
+[1,2],
+[2,28],
+[2,29],
+[8,15]
+
+]
+
+# run on each one:
+for features in lof:
+    predicted_species = predictive_model( features, knn_model_final )  # pass in the model, too!
+    name = species[predicted_species]
+    print(f"i predict {name} from the features {features}")    # answers in the assignment...
+
+

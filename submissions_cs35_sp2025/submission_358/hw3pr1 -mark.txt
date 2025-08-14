@@ -1,0 +1,251 @@
+# Homework 3:  Web-as-Output!
+
+Last week was dedicated to _consuming_ (or, perhaps, _gathering_) content **from** the web.
+
+This week and this notebook invites you into the world of _producing_ content for the web. The nice thing is
+  + the actual _producing_ happens in a scripting language
+  + and then the _formatting_ for the web can be done automatically
+  + whew!#### <font style="color:rgb(180,120,10);"><b>hw3pr1, parts (a) and (b)</b>:  &nbsp; "real" webscraping...</font>
+
+This problem bridges input from the web with output to the web. Last week's use of APIs found and interpreted **structured** data, mostly JSON.  (For pre-defined APIs, JSON is what's used, most of the time!)
+
+What if a site has information you'd like to use, but only has HTML, but not JSON? In this case, <tt>requests</tt> will provide the raw HTML (as a string) and it'll be up to us to extract the information we want! We'll use 
+  + Python string-handling and <tt>string</tt> libraries, and
+  + Python's _regular expression_ <tt>re</tt> library, a mini-language for string-matching and -manipulating.First, an example.  We want to programmatically access the _best snacks_ on the <u>definitive snacks page</u>, which is [here at this url](https://www.cs.hmc.edu/~dodds/demo.html)
+
+Alas, this snack-centric web service seems not to have a JSON API! We will have to grab the whole HTML text. HTML is always sent over as a huge string...#### <font style="color:rgb(180,120,10);"><b>hw3pr1a</b>:  &nbsp; snack-scraping, _an example to run_ </font>
+
+For this part, follow the cells below to scrape all of the snacks from the above string.
+
+Notice that all of the snacks have a _common context_ - namely, the HTML ``<li>`` and ``</li>`` tags in which they're embedded. In addition, they are all of _class_ ``"snack"``
+
+<br>
+<hr>Ooh... we notice that all of the snacks are inside ``li`` tags:
++ These are _list items_ within an _unordered list_ 
++ Here is an example of one: ``<li class="snack"> Poptarts </li>``
++ Notice, too, that the ``class`` in each case is ``"snack"``
+
+There are three ways to grab all of these snacks!
+1. We can use the ``.find`` method all strings have! (We'll do this.)
+1. We can use regular expressions. See part (c)!
+1. We can use a library such as [BeautifulSoup](https://beautiful-soup-4.readthedocs.io/en/latest/)  [[Good choice for a **final** project, if you'd like...]]
+
+For now, let's show how ``.find`` can work:
+
+First, let's see/remember what the <tt>find</tt> method does:Ok! Now we can create a plan...
+
+<br>
+<hr>
+
+Let's 
+  + find each instance of ``<li class="snack">``
+  + print their indices and
+  + print the string between them!Aargh!  We only got two snacks. &nbsp; ***Do you see why?***
+
+It's because we started the next ``find`` 42 characters after the first one, at ``end``, and it <u>ate into</u> the next snack. <br> So, it could only find the first and third snacks.
+
+<br>
+
+Let's repeat the process, more carefully
+  + We should find the following ``</li>``
+  + and then continue from there!<b>We have our snacks!</b>
+
+Let's show how to get ***only*** the snacks, not the HTML and CSS...
+
+What's needed is the offset to the front of the snack, here in the variable ``FRONT``#### Scraping Success!  
+
+We have 
++ scraped a superior snack page that, alas, did not have a JSON API...
++ written a special-purpose script that extracted the superior snacks from the page
++ and shown that we have them (by printing them, but we could put them in a ~~fridge~~ list for future snack-use!)#### <font style="color:rgb(180,120,10);"><b>hw3pr1b</b>:  &nbsp; Scrape another page and extract specific data - your choice -  from it ... </font>
+
+For this part, find another page - as large and complicated as you'd like - and scrape one or more pieces of information -- your choice -- from it...
+  + Be sure that your information-extraction involves some use of the function <tt>find</tt>  
+  + _or_ some use of the ``re`` regular expression library, which is introduced and used below.
+  + The other details are up to you...
+
+Ideas? Possibilities include
++ Any page that allows you to scrape it will work -- in the past, students have used The Student Life, and then compared which college is mentioned the most...
++ or the NYTimes, and see which of two cities/states/nation is mentioned the most
++ Perhaps one or two Wikipedia page(s), or a landing page for an organization...
++ With patience, you _can_ use ``find`` and/or ``re`` to extract arbitrary information... and this is a powerful foundation 
+  + worth bragging about... 🍰 
+# hw3pr1, part (b)
+
+Scraping the weather website to determine what clothing combo I should wear
+In SoCal, you can get away with almost anything anyday
+So I will do Sapporo, Japan.
+
+...Was my original plan
+As I was examining the HTML page, I found that there was a lot of tags with "adwrapper" or "basead" on it
+I usally use an adblocker so it wasn't immediately obvious to me, but after I turned it off...
+
+There was a lot of ads!
+
+I want to count how many distincts ads a simple weather website has
+That's it for <b>hw3pr1</b>, parts (a) and (b) ...
+
+<br>
+<hr>
+<br>
+
+Onward to <b>hw3pr1</b>, part (c): &nbsp; _Writing your own web-engine_ &nbsp; (with regular expressions) 
+  + We'll start by introducing _regular expressions_ - we'll see they provide a nice way to "grab" the <tt>&lt;li&gt;</tt> items from HTML...
+  + In fact, they're a great toolset for pretty much ***any*** text-extraction at all!
+
+  <br><br>#### <font style="color:rgb(180,120,10);"><b>hw3pr2</b>  &nbsp; Regular Expressions: &nbsp;  A _better_ approach to list-item finding and extracting...</font>
+
+The list-item example above used one function to find the items and another to "clearn them up."
+  + This is great! And, will work for absolutely anything you need (adding functions as you go...)
+
+**However**, there is a very powerful "mini" pattern-matching language that can help with many text-processing tasks: ***regular expressions***
+  + Sometimes called <tt>regex</tt>'es or <tt>re</tt>'s,
+  + regular expressions are a very compact languages for matching text patterns.
+  + the Python library is <tt>re</tt>
+
+Before unpacking the regex language, let's see it in action for the "handle list-item tags" challenge:### A nice example of RE's, _Regular Expressions_!  &nbsp;&nbsp; 
+
+No turning back now...  😊
+
+<br>
+
+As a goal, let's build up to that large example above.  However, we won't use ``findall`` .
+
+It's more informative to use ``sub`` (for _substitution_), so we can see what's found -- and what it becomes.Ok! &nbsp;&nbsp; Let's expand our thought experiments:There is one more "common" regular expression element. &nbsp;&nbsp; The star * means "zero or more" of what precedes it...
+
+It's similar to the plus + (which means 1 or more), _but * also allows for 0 times_ !  &nbsp;&nbsp; This can be mind-bending...####   Ok!  Let's break out, to a more <font color="DodgerBlue"><b>hands-on</b></font> medium...
+
+... to try out our ``"alabama"`` and ``"Google"`` regular-expression challenges... :) 
+
+<br><br>We now have ***almost*** everything in that list-item-handling example from a while back. 
+
+Let's take a look -- and add the idea of a _capture group_   &nbsp;&nbsp; (using parens)#### <font style="color:rgb(180,120,10);"><b>hw3pr1, part(c)</b> &nbsp;&nbsp; Writing your own Web Engine &nbsp; _with Regular Expressions_ ... </font>
+
+A **web engine** is an informal term for software that makes content visible in a browser. For example,
++ In Jupyter notebooks, we write _markdown_ and then VSCode renders it as _markup_
++ Similarly, this happens in Google Colab and _anywhere_ markdown is used! 
+  + to do this, the syntax <tt>_italic_</tt> gets transformed into <tt><i>italic</i></tt> by a "markdown-to-markup" web engine
+  + from there, the browser can render the latter using its markup: &nbsp; <i>italic</i>
+  + (in fact, it uses another web engine to go from markup to visible content)  
+  
++ We will focus on implementing the **markdown-to-markup** step - and extending it, by adding a few features of your own design 
+
+<b><font color="DodgerBlue">Side note</font></b>: &nbsp;&nbsp; This is an example of _meta-programming_ for software! That is, writing programs that transform one sort of programs into another, more useful sort!
++ Often, with strategic transformations along the way...
++ Metaprogramming is poised to be a much larger part of the next two decades than it was in the last two...!<br>
+<hr>
+<br>The next cell has the _starting markdown_ for our **markdown-to-markup** web engine.  
+
+Because the next cell ***is*** markdown -- and it's in a notebook _with_ a markdown engine -- you'll see the markup, as usual!
++ As usual, you can see the markdown by double-clicking the cell
++ It's also available as a Python string in the following cell...# Claremont's Colleges - MARKDOWN version
+
+The Claremont Colleges are a *consortium* of **five** SoCal institutions. <br>
+We list them here.
+
+## The 5Cs: a list
++ [Pomona](https://www.pomona.edu/)
++ [CMC](https://www.cmc.edu/)
++ [Pitzer](https://www.pitzer.edu/)
++ [Scripps](https://www.scrippscollege.edu/)
++ [HMC](https://www.hmc.edu/)
+
+The above's an _unordered_ list.  <br>
+At the 5Cs, we all agree there's __no__ order!
+
+---
+
+## Today's featured college: [CMC](https://coloradomtn.edu/)
+
+<img src="https://ygzm5vgh89zp-u4384.pressidiumcdn.com/wp-content/uploads/2017/06/GWS_campusview_1000x627.jpg" height=160>
+
+---
+
+### Also featured: &nbsp; Scripps and Pitzer and Mudd and Pomona
+
+<img src="https://i0.wp.com/tsl.news/wp-content/uploads/2018/09/scripps.png?w=1430&ssl=1" height=100px> &nbsp; 
+<img src="https://upload.wikimedia.org/wikipedia/commons/f/f9/Brant_Clock_Tower%2C_Pitzer_College%2C_2016_%28cropped%29.jpg" height=100px> &nbsp; 
+<img src="https://www.hmc.edu/about/wp-content/uploads/sites/2/2020/02/campus-gv.jpg" height=100px> &nbsp;
+<img src="https://upload.wikimedia.org/wikipedia/commons/4/46/Smith_Tower_and_the_San_Gabriel_Mountains.jpg" height=100px>
+
+Are there _other_ schools in Claremont?
+
+### Claremont destinations
++ _Pepo Melo_, a fantastic font of fruit!
++ **Starbucks**, the center of Claremont's "city," not as good as Scripps's _Motley_ 
++ ***Sancho's Tacos***, the village's newest establishment
++ ~~In-and-out CS35_Participant_3~~ (not in Claremont, alas, but close! CMC-supported!)
++ `42`nd Street Bagel, an HMC fave, definitely _well-numbered_
++ Trader Joe's, providing fuel for the walk back to Pitzer _from Trader Joe's_
+
+---
+
+#### Regular Expression Code-of-the-Day 
+`import re`               
+`pet_statement = re.sub(r'dog', 'cat', 'I <3 dogs')`
+
+#### New Construction of the ~~Day~~ _Decade_!
+
+<img src="https://www.cs.hmc.edu/~dodds/roberts_uc.png" height=150> <br><br>
+
+CMC's **_Roberts Science Center_, also known as _"The Rubiks Cube"_** <br>
+Currently under construction, under deadline, and undeterred by SoCal sun, or rain... 
+
+<br><br>
+#### <font color="Goldenrod"><b>Your hw3pr1c task</b></font> is to create a set of functions that create a markdown-to-markup transformer!
++ <b>including</b> at least these existing markdown features: headers, bold, italic, strikethrough (for Toby!), url-links, and item-lists
++ <b>and you should design</b> at least three new markdown-features of your own. <font size="-2">(This is ***modern*** markdown, not that stodgy markdown from the 90's!)</font>
++ The assignment page has several suggestions. You'll add to the markdown source to show off your new features (and customize)
+
+<hr>
+
+To get started, the following cells have a couple of example transformations: 
++ how to convert the word ``MARKDOWN`` to the word ``MARKUP``
++ how to convert all of the newlines to <tt>&lt;br&gt;</tt>
++ how to handle the <tt># </tt>  top-level headers, which use <tt>&lt;h1&gt;</tt> and  <tt>&lt;/h1&gt;</tt> around their contents
++ how to handle fixed-width (<tt>code-type</tt>) text, which converts backticks <tt>`</tt> to <tt>&lt;tt&gt;</tt>, e.g., <tt>&#96;code&#96;</tt> to <tt>&lt;tt&gt;code&lt;/tt&gt;</tt>
+
+It writes out the result to a file. 
++ Reload it directly in a browser to see how well it's doing.
++ Then, dive into the other changes...#### <font style="color:rgb(180,120,10);"><b>hw3pr1 part(c)</b>  &nbsp;&nbsp; More transformations!</font>
+
+Your task is to make sure you can run the above transformations:
++ For each one, one at a time, try it on the small example
++ Then, uncomment it from the large (overall) example
++ Be **sure** to change the final ``final_contents`` variable
+  + Forgetting this is the most common bug (not really a bug - just not running!)
+
+<br>
+<hr>
+<br>
+
+From there, implement the other markdown-to-markup transformations as noted in [HW3's gdocs page](https://docs.google.com/document/d/17bJfQIeuNGVh5vP8Y2BjRbVSDyDUNTpIrH0lgYubiUU/edit?tab=t.0) :
++ add new functions and cells -- or reuse other ones -- as you prefer
+  + do keep things organized, either way!
++ handle all six levels of headers ``<h1>`` through ``<h6>``
++ handle at least the five word-stylings noted, including _italic_, **bold**, ~~strikethrough~~, unordered lists, and [urls](https://docs.google.com/document/d/1IKZk9mbVkvsf9tl14EZD2CuNYhy3lQvO4Lnk89RmA-0/edit)
++ and, handle, at least <b><font color="DodgerBlue">three more features-or-stylings</font></b> of your own design. (See that gdocs hw page for several possibilities...)
+  + Note that you're welcome to _add prose to the original markdown page_ to show of your creative transformations
+  + Please don't _remove_ any of the original markdown, however -- that is for testing the various transformations, as well...
+
+<br>
+
+Lots of room for creativity, for sure...   
+
+<br>
+
+#### <font style="color:rgb(180,120,10);"><b>Be sure your <u>final output HTML</u> is present!</b></font>
++ This should show the result of _all_ the transformations:
++ both the starting ones (such as strikethrough, bold, etc.)
++ and your own creations :)
+
+
+
+<br>
+<hr>
+<br>
+
+<font color="DodgerBlue"><b>Meta-programming</b></font> -- that is, writing programs to help you write programs -- is mind-bending, for sure. 
++ As AI rises, there's no avoiding it: &nbsp;&nbsp; We have definitively entered the era of meta-programming ...
+
+Once your neurons are suitably _"bent"_ ... you'll find ***lots*** of uses for it! 

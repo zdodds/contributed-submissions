@@ -1,0 +1,30 @@
+<br>
+
+#### week4 ~ <i>... and into the data we dive ...</i>  &nbsp;&nbsp; (hw4pr0.ipynb)
+
+<a href="https://docs.google.com/document/d/1OdQ-01Gp7XAk9vbZ61zM3CaTdGsZVWEvZxgu1Z0toSY/edit?tab=t.0">This week's hw page</a>
+
+<hr><br>
+
+#### Reading for hw4...     (hw4pr0.ipynb)
+
+As we transition into AI/Machine Learning for the next few weeks, this week's reading takes a more <u>policy-based</u>, rather than socially-normed, view:
++ it's a NYTimes article from a few years ago -- nice, because it has a definite, wide-angle stance on regulating AI:
++ [How to Regulate Artificial Intelligence](https://www.nytimes.com/2017/09/01/opinion/artificial-intelligence-regulations-rules.html)
++ [locally-hosted pdf copy](https://drive.google.com/file/d/1EZcygQdk40J0dJTZ1vp0F20rIoQU27nH/view)
+
+Consider the author's three proposed principles, which elaborate Isaac Asimov's "laws":
++ AIs must obey human society's laws
++ AIs must disclose themselves as such
++ AIs cannot retain confidential information (w/o permission)
+
+Choose one (or more) of these principles with which to agree or disagree, bringing in your own experience and perspective.
+
+Alternative paths and balancing acts are, as always, welcome! For example -- this article was written before conversational AI was a reality. Do you feel there are differences in the appropriate principles or guidance for regulating today's AI agents and their authors?
+
+<hr>#### Reading response
+
+The law regarding obeying human society's laws intrest me the most as it is hard even for us to define what is the human society's laws. As we a divided into countries and even different unions of countires, we all have a set of legal system of our own. Thus, which legal system should it follow? If a country has a law that may be harmful to other parts of the world, should the AI be able to follow it too? Thus, I believe there should be a unified legal system that targets the use of AI.
+
+In addition, when the artical suggest: "full gamut of laws that apply to its
+human operator." However, this may mean that the AI would get the same punishment of its human operator. Many countires have laws that protect children under the age of 14 from many punishment that they would have gotten if they were adults. If the operator is under 14, they may use this powerful tool to achieve greater danmage than if they did not. As we give these powerful tools to people who might have done less damage, we also need to think of the consequences.

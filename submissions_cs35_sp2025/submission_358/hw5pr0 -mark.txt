@@ -1,0 +1,34 @@
+<br>
+
+### cs35 Week5: Reading and response
+
+_More data!_   &nbsp;&nbsp; (hw5pr0.ipynb)
+
+In fact, can we _generate_ our own?!
+
+<hr><br>
+
+#### Reading for hw5...     (hw5pr0.ipynb)
+
+This week's reading is an [Economist article](https://www.economist.com/technology-quarterly/2020/06/11/for-ai-data-are-harder-to-come-by-than-you-think) (here is a [pdf version](https://drive.google.com/file/d/1tJC3jLjk_ZNzA1UTxREJGqzZg5pg2N24/view)) on the pitfalls and promise of the data-driven era we now inhabit.  
+
+The article takes a "data-based" view on the developments and concerns in AI. It's from about 5 years ago, and you'll notice that this is a _long_ time ago, AI-wise!
+
+One of the more durable ideas in this article is the possibility -- and possible importance -- of ***generating*** data to improve model-training, when available data is inequitable, inflexible, or insufficient in another way. (Amazon Go, on the other hand? [Gone.](https://foodinstitute.com/focus/rise-and-stall-of-amazon-go-illustrates-limits-of-ai/))   
+
+Using the article and your own experience, what are <font color="Coral"><b>your thoughts on artificially generating data to assist AI/ML training</b></font>?  Possible jumping-off points include
++ (1) echo-chamber effects: &nbsp; Can generated data yield more fairness -- or only reinforce existing biases?, or
++ (2) implementation concerns: &nbsp; What process would artificially generate the data?, or
++ (3) a specific example you've encountered, &nbsp; where a computational system generated data, but "got things obviously wrong" (you may have experiences several of these examples!)
+
+In the last case, the automatically-generated data may have made the world's data-landscape worse, not better.  
+
+Alternative and additional perspectives about artificially-generated data are more than welcome... &nbsp; .
+
+As with each week's reading, responses should be thoughtful, but need not be CS35_Participant_2: a 4-5 sentence paragraph is wonderful.
+
+<hr>#### Reading response
+
+The first thing I thought of while reading this was the enormous amount of jobs data creating in real life brings to the world. Things such as minicing shoppers require little specialise expirence, degree, and work expirence. This opens up job opportunities for many groups of people such as disabilied, people without higher education, and more that would normally be harder for them to find jobs. This is a huge market that provides many societal benefits.
+
+On the more AI side, I have used AI generated data for model training and occationally, they don't work as expected. around 1/10 times, the generated data contains error that cannot allow the data to be trained properly. These types of error is hard to be detected just by looking at the numbers, thus they are not noticed until the model has been training. This may be a programing error of my own, and I am not sure what are the percentage of occurence for other perdiction model.
