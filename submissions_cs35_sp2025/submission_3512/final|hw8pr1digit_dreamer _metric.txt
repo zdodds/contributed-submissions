@@ -1,0 +1,759 @@
+#
+# here, we have a one-pixel predictor, to get you started...
+
+
+
+# libraries!
+import numpy as np      # numpy is python's "array" library
+import pandas as pd     # pandas is python's "data" library ("dataframe" == spreadsheet)
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+
+# let's read in our digits data...
+# 
+# for read_csv, use header=0 when row 0 is a header row
+# 
+filename = 'digits.csv'
+df = pd.read_csv(filename, header=0)   # encoding="utf-8" et al.
+print(f"{filename} : file read into a pandas dataframe.")
+
+
+
+#
+# let's drop that last column (dropping is usually by _name_):
+#
+#   if you want a list of the column names use df.columns
+coltodrop = df.columns[65]     # get last column name (with the url)
+df_clean = df.drop(columns=[coltodrop])  # drop by name is typical
+df_clean.info()                         # should be happier!
+
+
+
+#
+# let's keep our column names in variables, for reference
+#
+columns = df_clean.columns            # "list" of columns
+print(f"columns: {columns}")  
+
+# let's create a dictionary to look up any column index by name
+col_index = {}
+for i, name in enumerate(columns):
+    col_index[name] = i  # using the name (as key), look up the value (i)
+print(f"col_index: {col_index}")
+
+# and for our "species"!
+species = [ str(i) for i in range(0,10) ]  # list with a string at each index (index -> string)
+species_index = { s:int(s) for s in species }  # dictionary mapping from string -> index
+
+# and our "target labels"
+print(f"species: {species}")  
+print(f"species_index: {species_index}")
+
+
+#
+# let's convert our dataframe to a numpy array, named a
+#    our ml library, scikit-learn operates entirely on numpy arrays.
+#
+a = df_clean.to_numpy()    # .values gets the numpy array
+a = a.astype('float64')  # so many:  www.tutorialspoint.com/numpy/numpy_data_types.htm
+print(f"a's shape is {a.shape}")
+print(a)
+
+
+#
+# you will explore a different direction: "hallucinating" new data!
+#      this is sometimes called "imputing" missing data.
+#
+
+# first, build a regressor that
+#      + uses the first 48 pixels (6 image rows) to predict the floating-point value of pix52
+#      + we'll see how accurate it is...
+#      + then, you'll expand this process to build a regressor for _each_ pixel indexed from 48-63
+#      + and use those to "imagine" the bottom two rows of the digits...
+
+
+#
+# some starting code is provided here...
+#
+
+
+#
+# regression model that uses as input the first 48 pixels (pix0 to pix47)
+#                       and, as output, predicts the value of pix52
+#
+
+print("+++ start of regression prediction of pix52! +++\n")
+
+x_all = a[:,0:48]  ### old: np.concatenate( (a[:,0:3], a[:,4:]),axis=1)  # horizontal concatenation
+y_all = a[:,52]    # y (labels) ... is all rows, column indexed 52 (pix52) only (actually the 53rd pixel, but ok)
+
+print(f"y_all (just target values, pix52)   is \n {y_all}") 
+print(f"x_all (just features: 3 rows) is \n {x_all[:3,:]}")
+
+
+#
+# we scramble the data, to give a different train/test split each time...
+# 
+indices = np.random.permutation(len(y_all))  # indices is a permutation-list
+
+# we scramble both x and y, necessarily with the same permutation
+x_all = x_all[indices]              # we apply the _same_ permutation to each!
+y_all = y_all[indices]              # again...
+print("labels (target)\n",y_all)
+print("features\n", x_all[:3,:])
+
+
+#
+# a common convention:  train on 80%, test on 20%    let's define the test_percent
+#
+
+from sklearn.model_selection import train_test_split
+
+x_train, x_test, y_train, y_test = train_test_split(x_all, y_all, test_size=0.2)
+
+print(f"training with {len(y_train)} rows;  testing with {len(y_test)} rows\n" )
+
+print(f"held-out data... (testing data: {len(y_test)})")
+print(f"y_test: {y_test}\n")
+print(f"x_test (few rows): {x_test[0:5,:]}")  # 5 rows
+print()
+print(f"data used for modeling... (training data: {len(y_train)})")
+print(f"y_train: {y_train}\n")
+print(f"x_train (few rows): {x_train[0:5,:]}")  # 5 rows
+
+
+#
+# for nnets, it's important to keep the feature values near 0, say -1. to 1. or so
+#    this is done through the "standardscaler" in scikit-learn
+# 
+from sklearn.preprocessing import standardscaler
+use_scaler = true   # this variable is important! it tracks if we need to use the scaler...
+
+# we "train the scaler"  (computes the mean and standard deviation)
+if use_scaler == true:
+    scaler = standardscaler()
+    scaler.fit(x_train)  # scale with the training data! ave becomes 0; stdev becomes 1
+else:
+    # this one does no scaling!  we still create it to be consistent:
+    scaler = standardscaler(copy=true, with_mean=false, with_std=false) # no scaling
+    scaler.fit(x_train)  # still need to fit, though it does not change...
+
+scaler   # is now defined and ready to use...
+
+# ++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+# here is a fully-scaled dataset:
+
+x_all_scaled = scaler.transform(x_all)
+y_all_scaled = y_all.copy()      # not scaled
+
+
+# here are our scaled training and testing sets:
+
+x_train_scaled = scaler.transform(x_train) # scale!
+x_test_scaled = scaler.transform(x_test) # scale!
+
+y_train_scaled = y_train  # the predicted/desired labels are not scaled
+y_test_scaled = y_test  # not using the scaler
+
+def ascii_table(x,y):
+    """ print a table of binary inputs and outputs """
+    print(f"{'input ':>70s} -> {'pred':<5s} {'des.':<5s}") 
+    for i in range(len(y)):
+        s_to_show = str(x[i,:])
+        s_to_show = s_to_show[0:60]
+        print(f"{s_to_show!s:>70s} -> {'?':<5s} {y[i]:<5.0f}")   # !s is str ...
+    
+ascii_table(x_train_scaled[0:5,:],y_train_scaled[0:5])
+
+#
+# note that the zeros have become -1's
+# and the 1's have stayed 1's
+#
+
+
+#
+# mlpregressor predicts _floating-point_ outputs
+#
+
+from sklearn.neural_network import mlpregressor
+
+nn_regressor = mlpregressor(hidden_layer_sizes=(6,7), 
+                    max_iter=342,          # how many training epochs
+                    activation="tanh",     # the activation function
+                    solver='sgd',          # the optimizer
+                    verbose=true,          # do we want to watch as it trains?
+                    shuffle=true,          # shuffle each epoch?
+                    random_state=none,     # use for reproducibility
+                    learning_rate_init=.1, # how much of each error to back-propagate
+                    learning_rate = 'adaptive')  # how to handle the learning_rate
+
+print("\n\n++++++++++  training:  begin  +++++++++++++++\n\n")
+nn_regressor.fit(x_train_scaled, y_train_scaled)
+print("++++++++++  training:   end  +++++++++++++++")
+
+print(f"the (squared) prediction error (the loss) is {nn_regressor.loss_}")
+print(f"and, its square root: {nn_regressor.loss_ ** 0.5}")
+
+
+#
+# how did it do? now we're making progress (by regressing)
+#
+
+def ascii_table_for_regressor(xsc,y,nn,scaler):
+    """ a table including predictions using nn.predict """
+    predictions = nn.predict(xsc) # all predictions
+    xpr = scaler.inverse_transform(xsc)  # xpr is the "x to print": unscaled data!
+    # measure error
+    error = 0.0
+    # printing
+    print(f"{'input ':>35s} ->  {'pred':^6s}  {'des.':^6s}  {'absdiff':^10s}") 
+    for i in range(len(y)):
+        pred = predictions[i]
+        desired = y[i]
+        result = abs(desired - pred)
+        error += result
+        # xpr = xsc   # if you'd like to see the scaled values
+        s_to_show = str(xpr[i,:])
+        s_to_show = s_to_show[0:25]  # we'll just take 25 of these
+        print(f"{s_to_show!s:>35s} ->  {pred:<+6.3f}  {desired:<+6.3f}  {result:^10.3f}") 
+
+    print("\n" + "+++++   +++++      +++++   +++++   ")
+    print(f"average abs error: {error/len(y)}")
+    print("+++++   +++++      +++++   +++++   ")
+    
+#
+# let's see how it did on the test data 
+# 
+if true:
+    ascii_table_for_regressor(x_test_scaled,
+                            y_test_scaled,
+                            nn_regressor,
+                            scaler)   # this is our own f'n, above
+
+# and how it did on the training data!
+#
+if false:
+    ascii_table_for_regressor(x_train_scaled,
+                            y_train_scaled,
+                            nn_regressor,
+                            scaler)   # this is our own f'n, above
+
+
+
+#
+# let's create a final nn_regressor for pix52
+#
+pix52_final_regressor = mlpregressor(hidden_layer_sizes=(6,7), 
+                                    max_iter=400, 
+                                    activation="tanh",
+                                    solver='sgd', 
+                                    verbose=false, 
+                                    shuffle=true,
+                                    random_state=none, # reproduceability!
+                                    learning_rate_init=.1, 
+                                    learning_rate = 'adaptive')
+
+print("\n\n++++++++++  training:  begin  +++++++++++++++\n\n")
+pix52_final_regressor.fit(x_all_scaled, y_all_scaled)
+print("\n\n++++++++++  training:   end  +++++++++++++++\n\n")
+
+print(f"the (sq) prediction error (the loss) is {pix52_final_regressor.loss_}") 
+print(f"so, the 'average' error per pixel is {pix52_final_regressor.loss_**0.5}")
+
+
+#
+# and, let's be sure we can use our "finalized" model:
+#
+
+def predict_from_model(pixels, model):
+    """ returns the prediction on the input pixels using the input model
+    """
+    pixels_array = np.asarray([pixels])   # the extra sq. brackets are needed!
+    pixels_scaled = scaler.transform(pixels_array)  # need to use the scaler!
+    predicted = model.predict(pixels_scaled)
+    return predicted
+
+#
+# let's choose a digit to try...
+#
+row_to_show = 4                         # different indexing from x_all and y_all (they were reordered)
+numeral = a[row_to_show,64]
+print(f"the numeral is a {int(numeral)}\n")
+
+all_pixels = a[row_to_show,0:64] 
+first48pixels = a[row_to_show,0:48] 
+
+pix52_predicted = predict_from_model(first48pixels,pix52_final_regressor)
+pix52_actual = a[row_to_show,52]
+
+print(f"pix52 [predicted] vs. actual:  {pix52_predicted} vs. {pix52_actual}")
+
+
+#
+# let's visualize!   here's the idea: 
+# 
+# choose a row index (row_to_show)
+# show the original digit
+# show the original digit with pix52 replaced (may not be noticeable...)
+# show the original digit with the bottom-two rows zero'ed out _except_ pix 52 :-)
+#
+
+
+#
+# let's create a function to show one digit
+#
+
+def show_digit( pixels ):
+    """ should create a heatmap (image) of the digit contained in row 
+            input: pixels should be a 1d numpy array
+            if it's more then 64 values, it will be truncated
+            if it's fewer than 64 values, 0's will be appended
+            
+    """
+    # make sure the sizes are ok!
+    num_pixels = len(pixels)
+    if num_pixels != 64:
+        print(f"(in show_digit) num_pixels was {num_pixels}; now set to 64")
+    if num_pixels > 64:   # an elif would be a poor choice here, as i found!
+        pixels = pixels[0:64]
+    if num_pixels < 64:   
+        num_zeros = 64-len(pixels)
+        pixels = np.concatenate( (pixels, np.zeros(num_zeros)), axis=0 )
+        
+    pixels = pixels.astype(int)         # convert to integers for plotting
+    pixels = np.reshape(pixels, (8,8))  # make 8x8
+    # print(f"the pixels are\n{pixels}")  
+    f, ax = plt.subplots(figsize=(9, 6))  # draw a heatmap w/option of numeric values in each cell
+    
+    #my_cmap = sns.dark_palette("purple", as_cmap=true)
+    my_cmap = sns.light_palette("gray", as_cmap=true)    # all seaborn palettes: medium.com/@morganjonesartist/color-guide-to-seaborn-palettes-da849406d44f
+    # plot! annot=true to see the values...   palettes listed at very bottom of this notebook
+    sns.heatmap(pixels, annot=false, fmt="d", linewidths=.5, ax=ax, cmap=my_cmap) # 'seismic'
+
+
+#
+# another example of predicting one pixel
+#
+row_to_show = 42                         
+numeral = a[row_to_show,64]
+print(f"the numeral is a {int(numeral)}\n")
+# show all from the original data
+show_digit( a[row_to_show,0:64] )   # show full original
+
+all_pixels = a[row_to_show,0:64].copy()
+first48pixels = all_pixels[0:48] 
+
+pix52_predicted = predict_from_model(first48pixels,pix52_final_regressor)
+pix52_actual = a[row_to_show,52]
+
+print(f"pix52 [predicted] vs. actual:  {pix52_predicted} {pix52_actual}")
+
+# erase last 16 pixels
+all_pixels[48:64] = np.zeros(16)
+
+# show without pix52
+all_pixels[52] = 0         # omit this one
+show_digit( all_pixels )   # show without pixel 52
+
+# show with pix52
+all_pixels[52] = np.round(pix52_predicted)    # include this one
+show_digit( all_pixels )   # show with pixel 52
+
+
+
+
+
+# one-pixel regression function for 2 rows
+
+# construct the correct x_all from the columns we want
+def one_pixel_regression(i):
+    """  i is the pixel we are predicting
+    """
+    # print(f" ")
+    # print(f" ")
+    # print(f"predicting pixel {i}!")
+    x_all = a[:, 0:48]   # includes all other columns
+    y_all = a[:,i]                    # y (labels) ... pixel we are predicting
+
+
+
+    #
+    indices = np.random.permutation(len(y_all))  # indices is a permutation-list
+
+    # we scramble both x and y, necessarily with the same permutation
+    x_all = x_all[indices]              # we apply the _same_ permutation to each!
+    y_all = y_all[indices]              # again...
+
+
+    #
+    # we next separate into test data and training data ... 
+    from sklearn.model_selection import train_test_split
+
+    x_train, x_test, y_train, y_test = train_test_split(x_all, y_all, test_size=0.2)
+
+
+    #
+    # for nnets, it's important to keep the feature values near 0, say -1. to 1. or so
+    #    this is done through the "standardscaler" in scikit-learn
+    #
+
+
+    use_scaler = true   # this variable is important! it tracks if we need to use the scaler...
+
+    # we "train the scaler"  (computes the mean and standard deviation)
+    if use_scaler == true:
+        scaler = standardscaler()
+        scaler.fit(x_train)  # scale with the training data! ave becomes 0; stdev becomes 1
+    else:
+        # this one does no scaling!  we still create it to be consistent:
+        scaler = standardscaler(copy=true, with_mean=false, with_std=false) # no scaling
+        scaler.fit(x_train)  # still need to fit, though it does not change...
+
+    scaler   # is now defined and ready to use...
+
+    # ++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+    # here are our scaled training and testing sets:
+
+    x_train_scaled = scaler.transform(x_train) # scale!
+    x_test_scaled = scaler.transform(x_test) # scale!
+
+    y_train_scaled = y_train  # the predicted/desired labels are not scaled
+    y_test_scaled = y_test  # not using the scaler
+
+    
+     #
+    # mlpregressor predicts _floating-point_ outputs
+    #
+
+    from sklearn.neural_network import mlpregressor
+
+    nn_regressor = mlpregressor(hidden_layer_sizes=(6,7), 
+                        max_iter=500,          # how many training epochs
+                        verbose=false,          # do we want to watch as it trains?
+                        shuffle=true,          # shuffle each epoch?
+                        random_state=none,     # use for reproducibility
+                        learning_rate_init=.1, # how much of each error to back-propagate
+                        learning_rate = 'adaptive')  # how to handle the learning_rate
+
+    # print("\n\n++++++++++  training:  begin  +++++++++++++++\n\n")
+    nn_regressor.fit(x_train_scaled, y_train_scaled)
+    # print("++++++++++  training:   end  +++++++++++++++")
+    # print(f"the (squared) prediction error (the loss) is {nn_regressor.loss_:<6.3f}")
+    # print(f"and, its square root:         {nn_regressor.loss_ ** 0.5:<6.3f}")
+    # print()   
+    return nn_regressor, scaler
+
+    
+
+
+
+#
+# here we set up for a regression model that will predict the bottom two rows
+
+
+row_to_show = 47                        # different indexing from x_all and y_all (they were reordered)
+numeral = a[row_to_show,64]
+print(f"the numeral is a {int(numeral)}\n")
+
+all_pixels = a[row_to_show, 0:64]
+
+def predict_from_model(pixels, model, scaler):
+    """ returns the prediction on the input pixels using the input model
+    """
+    pixels_array = np.asarray([pixels])   # the extra sq. brackets are needed!
+    pixels_scaled = scaler.transform(pixels_array)  # need to use the scaler!
+    predicted = model.predict(pixels_scaled)
+    return predicted
+
+pixpred = []
+
+for i in range(48,64):
+    first48pixels = all_pixels[0:48] 
+    model, scaler = one_pixel_regression(i)   # build a new regressor for each pixel
+    pixel_prediction = predict_from_model(first48pixels, model, scaler)
+    pixpred.append(pixel_prediction[0])
+    
+# pix_predicted = predict_from_model(input_pixels, nn_regressor)
+# pix_actual = a[row_to_show,i]
+
+# print(f"pix{i} [predicted] vs. actual:  {pix_predicted} vs. {pix_actual}")
+
+# erase last 16 pixels
+all_pixels[48:64] = np.zeros(16)
+show_digit( all_pixels ) 
+
+# # show without pix52
+# all_pixels[48:64] = 0         # omit this one
+# show_digit( all_pixels )   # show without pixel 52
+
+# show with pix52
+for i in range(48,64):
+    all_pixels[i] = np.round(pixpred[i-48])         # omit this one
+show_digit( all_pixels )   # show with pixel 52
+
+
+#
+# here we set up for a regression model that will predict the bottom two rows
+
+
+row_to_show = 14                        # different indexing from x_all and y_all (they were reordered)
+numeral = a[row_to_show,64]
+print(f"the numeral is a {int(numeral)}\n")
+
+all_pixels = a[row_to_show, 0:64]
+
+def predict_from_model(pixels, model, scaler):
+    """ returns the prediction on the input pixels using the input model
+    """
+    pixels_array = np.asarray([pixels])   # the extra sq. brackets are needed!
+    pixels_scaled = scaler.transform(pixels_array)  # need to use the scaler!
+    predicted = model.predict(pixels_scaled)
+    return predicted
+
+pixpred = []
+
+for i in range(48,64):
+    first48pixels = all_pixels[0:48] 
+    model, scaler = one_pixel_regression(i)   # build a new regressor for each pixel
+    pixel_prediction = predict_from_model(first48pixels, model, scaler)
+    pixpred.append(pixel_prediction[0])
+    
+# pix_predicted = predict_from_model(input_pixels, nn_regressor)
+# pix_actual = a[row_to_show,i]
+
+# print(f"pix{i} [predicted] vs. actual:  {pix_predicted} vs. {pix_actual}")
+
+# erase last 16 pixels
+all_pixels[48:64] = np.zeros(16)
+show_digit( all_pixels ) 
+
+# # show without pix52
+# all_pixels[48:64] = 0         # omit this one
+# show_digit( all_pixels )   # show without pixel 52
+
+# show with pix52
+for i in range(48,64):
+    all_pixels[i] = np.round(pixpred[i-48])         # omit this one
+show_digit( all_pixels )   # show with pixel 52
+
+
+#
+# here we set up for a regression model that will predict the bottom two rows
+
+
+row_to_show = 55                       # different indexing from x_all and y_all (they were reordered)
+numeral = a[row_to_show,64]
+print(f"the numeral is a {int(numeral)}\n")
+
+all_pixels = a[row_to_show, 0:64]
+
+def predict_from_model(pixels, model, scaler):
+    """ returns the prediction on the input pixels using the input model
+    """
+    pixels_array = np.asarray([pixels])   # the extra sq. brackets are needed!
+    pixels_scaled = scaler.transform(pixels_array)  # need to use the scaler!
+    predicted = model.predict(pixels_scaled)
+    return predicted
+
+pixpred = []
+
+for i in range(48,64):
+    first48pixels = all_pixels[0:48] 
+    model, scaler = one_pixel_regression(i)   # build a new regressor for each pixel
+    pixel_prediction = predict_from_model(first48pixels, model, scaler)
+    pixpred.append(pixel_prediction[0])
+    
+# pix_predicted = predict_from_model(input_pixels, nn_regressor)
+# pix_actual = a[row_to_show,i]
+
+# print(f"pix{i} [predicted] vs. actual:  {pix_predicted} vs. {pix_actual}")
+
+# erase last 16 pixels
+all_pixels[48:64] = np.zeros(16)
+show_digit( all_pixels ) 
+
+# # show without pix52
+# all_pixels[48:64] = 0         # omit this one
+# show_digit( all_pixels )   # show without pixel 52
+
+# show with pix52
+for i in range(48,64):
+    all_pixels[i] = np.round(pixpred[i-48])         # omit this one
+show_digit( all_pixels )   # show with pixel 52
+
+
+# one-pixel regression function for 4 row prediction 
+
+# construct the correct x_all from the columns we want
+def one_pixel_regression(i):
+    """  i is the pixel we are predicting
+    """
+    # print(f" ")
+    # print(f" ")
+    # print(f"predicting pixel {i}!")
+    x_all = a[:, 0:32]   # includes all other columns
+    y_all = a[:,i]                    # y (labels) ... pixel we are predicting
+
+
+
+    #
+    indices = np.random.permutation(len(y_all))  # indices is a permutation-list
+
+    # we scramble both x and y, necessarily with the same permutation
+    x_all = x_all[indices]              # we apply the _same_ permutation to each!
+    y_all = y_all[indices]              # again...
+
+
+    #
+    # we next separate into test data and training data ... 
+    from sklearn.model_selection import train_test_split
+
+    x_train, x_test, y_train, y_test = train_test_split(x_all, y_all, test_size=0.2)
+
+
+    #
+    # for nnets, it's important to keep the feature values near 0, say -1. to 1. or so
+    #    this is done through the "standardscaler" in scikit-learn
+    #
+
+
+    use_scaler = true   # this variable is important! it tracks if we need to use the scaler...
+
+    # we "train the scaler"  (computes the mean and standard deviation)
+    if use_scaler == true:
+        scaler = standardscaler()
+        scaler.fit(x_train)  # scale with the training data! ave becomes 0; stdev becomes 1
+    else:
+        # this one does no scaling!  we still create it to be consistent:
+        scaler = standardscaler(copy=true, with_mean=false, with_std=false) # no scaling
+        scaler.fit(x_train)  # still need to fit, though it does not change...
+
+    scaler   # is now defined and ready to use...
+
+    # ++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+    # here are our scaled training and testing sets:
+
+    x_train_scaled = scaler.transform(x_train) # scale!
+    x_test_scaled = scaler.transform(x_test) # scale!
+
+    y_train_scaled = y_train  # the predicted/desired labels are not scaled
+    y_test_scaled = y_test  # not using the scaler
+
+    
+     #
+    # mlpregressor predicts _floating-point_ outputs
+    #
+
+    from sklearn.neural_network import mlpregressor
+
+    nn_regressor = mlpregressor(hidden_layer_sizes=(6,7), 
+                        max_iter=500,          # how many training epochs
+                        verbose=false,          # do we want to watch as it trains?
+                        shuffle=true,          # shuffle each epoch?
+                        random_state=none,     # use for reproducibility
+                        learning_rate_init=.1, # how much of each error to back-propagate
+                        learning_rate = 'adaptive')  # how to handle the learning_rate
+
+    # print("\n\n++++++++++  training:  begin  +++++++++++++++\n\n")
+    nn_regressor.fit(x_train_scaled, y_train_scaled)
+    # print("++++++++++  training:   end  +++++++++++++++")
+    # print(f"the (squared) prediction error (the loss) is {nn_regressor.loss_:<6.3f}")
+    # print(f"and, its square root:         {nn_regressor.loss_ ** 0.5:<6.3f}")
+    # print()   
+    return nn_regressor, scaler
+
+
+#
+# here we set up for a regression model that will predict the bottom two rows
+
+
+row_to_show = 47                        # different indexing from x_all and y_all (they were reordered)
+numeral = a[row_to_show,64]
+print(f"the numeral is a {int(numeral)}\n")
+
+all_pixels = a[row_to_show, 0:64]
+
+def predict_from_model(pixels, model, scaler):
+    """ returns the prediction on the input pixels using the input model
+    """
+    pixels_array = np.asarray([pixels])   # the extra sq. brackets are needed!
+    pixels_scaled = scaler.transform(pixels_array)  # need to use the scaler!
+    predicted = model.predict(pixels_scaled)
+    return predicted
+
+pixpred = []
+
+for i in range(32,64):
+    first48pixels = all_pixels[0:32] 
+    model, scaler = one_pixel_regression(i)   # build a new regressor for each pixel
+    pixel_prediction = predict_from_model(first48pixels, model, scaler)
+    pixpred.append(pixel_prediction[0])
+    
+# pix_predicted = predict_from_model(input_pixels, nn_regressor)
+# pix_actual = a[row_to_show,i]
+
+# print(f"pix{i} [predicted] vs. actual:  {pix_predicted} vs. {pix_actual}")
+
+# erase last 16 pixels
+all_pixels[32:64] = np.zeros(32)
+show_digit( all_pixels ) 
+
+# # show without pix52
+# all_pixels[48:64] = 0         # omit this one
+# show_digit( all_pixels )   # show without pixel 52
+
+# show with pix52
+for i in range(32,64):
+    all_pixels[i] = np.round(pixpred[i-32])         # omit this one
+show_digit( all_pixels )   # show with pixel 52
+
+
+#
+# here we set up for a regression model that will predict the bottom two rows
+
+
+row_to_show = 14                        # different indexing from x_all and y_all (they were reordered)
+numeral = a[row_to_show,64]
+print(f"the numeral is a {int(numeral)}\n")
+
+all_pixels = a[row_to_show, 0:64]
+
+def predict_from_model(pixels, model, scaler):
+    """ returns the prediction on the input pixels using the input model
+    """
+    pixels_array = np.asarray([pixels])   # the extra sq. brackets are needed!
+    pixels_scaled = scaler.transform(pixels_array)  # need to use the scaler!
+    predicted = model.predict(pixels_scaled)
+    return predicted
+
+pixpred = []
+
+for i in range(32,64):
+    first48pixels = all_pixels[0:32] 
+    model, scaler = one_pixel_regression(i)   # build a new regressor for each pixel
+    pixel_prediction = predict_from_model(first48pixels, model, scaler)
+    pixpred.append(pixel_prediction[0])
+    
+# pix_predicted = predict_from_model(input_pixels, nn_regressor)
+# pix_actual = a[row_to_show,i]
+
+# print(f"pix{i} [predicted] vs. actual:  {pix_predicted} vs. {pix_actual}")
+
+# erase last 16 pixels
+all_pixels[32:64] = np.zeros(32)
+show_digit( all_pixels ) 
+
+# # show without pix52
+# all_pixels[48:64] = 0         # omit this one
+# show_digit( all_pixels )   # show without pixel 52
+
+# show with pix52
+for i in range(32,64):
+    all_pixels[i] = np.round(pixpred[i-32])         # omit this one
+show_digit( all_pixels )   # show with pixel 52
+
+

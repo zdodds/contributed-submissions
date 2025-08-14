@@ -1,0 +1,117 @@
+### Jupyter Notebooks and Markdown!
++ At heart, cs35 is about bridge-building between human expression and executable expression
++ markdown is a popular language for human expression  (this cell is markdown)
+  + control-enter renders the Markdown  ("runs" it)
++ python is a popular language for executable expression (see cells below!)#### This is a Markdown cell, a <i>fourth-level</i> header
++ If you've already used Markdown, e.g., in Discord, wiki editing, etc., wonderful!
++ If you haven't used it, [this Markdown link](https://www.markdownguide.org/basic-syntax/) is a reference...
++ Equally or more welcome: &nbsp; Dive in! &nbsp; Share! &nbsp; Ask!#### <font color="Coral">First task</font> -- is "to markdown":
++ Here, use your markdown knowledge or research to...
++ **bold** this item
++ *italicize* this item
++ ~~strikethrough~~ this item
++ `use fixed-width formatting` for this item, i.e., code-style
++ ## and then do something else (your choice) with this item
++ BUT... <i><b><u>don't</u></b></i> use mark<u>up</u>, as this item does. Use mark<u>down</u>!
++ That is to say, don't use tags like <tt>\<i\>this\</i\></tt> for any of the challenges above...#### <font color="Coral">Second task</font> -- Be sure to
++ My name is CS35_Participant_1
++ I <3 <font color="Red">movie</font> soundtracks (especially the ones by Jon Brion)
++ I went to the same high school as [mark rothko](https://en.wikipedia.org/wiki/Mark_Rothko) and [elliot smith](https://en.wikipedia.org/wiki/Elliott_Smith)
++ My favorite password as a child was PleaseDontHackMe
++ The only link with my face that I know of... [my linkedin!!!!](https://www.linkedin.com/in/CS35_Participant_1-CS35_Participant_1-b840102b1/)#### <font color="Coral">Third task</font> include a linked image via url:
+
+This is me in San Clemente. Not the best picture for Linkedin, but I don't have many pictures that are not kind of ridiculous looking...... (the picture won't seem to appear in gradescope submission...)
+
+<img src="https://media.licdn.com/dms/image/v2/D4E03AQFwB8AdAD22Nw/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1716322929451?e=1743638400&v=beta&t=pY2d0deleyQyRB_cOeMK1EJ7JOT-qpMtDKfOfQnQTsk" height=142>### Onward to Python!#### Python review in about 5-10 cells!
+
+cs5 in one day!#### Let's use f-strings more carefully ...
+#### Notice that variables persist from cell to cell...
+
+Here, ``L`` and ``colleges`` are variables defined above.
+Their values are still present:
+#### ``split`` is a _really_ useful function
+
+Notice that it is called <i>by</i> the string being split.
+
+It returns a list!
+
+(Q'n: <i>How in the input being used?</i>)
+#### ``join`` is the _opposite_ of split#### <font color="Coral">Fourth task</font>: &nbsp; add another example in the spirit of the one below...
++ create (at least) three more variables and
++ a sentence using all of them and
++ render them in a single strings using f-strings...    
+
+Experiment!#### **Remember**  _list comprehensions_  ?
++ they are "loops-in-lists"
++ or "lists-with-loops"
+
+#### <font color="Coral">Fifth task</font>: &nbsp; <b>LC Challenge</b>
+
+Use list comprehensions to find how many of the first 1000 integers, _when squared_, contain the digit 4?
++ Remember: ``str(x)`` converts ``x`` to a string
+
+Then, create a variation of this question -- of your own design -- and answer it! For example,
++ what about checking for ``'4'`` and ``'2'`` ?
++ what about checking for ``'4'`` or ``'2'`` ?
++ even better: something else you've devised!
+
+Then , in a sentence-ish, explain your thinking:
+  + <i>why that question</i>
+  + <i>how did you answer it computationally?</i>
+  + <i>does the answer seem reasonable?</i>* `or seemed harder than and, but I tried just adding the word or and it seems to have worked?`
+
+* `My thinking was originally to try to get a list of all 1000 numbers, then use a loop of sorts to iteratively go through each index of each element to find a 4, but it got very messy with element types. I couldn't figure out how to do it... Then I thought it would be most efficient to just create the list as I wanted it, so I went online to find out what I could do with list creation.`
+
+* `The answers do seem reasonable, such that the number of numbers containing 4 or 2 is larger than the groups containing either 4 or 2, but not larger than the sum of the two`#### Let's function!  A first example, `plus1` and  its tests...### Let's loop!
+
+Below,
++ run this infinite loop - a while loop
++ practice using the "Interrupt" (the square at the upper left of the cell) to kill it
++ then, use the three-dots menu at the lower left to delete the cell's output...
+#### For-loop reminders....#### The next cell shows a larger <b>script</b>, which calls the previous two functions:#### The two mystery functions from our in-class exercise:#### Let's show two more functions:  
++ ``count_eyes( s )`` and
++ ``just_eyes( s )``#### Now, let's test our ``count_eyes`` function on all of the Sonnets:#### Now, let's <i>maximize</i> our ``count_eyes`` across all Sonnet lines:#### Thoughts on the most i-y line:
+
+The line with the most 'i's was ``So CS35_Participant_2 lives this and this gives life to thee.``
+
+Of all the sonnets, I'm surprised that no line contained more than 5 "i"s.
+
+But, trying it again looking for 't's, the result was again 5! It was
+
+``When in eternal lines to time thou growest:``
+
+Maybe 5 is a more reasonable maximum than originally thought. (There are fewer than 50 characters per line, after all...).#### <b><font color="Coral">Functions</font></b> to write for hw0pr1
++ Python's <tt>str</tt> functions are documented at this [str documentation page](https://docs.python.org/3/library/stdtypes.html#text-sequence-type-str)
+  + find and read over how <tt>split</tt> works... (that way, too, you'll have a feel for the documentation)
++ Python's <tt>string</tt> library, used via <tt>import string</tt> is at [the string library documentation page](https://docs.python.org/3/library/string.html)
+  + this has some useful constants and other capabilities. Most functionality is in the <tt>str</tt> datatype (class)
+  + not needed but fun: [all of Python's built-in modules](https://docs.python.org/3/py-modindex.html)
++ Be sure to include at least two tests that run - and work - for each of these functions.#### Then, add two functions that you brainstorm, implement, and test...
+
+Here are a couple of examples - one of mine and one from a prior cs35 - to help the brainstorming.
+
+The key is that yours should be, well, yours! That is, something that would only have been created by you/your team -- explain the reasoning, the process you went through, and the process that ended up working.
+
+Here, both algorithmic creativity and content creativity are equally the goal. That said, the aim is 15-20 minutes. (Remember you can always adapt the individualized outcome you're aiming for!)
+#### Example stolen from the past...
++ And Kenneth + Charlie's function, as well...
+  + K+C's is more representative of what's imagined...
+  + Up to you!`I thought this function would be much harder to code, as I imagined it involving loops and iteratively going down the empty spaces for nouns to plant random words from an inputed list. It ended up that loops wouldn't work with the sentence structure (as far as my attempts made it seem, I experimented a lot) and the finished code was really simple and not super interesting... ``AI helped me a lot with writing better, cleaner code for this function. It also used concepts in ways I didn't know were possible, like the way it used range() and referred to the items within the elements of a list.`#### <b><font color="Coral">Reflections</font></b>
+
+In a short 4-6 sentence markdown cell, share
++ Did you use AI?  (We hope so!)
++ If so, which one(s)? was it helpful?
++ Was there anything surprising about what it could help with?
++ Was there anything surprising about what it _couldn't_ help with?
+
+Key question:
++ Did you feel there was more reinforcement -- or more tension --    between "helping accomplish" and "helping understand"?* `I used AI (ChatGPT) for my very last function, and basically just asked it if there was any way I could condense [insert section of code that was awkward]/write it as a loop. It definitely was helpful, and I kind of wished I used it sooner. Throughout the tutorial & especially during the function writing, I ran into issues that were very hard to search up online, but I didn't ask AI because I wanted to learn it myself. After using AI though, I feel like if I asked it for help/how to do something it would've used a method I didn't know I could do in python (even with familiar objects and lists) and I actually could've learned more.`
+
+* `Not particularly surprised about how good it was, I know a computer can code much better than I can. Also I didn't ask it for much so I didn't run into any cases where it wasn't helpful.`
+
+* `Key question: Since my code was all pretty simple, I think by helping me accomplish my goals it helped me better understand what I could do with code. I definitely see how there could be tension if I fed it a lot of complex code though, as it mainly just writes you new code and tells you what it changed but not really why (at least on a conceptual level).`#### <b><font color="Coral">Submitting</font></b>
++ _Do_ keep your cell outputs intact: <i>Don't clear them</i>
++ If needed, use your choice of "commenting out":
++ `if False:` , `# hashes` , `''' triple quotes '''`   for code that does not work
++ _Do_ add context in comments or markdown both for things that worked (optional and welcome) and for things that you didn't get working (it shows you _know_ it's not working!)
+

@@ -1,0 +1,112 @@
+#
+# hw5pr1births_cleaner:  birth classification by month + day    (above/below median: 190942)
+#
+
+
+# libraries!
+import numpy as np      # numpy is python's "array" library
+import pandas as pd     # pandas is python's "data" library ("dataframe" == spreadsheet)
+
+
+# read in our spreadsheet (csv)
+filename = 'births.csv'
+bdf = pd.read_csv(filename)        # encoding="utf-8" et al.
+print(f"{filename} : file read into a pandas dataframe.")
+
+
+
+
+
+bdf.info()
+
+
+bdf.columns
+
+
+row = 0        
+column = 1     
+
+# we are dropping this final column - it was just a citation...
+bdf_clean1 = bdf.drop('from http://chmullig.com/2012/06/births-by-day-of-year/', axis=column)
+bdf_clean1
+
+
+
+bdf_clean2 = bdf_clean1.drop([60, 61, 123, 185, 278, 340], axis=row)
+
+def convert_median(ba):
+    if ba == 'below':
+        return 0
+    elif ba == 'above':
+        return 1
+    
+bdf_clean3 = bdf_clean2.copy() 
+
+bdf_clean3['above/below one/zero'] = bdf_clean2['above/below median'].apply(convert_median)
+
+# let's see...
+bdf_clean3
+
+
+bdf_clean3.info()  
+
+
+columns = bdf_clean3.columns            # "list" of columns
+print(f"columns is {columns}")  
+  # it's a "pandas" list, called an index
+  # use it just as a python list of strings:
+print(f"columns[0] is {columns[0]}\n")
+
+# let's create a dictionary to look up an index from its name:
+col_index = {}
+for i, name in enumerate(columns):
+    col_index[name] = i  # using the name (as key), look up the value (i)
+print(f"col_index is {col_index}")
+print(f"col_index[ 'births' ] is {col_index[ 'births' ]}")
+
+
+# check that right rows were deleted... 
+b = bdf_clean3['births']
+print(b.min())
+
+
+(nrows, ncols) = bdf_clean3.shape
+print(f"there are {nrows = } and {ncols = }")
+print()
+
+for row in range(0,nrows,5):
+    print(bdf_clean3[row:row+5]) 
+
+
+bdf_tidy =  bdf_clean3
+
+
+old_filename_without_extension = filename[:-4]                      # remove the ".csv"
+
+cleaned_filename = old_filename_without_extension + "_cleaned.csv"  # name-creating
+print(f"cleaned_filename is {cleaned_filename}")
+
+# now, save the dataframe names df_tidy
+bdf_tidy.to_csv(cleaned_filename, index_label=false)  # no "index" column...
+
+
+bdf_tidy_reread = pd.read_csv(cleaned_filename)   # encoding="utf-8" et al.
+print(f"{cleaned_filename} : file read into a pandas dataframe.")
+bdf_tidy_reread
+
+
+columns = bdf_tidy_reread.columns            # "list" of columns
+print(f"columns is {columns}\n")  
+  # it's a "pandas" list, called an index
+  # use it just as a python list of strings:
+print(f"columns[0] is {columns[0]}\n")
+
+# let's create a dictionary to look up any column index by name
+col_index = {}
+for i, name in enumerate(columns):
+    col_index[name] = i  # using the name (as key), look up the value (i)
+print(f"col_index is {col_index}\n\n")
+
+
+
+

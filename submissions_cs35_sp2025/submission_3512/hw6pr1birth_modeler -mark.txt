@@ -1,0 +1,24 @@
+#### Births Modeler: &nbsp; Using Decision Trees and Random Forests
+
++ births clasification via decision trees and random forests...
++ You're classifying "above" (above-median popularity of birthdays) vs "below" (below-median popularity of birthdays)
++ Feel free to re-use the cleaned data from previous weeks (already here)
++ Suggestion:  &nbsp; go cell-by-cell using the iris_modeler example, copying-and-adapting as you go...## Data set up...
++ Use the cleaned data from prior weeks (it should be here in this folder as births_cleaned.csv)
++ Be sure to get rid of the column with the **number of births** &nbsp;&nbsp; That makes the prediction "too easy"!
++ Instead, see how well the DT/RF techniques can predict above/below-median popularity, just based on month and day...
++ (It's quite a hard estimation problem!)## First: &nbsp; _Decision Trees_## Then: &nbsp; _Random Forests_<br>
+<hr>
+<br>
+
+### Final, big-picture question:  
++ What are the relative "feature importances" of the two features
+  + month
+  + day
++ ... at least, in terms of "birthday popularity," as we've defined it?
+
+Reflect, in a sentence or two, on the values of feature importances that you found.
++ To use Erica Thompson's framing, 
++ how much trust (or weight) would you attribute to this model and its feature importances, "outside of Model Land"? The relative importance of month is much greater than that of day in either model type (DT/RR) for birth popularity. Thinking about it, that makes sense, as day # doesn't even correlate with time of year, and at best, unique features in day data like holidays only impact 1/12 of the data points associated with day!
+
+This model is better than the KNN model, as there is a believable birth trend associated with a month's place in the year (>=N or <=N), and this trend is better characterized with DT/RF than through proximity like with KNN. It can also weight month/day separately. However it's still not too great of a model mostly because of the data set itself. Not enough data points, not a strong enough existing trend to model. Any model therefore feels like an attempt to pretend there is more to the data than there actually is 😥

@@ -1,0 +1,1117 @@
+# Where are we?
+
+
+
+# what's here?
+
+
+
+# to move around:  cd stands for "change directory" (a directory is a folder)
+#    # intro_first    would move into the intro_first folder
+#    # .. moves "up" to the containing directory
+#    # .  doesn't move at all:  .  represents the current directory    
+
+# For now, let's not move anywhere
+
+
+
+# we will use a few file-handling "system" libraries. 
+# These are built-in to python, so nothing to install - just to import:
+import os
+import os.path
+
+
+#
+# In fact, we can read it - it's just not a .ipynb file!
+#
+# Try it here, for your system:
+
+print("+++ Contents of the file nottrue.ipynb: +++\n")
+
+# Mac:    !cat  <filepath>  using forward slashes
+#
+# !cat ./intro_first/nottrue.ipynb       
+
+# Windows:  type <filepath>  using backslashes
+#
+# !type .\\intro_first\\nottrue.ipynb       
+
+
+#
+# function to return the contents of a file (as one-big-string)
+#
+
+def GET_STRING_FROM_FILE(filename_as_string):
+    """ return all of the contents from the file, filename
+        will error if the file is not present, then return the empty string ''
+    """
+    try:
+        # the encoding below is a common default, but not universal...
+        file_object = open(filename_as_string, "r", encoding='utf-8')    # open! (Other encodings: 'latin-1', 'utf-16', 'utf-32') 
+        file_data = file_object.read()                                   # and get all its contents
+        file_object.close()                                              # close the file (optional)
+        #print(DATA)                                                     # if we want to see it
+        return file_data                                                 # definitely want to return it!
+    except FileNotFoundError:                             # it wasn't there
+        print(f"file not found: {filename_as_string}")    # print error
+        return ''                                         # return empty string ''
+    except UnicodeDecodeError:
+        print(f"decoding error: {filename_as_string}")    # encoding/decoding error  
+        return ''                                         # return empty string ''
+
+
+full_file_path = "./intro_first/nottrue.ipynb"
+file_contents = GET_STRING_FROM_FILE(full_file_path)      # reminder: file_contents = file_data from above
+
+# Let's print only some of this potentially large string, adapting as needed:
+print("file_contents:\n\n", file_contents[0:42])          # let's then increase the 42...
+
+
+####  Let's try one of the other files!  (or a non-existent file!)
+
+full_file_path = "./intro_first/cs/file35.txt"    # how about the others?!
+file_contents = GET_STRING_FROM_FILE(full_file_path)     
+print("file_contents:\n\n", file_contents[0:42])
+
+
+#
+# Steppingstone, Version 0: does Python work?
+#
+
+import os
+import os.path
+
+def file_walker(path):
+    """ starting from the input, named path
+        
+        this function "walks" the whole path, including subfolders
+        and then... explores any questions we might want :)
+
+        call, for example, with    file_walker("./intro_first") 
+    """
+    return 42  # just to check that it's working (v0)    
+
+#
+# when discovering, keep your data close (and your functions closer!)
+#
+if True:
+    """ overall script that runs examples """
+    print(f"[[ Start! ]]\n")     # sign on
+
+    path = "./intro_first"       # Remember: . means the current directory
+    result = file_walker(path)   # Run!
+
+    print(f"result = {result}")  # Yay for f-strings!
+
+    print("\n[[ Fin. ]]")        # sign off
+
+
+
+# os.walk returns the structure of a folder (directory)
+
+# Here, we "walk" the intro_examples subfolder:
+all_files = os.walk("./intro_first")
+
+all_files     # oops! it's a "generator object"
+
+
+import os
+L = list( os.walk( "./intro_first" ) )  
+print(f"{len(L) = }")
+print(f"{L = }")
+
+
+from IPython import display
+#
+# this is in the hw1pr1 folder
+#
+display.Image("./intro_first_ss_small.png")   # local image
+
+
+path = "./intro_first"          # any path to any folder
+result = list(os.walk(path))    # this will "walk" all of the subfolders and files
+
+print(f"{len(result) = }")      # try c:/  (it took my machine 12.7 seconds!)
+print(f"{result = }")
+
+
+#
+# Steppingstone, Version 1: call os.walk, return length, optionally print
+#
+
+import os
+import os.path
+
+def file_walker(path):
+    """ starting from the input, named path
+        
+        this function "walks" the whole path, including subfolders
+        and then... explores any questions we might want :)
+
+        call, for example, with    file_walker("./intro_first") 
+    """
+    result = list(os.walk(path))     # perhaps try w/o converting to a list...
+    # print(f"{len(result) = }")
+    # print(f"{result = }")
+    num_folders = len(result)        # the len is the number of folders...
+    return num_folders
+
+#
+# when discovering, keep your data close (and your functions closer!)
+#
+if True:
+    """ overall script that runs examples """
+    print(f"[[ Start! ]]\n")     # sign on
+
+    path = "./intro_first"       # Remember: . means the current directory
+    result = file_walker(path)   # Run!
+
+    print(f"result = {result}")  # Yay for f-strings!
+
+    print("\n[[ Fin. ]]")        # sign off
+
+
+
+#
+# Steppingstone, Version 2: print all of the folder names!
+#
+
+import os
+import os.path
+
+def file_walker(path):
+    """ starting from the input, named path
+        
+        this function "walks" the whole path, including subfolders
+        and then... explores any questions we might want :)
+
+        call, for example, with    file_walker("./intro_first") 
+    """
+    result = list(os.walk(path))     # perhaps try w/o converting to a list...
+
+    for folder_tuple in result:
+        currentpath, subfolders, files = folder_tuple  # always three items, always these...
+        print(f"{currentpath = }")   # try non-f printing: it's worse!
+
+    num_folders = len(result)        # the len is the number of currentpaths...
+    return num_folders
+
+#
+# when discovering, keep your data close (and your functions closer!)
+#
+if True:
+    """ overall script that runs examples """
+    print(f"[[ Start! ]]\n")     # sign on
+
+    path = "./intro_first"       # Remember: . means the current directory
+    result = file_walker(path)   # Run!
+
+    print(f"result = {result}")  # Yay for f-strings!
+
+    print("\n[[ Fin. ]]")        # sign off
+
+
+
+#
+# Steppingstone, Version 3: walk all of the files, printing each one's fullpath
+#
+
+import os
+import os.path
+
+def file_walker(path):
+    """ starting from the input, named path
+        
+        this function "walks" the whole path, including subfolders
+        and then... explores any questions we might want :)
+
+        call, for example, with    file_walker("./intro_first") 
+    """
+    result = list(os.walk(path))     # perhaps try w/o converting to a list...
+
+    for folder_tuple in result:
+        currentpath, subfolders, files = folder_tuple  # always three items, always these...
+
+        if '__MACOSX' in currentpath: continue       # skip the rest of _this_ loop iteration: back to top
+
+        print(f"{currentpath = }") 
+        
+        for file in files:       # remember, files is a list of filenames!
+            fullpath = currentpath + "/" + file           # construct the full path, or, better: os.path.join(currentpath,file)  
+            print(f"   {fullpath = }")
+            #contents = GET_STRING_FROM_FILE(fullpath)     # use the fullpath!
+            #print(f"{contents[0:42] = }")
+
+    num_folders = len(result)        # the len is the number of currentpaths...
+    return num_folders
+
+#
+# when discovering, keep your data close (and your functions closer!)
+#
+if True:
+    """ overall script that runs examples """
+    print(f"[[ Start! ]]\n")     # sign on
+
+    path = "./intro_first"       # Remember: . means the current directory
+    result = file_walker(path)   # Run!
+
+    print(f"result = {result}")  # Yay for f-strings!
+
+    print("\n[[ Fin. ]]")        # sign off
+
+
+
+os.path.join("/root/Users/secret_stuff" , "file_name")
+
+
+#
+# Steppingstone, Version 4: walk all of the files, printing (bits of) each one's contents!
+#
+
+import os
+import os.path
+
+def file_walker(path):
+    """ starting from the input, named path
+        
+        this function "walks" the whole path, including subfolders
+        and then... explores any questions we might want :)
+
+        call, for example, with    file_walker("./intro_first") 
+    """
+    result = list(os.walk(path))     # perhaps try w/o converting to a list...
+
+    for folder_tuple in result:
+        currentpath, subfolders, files = folder_tuple  # always three items, always these...
+        if '__MACOSX' in currentpath:  continue
+        print(f"{currentpath = }") 
+
+        for file in files:       # remember, files is a list of filenames!
+            if file[0]== ".": continue
+            fullpath = currentpath + "/" + file           # construct the full path, or, better: os.path.join(currentpath,file)  
+            print(f"   {fullpath = }")
+            contents = GET_STRING_FROM_FILE(fullpath)     # use the fullpath!
+            print(f"   {contents[0:42] = }")
+
+    num_folders = len(result)        # the len is the number of currentpaths...
+    return num_folders
+
+#
+# when discovering, keep your data close (and your functions closer!)
+#
+if True:
+    """ overall script that runs examples """
+    print(f"[[ Start! ]]\n")     # sign on
+
+    path = "./intro_first"       # Remember: . means the current directory
+    result = file_walker(path)   # Run!
+
+    print(f"result = {result}")  # Yay for f-strings!
+
+    print("\n[[ Fin. ]]")        # sign off
+
+
+
+#
+# Rolodex lead-in, example1: counting the number of .txt files...
+#
+
+import os
+import os.path
+
+def file_walker(path):
+    """ starting from the input, named path
+        
+        this function "walks" the whole path, including subfolders
+        and then... explores any questions we might want :)
+
+        call, for example, with    file_walker("./intro_first") 
+    """
+    result = list(os.walk(path))     # perhaps try w/o converting to a list...
+    
+    count_txt = 0    # keep count of our .txt files
+
+    for folder_tuple in result:
+        currentpath, subfolders, files = folder_tuple  # always three items, always these...
+        if '__MACOSX' in currentpath:  continue
+        print(f"{currentpath = }") 
+
+        for file in files:       # remember, files is a list of filenames!
+            fullpath = currentpath + "/" + file           # construct the full path, or, better: os.path.join(currentpath,file)  
+            print(f"   {fullpath = }")
+            if file[0] == ".": continue      # skip files that start with dot
+            if file[-4:] == ".txt":
+                print("Found a .txt file! Adding one...")
+                count_txt += 1
+            #contents = GET_STRING_FROM_FILE(fullpath)     # use the fullpath!
+            #print(f"   {contents[0:42] = }")
+
+    return count_txt   # phew, we're finally returning something else!
+
+#
+# when discovering, keep your data close (and your functions closer!)
+#
+if True:
+    """ overall script that runs examples """
+    print(f"[[ Start! ]]\n")     # sign on
+
+    path = "./intro_first"       # Remember: . means the current directory
+    result = file_walker(path)   # Run!
+
+    print(f"num txt files = {result}")  # Yay for f-strings!
+
+    print("\n[[ Fin. ]]")        # sign off
+
+
+
+#
+# Rolodex lead-in, example2: counting the number of .txt files containing 'CS' ...
+#
+
+import os
+import os.path
+
+def file_walker(path):
+    """ starting from the input, named path
+        
+        this function "walks" the whole path, including subfolders
+        and then... explores any questions we might want :)
+
+        call, for example, with    file_walker("./intro_first") 
+    """
+    result = list(os.walk(path))     # perhaps try w/o converting to a list...
+    
+    count_txt = 0    # keep count of our .txt files
+    count_CS = 0     # keep count of 'CS' substrings found
+
+    for folder_tuple in result:
+        currentpath, subfolders, files = folder_tuple  # always three items, always these...
+        if '__MACOSX' in currentpath:  continue
+        print(f"{currentpath = }") 
+
+        for file in files:       # remember, files is a list of filenames!
+            fullpath = currentpath + "/" + file           # construct the full path, or, better: os.path.join(currentpath,file)  
+            print(f"   {fullpath = }")
+            if file[0] == ".": continue      # skip files that start with dot
+
+            if file[-4:] == ".txt":
+                # print("Found a .txt file! Adding one...")
+                count_txt += 1
+                contents = GET_STRING_FROM_FILE(fullpath)     # use the fullpath!
+                if 'CS' in contents:
+                    print("        *** Found a 'CS' ... adding 1    (aka 2-True)")
+                    count_CS += 1
+                # print(f"   {contents[0:42] = }")
+
+    return count_CS, count_txt   # oooh... we can return two things!
+
+#
+# when discovering, keep your data close (and your functions closer!)
+#
+if True:
+    """ overall script that runs examples """
+    print(f"[[ Start! ]]\n")     # sign on
+
+    path = "./intro_first"       # Remember: . means the current directory
+    result = file_walker(path)   # Run!
+
+    count_CS, count_txt = result
+    print()
+    print(f"num txt files       = {count_txt}")  
+    print(f"num containing CS   = {count_CS}")  
+    perc = count_CS*100/count_txt
+    print(f"for a CS percentage of {perc:5.2f}%")   # :5.2f means width of 5, 2 dec. places, for a _floating pt value
+
+    print("\n[[ Fin. ]]")        # sign off
+
+
+
+#path = "./intro_first"          # any path to any folder?!  intro_first contains _5_ folders total
+#path = "./intro_second"       # any path to any folder?!  intro_second contains _12_ folders total
+path = "./files_challenge"    # this is the really large folder: it contains _23_ folders total
+
+# path = "C:/"                  # could use C:/  on windows or "/" on MacOS  
+# path = "."                    # could use "." for the current directory
+
+result = list(os.walk(path))    # this will "walk" all of the subfolders and files
+
+print(f"{len(result) = }")      # this took my machine 2m 47.4s seconds (for "/" with total 555695 folders)
+                                # and, it asked for permission a couple of times (I said no.)
+#print(f"{result = }")          # let's _not_ print it out...
+
+
+# how many .txt files?
+import os
+import os.path
+
+#path = "./intro_first"     # you can choose which folder to explore
+#path = "./intro_second"      
+path = "./files_challenge" 
+
+def txt_count(path):
+    result = list(os.walk(path))    # walks the entire folder
+    countxt = 0                     # empty variable to count .txt files
+
+    for folder_tuple in result: 
+        currentpath, subfolders, files = folder_tuple 
+        if '__MACOSX' in currentpath:  continue
+        #print(f"{currentpath = }") 
+
+        for file in files:                              # goes through each file
+            fullpath = os.path.join(currentpath,file)   # construct the full path
+            #print(f"   {fullpath = }")
+            if file[0] == ".": continue                 # skip binary files
+
+            if file[-4:] == ".txt":                     # count .txt files
+                countxt += 1
+    return countxt  
+
+print(f"{str(path)} has {txt_count(path)} .txt files")
+
+
+# max depth of directories
+import os
+import os.path
+
+#path = "./intro_first"      # select a folder to explore    
+#path = "./intro_second"      
+path = "./files_challenge" 
+
+def max_dir_depth(path):
+    result = list(os.walk(path))      # walk the whole folder
+    countL = []     # create an empty list to store depths
+    maxpath = ''    # create an empty string to hold longest path
+
+    for folder_tuple in result:
+        currentpath, subfolders, files = folder_tuple 
+        if '__MACOSX' in currentpath:  continue
+        #print(f"{currentpath = }") 
+
+        for file in files:       # go through each file
+            if file[0]== ".": continue                         # skip over binary files
+            fullpath = os.path.join(currentpath,file)          # construct the full path
+            #print(f"   {fullpath = }")
+
+            countL.append(fullpath.count("/"))                 # creates a new item in the list containing directory depth of file
+            if fullpath.count("/") == max(countL):             # if this depth is the longest in the list so far...
+                maxpath = fullpath                             # ...store it's path
+    return countL, maxpath
+
+countL, maxpath = max_dir_depth(path)
+
+print(f"Your maximum directory depth is {max(countL)} with the associated path {maxpath}")
+
+
+# phone number digit count
+import os
+import os.path
+
+path = "./intro_first"          # select a folder to explore    
+#path = "./intro_second"      
+#path = "./files_challenge" 
+
+def dig_count(path):
+    result = list(os.walk(path))    # walk the whole folder
+    digcount = []                   # empty list to store 
+
+    for folder_tuple in result:
+        currentpath, subfolders, files = folder_tuple  
+        if '__MACOSX' in currentpath:  continue
+        #print(f"{currentpath = }") 
+
+        for file in files:  
+            if file[0]== ".": continue               # skip binary files
+            if file[-4:]== ".jpg": continue          # skip ice cream.jpg encoding error   
+            fullpath = currentpath + "/" + file         
+            #print(f"   {fullpath = }")
+            digits = 0
+
+            contents = GET_STRING_FROM_FILE(fullpath)     # reads file as string
+            for i in contents:                            # for each index of the string...
+                if i.isdigit():                           # if a digit is found...
+                    digits += 1                           # add one
+            
+            digcount.append(digits)          # make the number of digits found a list item
+
+    return digcount  
+
+digcount = dig_count(path)
+
+value = input("How many phone number digits do you want look for?")       # user input to decide what length of phone number you want
+howmany = 0                                                               # create an empty variable
+
+for item in digcount:               # for each digit count...
+    if item == int(value):          # if input length detected...
+        howmany += 1                # count it
+
+print(f"You have {howmany} phone numbers with {value} digits")
+
+
+# 909 seeker
+import os
+import os.path
+
+#path = "./intro_first"          # select a folder to explore  
+path = "./intro_second"      
+#path = "./files_challenge" 
+
+
+def nohn(path):
+    result = list(os.walk(path))      # walk the whole folder
+    phone = []                        # create empty list for phone numbers
+
+    for folder_tuple in result:
+        currentpath, subfolders, files = folder_tuple  
+        if '__MACOSX' in currentpath:  continue
+        #print(f"{currentpath = }") 
+
+        for file in files:  
+            if file[0]== ".": continue          # skip over binary files
+            if file[-4:]== ".jpg": continue     # skip over ice cream.jpg    
+            fullpath = currentpath + "/" + file         
+            #print(f"   {fullpath = }")
+            pnum = ''       # empty string for individual phone numbers
+
+            contents = GET_STRING_FROM_FILE(fullpath)     
+            for i in contents:             # for every index of the file 
+                if i.isdigit():            # if a number is detected
+                    pnum += str(i)         # translate that number to a string, then add to pnum string
+            phone.append(pnum)             # when phone number is finished, add pnum as a list item 
+
+    return phone 
+
+phone = nohn(path)
+
+howmany = 0     # create empty int to count 909s
+
+for item in phone:
+    if len(item) == 10:             # if the phone number is ten digits
+        area = item[slice(3)]       # cut out everything but the area code
+        if area == '909':           # is this area code 909?
+            howmany+=1
+    else: continue
+
+print(f"Of the ten-digit phone numbers, {howmany} have the area code 909")
+
+
+# how many names with 3 i's
+import os
+import os.path
+
+#path = "./intro_first"          # select a folder to explore    
+#path = "./intro_second"      
+path = "./files_challenge" 
+
+def three_is(path):
+    result = list(os.walk(path))    # walk the whole folder
+    ifound = 0
+
+    for folder_tuple in result:
+        currentpath, subfolders, files = folder_tuple  
+        if '__MACOSX' in currentpath:  continue
+        #print(f"{currentpath = }") 
+
+        for file in files:  
+            if file[0]== ".": continue               # skip binary files
+            if file[-4:]== ".jpg": continue          # skip ice cream.jpg encoding error   
+            fullpath = currentpath + "/" + file         
+            #print(f"   {fullpath = }")
+
+            contents = GET_STRING_FROM_FILE(fullpath)     # reads file as string
+            icount = contents.count("i")                  # counts number of i's per file
+            if icount == 3: 
+                ifound +=1
+
+    return ifound
+
+ifound = three_is(path)
+
+print(f"You have {ifound} full names containing three i's")
+
+
+# maximum counter
+import os
+import os.path
+
+#path = "./intro_first"          # select a folder to explore    
+#path = "./intro_second"      
+path = "./files_challenge"     
+
+result = list(os.walk(path))  # walk the entire folder structure
+
+# couldn't figure out the 4 line file limiter so ChatGPT helped me out with this function
+def GET_STRING_FROM_FILE2(filepath):            # new function for reading file
+    with open(filepath, 'r', encoding='utf-8') as f:
+        lines = f.readlines()
+        if len(lines) > 4:  # skip files with more than four lines
+            return None  
+        return "".join(lines)  # convert list of lines into a single string
+
+def most_is(path):
+    names = []
+    maxeyes = 0
+    maxname = ''
+
+    for folder_tuple in result:
+        currentpath, subfolders, files = folder_tuple  
+        if '__MACOSX' in currentpath:  
+            continue  
+
+        for file in files:
+            if file[0]== ".": continue               # skip binary files
+            if file[-4:]== ".jpg": continue          # skip ice cream.jpg encoding error   
+            fullpath = currentpath + "/" + file 
+            
+            contents = GET_STRING_FROM_FILE2(fullpath)  # only translate files with more than four lines to string
+            if contents is None:  
+                continue  
+            
+            name = ''.join(i if i.isalpha() or i == " " or i == "'" else '' for i in contents)  # parse out what is a name
+            names.append(name)
+
+            eyes = name.count("i") + name.count("I")
+
+            if eyes > maxeyes:
+                maxeyes = eyes
+                maxname = name
+
+    return maxeyes, maxname
+
+maxeyes, maxname = most_is(path)
+print(f"The namme with the most i's is {maxname}, with {maxeyes} i's")
+
+
+# Khaby detector
+import os
+import os.path
+
+#path = "./intro_first"          # select a folder to explore    
+#path = "./intro_second"      
+path = "./files_challenge" 
+
+def string_in_name(path):
+    result = list(os.walk(path))    # walk the whole folder
+    Kfound = 0
+
+    for folder_tuple in result:
+        currentpath, subfolders, files = folder_tuple  
+        if '__MACOSX' in currentpath:  continue
+        #print(f"{currentpath = }") 
+
+        for file in files:  
+            if file[0]== ".": continue               # skip binary files
+            if file[-4:]== ".jpg": continue          # skip ice cream.jpg encoding error   
+            fullpath = currentpath + "/" + file         
+            #print(f"   {fullpath = }")
+
+            contents = GET_STRING_FROM_FILE(fullpath)     # reads file as string
+            kcount = contents.count(nminput)              # counts "Khaby"s
+            if kcount != 0:
+                Kfound +=1
+
+    return Kfound
+
+nminput = input("What name are you looking for? ")  # user chooses last name to detect
+
+Kfound = string_in_name(path)
+
+print(f"There are {Kfound} names containing {nminput}")
+
+
+# How many "X" last names detector
+import os
+import os.path
+
+#path = "./intro_first"          # select a folder to explore    
+#path = "./intro_second"      
+path = "./files_challenge" 
+
+def last_name(path):
+    result = list(os.walk(path))    # walk the whole folder
+    lncount = 0
+
+    for folder_tuple in result:
+        currentpath, subfolders, files = folder_tuple  
+        if '__MACOSX' in currentpath:  
+            continue
+
+        for file in files:  
+            if file[0]== ".": continue               # skip binary files
+            if file[-4:]== ".jpg": continue          # skip ice cream.jpg encoding error   
+            
+            fullpath = os.path.join(currentpath, file)
+            
+            contents = GET_STRING_FROM_FILE(fullpath)  # reads file as a string
+            name = ''.join(i if i.isalpha() or i == " " or i == "," or i == "'" else '' for i in contents)
+            
+            if "," in name:
+                lastname = name.split(",")[0]   # selects first item in [last, first] list
+            else: 
+                lastname = name.split(" ")[-1]  # selects last item in [first last] list
+            
+            if lastname == lninput:             # how many of your chosen last name are there?
+                lncount += 1
+
+    return lncount
+
+lninput = input("What last name are you looking for? ")  # user chooses last name to detect
+
+lncount = last_name(path)
+
+print(f"{lncount} people have the last name {lninput}")
+
+
+#path = "./intro_first"          # select a folder to explore    
+#path = "./intro_second"      
+path = "./files_challenge" 
+
+lninput = input("first name") 
+nminput = lninput
+
+Kfound = string_in_name(path)
+count = last_name(path)
+
+print(f"There are {Kfound-count} people with the first name {nminput}")
+
+
+
+# northeast or southwest
+import os
+import os.path
+
+#path = "./intro_first"          # select a folder to explore  
+#path = "./intro_second"      
+path = "./files_challenge" 
+
+
+def nesw(path):
+    result = list(os.walk(path))      # walk the whole folder
+    phone = []                        # create empty list for phone numbers
+
+    for folder_tuple in result:
+        currentpath, subfolders, files = folder_tuple  
+        if '__MACOSX' in currentpath:  continue
+        #print(f"{currentpath = }") 
+
+        for file in files:  
+            if file[0]== ".": continue          # skip over binary files
+            if file[-4:]== ".jpg": continue     # skip over ice cream.jpg    
+            fullpath = currentpath + "/" + file         
+            #print(f"   {fullpath = }")
+            pnum = ''       # empty string for individual phone numbers
+
+            contents = GET_STRING_FROM_FILE(fullpath)     
+            for i in contents:             # for every index of the file 
+                if i.isdigit():            # if a number is detected
+                    pnum += str(i)         # translate that number to a string, then add to pnum string
+            phone.append(pnum)             # when phone number is finished, add pnum as a list item 
+
+    return phone 
+
+phone = nesw(path)
+
+ne = 0     # create empty int to count 909s
+sw = 0
+
+for item in phone:
+    if len(item) == 10:  
+        area = item[slice(1)]       # cut out everything but the first digit
+        if area == '2':           
+            ne+=1
+        if area == '9':           
+            sw+=1
+    else: continue
+
+if ne > sw: mnesw = 'the northeast'        # find which has more, ne or sw
+if sw > ne: mnesw = 'the southwest'
+if sw == ne: mnesw = 'neither'
+
+print(f"Of the 10-digit phone numbers, {ne} are from the northeast and {sw} are from the southwest. Thus there are more numbers from {mnesw}")
+
+
+# maximum last name length 
+import os
+import os.path
+
+#path = "./intro_first"          # select a folder to explore    
+#path = "./intro_second"      
+path = "./files_challenge" 
+
+def maxln(path):
+    result = list(os.walk(path))    # walk the whole folder
+    lengthnames = []
+    mname = ''
+    mlen = 0
+
+    for folder_tuple in result:
+        currentpath, subfolders, files = folder_tuple  
+        if '__MACOSX' in currentpath:  
+            continue
+
+        for file in files:  
+            if file[0]== ".": continue          # skip over binary files
+            if file[-4:]== ".jpg": continue     # skip over ice cream.jpg    
+            
+            fullpath = os.path.join(currentpath, file) 
+            
+            contents = GET_STRING_FROM_FILE2(fullpath)  # reads file as a string using <4 line limiter function to cut out super CS35_Participant_2 files
+            if contents is None:  
+                continue  
+
+            name = ''.join(i if i.isalpha() or i == " " or i == "," or i == "'" else '' for i in contents)
+            
+            if name[0].isupper():                   # cuts out other strings that could be mistaken for names
+                if "," in name:
+                    lastname0 = name.split(", ")[0] # selects first item of [last, first] list
+                else: 
+                    lastname0 = name.split(" ")[-1] # selects last item of [first last] list
+            else: continue
+
+            lengthnames.append(len(lastname0))      # list of last name lengths
+
+            if len(lastname0) == max(lengthnames):  # finds longest last name
+                mname = lastname0
+                mlen = len(lastname0)
+
+    return mname, mlen
+
+mname, mlen = maxln(path)
+
+print(f"The longest last name is {mname} with {mlen} characters")
+
+
+# most vowels in first name
+import os
+import os.path
+
+path = "./intro_first"          # select a folder to explore    
+#path = "./intro_second"      
+#path = "./files_challenge" 
+
+def most_vowels(path):
+    result = list(os.walk(path))    # walk the whole folder
+    vowelprops = []
+
+    for folder_tuple in result:
+        currentpath, subfolders, files = folder_tuple  
+        if '__MACOSX' in currentpath:  
+            continue
+
+        for file in files:  
+            if file[0]== ".": continue          # skip over binary files
+            if file[-4:]== ".jpg": continue     # skip over ice cream.jpg   
+            
+            fullpath = os.path.join(currentpath, file)
+            
+            contents = GET_STRING_FROM_FILE(fullpath)  # reads file as a string
+            name = ''.join(i if i.isalpha() or i == " " or i == "," or i == "'" else '' for i in contents)
+            
+            if name[0].isupper(): # cuts out other strings that could be mistaken for names
+                if "," in name:
+                    fname = name.split(", ")[-1]   # takes last item of [last, first]
+                else: 
+                    fname = name.split(" ")[0]     # takes first item of [first last]
+            else: continue
+
+            #lengthname = int(len(lastname0))
+            vowelcount = fname.count('a')+fname.count('e')+fname.count('i')+fname.count('o')+fname.count('u') # counts all the vowels
+            vowelproportion = vowelcount/len(fname)               # divides vowels by total name length
+            vowelprops.append(vowelproportion)                    # puts these proportions into a list            
+            if vowelproportion == max(vowelprops):                # finds maximum proportion of vowels
+                mvowel = fname
+
+    return mvowel
+
+mvowel = most_vowels(path)
+
+print(f"The first name with the most vowels proportional to name length is {mvowel}")
+
+
+# how many files in my downloads folder
+# since I started in starting_notebooks, a file within downloads, I did #... to get up to users/nw, the folder that contains the subfolder downloads
+path = "./Downloads"    
+
+filecount = 0
+
+result = list(os.walk(path))    # walk all of the subfolders and files
+
+for folder_tuple in result:
+    currentpath, subfolders, files = folder_tuple  
+    if '__MACOSX' in currentpath:  continue
+
+    for file in files:    
+        filecount+=1
+
+print(f"I have {filecount} files in my downloads")
+
+
+
+# how many .pdf in my downloads?
+path = "./Downloads"    
+
+pdfcount = 0
+
+result = list(os.walk(path))    # walk all of the subfolders and files
+
+for folder_tuple in result:
+    currentpath, subfolders, files = folder_tuple  
+    if '__MACOSX' in currentpath:  continue
+
+    for file in files:    
+        if file[-4:]== ".pdf":   # find files ending in .pdf 
+            pdfcount+=1
+
+print(f"I have {pdfcount} pdfs in my downloads")
+
+
+path = "./Downloads"    
+
+pdfcount = 0
+
+countL, maxpath = max_dir_depth(path)
+
+print(f"Your maximum directory depth is {max(countL)} with the associated path {maxpath}")
+
+
+# what is my largest file
+path = "./Downloads"    
+
+pdfcount = 0
+filesizes = []
+
+def biggest_file(path):
+    result = list(os.walk(path))    # walk all of the subfolders and files
+
+    for folder_tuple in result:
+        currentpath, subfolders, files = folder_tuple  
+        if '__MACOSX' in currentpath:  continue
+
+        for file in files:    
+            fullpath = os.path.join(currentpath, file)
+            filesize = os.path.getsize(fullpath)          # finding file sizes in bytes
+            filesizes.append(filesize)
+            if filesize == max(filesizes):                # finding biggest file
+                maxfile = fullpath
+                maxsize = filesize
+    
+    return maxfile, maxsize
+
+maxfile, maxsize = biggest_file(path)
+
+print(f"My largest file in my downloads is {maxfile} with {maxsize} bytes")
+
+
+# what is my most common file type
+from statistics import mode
+
+path = "./Downloads"    
+
+pdfcount = 0
+filetypes = []
+
+def file_type_counter(path):
+    result = list(os.walk(path))    # walk all of the subfolders and files
+
+    for folder_tuple in result:
+        currentpath, subfolders, files = folder_tuple  
+        if '__MACOSX' in currentpath:  continue
+
+        for file in files:    
+            if file[0]== ".": continue          # skip over binary files
+
+            fullpath = os.path.join(currentpath, file)
+            
+            filetypes.append(fullpath.split('.')[-1])
+            mosttype = mode(filetypes)         # use stats package mode function
+    
+    return mosttype
+
+mosttype = file_type_counter(path)
+
+print(f"The most common file type in my downloads is .{mosttype}")
+
+
+# this was my original code draft, but it took a very very CS35_Participant_2 time to run...
+
+# What is my oldest screenshot?
+# path = "./Downloads"    
+
+# def oldest_screenshot(path):
+#     result = list(os.walk(path))    # walk the whole folder
+#     screenslist = []
+#     yearl = []
+#     monthl = []
+#     dayl = []
+
+#     for folder_tuple in result:
+#         currentpath, subfolders, files = folder_tuple  
+#         if '__MACOSX' in currentpath:  
+#             continue
+
+#         for file in files:  
+#             if file[0]== ".": continue          # skip over binary files
+     
+#             fullpath = os.path.join(currentpath, file) 
+            
+#             for item in files:
+#                 if item.__contains__("Screenshot"):
+#                     if item.__contains__("AM"):
+#                         screenslist.append(item)
+            
+#             for item in screenslist:
+#                 date = item.split( )[1]
+#                 year = date.split('-')[0]
+#                 yearl.append(year)
+#                 if year == min(yearl):
+#                     month = date.split('-')[1]
+#                     monthl.append(month)
+#                     if month == min(monthl):
+#                         day = date.split('-')[2]
+#                         dayl.append(day)
+#                         if day == min(dayl):
+#                             earliest = item
+
+#     return earliest
+
+# earliest = oldest_screenshot(path)
+# print(f"The longest last name is {earliest} characters")
+
+#  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# I asked ChatGPT how to make my code run faster
+# instead of reading the dates purely strings and running 1 billion loops, it imported me a datetime module 
+
+# python has so many tools I want to familiarize with....
+
+# I edited the outputted code a bit to better understand the logic so this is not the original chat code
+# & Iasked chat about different tools from the module (like why does datetime repeat twice? what is strptime?)!
+
+import os
+import datetime
+
+path = "./Downloads"    
+
+def oldest_screenshot(path):
+    oldestdate = datetime.datetime.strptime('2025-02-06', "%Y-%m-%d")   # today's date! strptime allows strings of Y-M-D to be read as dates
+
+    for currentpath, subfolders, files in os.walk(path):
+        if '__MACOSX' in currentpath:  
+            continue
+
+        for file in files:
+            if file[0]== ".": continue  # skip over binary files
+            
+            if "Screenshot" in file and "AM" in file:   # considers only screenshots taken in the morning
+                datestr = file.split()[1]               # screenshot name has format screenshot, space, date. we just want the date
+                filedate = datetime.datetime.strptime(datestr, "%Y-%m-%d")  
+
+                if filedate < oldestdate:    # updates oldest file, starting with "is it older than today?""
+                    oldestdate = filedate
+
+    return oldestdate.strftime("%Y-%m-%d")  # return only the Y-M-D, in string form, cutting out the timestamp since this code only looks at the date taken
+
+earliest = oldest_screenshot(path)
+
+print(f"My oldest screenshot was taken on {earliest}")
+
+

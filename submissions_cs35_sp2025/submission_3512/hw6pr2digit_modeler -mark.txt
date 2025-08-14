@@ -1,0 +1,20 @@
+<br>
+
+##   hw6pr2digits_modeler 
++ digits clasification via decision trees and random forests...
++ Remember: feel free to re-use the cleaned data from previous weeks (already here)
+## Data set up...
++ Use the cleaned data from prior weeks (it should be here in this folder as digits_cleaned.csv)
++ (I don't think there's too much more to adjust, data-wise...)
++ Next, let's see how well the DT/RF techniques can predict the digit, based on its 64 pixels...## First: &nbsp; _Decision Trees_## Then: &nbsp; _Random Forests_<br>
+<hr>
+<br>
+
+### Final task: &nbsp; _Visualizing_ pixel-importance:
++ using your best Random Forest model, find the 64 _relative feature importances_ for all 64 of the digits' pixels!
+  + Show these as a list of 64 values (they will be difficult to imagine, but you will see that they vary a great deal, pixel-to-pixel)
++ Then, grab-and-adapt the code for visualizing individual digits in order to visualize the "importance image" of pixels...
++ that is, you'll create a heat map visualization, which is really just another image, of how relatively-important each of the 64 pixels is in your final Random Forest
+
+This visualization will be a "low-res image" similar to the digits, ***but it won't itself be a digit*** 
++ Instead, it will show _how much_ each of the 64 spots, across all of the 8x8 grids in the dataset, contribute in classifying each digit...This model is pretty comparable to the KNN model. This makes sense, the DT/RF model considers the darknesses of certain points, which makes sense to have good correlation with the final digit. The KNN model considers a range of similar cases to the digit you are trying to predict, which also would have good correlation to final digit as adjacent-pixels are all similar in appearance. I'm not quite sure which model is better, because the amount of features you have to consider about 44 pixels to get the same degree of accuracy as a random forest with a depth of 5 and 250 trees. I don't know how quantify this into one being better than another though, and it seems like both models are rather effective for this dataset.

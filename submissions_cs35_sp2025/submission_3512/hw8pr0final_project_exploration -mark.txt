@@ -1,0 +1,61 @@
+<br>
+
+## Final project preliminaries
+
+<font color="Teal"><b>Exploring how much an idea "pushes back" - including its technologies, libraries, and online resources ...</b></font>
+
+<br>
+
+#### Here are the  [cs35 project guidelines](https://docs.google.com/document/d/1DwoOJCy6GGECvzSOE4BDPVcEgVtvChglnz03-uxx7mA/edit)  with more details.
+
+And here is the [Colab version](https://colab.research.google.com/drive/1kASM8K0vqu40S5xjBS-hXf-bIDcQPZtz#scrollTo=1gAMoA_KN5L0) of this notebook. If Colab works better for your project, wonderful!
+
+<br>
+#### **What you've tried**
++ What are the things you've tried <b><u>so far</u></b> - and how has it gone?  
+  + This is the most important effort!  
+  + <b>Note</b>: If you have _lots_ of ideas and can't decide... look for online guides or walkthroughs for several of them and see which are most promising (and interesting!)
+  + include, here in the Python cells above/below, the explorations and/or experiments you've pursued
+  + if you're using plain-python files or other notebook files, submit those, in addition or instead
+    + <font size="-2">if you submit other files instead, include these reflections in the files you submit...</font>
+  + include any other <i>small</i> data files/links/resources you've collected
+
+<br>
+<br>#### **Your Project Plan,** <font size="-1">as of this moment...</font>
+
++ <b><font color="DodgerBlue">Share</font></b> a paragraph or so on your project exploration so far -- and your summer of the idea/plan + its background
+  + This is intentionally ***progress-first***
+  + **Try things out** before dedicating too much to a single, specific path...
++ <b><font color="Coral">Share</font></b>: &nbsp; What resources/libraries/walkthroughs have you found?
++ <b><font color="Coral">Share</font></b>: &nbsp; What datasets are you using? <font size="-1">if applicable for your project</font>
+
+<br>
+<br>#### **Looking ahead**
++ Specifically, what task do you plan to try <b><u>next</u></b>?
++ More generally, how do you plan to go _beyond_ existing resources...
+  + If it's not shared above, describe how you envision _personalizing_ and/or _individualizing_ your project...<br><br>
+<hr>
+<br><br>
+
+#### <b><font color="DodgerBlue">what do i want to do/why</font></b>
+I wanted my project to relate to something else I'm doing, and since the biophysics course I'm enrolled in also has an open-ended final project, I thought I'd fuse the two projects to do something cool. My current idea is to use online databases to construct a NN which can take in protein sequence data and tell us what secondary structures are within the protein. 
+
+This feels like a rather straightforward use of NNs, and there are datasets I've already found which contain the information I need (ProteinNet, in particular), so I'm currently exploring extensions to this project. Perhaps considering more features about the protein, and having it be able to generate sequences that fit a series of features would be more challenging and interesting? Or considering the tertiary structure as well to create an image from the sequence? That seems significantly more challenging though
+
+<br><br>
+
+PS. Came up with idea before I knew about AlphaFold! 
+
+<br>
+
+#### <b><font color="Coral">datasets</font></b>
+Paper introducing ProteinNet: https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-019-2932-0
+
+ProteinNet Github: https://github.com/aqlaboratory/proteinnet
+
+Info on how the secondary and tertiary structure data is represented: https://github.com/aqlaboratory/proteinnet/blob/master/docs/proteinnet_records.md
++ I think secondary data should be simple, as there is a 1 letter code for each structure (alpha helix, beta sheet, etc.)
++ tertiary data is trickier, but all of the positions of the amino acids are encoded as vectors. Perhaps displaying each dimension would be possible?#### <b>looking ahead </b>
+
+I'll have to understand their data formatting, now that I've downloaded their files. After looking at the files themselves, I think it could be a real challenge to transfer that information into Python, at least formatting-wise. From there I can perhaps get more creative with data vis or creating protein visuals (ambitious), or otherwise thinking about how I can make this project more of my own.
+

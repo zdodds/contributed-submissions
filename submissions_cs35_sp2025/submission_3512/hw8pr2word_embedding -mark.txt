@@ -1,0 +1,109 @@
+## hw8pr2: &nbsp; Embeddings: computing with word _meanings_
+
+About a decade ago, the computing community proposed a representation of the _meaning_ of words as _embeddings_.
+
+Embeddings are large vectors of weights that capture a word's use in context. They can be created by training a neural network to "predict the missing word" (from lots of possible contexts where it appears). 
+
+Here, you will try out the original word-embeddings, called Word2Vec. ### Gensim is a library for word-meanings
+
+Most often, the _meaning_ of a word is a vector, or ***embedding*** that has been learned through a neural net:
++ that net is trained to determine each word from its context
++ many variations are now used
++ here, we use the original embeddings -- which better illustrate many of their weaknesses! 
++ from the word2vec paper: https://arxiv.org/abs/1301.3781#### Let's see the "meaning" (the vector or embedding) for 'queen':
+
+First, we'll make sure 'queen' is in the model, <tt>m</tt>Let's use an <tt>if</tt> to check whether a particular word is in the model:#### <tt>similarity</tt>
+
+The model has a built-in similarity method:###  hw8pr2 Task #1: &nbsp;&nbsp; Let's re-implement <tt>similarity</tt> to create/build intuition:
+
+This is an example to run - it's already implemented: <br>
+
+###  hw8pr2 Task #2: exploring dataset bias
+
+With the cell below as a starting point, explore different similarities to find one or more additional example of "dataset bias"
+
+Include a cell explaining your example. Also, show how the dataset itself can _quantify_ the bias.
+
+Here's a first example:<br>
+
+#### Computing multiple similarities...<br>
+
+###  hw8pr1 task #3: computing the "odd-one-out"
+
+Adapting the above cell as a starting point, create a function that computes the "odd one out"
+
+That is, <tt>odd_one_out( LoW, m )</tt> should
++ take in LoW, a list-of-words
++ take in m, a gensim word-embedding model (of type KeyedVectors)
++ computing the similarities of all pairs-of-words across the elements of LoW
++ return the word with the lowest _sum_ across all of those similarities
++ (don't include any words not in the vocabulary)
+
+There are other ways to compute "overall dissimilarity."  
++ For our purposes, this is a reasonable first approach.
++ Below is a cell with a signature line to get started:
+
+When you have built this, test it with three new examples of your own design
++ Be sure that at least one example contains at least five words
++ How well do your examples work?
+<br>I'd say both were pretty sucessful!<br>
+
+####  A _geometric_ view of word-vectors...###  hw8pr1 task #4: &nbsp; Your task: &nbsp;&nbsp; Create two more examples...
+
+Using your own choice of words, create two more examples in the spirit of the ones above.
+
+Let's say, at least four words for each. More words welcome!<br>
+
+<br>
+
+<hr>
+
+<br>
+
+####  **Optional** &nbsp; Visualizing vocabulary similarities as a heat map
+
+The next cell begins the process of visualizing similarity as a heat map.
++ (optional, ec) &nbsp; The challenge is to expand this into a full 2d visualization of similarities
++ First, for our two sets of words...
+  + <tt>Keys = [ 'python', 'ruby', 'r', 'c', 'java', 'coffee' ]</tt> , along with
+  + <tt>initial_words = "snake serpent python code ai ml programming".split()</tt>
++ Then, for two more sets of words -- of your own design:
+
+<br><br>
+
+### More word-embedding geometry:  Analogies
++ These are an introduction to the analogy problem in hw8 (see the google doc for more detail!)
++ For the moment, we'll keep the examples and explorations in this notebook:###  hw8pr1 task #5: &nbsp; Your task: &nbsp;&nbsp; two _analogy_ functions
+
+#### First, write `generate_analogy(word1, word2, word3, m)`  
+
+Create a function `generate_analogy(word1, word2, word3, m)` that 
++ first checks if all three words, `word1`, `word2`, `word3` are in the model `m`
++ if not, it prints an error warning about this
++ if so, it returns `word4`, where `word1` : `word2` :: `word3` : `word4`
++ (This is using "analogy notation"!)
++ Warning:  the ordering of the words in the most_similar call is DIFFERENT (watch out!)
+
+Be sure to test this on a few examples to find at least one that works well -- and one that does not!
+
+<br>
+<hr>
+<br>
+By closely looking at the above combinations, this is the one that works. This kind of makes sense, as the analogous word should be like w3 (given), but also like w2 since you're looking for basically a neighbor of w2 that's also close to w3. I guess I'm just not sure why we have to specify w4 is unlike w1. It makes sense that w4 is not close to w1, but I don't know why the function doesn't work without that specification.#### Then, write `check_analogy(word1, word2, word3, word4, m)`
++ This should return a "score" on how well the word2vec model `m` does at solving the analogy provided, i.e., 
+  + `word1` : `word2` :: `word3` : `word4`
++ that is, it should determine where word4 appears in the top 100 (use topn=100) most-similar words
++ if it _doens't_ appear in the top-100, it should give a score of 0
++ if it _does_ appear, it should give a score between 1 and 100, but
+  + a score of 100 means a perfect score. 
+  + A score of 1 means that `word4` was the 100th in the list, which is index 99
++ Try it out!   
+  + `check_analogy( "man", "king", "woman", "queen", m ) -> 100` <br>
+  + `check_analogy( "woman", "man", "bicycle", "fish", m ) -> 0` <br>
+  + `check_analogy( "woman", "man", "bicycle", "pedestrian", m ) -> 96` <br>
+
+And, again be sure to find at least four of your own `check_analogy` examples:
+  + at least one in the "top quartile" (75% to 100%) 
+  + at least one in the "next quartile" (50% to 75%) 
+  + at least one in the "next quartile" (25% to 50%) 
+  + at least one in the "bottom quartile" (0% to 25%) 
