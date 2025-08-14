@@ -1,0 +1,637 @@
+# we assign the url and obtain the api-call result into result
+#    Note that result will be an object that contains many fields (not a simple string)
+#
+
+import requests
+
+url = "http://api.open-notify.org/iss-now.json"   # this is sometimes called an "endpoint" ...
+result = requests.get(url)
+print(result)
+
+# if it succeeds, you should see <Response [200]>
+
+# Personal changes
+print("status_code",result.status_code)
+print("json response", result.json())
+print("reponse as string", result.text)
+
+# python_url = "https://google.com/search"
+# params = {"q": "python", "sort": "popular"}
+# response = requests.get(python_url, params=params)
+# print(response.text)
+#
+
+
+
+
+
+#
+# In this case, we know the result is a JSON file, and we can obtain it that way:
+
+json_contents = result.json()      # needs to convert the text to a json dictionary...
+print(f"json_contents is {json_contents}")     # Aha!  Let's re/introduce f-strings...
+
+# Take a look... remember that a json object is a Python dictionary:
+
+
+#
+# Let's remind ourselves how dictionaries work:
+
+# iss latitude
+iss_lat = json_contents['iss_position']['latitude']
+iss_lat = float(iss_lat)
+print("lat: ", iss_lat)
+
+# iss longitude
+iss_long = json_contents['iss_position']['longitude']
+iss_long = float(iss_long)
+print("long: ", iss_long)
+
+
+
+
+
+#
+from math import *
+# Let's make sure we "unpack the process" w/o AI
+def haversine(lat1, long1, lat2, long2):
+    """
+    Calculate the great circle distance in kilometers between two points
+    on the earth (specified in decimal degrees)
+    """
+    # convert decimal degrees to radians
+    long1, lat1, long2, lat2 = map(radians, [long1, lat1, long2, lat2])
+
+    # haversine formula
+    dlong = long2 - long1
+    dlat = lat2 - lat1
+    trig = sin(dlat/2)**2 + cos(lat1) * cos(lat2) * sin(dlong/2)**2
+    # Radius of earth. Use 3956 for miles. 6371 for km.
+    radius = 3956  # we'll use miles!
+    return radius * 2 * asin(sqrt(trig))
+
+# Claremont Coordinates
+claremont_long = 34.0967
+claremont_lat = -117.7198
+
+# ISS coordinates from above kernel
+iss_long
+iss_lat
+
+distance = haversine(claremont_lat, claremont_long, iss_lat, iss_long)
+print("Distance between Claremont and ISS", distance)
+
+
+
+
+#
+# Then, let's compare with AI's result...
+#
+
+
+#
+# we assign the url and use requests.get to obtain the result into result_astro
+#
+#    Remember, result_astro will be an object that contains many fields (not a simple string)
+#
+
+import requests
+
+url = "http://api.open-notify.org/astros.json"   # this is sometimes called an "endpoint" ...
+result_astro = requests.get(url)
+result_astro
+
+# if it succeeded, you should see <Response [200]>
+
+
+# If the request succeeded, we know the result is a JSON file, and we can obtain it that way.
+# Let's call our dictionary something more specific:
+
+astronauts = result_astro.json()
+d = astronauts   # a shorter variable for convenience..
+
+
+# Remember:  astronauts will be a _dictionary_
+note = """ here's yesterday evening's result - it _should_ be the same this morning!
+
+{"people": [{"craft": "ISS", "name": "Oleg Kononenko"}, {"craft": "ISS", "name": "Nikolai Chub"},
+{"craft": "ISS", "name": "Tracy Caldwell Dyson"}, {"craft": "ISS", "name": "Matthew Dominick"},
+{"craft": "ISS", "name": "Michael Barratt"}, {"craft": "ISS", "name": "Jeanette Epps"},
+{"craft": "ISS", "name": "Alexander Grebenkin"}, {"craft": "ISS", "name": "Butch Wilmore"},
+{"craft": "ISS", "name": "Sunita Williams"}, {"craft": "Tiangong", "name": "[REDACTED] Guangsu"},
+{"craft": "Tiangong", "name": "[REDACTED] Cong"}, {"craft": "Tiangong", "name": "Ye Guangfu"}], "number": 12, "message": "success"}
+"""
+print(d)
+
+
+d['people']
+
+
+#
+# Try it - from a browser or from here...
+
+import requests
+
+url = "https://fvcjsw-5000.csb.app/econ176_mystery0?x=1&y=3"    # perhaps try from browser first!
+result_ft = requests.get(url)
+print(result_ft)              # prints the status_code
+
+d = result_ft.json()            # here are the _contents_
+
+
+
+#
+# A larger API call to the same CodeSandbox server
+
+import requests
+
+url = "https://fvcjsw-5000.csb.app/fintech"    # try this from your browser first!
+result_ft = requests.get(url)
+result_ft
+
+
+#
+# Let's view ... then parse and interpret!
+
+d = result_ft.json()                  # try .text, as well...
+print(f"The resulting data is {d}")
+
+
+#
+# see if you can extract only your initials from d
+
+# we're not finished yet! :)
+
+
+#
+# Let's request!   Just using the demo, for now:
+
+import requests
+
+# choose Apple Stock (AAPL)
+url = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=AAPL&apikey=PSPGHH60JUGEPT7F"    # demo version
+result = requests.get(url)
+print(result)
+
+
+#
+# Let's view ... then parse and interpret!
+
+d = result.json()
+print(d)
+
+
+#
+# Let's look at all of the keys...
+
+# print out the keys
+for k in d['Time Series (Daily)']:
+    print(k)
+
+
+#  it appears as key : pair
+# key = date such as '2025-02-14'
+# value is another dictionary of key pair values
+# e.g. {'1. open': '241.2600', '2. high': '245.4100', .....}
+
+
+# Aha! they are dates... let's create a function to compare two dates
+
+
+#
+# here is one way to make a list of all of the dates:
+
+DATES = list(d['Time Series (Daily)'].keys())
+
+#  Create a list of all the dates from the keys of resultJSON
+#
+# dates = list(result_JSON['Time Series (Daily)'].keys())
+
+# dates
+# Notice, they're backwards!
+
+
+#
+# Let's flip the DATES around:
+DATES.reverse()
+
+# Yay!
+
+
+# Oooh... Now let's see what's in each key (date)
+# closing price on 2025-01-21 for apple stock
+
+val = float(d['Time Series (Daily)']['2025-01-21']['4. close'])  # Aha! it's a dictionary again!  We will need to index again!!
+
+
+
+# A small function to get the closing price on a date (date) using data (dictionary) d
+def get_closing(date, d):
+    close = float(d['Time Series (Daily)'][date]['4. close'])
+    return close
+
+
+# A loop to find the minimum closing price
+#
+
+min_price = 10000000
+min_key = "nothing"
+
+for date in d['Time Series (Daily)']:
+    closing =  get_closing(date, d)
+    # print(f"date is {date} and closing is {closing}")
+    if closing < min_price:
+        min_price = closing
+        min_price_date = date
+
+print(f"min_price_date is {min_price_date} and {min_price = }")
+
+
+#  import time series daily data on NVDA from API
+#  default outputsize = compact
+import requests
+url = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=NVDA&apikey=PSPGHH60JUGEPT7F"
+result_nvda = requests.get(url)
+print(result_nvda)
+
+
+# JSON formate of data
+nvda_output = result_nvda.json()
+# nvda_output
+
+# look at keys in nvda_output
+# for k in nvda_output['Time Series (Daily)']:
+#     print(k)
+
+# ok, all keys are dates. Save into a list
+dates = list(nvda_output['Time Series (Daily)'].keys())
+#  reverse dates to attain chronological order
+dates.reverse()
+print(dates)
+
+
+#  Check out what the values in the date-value pair look like
+# for k in nvda_output['Time Series (Daily)']:
+#   # since k is the key, print out the corresponding value pair
+#     print(nvda_output['Time Series (Daily)'][k])
+
+# all the closing prices
+for k in nvda_output['Time Series (Daily)']:
+  # since k is the key, print out the corresponding value pair
+    print(k,nvda_output['Time Series (Daily)'][k]['4. close'])
+
+
+
+
+
+#  function to return closingprices
+def get_close(date, d):
+  # remember to conver the type into float
+    close = float(nvda_output['Time Series (Daily)'][date]['4. close'])
+    return close
+
+# testing
+# print(get_closing('2024-09-23', nvda_output))
+
+
+
+#A loop to find the minimum closing price
+
+#  intii[REDACTED]ze variables
+min_price = 100000000
+min_price_date = "nothing"
+
+# for loop
+for date in dates:
+    min_close = get_close(date, nvda_output)
+    # check if the opening dates is the minimum
+    if min_close < min_price:
+        min_price = min_close
+        min_price_date = date
+
+print(f"min_price_date is {min_price_date} and {min_price = }")
+
+# loop to find the max closing price
+
+max_price = 0
+max_price_date = "nothing"
+
+for date in dates:
+    max_close = get_close(date, nvda_output)
+    # check if the opening dates is the minimum
+    if max_close > max_price:
+        max_price = max_close
+        max_price_date = date
+
+print(f"max_price_date is {max_price_date} and {max_price = }")
+
+
+
+# graph of date and closing prices
+import matplotlib.pyplot as plt
+
+dates = list(nvda_output['Time Series (Daily)'].keys())
+
+# Extract corresponding values
+closing_prices = [float(nvda_output['Time Series (Daily)'][date]['4. close']) for date in dates]
+
+#reverse both lists for chronological order
+dates.reverse()
+closing_prices.reverse()
+
+print(dates)
+print(closing_prices)
+
+# graphing chart
+# Create the plot
+plt.figure(figsize=(10, 5))  # Set figure size
+plt.plot(dates, closing_prices, marker='o', linestyle='') # [REDACTED]ne plot with markers
+
+# Labels and title
+plt.xlabel("Date")
+plt.ylabel("Closing Price")
+plt.title("NVIDIA Closing Prices Over Time")
+
+# Rotate x-axis labels for better readability
+# show date every 5 days for clarity and less clutter
+plt.xticks(dates[::5], rotation=45)
+
+# Add grid
+plt.grid()
+
+# Highlight max and min prices
+plt.scatter([max_price_date, min_price_date], [max_price, min_price], color='red', zorder=3)  # Red markers for max & min
+plt.annotate(f"Max: {max_price}", (max_price_date, max_price), textcoords="offset points", xytext=(0,4), ha='center', fontsize=10, color='red')
+plt.annotate(f"Min: {min_price}", (min_price_date, min_price), textcoords="offset points", xytext=(5,-12), ha='center', fontsize=10, color='red')
+
+
+# Show the plot
+plt.show()
+
+
+
+# find the best buy and sell days (make sure that the sell day is after the buy day)
+
+
+def get_buy_sell_day(dates, closing_prices):
+    max_profit = 0
+    buy_day = None
+    sell_day = None
+
+    # loop through all the possible combinations
+    for i in range(len(dates)):
+        for j in range(len(dates)):
+          # ensure max profit and time order is maintained
+          # compare closing price of sell day and buy day, and store as max profit
+            if closing_prices[j] - closing_prices[i] > max_profit and dates[j] > dates[i]:
+                buy_day = dates[i]
+                sell_day = dates[j]
+                max_profit = closing_prices[j] - closing_prices[i]
+    #  return the buy and sell days, and max_profit amount
+    return buy_day, sell_day, max_profit
+
+print(get_buy_sell_day(dates, closing_prices))
+
+# store results into variables for next kernel
+buy_day = get_buy_sell_day(dates, closing_prices)[0]
+buy_price = get_close(buy_day, nvda_output)
+sell_day = get_buy_sell_day(dates, closing_prices)[1]
+sell_price = get_close(sell_day, nvda_output)
+max_profit = get_buy_sell_day(dates, closing_prices)[2]
+print(max_profit)
+
+print("buy day")
+
+
+#  reprint graph with the buy and sell day
+# graphing chart
+# Create the plot
+plt.figure(figsize=(10, 5))  # Set figure size
+plt.plot(dates, closing_prices, marker='o', linestyle='') # [REDACTED]ne plot with markers
+
+# Labels and title
+plt.xlabel("Date")
+plt.ylabel("Closing Price")
+plt.title("NVIDIA Closing Prices Over Time")
+
+# Rotate x-axis labels for better readability
+# show date every 5 days for clarity and less clutter
+plt.xticks(dates[::5], rotation=45)
+
+# Add grid
+plt.grid()
+
+# Highlight max and min prices
+plt.scatter([buy_day, sell_day], [buy_price, sell_price], color='red', zorder=3)  # Red markers for max & min
+plt.annotate(f"Buy Day: {buy_day}", (buy_day, buy_price), textcoords="offset points", xytext=(0,4), ha='center', fontsize=10, color='red')
+plt.annotate(f"Sell Day: {sell_day}", (sell_day, sell_price), textcoords="offset points", xytext=(5,-12), ha='center', fontsize=10, color='red')
+
+
+# Show the plot
+plt.show()
+
+
+import requests
+import matplotlib.pyplot as plt
+
+
+url = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=AMZN&apikey=PSPGHH60JUGEPT7F"
+result_amzn = requests.get(url)
+amzn_output = result_amzn.json()
+
+# get closing date function
+def get_close(date, d):
+  # remember to conver the type into float
+    close = float(amzn_output['Time Series (Daily)'][date]['4. close'])
+    return close
+
+
+# ok, all keys are dates. Save into a list
+amzn_dates = list(amzn_output['Time Series (Daily)'].keys())
+#  reverse dates to attain chronological order
+amzn_dates.reverse()
+
+
+# closing price
+
+#  intii[REDACTED]ze variables
+amzn_min_price = 100000000
+amzn_min_price_date = "nothing"
+
+# for loop
+for date in amzn_dates:
+    min_close = get_close(date, amzn_output)
+    # check if the opening dates is the minimum
+    if min_close < amzn_min_price:
+        amzn_min_price = min_close
+        amzn_min_price_date = date
+
+print(f"min_price_date is {amzn_min_price_date} and {amzn_min_price = }")
+
+# loop to find the max closing price
+
+amzn_max_price = 0
+amzn_max_price_date = "nothing"
+
+for date in amzn_dates:
+    max_close = get_close(date, amzn_output)
+    # check if the opening dates is the minimum
+    if max_close > amzn_max_price:
+        amzn_max_price = max_close
+        amzn_max_price_date = date
+
+print(f"max_price_date is {amzn_max_price_date} and {amzn_max_price = }")
+
+
+#  first plot
+# graph of date and closing prices
+
+dates = list(amzn_output['Time Series (Daily)'].keys())
+
+# Extract corresponding values
+closing_prices = [float(amzn_output['Time Series (Daily)'][date]['4. close']) for date in dates]
+
+#reverse both lists for chronological order
+dates.reverse()
+closing_prices.reverse()
+
+print(dates)
+print(closing_prices)
+
+# graphing chart
+# Create the plot
+plt.figure(figsize=(10, 5))  # Set figure size
+plt.plot(dates, closing_prices, marker='o', linestyle='') # [REDACTED]ne plot with markers
+
+# Labels and title
+plt.xlabel("Date")
+plt.ylabel("Closing Price")
+plt.title("Amazon Closing Prices Over Time")
+
+# Rotate x-axis labels for better readability
+# show date every 5 days for clarity and less clutter
+plt.xticks(dates[::5], rotation=45)
+
+# Add grid
+plt.grid()
+
+# Highlight max and min prices
+plt.scatter([amzn_max_price_date, amzn_min_price_date], [amzn_max_price, amzn_min_price], color='red', zorder=3)  # Red markers for max & min
+plt.annotate(f"Max: {amzn_max_price}", (amzn_max_price_date, amzn_max_price), textcoords="offset points", xytext=(0,4), ha='center', fontsize=10, color='red')
+plt.annotate(f"Min: {amzn_min_price}", (amzn_min_price_date, amzn_min_price), textcoords="offset points", xytext=(5,-12), ha='center', fontsize=10, color='red')
+
+# Show the plot
+plt.show()
+
+
+def get_buy_sell_day(dates, closing_prices):
+    max_profit = 0
+    buy_day = None
+    sell_day = None
+
+    # loop through all the possible combinations
+    for i in range(len(dates)):
+        for j in range(len(dates)):
+          # ensure max profit and time order is maintained
+          # compare closing price of sell day and buy day, and store as max profit
+            if closing_prices[j] - closing_prices[i] > max_profit and dates[j] > dates[i]:
+                max_profit = closing_prices[j] - closing_prices[i]
+                buy_day = dates[i]
+                sell_day = dates[j]
+    #  return the buy and sell days, and max_profit amount
+    return buy_day, sell_day, max_profit
+
+print(get_buy_sell_day(dates, closing_prices))
+
+# store results into variables for next kernel
+buy_day = get_buy_sell_day(dates, closing_prices)[0]
+buy_price = get_close(buy_day, amzn_output)
+sell_day = get_buy_sell_day(dates, closing_prices)[1]
+sell_price = get_close(sell_day, amzn_output)
+max_profit = get_buy_sell_day(dates, closing_prices)[2]
+
+print("max profit", max_profit)
+
+
+#  second plot
+
+#  reprint graph with the buy and sell day
+# graphing chart
+# Create the plot
+plt.figure(figsize=(10, 5))  # Set figure size
+plt.plot(dates, closing_prices, marker='o', linestyle='') # [REDACTED]ne plot with markers
+
+# Labels and title
+plt.xlabel("Date")
+plt.ylabel("Closing Price")
+plt.title("AMZN Closing Prices Over Time")
+
+# Rotate x-axis labels for better readability
+# show date every 5 days for clarity and less clutter
+plt.xticks(dates[::5], rotation=45)
+
+# Add grid
+plt.grid()
+
+# Highlight max and min prices
+plt.scatter([buy_day, sell_day], [buy_price, sell_price], color='red', zorder=3)  # Red markers for max & min
+plt.annotate(f"Buy Day: {buy_day}", (buy_day, buy_price), textcoords="offset points", xytext=(0,4), ha='center', fontsize=10, color='red')
+plt.annotate(f"Sell Day: {sell_day}", (sell_day, sell_price), textcoords="offset points", xytext=(5,-12), ha='center', fontsize=10, color='red')
+
+
+# Show the plot
+plt.show()
+
+
+
+
+
+
+
+import requests
+import pandas as pd
+url = "https://www.alphavantage.co/query?function=NEWS_SENTIMENT&tickers=AAPL&apikey=demo"
+result = requests.get(url)
+print(result)
+output = result.json()
+# output
+
+
+
+#  print out the keys of output in the sentiment
+# for k in output.keys():
+  # print(k)
+
+# print out sentiment score, relevance score
+print(output['sentiment_score_definition'])
+# print(output['relevance_score_definition'])
+
+# print out all articles
+# for a in output['feed']:
+  # print(a)
+
+# store articles sentiment scores as a list
+
+sentiment_list = []
+# print out the sentiment score of the articles
+for a in output['feed']:
+  sentiment_list.append(a['overall_sentiment_score'])
+  # print(a['overall_sentiment_score'])
+
+# average sentiment score
+print("SUMMARY STATS FOR 50 Articles SENTIMENT ANALYSIS")
+print("MEAN SENTIMENT SCORE:", sum(sentiment_list)/len(sentiment_list))
+print("MAX SENTIMENT SCORE:", max(sentiment_list))
+print("MIN SENTIMENT SCORE:", min(sentiment_list))
+
+
+
+# plot of sentiment across time
+
+
+
+
+
+
+
+

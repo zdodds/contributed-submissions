@@ -1,0 +1,200 @@
+# Welcome to Web3!
+
+### Blockchain programming using Ethereum and Web3.py
+
+<font size="-1">motivated by <a href="https://snakecharmers.ethereum.org/a-developers-guide-to-ethereum-pt-1/">A Developer's Guide to Ethereum</a> by M. Garreau</font>#### Let's check that the libraries are working...
+
+#### Use auto-completion
+
+It's great to quickly review the data and functions in an object...
+
+Add a period at the end of the <tt>Web3</tt> object to see and review its fields:#### Notice <tt>to_wei</tt> and <tt>from_wei</tt>
+
+... and many others!
+
+Here, let's use <tt>to_wei</tt> from the <tt>Web3</tt> object to convert among different units of Ether:Here are names for the "coins" of the Ether realm:
+
+<img src="https://m.foolcdn.com/media/dubs/images/gwei-infographic.width-880.png" height="284px">
+
+The nicknames are a mix of computing and cryptography/Ethereum early-explorers...   😀#### Let's try out the <tt>gwei</tt> unit
+
+Gwei are the typical units for Ethereum's <i>gas</i>
+
+This also shows off the use of <tt>from_wei</tt>
+
+<font size="-1"><i>Warning</i> &nbsp; We will use <i>floating-point</i> for readability. For exact artihmetic, everything must be in integers (and probably in <tt>wei</tt>).</font>## <b><font color="DodgerBlue">Challenge #1</font></b> &nbsp;&nbsp; <i>Current</i> currency conversion
+
+<b><font color="Coral">Task</font></b> &nbsp;&nbsp;  Write a function that finds the value, in dollars, of 1 ether and finds the value, in ether and gwei, of 1 dollar. Use the <i>current</i> value of the currencies!
+
+For example, here is how the function might look when it's run:
+
+```
+# the call to your function:
+your_function()   # choose your own name
+
+# the output, printed:
+1 ether is currently  $1342.26
+
+1 dollar is currently .000745012143697942 ether
+1 dollar is about     745012.14 gwei
+```
+
+#### Remember <tt>requests</tt> ?
+
+<tt>requests</tt> was the Python library our API module used to make API requests to arbitrary endpoints (urls). This is a great way to help implement this function  et's get the current price of ETH...
+And use that to convert from dollars to gwei and gwei to dollars...
+
+<br>
+
+#### <i>Use the AI to build-in current ETH pricing...</i>
+
++ Prompt Colab to use requests API to get the current price of ETH
++ Test the code version(s) it provides to find one that works (and that you like)
++ Continue on, to create your function above...
++ Use better names! For example,  <tt>dollars_to_gwei</tt> or <tt>gwei_to_dollars</tt> would be reasonable helper functions
++ (No requirement for a helper function in this case.)
+
+#### Show that it is working as desired!
++ Run it!
++ <b>Confirm</b> that they are correct by checking the "opposite" results in another cell...## <b><font color="DodgerBlue">Challenge #2</font></b> &nbsp;&nbsp; <i>Reflect</i> on the AI code success ...
+
+<b><font color="Coral">Task</font></b> &nbsp;&nbsp;  In developing the above current-currency-conversion function,
++ was the AI able to create the API call you needed?
++ did it format the result as you'd hoped?
++ were there things you had to add to the output code?
++ and - bigger-picture - have you found the Colab AI more helpful as time goes on (or less so?!)
+
+<br>
+<hr>
+<br>
+
+<font size="-1">Things working too smoothly? <br> Tired of typing/generating the same-old prose answers? <br> Liven up your Colab up with some <font color="DodgerBlue">raw html</font>! <br> Copy the following into a _code_ cell:
+```
+%%html
+<marquee style='width: 30%; color: Coral;'><b>It Works!</b></marquee>
+```
+</font>1. The AI was able to generate a functional API call to retrieve the current price of ETH using the requests library
+2. It formatted correctly
+3.  I needed to add calculations to convert between dollars, ether, and gwei. These conversions required manual edits
+4. I found the Colab AI to be very helpful given how it is integrated<font color="Coral"><b>task</b></font>
+
+#### Be sure to include at least one cell - of whatever sort - for your AI-success reflection...
+
+<font color="lightgray" size="-2">
+Look below for a "cookie clicker" application inside Colab! :)
+<font>
+
+<!-- Cookie Clicker (generalized snack version):  
+     Copy the code below into a code cell:  
+
+
+%%html
+<head>
+  <style>
+    button {
+      font-size: 2rem;        /*  1 rem is 16 pixels and 12 point */
+      padding: 10px 20px;     /*  x padding and y padding         */
+    }
+  </style>
+</head>
+<body>
+  <button id="snack" onclick="increment()">0</button>
+  <script>
+    let delta = 1;
+    function increment() {
+      const btn = document.getElementById('snack');        // our "snack" clicker!
+      let count = parseInt(btn.innerText);                 // get the button number
+      if (count >= 4.2 || count <= -4.2) { delta *= -1; }  // switch the direction
+      btn.innerText = count + delta;                       // update with the current delta
+    }
+  </script>
+</body>
+</html>
+
+
+-->
+
+## Ok!  Let's connect to "the" Ethereum blockchain
+
++ We will be using the <tt>Web3.py</tt> <i>TesterProvider</i>
++ This is an Ethereum "sandbox" so that we won't have to stake any actual funds
++ Plus, the sandbox blockchain will give us <i>lots</i> of ether!  😃#### Are we connected?#### Nice!
+
+Let's see how much is in one of the accounts, say the one at index 3:Let's see how big this is as a power of 10. &nbsp;&nbsp; (in floating point)## <b><font color="DodgerBlue">Challenge #3</font></b> &nbsp;&nbsp; Count your gold! &nbsp; (or ether...)
+
+<b><font color="Coral">Task</font></b> &nbsp;&nbsp;  Use your code from earlier in this notebook -- and any AI help you might want -- to create a new function (you choose the name) that
++ finds the amount of Ether in ***all*** of your accounts
++ adds it all up
++ converts it to dollars
++ prints out the total dollars you have ...
++ and <tt>returns</tt> that value back from the function
+
+<br><br>## Let's transact!
+
+First, let's see the latest block in our blockchain...
+
+Then, let's create a single transaction and track its effects...
+
+Then, we'll run a whole marketplace's-worth of transactions!#### Now, let's try our single, one-time transaction
+
+<i>Warning</i>: &nbsp;&nbsp; If you run this more than once, it will transact more than once!
+
+<font size="-1">This is not really a warning, actually. Try it! 😀</font>### Let's see the <font color="DodgerBlue"><b>current amount</b></font> in each of the accounts:### What if we don't have enough currency for the requested transaction?
+
+If a transaction is requested for too-large an amount, the request fails and it is rolled back.
+
+Let's try it:### A `ValidationError` results!
+
+The transaction does ***not*** succeed.
+
+Any transaction should use `try ... except ...` error-handling blocks in order to catch these potential errors.
+
+Let's see how this will work:## <b><font color="DodgerBlue">Challenge #4</font></b> &nbsp;&nbsp; A bustling  marketplace...
+
+<b><font color="Coral">Task 1</font></b> &nbsp;&nbsp;  Use the example, above,  -- and any AI help you might want -- to create functions and cells that
++ run <tt>N</tt> transactions, perhaps once every 2-3 seconds
++ print what's running , e.g., "Account 3 is sending 42,042 ether to Account 8"
++ uses random amounts (you choose the span that's ok)
++ uses random accounts (you choose how to handle this randomness)
+
+<br><br>
+
+<b><font color="Coral">Task 2</font></b> &nbsp;&nbsp;  Run your marketplace a small number of times, e.g., 10 transactions, and print the slate of account values at the end, <i>including the total across all of the accounts</i>.
++ How much gas has been used, across all of the accounts?
++ What are the <i>variance</i> and <i>inequality</i> (as measured by the <i>gini coefficient</i>) across all of the accounts?
+
+<br><br>
+
+<b><font color="Coral">Task 3</font></b> &nbsp;&nbsp;  Run the same marketplace, but now for ***lots*** of transactions. Again, include the resulting account balances, the amount of gas used (total), and the measure of inequality -- which should be the <i>gini inequality</i> or <i>gini coefficient</i>  -- of the result. <br> <font size="-2">How to implement  Gini inequality? Feel free to use AI or [Wikipedia](https://en.wikipedia.org/wiki/Gini_coefficient), which is probably what the AI will have used!</font>
+
+This time, add one more capability to your marketplace:
++ when an account tries to overspend, it spends all it has and then stops spending (it doesn't crash!)
++ one way to do this is to keep a list of the <i>insolvent</i> accounts, starting with the empty list `[ ]`
++ Then, when an account tries to overspend, the transaction will be denied, but it would then go onto the insolvent list -- and will be ignored from then on.
++ equivalently, you could start with a list of <i>solvent</i> accounts and then remove accounts from it when they first try to overspend...
+
+<br><br>
+
+<b><font color="Coral"><u>Finale</u>: &nbsp; The Tontine</font></b> &nbsp;&nbsp;  Run the same marketplace, but now until there is only one account with positive balance...  This time, the questions are slightly different:
++ how many "generations" did it take until one account
++ for each generation, measure and remember the inequality-measure across all 10 accounts (for example, into a list)
++ ***create a plot*** of the balances from the start until the Tontine is won.
++ also, ***create a plot of the Gini inequality/coefficient*** across that time...
+
+You should adapt <i>how much</i> the accounts decide to exchange, so that this is both interesting and not too slow.
+
+<br>
+
+<b><font color="DodgerBlue"><u>Reflection</u></font></b>: &nbsp; **Share your thoughts** on how this programming-and-simulation challenge went -- if you used AI, share how useful (or not) that was. This can be in a new text cell or in comments accompanying your executable cells...
+
+<br><br>
+<br><br>
+
+<hr>
+<br><b><font color="Coral">Hint</font></b> &nbsp;&nbsp; Here is an example of the final cell used for the in-class example. Notice that
++ the function `run_transactions()` does all of the work
++ the two lines above simply "reset" all 10 ETH accounts to 1,000,000 ETH each (wow!)
++ the function `run_transactions()` returns two lists:
+  + the list `GiniCoefficients` holds all of those gini coefficients for the whole tontine
+  + the line `AllBalances` holds ALL of the balances of all of the accounts for the whole tontine
++ these two were used in order to plot the inequality values and balances...### Task 1: Run N transactions### Task 2: Small marketplace with stats### Task 3: Large marketplace with insolvency handling### Finale: The Tontine### Example usage for each task#### Run Challenge 4
