@@ -1,0 +1,89 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.tree import decisiontreeclassifier, plot_tree
+from sklearn.ensemble import randomforestclassifier
+from sklearn.model_selection import train_test_split, cross_val_score
+
+#
+
+
+
+df = pd.read_csv("births_cleaned.csv") 
+
+
+x = df[['day', 'month']]
+y = (df['births'] > df['births'].median()).astype(int) 
+
+
+x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=42)
+
+
+
+
+
+dt_model = decisiontreeclassifier(max_depth=2, random_state=42) 
+dt_model.fit(x_train, y_train)
+
+
+plt.figure(figsize=(10, 6))
+plot_tree(dt_model, feature_names=x.columns, class_names=['below median', 'above median'], filled=true)
+plt.show()
+
+best_depth = none
+best_score = 0
+
+for depth in range(1, 6):
+    dt = decisiontreeclassifier(max_depth=depth, random_state=42)
+    scores = cross_val_score(dt, x_train, y_train, cv=5)
+    mean_score = scores.mean()
+    
+    if mean_score > best_score:
+        best_score = mean_score
+        best_depth = depth
+
+print(f"best decision tree depth: {best_depth}")
+
+#
+
+
+
+best_depth_rf = none
+best_num_trees = none
+best_rf_score = 0
+
+for depth in range(1, 6):
+    for num_trees in [50, 150, 250]:
+        rf = randomforestclassifier(n_estimators=num_trees, max_depth=depth, random_state=42)
+        scores = cross_val_score(rf, x_train, y_train, cv=5)
+        mean_score = scores.mean()
+
+        if mean_score > best_rf_score:
+            best_rf_score = mean_score
+            best_depth_rf = depth
+            best_num_trees = num_trees
+
+print(f"best rf depth: {best_depth_rf}, best num trees: {best_num_trees}")
+
+
+
+rf_model = randomforestclassifier(n_estimators=best_num_trees, max_depth=best_depth_rf, random_state=42)
+rf_model.fit(x_train, y_train)
+
+
+
+#
+# #our model indicates that month/day both have a huge impact on birth trends (seasonal patterns or days with high birth rate). however, real world factors like cultural norms or big events happening in the world that play big roles are not considered. we should not rely too much on the model "outside of model land." 
+#
+
+
+#
+# welcome to the world of model-building workflows!!    
+#
+
+#
+# in fact, the next task on this hw is to run at least one more ml workflow:   
+#          (2) digits, (ec) your-own-data, ...
+#
+
+

@@ -1,0 +1,60 @@
+<br>
+
+### cs35 Week6: Reading and response 
+
+_On the Uses and Misuses of Models_   &nbsp;&nbsp; (hw6pr0.ipynb)
+
+<hr><br>
+
+#### Reading for hw6...     (hw6pr0.ipynb)
+
+This week's reading has two options:
++ [Option 1] Georgia Meyer's review of <u>Escape from Model Land</u>, which addresses the troubles of over-trusting models -- and provides a path for balancing the skepticism and promise of models' _"knowledge"_  
+  + [Here is the link to the original review](https://www.lse.ac.uk/DSI/Research/Blog-posts/Book-review-Escape-from-Model-Land) &nbsp;&nbsp; and &nbsp;&nbsp; [here is a local copy](https://drive.google.com/file/d/1SCuPWPyHEQ2N5eycg48pcV6Rkg8CLzSe/view?usp=drive_link), &nbsp;&nbsp; just in case <br><br>
++ [Option 2] Kate Harbath's short history of Cambridge Analytica, perhaps the most costly - and expensive - example of _modeling misuse_
+  + [Here is the link to the original article](https://bipartisanpolicy.org/blog/cambridge-analytica-controversy/#) &nbsp;&nbsp; and &nbsp;&nbsp; [here is a local copy](https://drive.google.com/file/d/1k0DeDBH0EBdVfApY1O205FXMDbsashzj/view?usp=drive_link), &nbsp;&nbsp; just in case <br><br>
++ [Option 1+2] Feel free to read and respond to both (optional and ec, up to +10)
+
+
+#### The prompt(s)
+
+Using the article you choose - and your own experience - what are your thoughts on the ***trustworthiness*** of the models that modern approaches can and have created?   
+
+Possible jumping-off points include your thoughts on ...
++ (1) the responsibility (and accountability) of the humans who **design and create** models. How should the source data affect models' scope and use?  For example, CA's models used _social media scraping_ ... <br><br>
++ (2) the responsibility (and accountability) of the humans who **deploy and use** models. To what extent does it matter what the model is a model ***of*** ? For example, CA's models were models _of people_ ... <br><br>
++ (3) an example you've encountered where an artificially-learned model was mis-deployed. This could be a non-artificially-learned model, for that matter! Was the responsibility for mis-deployment focused/individually-based? or was it diffuse/community-based? 
+
+<br>
+
+Alternative directions on the tensions between model-trust and human-trust are more than welcome!  
+
+As with each week's reading, responses should be thoughtful, but need not be CS35_Participant_2: a 4-5 sentence paragraph is wonderful.
+
+<br>
+<br>
+<hr>
+<br>
+<br>#### Reading response
+
+On the idea on the trustworthiness of the models that modern approaches can and have created, I believe we need to explore the responsibilities of the models' creators and of the the users. In the text, it states that "discrimination and dangerous stereotyping that arises when deeply flawed processes of constructing and applying models (and poor input data) are left unchecked" (Meyer). This raises questions regarding the trustworthiness/responsiblities of the model, and how it will impact the users. The responsiblities of keeping the models unbiased ultimately comes down to its creator, similar to the other platforms people get their data/information. For example, if an error occurred on Wikipedia, the non-profit organization hosting it, will be the ones to blame.
+
+<br>
+<br>
+
+
+
+
+
+<br>
+<br>
+
+<br>
+<br>
+
+<br>
+<br>
+
+<hr>
+
+<br>

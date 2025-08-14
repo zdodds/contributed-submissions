@@ -1,0 +1,197 @@
+### week2 ~ APIs !
+
+<b>that is, _the-web-as-your-filesystem_ ...</b>  &nbsp;&nbsp; (hw2pr1.ipynb)
+
+[the google doc with hw2's details](https://docs.google.com/document/d/1z4HwpUL1-ImGX3j-6bddyZAfdv2SkRQHRNhF5Cu3Fkk/edit?tab=t.0)
+<hr>#### Let's see if you already have the requests library...[Here is Wikipedia's list of all HTTP response codes](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes)
++ 100's: information
++ 200's: success           
++ 300's: redirects
++ 400's + 500's: errors
+
+Perhaps familiar:  404 <br>
+Especially fun:  418
+How to access the data inside this object, ``result`` ?
+
+One way: [Head over to the online documentation](https://requests.readthedocs.io/en/latest/api/#requests.Response)
+
+In addition, you can "look around" in Python:#### Traversing the world - and web - <i>without a browser</i>.   
+
+<b>Using the ISS APIs</b> 
+
++ Here, you'll make some calls using `requests` to, first, the International Space Station API 
++ and, then, the US Geological Survey's earthquake API
++ "API" is short for "Application Programming Interface" 
+  + Admittedly, this is not a very informative name:
+  + The API is the set of services, which are functions and/or urls, provided by some software or siteLet's try it with the International Space Station api at [http://api.open-notify.org/iss-now.json](http://api.open-notify.org/iss-now.json)
++ [This page has documentation on the ISS API](http://open-notify.org/Open-Notify-API/ISS-Location-Now/)<font color="Coral"><b>Task 0a</b></font>  &nbsp;&nbsp; From here, 
++ extract the lat and CS35_Participant_2 of the ISS from ``json_contents``  (dictinoary practice!)
++ copy the ``haversine`` function from the assignment
++ find the lat/CS35_Participant_2 of Claremont (or grab it from the hw page! 😊 )
++ combine these to find out how far, in miles, the ISS is from Claremont  
++ <font size="-2">you could _imagine_ writing a function to do all this (no need to - we'll do it with earthquakes!)</font>## JSON
+
+####  Let's make a brief JSON visit in Python
+
+The library ``json`` allows us to create and read arbitrary JSON data.Most of the time this will be done for us by the ``requests`` library. So, we will simply receive the dictionary of data sent.
+
+Then, the trick is to "extract" the data fragments we want. (Sometimes it feels like forensics - or archaeology!) Try excavating items one **layer** at a time...#### Remember: &nbsp; <i>not</i> every url returns json data...
++ The url [https://www.cs.hmc.edu/~dodds/demo.html](https://www.cs.hmc.edu/~dodds/demo.html) returns a plain-text file with _markup_ text
++ that is to say, with HTML tags, such as `<title>Title</title>` to designate the components of its content
++ HTML stands for _hypertext markup language_   
++ Often anything with tags similar to `<b>be bold!</b>` is called "markup." 
+
+Let's try our 5C homepages: they're HTML, not JSON:#### Declined requests!
+
+Caution: <i>See this week's reading!</i>#### For now let's focus on API calls providing JSON 
++ We're reading-aligned, as we should be!
++ The open-ended problem (the finale in this notebook) offers the _option_ of scraping raw html -- up to you...
+
+<br>
+
+<b>Let's try another ISS "endpoint" ~ one with all of the <i>people</i> in space.</b>
+
+It's at this url:  [http://api.open-notify.org/astros.json](http://api.open-notify.org/astros.json)
+This is pretty intricate. Let's try unpacking this - _parsing it_ - with an in-class break-out challenge.Let's compare with a whole other webservice: **earthquakes** 
+
+<br>
+<hr>
+<br>
+
+#### Earthquake data
+
+[Here is the USGS Earthquate data API documentation](https://earthquake.usgs.gov/fdsnws/event/1/)
+
+Notice that the "headline" is the URL: &nbsp; This is the <i>domain</i> from which we'll access data.
++ Underneath, there are several different <i>endpoints</i> 
++ We are going to focus on the <tt>count</tt> endpoint and the <tt>query</tt> endpoint
++ along with their parameters
+  + the whole list of parameters is linked and available by scrolling down
+  + that said, it's easy to miss (well, at least I did! :)First, let's establish that, for these endpoints, we can make requests - by hand - in our browser!
+
+Try this link: <br><br>  [https://earthquake.usgs.gov/fdsnws/event/1/count?format=geojson&minmagnitude=5.0&starttime=2024-01-01&endtime=2024-02-01](https://earthquake.usgs.gov/fdsnws/event/1/count?format=geojson&minmagnitude=5.0&starttime=2024-01-01&endtime=2024-02-01)Ok! Let's parse this url. Requests in which there are parameters <i><b>in the url</b></i> are called GET requests:
++ the <b>endpoint</b> is the first part: ``https://earthquake.usgs.gov/fdsnws/event/1/count``
+   + Notice that the forward-slashes are very much like our file-system trees from last week!
+   + In fact, they usually <i>are</i> file-system trees. They're just on the <i>server</i> side, instead of our "client" side...
++ the <b>parameters</b> follow the question mark: ``format=geojson&minmagnitude=5.0&starttime=2024-01-01&endtime=2024-02-01``
+   + There are four parameters here. Parameters are separated by the ampersand <tt>&amp;</tt> character.
+   + Each one is in the format <tt>name=value</tt>  Here are the four:
+   + ``format=geojson`` specifies the desired format of the returned data. ``geojson`` is JSON with geographic data.
+   + ``minmagnitude=5.0`` specifies the minimum magnitude of earthquakes to consider. 5.0 is strong, if not always catastrophic.
+   + ``starttime=2024-01-01`` specifies the earlier time-endpoint to consider. (Jan 1, 2024)
+   + ``endtime=2024-02-01`` specifies the later time-endpoint to consider. (Feb 1, 2024)
+
+My result was this:  ``{"count":134,"maxAllowed":20000}``
++ Earthquakes are always happening -- and they do get reclassified. So, the numbers can change - even in the past.
+
+Try it, in your browser.
+
+Also, try increasing the ``minmagnitude`` -- you'll see a progression of fewer and fewer quakes. (Fortunately!) 
+
+<hr>Then, try it using a short Python script:#### Handling parameters separately...
+
+It's awkward to include all the parameters as part of the url.
+
+It's much more common to create a <i>dictionary</i> of the parameters, and then pass that to ``requests.get``
+
+Here is an example:From here, it would be possible to write one or more loops and build an earthquake dataset. For example,
++ it would be possible to loop over the ``minmagnitude`` to get a distribution of different sized quakes (or a histogram)
++ it would be possible to loop over one of the <i>time-endpoints</i>
++ it would be possible to loop over one of the _other parameters_ e.g.,
+  + you can specify a circle around a specific ``latitude`` and ``longitude`` with a ``maxradiuskm`` (the radius)
+  + Claremont is at ``latitude=34.0967`` and ``longitude=-117.7198`` 
+
+The next two cells have an example of a Claremont-centric quake-count question and answer:<font color="Coral"><b>Try this, task "0b"</b></font>  &nbsp;&nbsp; 
++ Would you expect more or fewer quakes if a minimum magnitude of 2.2 were used?
+    
+    One would expect more quakes as lowering the minimum magnitudes means more smaller earthquakes (more frequent than stronger ones).
++ Try the above cells again for a minimum magnitude of 2.2 -- if that the difference you'd expect?
+    
+    Higher count of quakes. Expected result.<font color="DodgerBlue"><b>Quake-counting Results:</b></font> 
+
+
+
+#### Number of Claremont-centric quakes
+  + <u>Overall</u> The API calls to the USGS showed that, within 300km of Claremont, there were
+    + 1 quake of magnitude 4.2 or larger within 300km of Claremont in Jan '25
+    + more quakes  of magitude 2.2 or larger within 300km of Claremont in Jan '25 <br><br>
+  + <u>Reflection</u>: _This is not enough data to establish a trend. (I hope!)_ That said, for the hw, you should include a **loop** over at least 10 values, as well as a text-formatted set of values. (It's ok for the output values to be in the computational cell(s), not the markdown cell. The markdown is really for reflection on results than reporting of results.) <br><br>
+  + <u>Opportunities</u>: In fact, there are lots of values over which the USGS API allows to vary. For example,  minmagnitude (or maxmagnitude), radius, location (lat/CS35_Participant_2), months (or other time-measurements) - and others. In addition, there is the chance to look at the details of each quake using the ``query`` endpoint. <br><br>Looping over API calls to gather data will be one of the hw problems.
+
+<hr>
+
+#### The ``query`` endpoint
+
+Let's see, too, that it's possible to obtain, not only a <i>count</i>, but also a <b>"full report"</b> of all of the earthquakes.
+
+To do so, the only change needed is from the endpoint ``count`` to the endpoint ``query``
+
+First, try it "by hand" -- by opening this url in your browser:
+
+[https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=6.8&starttime=2024-01-01&endtime=2024-02-01](https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=6.8&starttime=2024-01-01&endtime=2024-02-01)
+
+Take a look -- there is a lot more data!  
+
+Next, let's try it programmatically:but, we can do better! 
+
+the "dump string" function, json.dumps, can output the formatted version, too...
+<font color="Coral"><b>Try this, also for Task 0b</b></font>  &nbsp;&nbsp; 
++ Look through the response to find where and when the largest eathquake was, in the previous year
+
+    Noto Peninsula, Japan on January 2024.
++ What was its magnitude?
+
+    7.5
++ (optional) Do you see a way that - just by making small changes and re-running - you could find the second-biggest quake of '24?  Perhaps try it...  🦔<br>
+<hr>
+<br>
+
+
+
+#### Launching into hw2's challenges:
++ <font color="Coral"><b>Tasks1-2</b></font> &nbsp;&nbsp; ISS challenges:
+  + ``ISS_now()`` which will find and return the ISS's lat/CS35_Participant_2 (as floats)
+    + use the earlier examples as a starting point...
+  + ``ISS_distance()`` which will return the distance of the ISS from a city of your choice (a constant city, not a variable). It can be Claremont, but doesn't have to be. This will require using the <i>haversine</i> distance for global lat/CS35_Participant_2 coordinates...
++ <font color="Coral"><b>Tasks3-4</b></font> &nbsp;&nbsp; Earthquake challenges:
+  + ``Quake_loop()`` which will loop over a parameter of your choice, print a formatted list of quake-count data, and return that list
+  + ``Quake_compare(place1, place2)`` which will ask - and answer - a comparative question about "quakiness" for two different places, using the quake data... 
+    + Here, the goal is to define which of the two places is "quakiest."
+    + Notice that the definition of "quakiest" is up to you...
+    + The inputs, place1 and place2, can be lat/CS35_Participant_2 pairs - or strings, which then get looked up...
+
+<br>
+
+#### <font color="Coral"><b>Task5</b></font> &nbsp;&nbsp; Open-ended, two-hop challenge
+
+Then, you'll choose or create an open-ended API task -- or create a variant of your own design from at least two APIs - or "scrapes" - of your choice.
++ The key constraint is to be sure you meaningfully use the  <font color="DodgerBlue">result</font>  from the first API call in order to customize the request of the second API call.
++ Then, with the result of that second API call, interpret the data obtained to make a final "statement" -- which can be anywhere amid serious, silly, surreal -- that combines the two API insights.
++ See below for a far-fetched superbowl-themed idea...
+
+
+Feel free to create some new cells around this area to write and test ``ISS_now()`` ...Feel free to create some new cells around this area to write and test ``ISS_distance()`` ...#### USGS Challenges
+
+Tasks 3 and 4 use the earthquake APIFeel free to create some new cells around this area to write and test ``Quake_loop()`` ...Feel free to create some new cells around this area to write and test ``Quake_compare(place1, place2)`` ...#### Final API challenge:  an open-ended, two-hop API task...
+
+<font color="Coral">Key constraint: _Use two hops!_</font>  &nbsp;&nbsp; Be sure to dome something that uses two separate API calls, in which the results of the first affect the second - culminating in an aggregate, overall result.
+
+Possibilities: 
+  + You should use at least one other API. (See the hw2 page for links to many.)
+      + The [Poke API](https://pokeapi.co/)  or [one of these](https://medium.com/codex/15-fun-and-interesting-apis-to-use-for-your-next-coding-project-in-2022-86a4ff3a2742) or [one of the many, many more!](https://github.com/public-apis/public-apis)
+  + That said, <u><b>one</b></u> of the two can be ISS or USGS, as you used above.
+
+
+
+<font size="-2">PS. My example of this is in ``superbowl_prediction.ipynb`` with the starter files. It used to be here, but it was too clutter-y... .</font>
+
+<br><hr><br>
+
+Big-picture, an important part of using API calls is gathering a _specific piece_ of data from an otherwise too-large ocean of raw material. That element then allows you to express a natural _next_ specific question, obtain its relevant data, and continue to build from there, with each round-trip branching into additional (possible) questions... .
+
+<br>
+
+Good luck API'ing!!
+
+<br>
+

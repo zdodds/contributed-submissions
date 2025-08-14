@@ -1,0 +1,132 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns 
+from sklearn.tree import decisiontreeclassifier, plot_tree
+from sklearn.ensemble import randomforestclassifier
+from sklearn.model_selection import train_test_split, cross_val_score, gridsearchcv
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+
+
+digits_df = pd.read_csv("digits_cleaned.csv")
+
+
+print("columns in digits_df:", digits_df.columns)
+
+
+
+
+target_column = 'actual_digit'
+x_all = digits_df.drop(target_column, axis=1)
+y_all = digits_df[target_column]
+
+
+species = [str(x) for x in digits_df[target_column].unique()] 
+print("species are\n", species)
+
+
+
+
+x_train, x_test, y_train, y_test = train_test_split(x_all, y_all, test_size=0.2, random_state=42)
+
+
+param_grid = {'max_depth': range(1, 7)}  
+grid_search = gridsearchcv(decisiontreeclassifier(random_state=42),
+                           param_grid,
+                           cv=5, 
+                           scoring='accuracy')
+grid_search.fit(x_train, y_train)
+
+best_max_depth = grid_search.best_params_['max_depth']
+print(f"best max_depth found by cross-validation: {best_max_depth}")
+
+
+dt_model = decisiontreeclassifier(max_depth=best_max_depth, random_state=42)
+dt_model.fit(x_train, y_train)
+
+
+dt_pred = dt_model.predict(x_test)
+print("decision tree model evaluation:")
+print(classification_report(y_test, dt_pred))
+print("accuracy:", accuracy_score(y_test, dt_pred))
+
+
+dt_model_visual = decisiontreeclassifier(max_depth=3, random_state=42)
+dt_model_visual.fit(x_train, y_train)
+
+plt.figure(figsize=(20,10)) 
+plot_tree(dt_model_visual,
+          feature_names=x_all.columns,
+          class_names=species,
+          filled=true)
+plt.title("decision tree with max_depth=3")
+plt.show()
+
+
+param_grid_rf = {
+    'n_estimators': [50, 100, 200],  
+    'max_depth': range(3, 7)        
+}
+
+
+grid_search_rf = gridsearchcv(randomforestclassifier(random_state=42),
+                              param_grid_rf,
+                              cv=3,  
+                              scoring='accuracy')
+grid_search_rf.fit(x_train, y_train)
+
+best_rf_model = grid_search_rf.best_estimator_
+print("best random forest model:", best_rf_model)
+
+
+rf_pred = best_rf_model.predict(x_test)
+print("\nrandom forest model evaluation:")
+print(classification_report(y_test, rf_pred))
+print("accuracy:", accuracy_score(y_test, rf_pred))
+
+
+lod = [[0,0,0,8,14,0,0,0,0,0,5,16,11,0,0,0,0,1,15,14,1,6,0,0,0,7,16,5,3,16,8,0,0,8,16,8,14,16,2,0,0,0,6,14,16,11,0,0,0,0,0,6,16,4,0,0,0,0,0,10,15,0,0,0],
+[0,0,0,5,14,12,2,0,0,0,7,15,8,14,4,0,0,0,6,2,3,13,1,0,0,0,0,1,13,4,0,0,0,0,1,11,9,0,0,0,0,8,16,13,0,0,0,0,0,5,14,16,11,2,0,0,0,0,0,6,12,13,3,0],
+[0,0,0,3,16,3,0,0,0,0,0,12,16,2,0,0,0,0,8,16,16,4,0,0,0,7,16,15,16,12,11,0,0,8,16,16,16,13,3,0,0,0,0,7,14,1,0,0,0,0,0,6,16,0,0,0,0,0,0,4,14,0,0,0],
+[0,0,0,3,15,10,1,0,0,0,0,11,10,16,4,0,0,0,0,12,1,15,6,0,0,0,0,3,4,15,4,0,0,0,0,6,15,6,0,0,0,4,15,16,9,0,0,0,0,0,13,16,15,9,3,0,0,0,0,4,9,14,7,0],
+[0,0,0,3,16,3,0,0,0,0,0,10,16,11,0,0,0,0,4,16,16,8,0,0,0,2,14,12,16,5,0,0,0,10,16,14,16,16,11,0,0,5,12,13,16,8,3,0,0,0,0,2,15,3,0,0,0,0,0,4,12,0,0,0],
+[0,0,7,15,15,4,0,0,0,8,16,16,16,4,0,0,0,8,15,8,16,4,0,0,0,0,0,10,15,0,0,0,0,0,1,15,9,0,0,0,0,0,6,16,2,0,0,0,0,0,8,16,8,11,9,0,0,0,9,16,16,12,3,0]]
+
+
+lod_pred_dt = dt_model.predict(lod)
+lod_pred_rf = best_rf_model.predict(lod)
+
+print("\npredictions on lod (decision tree):", lod_pred_dt)
+print("predictions on lod (random forest):", lod_pred_rf)
+
+
+
+feature_importances = best_rf_model.feature_importances_
+print("\nfeature importances from random forest:\n", feature_importances)
+
+
+feature_importances_image = feature_importances.reshape(8, 8)
+
+
+plt.figure(figsize=(8, 6))
+sns.heatmap(feature_importances_image, annot=true, cmap="viridis", fmt=".3f")  # you can change the cmap
+plt.title("heatmap of feature importances")
+plt.show()
+
+
+
+
+
+
+#
+# that's it!  welcome to the world of model-building workflows!!    
+#
+#             our prediction?  we'll be back for more ml! 
+#
+
+
+# if you'd like, the ec is to run a dt/rf workflow on your own data...   (in hw6ec_modeler.ipynb)
+
+
+
+
