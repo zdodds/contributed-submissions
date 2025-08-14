@@ -1,0 +1,717 @@
+#
+# hw6pr1births_modeler:  bday popularity modeling by month + day    
+#                                                 (above/below median: 190942)
+#
+
+#
+# suggestion:  
+# 
+# +++ copy-paste-and-alter from the week6 iris-modeling notebook into here +++
+#
+
+
+# libraries!
+import numpy as np      # numpy is python's "array" library
+import pandas as pd     # pandas is python's "data" library ("dataframe" == spreadsheet)
+
+
+#
+# suggestion:  
+# 
+#   copy-paste-and-adapt from the iris-modeling notebook.
+#
+#
+# this approach has the advantage of more deeply "digesting" the iris workflow ...
+#
+#      ... altering the parts that don't transfer, and taking the parts that do
+#
+
+
+# let's read in our data...
+# 
+# 
+filename = 'births_cleaned.csv'
+df_tidy = pd.read_csv(filename)      # encoding = "utf-8", "latin1"
+print(f"{filename} : file read into a pandas dataframe.")
+
+
+#
+# all of the columns need to be numeric, we'll drop irisname
+row = 0
+column = 1
+df_model1 = df_tidy.drop('births', axis=column )
+df_model1 = df_model1.drop('above/below median', axis=column )
+df_model1
+
+
+#
+# once we have all the columns we want, let's create an index of their names...
+
+#
+# let's make sure we have all of our helpful variables in one place 
+#       to be adapted if we drop/add more columns...
+#
+
+#
+# let's keep our column names in variables, for reference
+#
+columns = df_model1.columns            # "list" of columns
+print(f"columns is {columns}\n")  
+  # it's a "pandas" list, called an index
+  # use it just as a python list of strings:
+print(f"columns[0] is {columns[0]}\n")
+
+# let's create a dictionary to look up any column index by name
+col_index = {}
+for i, name in enumerate(columns):
+    col_index[name] = i  # using the name (as key), look up the value (i)
+print(f"col_index is {col_index}\n\n")
+
+#
+# feature names!
+#
+features = columns[0:2]
+print(features)
+#
+# and our "species" names
+#
+
+# all of scikit-learn's ml routines need numbers, not strings
+#   ... even for categories/classifications (like species!)
+#   so, we will convert the flower-species to numbers:
+
+species = ['above','below']   # int to str this is not right lol but i think it fine
+species_index = {'above':0,'below':1}  # str to int
+
+# let's try it out...
+for name in species:
+    print(f"{name} maps to {species_index[name]}")
+
+
+# let's convert our dataframe to a numpy array, named a
+#
+
+a = df_model1.to_numpy()  
+print(a)
+
+
+
+#
+# let's make sure it's all floating-point (here, it already is, but in other datasets it might not be)
+#
+a = a.astype('float64')  # so many:  www.tutorialspoint.com/numpy/numpy_data_types.htm
+print(a)
+
+
+#
+# nice to have num_rows and num_cols around
+#
+num_rows, num_cols = a.shape
+print(f"\nthe dataset has {num_rows} rows and {num_cols} cols")
+
+
+# let's use all our variables, to reinforce that we have
+# (1) their names...
+# (2) access and control over each...
+
+# choose a row index, n:
+n = 42
+print(f"flower #{n} is {a[n]}")
+
+for i in range(len(columns)):
+    colname = columns[i]
+    value = a[n][i]
+    print(f"  its {colname} is {value}")
+
+species_index = col_index['birthnum']
+species_num = int(round(a[n][species_index]))
+species = species[species_num]
+print(f"  its species is {species} (i.e., {species_num})")
+
+
+print("+++ start of data definitions +++\n")
+
+#
+# we could do this at the data-frame level, too!
+#
+
+x_all = a[:,0:2]  # x (features) ... is all rows, columns 0, 1, 2, 3
+y_all = a[:,2]    # y (labels) ... is all rows, column 4 only
+
+print(f"y_all (just the labels/species)   are \n {y_all}")
+print(f"x_all (just the features, first few rows) are \n {x_all[0:5]}")
+
+
+#
+# we scramble the data, to remove (potential) dependence on its ordering: 
+# 
+indices = np.random.permutation(len(y_all))  # indices is a permutation-list
+
+# we scramble both x and y, necessarily with the same permutation
+x_permed = x_all[indices]              # we apply the _same_ permutation to each!
+y_permed = y_all[indices]              # again...
+print(f"the scrambled labels/species are \n {y_permed}")
+print(f"the corresponding data rows are \n {x_permed[0:5]}")
+
+
+#
+# we next separate into test data and training data ... 
+#    + we will train on the training data...
+#    + we will _not_ look at the testing data to build the model
+#
+# then, afterward, we will test on the testing data -- and see how well we do!
+#
+
+#
+# a common convention:  train on 80%, test on 20%    let's define the test_percent
+#
+
+from sklearn.model_selection import train_test_split
+
+x_train, x_test, y_train, y_test = train_test_split(x_permed, y_permed, test_size=0.2, random_state=42)
+
+print(f"training with {len(y_train)} rows;  testing with {len(y_test)} rows\n" )
+
+print(f"held-out data... (testing data: {len(y_test)})")
+print(f"y_test: {y_test}\n")
+print(f"x_test (few rows): {x_test[0:5,:]}")  # 5 rows
+print()
+print(f"data used for modeling... (training data: {len(y_train)})")
+print(f"y_train: {y_train}\n")
+print(f"x_train (few rows): {x_train[0:5,:]}")  # 5 rows
+
+
+#
+# +++ this is the "model-building and model-training cell"
+#       
+# create a dt model and train it! 
+#
+from sklearn import tree      # for decision trees
+
+best_depth = 1   # we don't know what depth to use, so let's guess 1
+dtree_model = tree.decisiontreeclassifier(max_depth=best_depth)
+
+# let's train the model.   it's this one line:
+dtree_model.fit(x_train, y_train)                              # yay!  trained!
+print("created and trained a dt classifier with max depth =", best_depth) 
+
+
+#
+# +++ this cell will "model-testing cell"
+#
+# now, let's see how well our model does on our "held-out data" (the testing data)
+#
+
+# we run our test set:
+
+# the function knn_model.predict is the instantiation of our model
+# it's what runs the k-nearest-neighbors algorithm:
+predicted_labels = dtree_model.predict(x_test)   
+actual_labels = y_test
+
+# let's print them so we can compare...
+print("predicted labels:", predicted_labels)
+print("actual  labels  :", actual_labels)
+
+# and, some overall results
+num_correct = sum(predicted_labels == actual_labels)
+total = len(actual_labels)
+print(f"\nresults on test set:  {num_correct} correct out of {total} total.")
+
+
+#
+# let's print these more helpfully, in a vertical table
+#
+
+def compare_labels(predicted_labels, actual_labels):
+    """ a more neatly formatted comparison """
+    num_labels = len(predicted_labels)
+    num_correct = 0
+    
+    for i in range(num_labels):
+        p = int(round(predicted_labels[i]))         # round protects from fp error 
+        a = int(round(actual_labels[i]))
+        result = "incorrect"
+        if p == a:  # if they match,
+            result = ""       # no longer incorrect
+            num_correct += 1  # and we count a match!
+
+        print(f"row {i:>3d} : {species[p]:>12s} {species[a]:<12s}   {result}")   
+
+    print()
+    print("correct:", num_correct, "out of", num_labels)
+    return num_correct
+
+# let's try it out!
+compare_labels(predicted_labels,actual_labels)
+
+
+#
+# first, let's use text :)
+#
+text_representation = tree.export_text(dtree_model)
+print(text_representation)
+
+
+#
+# now, let's see the tree!
+#
+
+filename = 'tree_data.gv'    # sometimes .dot is used, instead of .gv
+
+tree.export_graphviz(dtree_model, out_file=filename,  # the filename constructed above...!
+                            feature_names=features,   # actual feature names, not species
+                            filled=true,              # fun!
+                            rotate=false,             # false for up/down; true for l/r
+                            class_names=species,      # yay! we created this  
+                            leaves_parallel=true )    # lots of options!
+
+print(f"# file {filename} written. try pasting its contents to  http://viz-js.com/")
+print()
+
+with open(filename, "r") as f:
+    all_file_text = f.read()
+    print(all_file_text)
+
+
+#
+# treeing!
+#
+import matplotlib.pyplot as plt 
+
+fig = plt.figure(figsize=(5,4))              # feel free to adjust this size...
+tree_plot = tree.plot_tree(dtree_model, 
+                   feature_names=features,   # glad to have these features...
+                   class_names=species,      # and these species...
+                   filled=true)
+
+
+#
+# to compare different tree-depths, we use cross validation
+#
+
+from sklearn.model_selection import cross_val_score
+
+#
+# cross-validation splits the training set into two pieces:
+#   + model-building and model-validation. we'll use "build" and "validate"
+#
+
+best_d = 1
+best_accuracy = 0.0
+
+for d in range(1,10+1):
+    cv_model = tree.decisiontreeclassifier(max_depth=d)   # for each depth, d
+    cv_scores = cross_val_score( cv_model, x_train, y_train, cv=5 ) # 5 means 80/20 split
+    # print(cv_scores)  # we usually don't want to see the five individual scores 
+    average_cv_accuracy = cv_scores.mean()  # more likely, only their average
+    print(f"depth: {d:2d}  cv accuracy: {average_cv_accuracy:7.4f}")
+    
+    if average_cv_accuracy > best_accuracy:
+        best_accuracy = average_cv_accuracy
+        best_d = d
+
+    
+    
+# assign best value of d to best_depth
+best_depth = best_d   # may have to hand-tune this, depending on what happens...
+print()
+print(f"best_depth = {best_depth} with acc: {best_accuracy} is our balance.")
+print()
+print("too deep and the tree will _overfit_ the training data.")
+print("too shallow and the tree will _underfit_ the training data.")
+
+
+#
+# now, we re-create and re-run the  "model-building and -training cell"
+#
+# this time, with the best depth, best_d, found by cross-validation model tuning:
+#
+from sklearn import tree      # for decision trees
+
+# we should have best_depth from our cv exploration
+dtree_model_tuned = tree.decisiontreeclassifier(max_depth=best_depth)
+
+# we train the model (it's one line!)
+dtree_model_tuned.fit(x_train, y_train)                              # yay!  trained!
+print("created and trained a dt classifier with max depth =", best_depth) 
+
+
+#
+# now, let's see the tree!
+#
+
+filename = 'tree_data.gv'    # sometimes .dot is used, instead of .gv
+
+tree.export_graphviz(dtree_model_tuned, out_file=filename,  # the filename constructed above...!
+                            feature_names=features, # actual feature names, not species
+                            filled=true,              # fun!
+                            rotate=false,             # false for up/down; true for l/r
+                            class_names=species,      # good to have   
+                            leaves_parallel=true )    # lots of options!
+
+# use this line to print the tree to the console in the dot language:
+# print(f"file {filename} written. try pasting its contents to  http://viz-js.com/")
+
+# with open(filename, "r") as f:    # here, it will print to a file:
+#     all_file_text = f.read()
+#     print(all_file_text)
+
+#
+# treeing using matplotlib:
+#
+fig = plt.figure(figsize=(9,6))
+tree_plot = tree.plot_tree(dtree_model_tuned, 
+                   feature_names=features,   # glad to have these!
+                   class_names=species,      # and these!!
+                   filled=true,
+                   rounded=true,
+                   fontsize=8)
+
+
+#
+# re-create and re-run the  "model-testing cell"     how does it do with best_k?!
+#
+predicted_labels = dtree_model_tuned.predict(x_test)
+actual_labels = y_test
+
+# let's print them so we can compare...
+print("predicted labels:", predicted_labels)
+print("actual labels:", actual_labels)
+print()
+
+# and, we'll print our nicer table...
+compare_labels(predicted_labels,actual_labels)
+
+
+#
+# final predictive model (decision trees), with tuned parameters + all data incorporated
+#
+
+def predictive_model( features, model ):
+    """ input: a list of four features 
+                [ sepallen, sepalwid, petallen, petalwid ]
+        output: the predicted species of iris, from
+                  setosa (0), versicolor (1), virginica (2)
+    """
+    our_features = np.asarray([features])                 # extra brackets needed
+    predicted_species = model.predict(our_features)       # the model's prediction!
+    predicted_species = int(round(predicted_species[0]))  # unpack the extra brackets
+    return predicted_species
+   
+#
+# try it!
+# 
+# features = eval(input("enter new features: "))
+#
+# features = [6.7,3.3,5.7,0.1]  # [5.8,2.7,4.1,1.0] [4.6,3.6,3.0,2.2] [6.7,3.3,5.7,2.1]
+
+lof = [[10,4.2],
+[1.5,1.5],
+[2,-1],
+[-10,0],
+[0,0],
+[2,32],
+[9.2,6.5],
+[3.14159,2.71828],
+[42,42]]
+
+
+# run on each one:
+for features in lof:
+    predicted_species = predictive_model( features, dtree_model_final )  # pass in the model, too!
+    name = species[predicted_species]
+    print(f"i predict {name} from the features {features}")    # answers in the assignment...
+
+
+print(dtree_model_tuned.feature_importances_)
+print()
+
+# let's see them with each feature name:
+imps = dtree_model_tuned.feature_importances_
+
+# enumerate is great when you want indices _and_ elements!
+for i, importance in enumerate(imps):
+    perc = importance*100
+    print(f"feature {columns[i]:>12s} has {perc:>7.2f}% of the decision-making importance.")
+
+
+#
+# ok!  we have tuned our dt to use the "best" depth...
+#
+# now, we use all available data to train our final predictive model:
+#
+
+from sklearn import tree      # for decision trees
+
+# we should have best_depth from our cv exploration
+dtree_model_final = tree.decisiontreeclassifier(max_depth=best_depth)
+
+# we train the model (it's one line!)
+dtree_model_final.fit(x_all, y_all)                              # yay!  trained!
+print("created and trained a 'final' dt classifier with max depth =", best_depth) 
+
+
+#
+# here, use this week's iris-modeler to create, cross-validate, and model
+#       bday popularity using random forests
+#
+
+# be sure to cross-validate on the two parameters: depth and number-of-estimators
+#    (the number-of-estimators is the number of trees used)
+
+
+#
+# +++ we're back at the "model-building and model-training cell"
+#       
+# create a rf model and train it! 
+#
+from sklearn import tree      # for decision trees
+from sklearn import ensemble  # for random forests, an ensemble classifier
+
+best_d = 1            # we don't know what depth to use, so we guess...
+best_num_trees = 42   # again, we guess
+rforest_model = ensemble.randomforestclassifier(max_depth=best_d, 
+                                                n_estimators=best_num_trees,
+                                                max_samples=0.5)  
+# this max_samples=0.5 is the fraction of rows to use for each dt 
+# for all of our forests, we will let max_samples be 0.5   
+
+# we'll explore best_d and best_num_trees...
+
+# we train the model (again, one line):
+rforest_model.fit(x_train, y_train)                              # yay!  trained!
+print(f"built an rf with depth={best_d} and number of trees={best_num_trees}")  
+
+
+#
+# +++ this is the "model-testing cell"
+#
+# now, let's see how well we did on our "held-out data" (the testing data)
+#
+
+# we run our test set!
+predicted_labels = rforest_model.predict(x_test)
+actual_labels = y_test
+
+# let's print them so we can compare...
+print("predicted labels:", predicted_labels)
+print("actual  labels  :", actual_labels)
+
+# and, some overall results
+num_correct = sum(predicted_labels == actual_labels)
+total = len(actual_labels)
+print(f"\nresults on test set:  {num_correct} correct out of {total} total.")
+
+# and, let's print our table, too...
+compare_labels(predicted_labels,actual_labels)
+
+
+#
+# we can get the individual trees, if we want...
+#
+tree_index = 28   # which tree
+one_rf_tree = rforest_model.estimators_[tree_index]
+print(f"one of the forest's trees is {one_rf_tree}")
+
+# from there, it's possible to create a graphical version...
+filename = f'rf_tree_{tree_index:03d}.gv'             # f strings! could save all trees, but we won't do so here. 
+tree.export_graphviz(one_rf_tree, out_file=filename,  # the filename constructed above...!
+                            feature_names=features, # actual feature names, not species
+                            filled=true,              # fun!
+                            rotate=false,             # false for up/down; true for l/r
+                            class_names=species,      # good to have   
+                            leaves_parallel=true )    # lots of options!
+                            
+print(f"file {filename} written. try copying the result to http://viz-js.com/ \n")
+
+with open(filename, "r") as f:
+    file_text = f.read()
+    print(file_text)
+
+#
+# treeing!
+#
+fig = plt.figure(figsize=(5,4))
+tree_plot = tree.plot_tree(one_rf_tree, 
+                   feature_names=features,   # glad to have these!
+                   class_names=species,      # and these!!
+                   filled=true)
+
+
+#
+# so, to compare different parameters, let's use cv
+#
+
+from sklearn.model_selection import cross_val_score
+
+#
+# cross-validation splits the training set into two pieces:
+#   + model-building and model-validation. we'll use "build" and "validate"
+#
+
+#
+# lab task:  wrap this loop in another one! (or create an inner one...)
+#
+
+best_d = 1         # range(1,6)
+best_ntrees = 50   # [50,150,250]
+best_accuracy = 0
+
+for d in range(1,6):
+    for ntrees in [50,150,250]:
+        rforest_model = ensemble.randomforestclassifier(max_depth=d, 
+                                                        n_estimators=ntrees,
+                                                        max_samples=0.5)
+        cv_scores = cross_val_score( rforest_model, x_train, y_train, cv=5 ) # 5 means 80/20 split
+        average_cv_accuracy = cv_scores.mean()  # more likely, only their average
+        print(f"depth: {d:2d} ntrees: {ntrees:3d} cv accuracy: {average_cv_accuracy:7.4f}")
+        if average_cv_accuracy > best_accuracy:
+            best_accuracy = average_cv_accuracy
+            best_d = d
+            best_ntrees = ntrees
+
+# 
+# your task: assign best values by keeping a "running max"
+#
+best_depth = best_d   
+best_num_trees = best_ntrees
+
+# this will be incorrect when initially run (you'll fix it):
+print()
+print(f"best_depth: {best_depth} and best_num_trees: {best_num_trees} are our choices. acc: {best_accuracy}")  
+
+#
+# remember that the rf lab task is to complete this nested cross-validation loop!
+#
+
+
+#
+# now, we re-create and re-run the  "model-building and -training cell"
+#
+from sklearn import tree      # for decision trees
+from sklearn import ensemble  # for random forests
+best_depth =  best_depth
+best_num_trees = best_num_trees
+# we should have best_depth and best_num_trees
+rforest_model_tuned = ensemble.randomforestclassifier(max_depth=best_depth, 
+                                                      n_estimators=best_num_trees,
+                                                      max_samples=0.5)
+
+# we train the model (it's one line!)
+rforest_model_tuned.fit(x_train, y_train)                              # yay!  trained!
+print(f"built an rf classifier with depth={best_depth} and ntrees={best_num_trees}") 
+
+
+#
+# +++ this is our "model-testing cell"
+#
+# now, let's see how well we did on our "held-out data" (the testing data)
+#
+
+# we run our test set!
+predicted_labels = rforest_model_tuned.predict(x_test)
+actual_labels = y_test
+
+# let's print them so we can compare...
+print("predicted labels:", predicted_labels)
+print("actual  labels  :", actual_labels)
+
+# and, some overall results
+num_correct = sum(predicted_labels == actual_labels)
+total = len(actual_labels)
+print(f"\nresults on test set:  {num_correct} correct out of {total} total.")
+
+# and, let's print our table, too...
+compare_labels(predicted_labels,actual_labels)
+
+
+#
+# ok!  we have tuned our rf to use the "best" parameters
+#
+# now, we use all available data to train our final predictive model:
+#
+from sklearn import tree      # for decision trees
+from sklearn import ensemble  # for random forests
+
+# we should have best_depth and best_num_trees
+rforest_model_final = ensemble.randomforestclassifier(max_depth=best_depth, 
+                                                      n_estimators=best_num_trees,
+                                                      max_samples=0.5)
+
+# we train the model (it's one line!)
+rforest_model_final.fit(x_all, y_all)              # yay!  trained!
+print(f"built an rf classifier with depth={best_depth} and ntrees={best_num_trees}") 
+
+
+#
+# final predictive model (random forests), with tuned parameters + all data incorporated
+#
+
+def predictive_model( features, model ):
+    """ input: a list of four features 
+                [ sepallen, sepalwid, petallen, petalwid ]
+        output: the predicted species of iris, from
+                  setosa (0), versicolor (1), virginica (2)
+    """
+    our_features = np.asarray([features])                 # extra brackets needed
+    predicted_species = model.predict(our_features)       # the model's prediction!
+    predicted_species = int(round(predicted_species[0]))  # unpack the extra brackets
+    return predicted_species
+   
+#
+# try it!
+# 
+# features = eval(input("enter new features: "))
+#
+# features = [6.7,3.3,5.7,0.1]  # [5.8,2.7,4.1,1.0] [4.6,3.6,3.0,2.2] [6.7,3.3,5.7,2.1]
+
+lof = [[10,4.2],
+[1.5,1.5],
+[2,-1],
+[-10,0],
+[0,0],
+[2,32],
+[9.2,6.5],
+[3.14159,2.71828],
+[42,42]]
+
+
+# run on each one:
+for features in lof:
+    predicted_species = predictive_model( features, rforest_model_final )  # pass in the model, too!
+    name = species[predicted_species]
+    print(f"i predict {name} from the features {features}")    # answers in the assignment...
+
+
+#
+# feature importances are often even more "important" than predictions...
+#
+#    random forests can provide a much "smoother" measure of feature importance, since
+#                   they integrate over so many individual models (each tree)
+#
+#    that is, it's much less likely that a feature will have 0% importance, unless it never varies
+#
+
+print(rforest_model_final.feature_importances_)
+print()
+
+# let's see them with each feature name:
+imps = rforest_model_final.feature_importances_
+
+# enumerate is great when you want indices _and_ elements!
+for i, importance in enumerate(imps):
+    perc = importance*100
+    print(f"feature {columns[i]:>12s} has {perc:>7.2f}% of the decision-making importance.")
+
+
+#
+# welcome to the world of model-building workflows!!    
+#
+
+#
+# in fact, the next task on this hw is to run at least one more ml workflow:   
+#          (2) digits, (ec) your-own-data, ...
+#
+
+

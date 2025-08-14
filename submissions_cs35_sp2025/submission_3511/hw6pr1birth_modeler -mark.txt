@@ -1,0 +1,28 @@
+#### Births Modeler: &nbsp; Using Decision Trees and Random Forests
+
++ births clasification via decision trees and random forests...
++ You're classifying "above" (above-median popularity of birthdays) vs "below" (below-median popularity of birthdays)
++ Feel free to re-use the cleaned data from previous weeks (already here)
++ Suggestion:  &nbsp; go cell-by-cell using the iris_modeler example, copying-and-adapting as you go...I AM USING MY OWN BIRTHS_CLEANED.CSV
+
+THAT IS WHY I HAVE THIS "BIRTHNUM" COLUMN## Data set up...
++ Use the cleaned data from prior weeks (it should be here in this folder as births_cleaned.csv)
++ Be sure to get rid of the column with the **number of births** &nbsp;&nbsp; That makes the prediction "too easy"!
++ Instead, see how well the DT/RF techniques can predict above/below-median popularity, just based on month and day...
++ (It's quite a hard estimation problem!)## First: &nbsp; _Decision Trees_I think this is peculiar, but expected. Since every birthday in a month likely follows the same trend, it is best to use the month as a deciding factor than the date.## Then: &nbsp; _Random Forests_This one is every more interesting. Although month is still at an majority, the day is also considered now. Since the accuracy is very similar, I suppose both approaches work well. This probably puts a bigger concern on holidays and such<br>
+<hr>
+<br>
+
+### Final, big-picture question:  
++ What are the relative "feature importances" of the two features
+  + month
+  + day
++ ... at least, in terms of "birthday popularity," as we've defined it?
+
+Reflect, in a sentence or two, on the values of feature importances that you found.
++ To use Erica Thompson's framing, 
++ how much trust (or weight) would you attribute to this model and its feature importances, "outside of Model Land"? Generally, the month seems to be an more important factor than the date. Although the random forest model placed a slighter higher emphasis on date.
+
+If one were to ask me to predict above/below, I'd have no clue at all. In this case, I would trust my model since this is based on statistics. Whereas if I were to do it, it would be based on sheer luck.
+
+In addition, I don't see any issues with placing too much weight on these models since I cannot imagine them harming the world in any way if it goes wrong.

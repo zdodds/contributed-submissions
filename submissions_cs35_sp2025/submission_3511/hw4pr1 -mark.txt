@@ -1,0 +1,242 @@
+## Welcome to cs35's <i>"Data-and-Modeling"</i> module...
+
+<br>
+<hr>
+<br><b><font color="Coral">Installing and trying</font> numpy, pandas, scipy, matplotlib, and seaborn</b>
++ Installing seaborn and pandas will pull in numpy and matplotlib, so you'll have all four.
++ So, the smoothest approach is to uncomment the two cells below and run them, e.g.,
++ &nbsp;&nbsp;&nbsp;&nbsp;   <tt><font color="DodgerBlue">!pip install pandas</font></tt>
++ The <tt>-U</tt> will upgrade, if you already have it. Also, your version may be named <tt>pip3</tt>  (mine was)<b>Details about paths and installing libraries</b> - you may not need these...
++ The key is to use the <tt>pip</tt> or <tt>pip3</tt> that corresponds to the Python that you use as a notebook kernel...
++ For me, on a Mac desktop, it's <tt>/usr/bin/local/pip3</tt>
++ For me, on a Win laptop, it's <tt>c:\Users\dodds\AppData\Local\Progams\Python\Python311\Scripts\pip</tt>
++ Your path will vary!
++ Clicking on your "chosen kernel" (at a notebook's upper right) and/or running these commands can help you find those paths:
+  + <tt><font color="DodgerBlue">where python</font></tt>
+  + <tt><font color="DodgerBlue">where python3</font></tt>
+  + <tt><font color="DodgerBlue">where pip</font></tt>
+  + <tt><font color="DodgerBlue">where pip3</font></tt>
++ Most of all, do _ask_ if you're running into trouble...## <font color="Coral">Part (a)</font>: &nbsp;&nbsp; House Hunters!
+
+Welcome to the wonderful world of real estate! &nbsp;&nbsp; <font size="-2">This introduction to pandas brought to you by <font color="DodgerBlue">Kanalu Monaco</font> '24. &nbsp;&nbsp;  Kanalu:</font>
+
+Buying a home is a huge life decision, and it is important to be informed about the housing market.
+We will analyze some housing data using Pandas!
+
+What does pandas stand for?
++ Python Data Analysis Library?
++ Panel Data?
++ _Who knows!?_ (it's actually both)
+
+Big-picture, Pandas uses a spreadsheet-like object called a "DataFrame" to store information. We will see how convenient this data frame is!<br>
+
+#### Pandas and our housing datasetWe have a housing csv (reminder: "comma-separated values") file with all the data we want to analyze (Thank you, Internet!)
+
+Pandas has a function that makes it easy to import data: read_csv
+
+read_csv can take a whole bunch of different inputs, but for now, we can just pass in the name of the file we want to open as a string. If the file is not in the same folder as your notebook file, you can pass in a path from the notebook directory to the file directory (as a string).
+
+This function will automatically convert the data in the csv file into the data frame that pandas uses.
+Be sure to give the data frame a name for easy reference later!You can type 'zillow' to view the data frame.
+
+
+By default, it will only display the first and last 5 rows of the data frame.
+
+
+Alternatively, you can use `zillow.head(n)` to view the first `n` (n<=60) rows only, or `zillow.tail(n)` to view the last `n` rows.
+
+If you _really_ want to see every row... a loop is your best bet! (It's rare to need this - and better in csv form!!)As you can see, pandas organizes the data in a friendly, familiar, spreadsheet-y way (and there's a lot of data to be organized!)
+
+There are a lot of ways to view and access the data. We will go over some of the basic ones<br>
+
+#### References to explain all of these columns!
++ The last column isn't real data, but a link to additional information. We'll drop it momentarily...
++ This dataset is so large, however, that a reference to its columns may be needed.
++ [This is a link to a plain-text file describing the columns in detail](https://jse.amstat.org/v19n3/decock/DataDocumentation.txt)
++ [This is a link to a Kaggle exploration of this dataset](https://www.kaggle.com/leeclemmer/exploratory-data-analysis-of-housing-in-ames-iowa)
++ For this walkthrough, you may not need these, but - they're here.When accessing data in a data frame, it is usually necessary to know the index of the data you want!
+
+Sometimes default indices are not useful.  As an example, we will re-index our data frame so that we can search for homes by order number!
++ Note that Order number -- the column named 'Order' -- is simply 1 more than the default index
++ So, this is not a huge change
++ However, it means that, if you're a fan of 1-indexed data -- that choice is up to you!  
++ Admission:  &nbsp; Myself, I'm too used to and partial to 0-indexed data to change, generally speaking...<br>
+
+<b><font color="Coral">hw4pr1 (example/task0)</font>:</b>
+
+Imagine that you wanted to find the all the houses in the dataset such that
++ There is a Screen Porch with area more than 100 sq ft.  (Column: 'Screen Porch')  # there are 83
++ There is a pool Porch with area more than 100 sq ft.    (Column: 'Pool Area')     # there are 13; 2 among the 83
++ The Lot Area is greater than 14200 sq. ft.              (Column: 'Pool Area')     # there are 305; 1 among the 2 above
+
+We can "chain" a set of dataframes to find the order number of this house... and all of the data in its row.
++ Below is that result, it's Order #2351 (index #2350)
+
+
+Model your solution to task #1 (next cell) on this!<br>
+
+### <font color="Coral">hw4pr1, task #1</font>
+
+You are working at a real estate company as an underpaid intern.
+Your boss asks you to find the order number of a house that they sold several years ago.
+They give you the following information:
++ The SalePrice was less than $300000
++ The Yr Sold is 2010
++ The Lot Area is greater than 10000
++ The number of "above ground" bedrooms (Bedroom AbvGr) is 3
++ The Month Sold was June (June == 6)
++ The overall quality score was 9 (out of 10)
+
+Find the order number of this house! (and all of the data in its row)
++ HINT: Start by creating a NEW data frame that applies just one of the filters, and continue from there...
++ ALSO: You'll know you have the correct result when you see it...<br>
+<hr>
+<br>## <font color="Coral">Part (b)</font>: &nbsp; Sea-ing the Data with _Seaborn_
+
+There are many great tools like Pandas and Numpy that allow you to easily manipulate data.
+But what's often more important is VISUALIZING the data.
+
+Matplotlib provides a great way to create graphs from data, but the syntax is often very cumbersome.
+
+Seaborn is essentially a "high-level" library that uses matplotlib to make graphs with less required code!
+
+Where does the name "Seaborn" come from? We are open to suggestions...### Let's see an example of my favorite visualization, the <i>heat map</i>!### Let's adapt the heatmap to show an example digit-image!As you can see, seaborn provides a resource for creating informative plots from a dataframe...
+
+## <font color="Coral">hw4pr1, task #2</font>:
+
+#### Your task...
++ Is to check out https://seaborn.pydata.org/examples/index.html - or other Galleries - for more ideas that might strike your interest...
+   + the two examples, below, don't "count" - but they do show the idea
+   + **be sure to include a name and a url to your source for each**
++ Then, create three (or more) additional plots from those galleries.
++ Using their data is 100% ok. This is really curated exploration...
+   + Which is to say, it's _Copy-and-Paste_ (CaP is a very good friend! :-)
++ Other galleries of examples:
+   + matplotlib: https://matplotlib.org/2.0.2/gallery.html  
+   + python graph gallery: https://python-graph-gallery.com/
+
+<br><br>
+
++ <i>Task #3</i>, below, asks you to adapt your choice of visualizations to our other datasets...
+   + ... and at least one dataset of your own.### <font color="Coral">hw4pr1, task #2b</font>:
+
+#### The final visualization-task for this week...
++ is inspired by the examples using the <tt>iris.csv</tt> dataset (both above and below this cell):
++ to **create one visualization from three of these four datasets** :
+  + <tt>births.csv</tt>, the botanical features from ~140 iris flowers
+  + <tt>digits.csv</tt>, the pixel features from ~1700 handwritten digits
+  + <tt>titanic.csv</tt>, the (incomplete) data from passengers on the Titanic
+  + <tt>housing.csv</tt>, the housing dataset used in the Pandas walkthrough
++ **plus, one more visualization from a dataset of your own**
+  + feel free to find and use a .csv you're interested in
+  + or, feel free to use <tt>Pokemon.csv</tt> or <tt>fortune500.csv</tt>, which are also here
+
+We will be using <tt>births</tt>, <tt>iris</tt>, <tt>digits</tt>, and <tt>titanic</tt> to practice the data-modeling workflows and algoithms in the upcoming weeks. _In addition_, you will apply those modeling techniques to your own datasets... .
+
+<br>
+
+<hr>
+
+#### Feel free to create ***fundamental*** plots - line plots, scatter plots, histograms...
+
+Specifically, these plots do not need to be - indeed, _should not_ be - especially complex or intricate
++ Intricate and complex plots are wonderful, but lines, points, and bars are the starting point for most dataset understanding
++ in fact, they're the starting point for most of the intricate, complex plots, as well!
+
+<br>
+
+<hr>#### Example dataset visualization
+
+This one uses the <tt>iris.csv</tt> dataset.
+
+Here, we read the file and preprocess it, as we did above:Let's sort by the **petalwid** column and then plot that!Interesting... It seems that the setosa species have narrow petals, then versicolor, then virginica...
++ with some overlap in the last two...
+
+<br>
+
+<hr>
+
+<br>
+
+Create cells below for your own, _foundational_ data-visualizations:
++ from 2-3 of our four other datasets (<tt>births</tt>, <tt>iris</tt>, <tt>digits</tt>, and <tt>titanic</tt>)
++ and one of your ownAs you can see, seaborn provides a resource for creating informative plots from a dataframe...
+
+Next, we dive into model-building, whose goal is to create predictive/explanatory models from the data.
+
+<br>
+<hr>
+<br>
+
+## <font color="Coral">Part (c)</font>: &nbsp;&nbsp; Model-building!  
+
+#### Linear Regression  &nbsp;&nbsp; hw4pr1, part c
+
++ _Linear Regression_ is sometimes considered the "first" approach to model-building.
++ Indeed, it's fast, and it's powerful.
+
++ A few <font color="DodgerBlue"><b>limitations</b></font> of linear regression:
+  + By default, linear regression predicts _continuous_ variables (features) from other _continuous_ features
+  + For example, you'll see below that we create a Linear Regression model to predict flowers' <tt>sepalwid</tt> from their <tt>petallen</tt>
+  + Also, Linear Regression makes the strong assumption that the input-output relationship is linear...
+    + In practice, this means that doubling the input will double the output (and halving the input will halve the output), after accounting for the average offset
+  + Not every relationship ***is*** linear -- but many are.
+  + Plus, we can always just treat a relationship as linear -- just to see how well or poorly that approximation does!  
+
++ On the whole, linear regression has a lot more positives than negatives!
++ Here are some <font color="Coral"><b>upsides</b></font> of linear regression:
+  + Every modeling library has already implemented it for you! (we will use <tt>scikit-learn</tt>)
+  + It can handle any number of dimensions of input and output.
+    + A one-dimensional regression (one input and one output) is a _line_.
+    + A two-dimensional regression (two inputs and one output) is a _plane_.
+    + <font size="-2">More dimensions are harder to visualize. They're usually called _hyperplanes_. I imagine them as just planes for which you can swap different input features.</font>
+
+<br>
+<hr>
+<br>
+
++ <i>Part (c)</i>, below, asks you to first run this example of linear regression of <tt>sepalwid</tt> vs. <tt>petallen</tt> in the <tt>iris.csv</tt> flower data.
+   + Then, <font color="Coral"><b>adapt this example to at least one dataset of your own</b></font>. &nbsp;&nbsp; <font size="-2">totally optional EC for adding, too, an example with inputs that are 2d or more</font>### Hooray!  Our predictive model is complete!
+
+Let's note that
++ It's really not a very good model.
++ An R-squared value of 0.17 means that
+  + only 17% of the variance in the output <tt>sepalwid</tt> is explained by the input <tt>petallen</tt>
+  + this means that modeling-by-just-using-the-average is almost as good!
+
+To be honest, I was expecting the relationship to be stronger. Because it's so weak,
++ My very naive self takes this as evidence that the petal and sepal are more different - in their biological function - than I'd previously imagined.
+  + <font size="-2">I had figured sepals were just "more petals" ... but <a href="https://www.fs.usda.gov/wildflowers/beauty/iris/flower.shtml#:~:text=The%20petals%20(sometimes%20called%20%E2%80%9Cstandards,The%20iris%20style%20arm.">apparently</a> ... the petals are for structure/support and the sepals are "landing pads" to attract bees to the flower. Ok!</font>
+
+<br>
+<br>
+
+Just for illustration, let's create a "model-by-just-using-the-average" - it's below.
++ Note, that this is not needed for your model. It's good to know it's there!#### A second example:
+
+Let's run the "very first" linear regression ... ?!
+
+This uses the dataset of 1078 heights -- from the 1890's/1900's.How did it do?
++ It worked!
++ The model is compelling, but not particularly strong (R-squared about 0.25)
+  + <font size="-2">This makes sense: &nbsp; height is loosely, but only loosely, correlated with parent height</font>
++ One wonders if the overall average continues to rise. (I suspect so...)
++ Key takeaway: &nbsp; ***regression*** is a historical name, not a helpfully suggestive one, for the process of <i>building a model with floating-point outputs, i.e., continuous outputs</i>
+  + <font size="-2">Very often there's no "regression" to any mean -- or any "regression" to anything at all. Just continuous outputs...</font>### <i>Part (c)</i> &nbsp; Your own regression...
+
+Take it away!  From here,  <font color="Coral"><b>adapt this example to build a linear-regression model for at least one dataset of your own</b></font>:
++ Choose a different dataset than the iris and pearson datasets...
++ Choose any two <i>continuous</i> features -- that is, features with varying numeric values <i>in which their relative values are meaningful</i>
+  + Numeric values that are simply an encoding for different labels are ***not*** continuous features.
++ Be sure to run at least one 1d linear regression.
++ Be sure to create a short markdown cell that reflects on how well/poorly your model does...
+  + What is the R-squared value?
+  + Is it surprising that the linear model does well for your example?
+  + Or would that be something you expected. in your case?
++ <font size="-2"><font color="DodgerBlue">totally optional EC</font> for adding, a second Linear-Regression example with inputs that are two-dimensional or higher</font>The linear agression given by the graph looks very well and so does the perdictions. The two prediction model both gave reasonable predictions.
+
+The prediction based on sales price gave a lower lot area than the prediction based on the average lot area. This could be due to the high density of the data in one area.
+
+In addition, this model has a significantly lower R-squared score than the example model. This suggests a better perdiction for the housing model.
+
+Thus, both predictions did a good job.

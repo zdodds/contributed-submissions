@@ -1,0 +1,59 @@
+### <font color="DodgerBlue">hw5pr1 births modeler</font>
+
+Suggestion:
++ set up this file and the example iris_modeler file side-by-side...
++ for each iris_modeler cell, copy it over..
+   + edit it and make adjustments to suit the births problem (as needed)
+   + run it to make sure it all works!
+
+And, by the end, you'll have experienced the full ML/data modeling workflow (for classification, at least)
++ Running through this workflow by hand is a great way to digest the process...
++ hw5pr2 will ask you to do this again, with the digits
++ hw5ec is for another - optional - example, using your own dataset or, possibly, regression 
+
+### <font color="Coral">Final, _big-picture_ question</font>   
++ Which phenomenon, iris-species or birthday-popularity, is more "modelable"?
++ ... at least, as far as these two datasets are concerned?!
+
+Note that you might want to wait until _after_ modeling the births data to answer this...
+
+<hr>
+
+Below ... after finishing the model-building ... share your thoughts on which (irises/births) is more "modelable" and why ...
+
+<br><br>## Modeling birthdays
+
+Remember: Be sure to **drop** the column with the official birth numbers.
+
+The goal is to model whether a birthday is above-average or below-average in popularity, based on two features: <tt>month</tt> and <tt>day</tt>### Congrats!
+
+You've created a birthday-popularity modeler!
+
+The rest of the hw - and the rest of our ML module - is to run more ML workflows:   
++ for different datasets:  &nbsp; (2) Digits, (ec) your own data, or Titanic, or Housing, or ...
++ and, starting next time, for different algorithms: &nbsp; decision trees and random forests, then nnets, ...
+
+### Remember to answer the "which dataset is more modelable?" question: _births_ or _irises_ ?  
+
+It's here:<br>
+
+### <font color="Coral">Final, _big-picture_ question</font>  
++ Which phenomenon, iris-species or birthday-popularity, is more "modelable"?
++ ... at least, as far as these two datasets are concerned?!
+
+Note that you might want to wait until _after_ modeling the births data to answer this...
+
+<hr>
+
+Here, share your thoughts on which (irises/births) is more "modelable" and why:
+
+<br><br>
+<br><br>iris has accuracy of 27/29 =93%
+
+birthday has accuracy of 61/74 = 82%
+
+seems like iris is more accurate
+
+Theoretically, iris should be more modelable because the input is continuous and the output is categorical
+
+Birthday is just a tad behind because the input is also categorical

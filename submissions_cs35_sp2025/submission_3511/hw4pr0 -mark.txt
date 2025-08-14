@@ -1,0 +1,35 @@
+<br>
+
+#### week4 ~ <i>... and into the data we dive ...</i>  &nbsp;&nbsp; (hw4pr0.ipynb)
+
+<a href="https://docs.google.com/document/d/1OdQ-01Gp7XAk9vbZ61zM3CaTdGsZVWEvZxgu1Z0toSY/edit?tab=t.0">This week's hw page</a>
+
+<hr><br>
+
+#### Reading for hw4...     (hw4pr0.ipynb)
+
+As we transition into AI/Machine Learning for the next few weeks, this week's reading takes a more <u>policy-based</u>, rather than socially-normed, view:
++ it's a NYTimes article from a few years ago -- nice, because it has a definite, wide-angle stance on regulating AI:
++ [How to Regulate Artificial Intelligence](https://www.nytimes.com/2017/09/01/opinion/artificial-intelligence-regulations-rules.html)
++ [locally-hosted pdf copy](https://drive.google.com/file/d/1EZcygQdk40J0dJTZ1vp0F20rIoQU27nH/view)
+
+Consider the author's three proposed principles, which elaborate Isaac Asimov's "laws":
++ AIs must obey human society's laws
++ AIs must disclose themselves as such
++ AIs cannot retain confidential information (w/o permission)
+
+Choose one (or more) of these principles with which to agree or disagree, bringing in your own experience and perspective. 
+
+Alternative paths and balancing acts are, as always, welcome! For example -- this article was written before conversational AI was a reality. Do you feel there are differences in the appropriate principles or guidance for regulating today's AI agents and their authors?
+
+<hr>#### Reading response
+
+(Feel free to use this cell for your response.)In response to the second statement that AI must disclose themselves. I think there are exceptions where an AI should not disclose themselves as such, for example, for a computer science research project.
+
+It seems like many (such as my physics teacher) have noticed that a notable feature of AI writing is their bland style. As such, I am sure one day researchers will want to ask the question of "can an AI develop its own writing style?" To test this theory out, researchers may need a do an advanced Turing test with a version of AI that won't share its identity.
+
+My ultimate concern is not whether or not AI will reach this stage, nor about the negative consequences after reaching this stage. My biggest concern is with the strictness of the principle. Since there exist exceptions, it means that these rules are not absolute. Hence, when should we follow these rules? When can we claim there is a "greater good" on the line so that these rules can be ignored? Perhaps we should view them as ideas or guidelines to keep in mind?
+
+We have the chance to create inteligence, and it is only reasonable that our AIs' morality closely follow its creator's moral code, not the moral code of this NYT author. Nevertheless! I see the good intentions behind these guidelines, but I just think executing them will be dificult and ambiguous at times.
+
+This is very fitting for ethics: debate and grey area everywhere. At the same time, this is what makes discussing it fun innit?
