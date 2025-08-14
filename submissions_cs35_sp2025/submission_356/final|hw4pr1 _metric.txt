@@ -1,0 +1,847 @@
+# #3 install pandas    #  (this worked for me - if it doesn't for you, ask! :)
+
+
+# #3 install seaborn   #  similar
+
+
+# #3 install scikit-learn     # also similar
+
+
+# let's start by exploring library-imports in general
+# note that notebooks are happy to interoperate with plain python files...
+
+# here are the contents of morefun.py:
+"""
+#
+# morefun.py 
+#
+
+def f():
+    return 'returned from f'
+
+def fac():
+    return 'returned from fac'
+"""
+
+# # ordinary library import
+# import morefun
+# print( f"{morefun.f() = }" )
+
+# # renaming library import
+# import morefun as mandatoryfun
+# print( f"{mandatoryfun.fac() = }" )
+
+# # single-function import
+# from morefun import fac
+# print( f"{fac() = }" )
+
+# # single-function renaming import
+# from morefun import fac as funfac   # as f
+# print( f"{funfac() = }" )
+
+# # all-functions import
+# from morefun import *
+# print( f"{f() = }" )          # truly an f string...
+
+# # if a library needs to be reloaded:   # *** if you develop in more than one file, this can be very important! ***
+# import importlib
+# importlib.reload(morefun)
+
+
+# numpy is a python library supporting fast, memory-efficient arrays of data
+# let's try it!
+
+# this is numpy's traditional renaming import
+import numpy as np
+
+
+#
+# our starting numpy examples:
+
+print( f"{ np.arange(1,3,.1) = }\n" )
+print( f"{ np.linspace(1,3,42) = }\n" )   
+print( f"{ np.ones( shape=(4,2) ) = }\n" ) 
+print( f"{ np.zeros( (3, 4) ) = }\n" )     
+
+
+
+# import three random-number-generation functions that create numpy arrays...
+from numpy.random import rand, randn, randint
+
+#
+# here, we show how to convert numpy arrays to/from python lists (and lists-of-lists, etc.)
+#
+r = rand(2,4)                 # uniform from 0 to 1
+print(f"{r = }\n" )
+
+rn = randn(2,4)               # normally (bell-curve) distributed, mean 0, stdev. 1
+print(f"{rn = }\n" )
+
+a = randint(0,10,size=(2,4))  # let's use one-digit values for ease of printing
+print(f"a is\n{a}\n")
+
+l = a.tolist()                # this converts to a python structure!
+print(f"l is\n{l}\n")
+
+a = np.asarray(l)             # and back to a numpy array...
+print(f"a is\n{a}\n")
+
+# notice the slight differences in printing: python uses commas, numpy does not
+
+
+print(f"{a = }\n")
+
+
+
+# in-class "screenshot challenge" example
+
+# python functions (range) and list comprehensions are still available...
+
+l = [ list(range(low,low+6)) for low in range(0,60,10) ]     # low runs over [0,10,20,30,40,50]
+
+a = np.asarray(l)        # convert to a numpy array
+
+print(f"a.shape is {a.shape}\n")   # (nrows, ncols)    symmetry hiding the difference here...
+
+print(f"a is\n{a}\n")
+
+
+
+a[1:3,0:2]   # showing off 2-dimensional slicing!
+
+
+l = [5,6,7,8,9]
+print("slice is", l[0:2])  # [0:200]
+
+
+
+# let's continue by importing the pandas library
+import pandas as pd   # abbreviated "pd"
+
+
+# we will import the data as a dataframe called "zillow"
+zillow = pd.read_csv('./housing.csv')
+
+
+# let's see what our dataframe looks like
+
+
+
+# we can view all of the columns available
+zillow.columns
+
+
+# that last "column" is not really a column, let's drop it:
+row = 0    # this is one of the constants for defining which axis is which
+column=1   # this is another such constant
+zillow2 = zillow.drop(zillow.columns[-1], axis=column)   # more readable than axis=1
+
+
+
+zillow2.columns
+
+
+# let's rename zillow
+zillow = zillow2     # this is without that url-column
+
+
+# we can access a column by inputting its name in brackets like so (a single column is, officially, a "series")
+zillow['saleprice']
+
+
+# we can access a single value by using its index
+zillow['saleprice'][2]
+
+
+# we even slice the column, as with a python list...
+zillow['saleprice'][0:3]
+
+
+# we can use zillow.loc[n] to locate a house (one row) by its index number n (0-2929)
+zillow.loc[0]
+
+
+# a common pandas pattern is to create a series of trues and falses
+zillow['saleprice'] == 172000
+
+# note that this applies the conditional to each of the elements of the the series, zillow['saleprice']
+
+
+# this series of booleans can be used to "subset" a data frame
+
+# this command locates all of the houses whose sale prices are $172000
+zillow.loc[ zillow['saleprice'] == 172000 ]
+
+
+#
+# this gives us access to a much smaller subset...
+houses_for_172k = zillow.loc[ zillow['saleprice'] == 172000 ]
+print(f"the len of houses_for_172k is {len(houses_for_172k)}")
+
+
+# other boolean conditions are also welcome...
+
+# this command locates all of the houses whose sale prices are < $172000
+houses_under_172k = zillow.loc[ zillow['saleprice'] < 172000 ]
+print(f"the len of houses_under_172k is {len(houses_under_172k)}")
+
+
+# by default, loc[] extracts all columns of information
+# we can pass specific columns we want to view (as a list if there are more than 1)
+
+target_info = zillow.loc[zillow['saleprice'] == 172000, ['saleprice','central air', 'full bath']]
+target_info
+
+
+# let's see the series of data that is zillow's 'order' column:
+zillow['order']
+
+
+# we can use zillow.set_index(column) to set a given column as our indices insetad of 0-2929!
+# setting the 'inplace' parameter as true causes the existing data frame to change when we call set_index (insetad of creating a new data frame)
+# setting the 'drop' parameter as false keeps the original column in the data frame (instead of deleting it)
+zillow_one = zillow.set_index('order', drop=false)   # inplace = true  (if we want to replace the original)
+zillow_one
+
+
+# now we can use loc[] to find search for homes by order number
+zillow_one.loc[2930]
+
+# and you can make the index whatever you want!
+
+
+z1 = zillow.loc[zillow['screen porch']>100]
+z2 = z1.loc[z1['pool area']>100]
+z3 = z2.loc[z2['lot area']>14200]
+
+#pool area (continuous): pool area in square feet
+
+
+# here is a cell to work on hw4pr1 task #1
+z1 = zillow.loc[zillow['saleprice']<300000]
+z2 = z1.loc[z1['yr sold'] == 2010]
+z3 = z2.loc[z2['lot area'] > 10000]
+z4 = z3.loc[z3['bedroom abvgr'] == 3]
+z5 = z4.loc[z4['mo sold'] == 6]
+z6 = z5.loc[z5['overall qual'] == 9]
+
+
+
+# we will need data in order to make graphs! we will use pandas
+import pandas as pd
+
+# matplotlib is an essential whenever we are making graphs! 
+# seaborn is simply a shortcut for using matplotlib!
+import matplotlib.pyplot as plt
+
+# import seaborn!
+import seaborn as sns
+
+
+# next, we import import our dataframe using pandas
+iris_orig = pd.read_csv('./iris.csv')
+iris_orig
+
+
+# we can drop a series of data (a row or a column)
+# they're indicated by numeric value, row~0, col~1, but let's use readable names instead:
+row = 0
+column = 1
+
+iris2 = iris_orig.drop('adapted from https://en.wikipedia.org/wiki/iris_flower_data_set', axis=column)
+
+# iris2 is a new dataframe, without that unwanted column,
+# which had really just been a single element taking up a whole column...
+
+
+
+# those last two rows look suspicious...
+iris3 = iris2.drop(142, axis=row)
+iris4 = iris3.drop(141, axis=row)
+iris = iris4
+iris                 # our final dataframe-name
+
+
+# to illustrate the beauty of data visualization...
+# let's start with perhaps the most powerful type of plot applicable to this data set: a pair plot
+
+# the power of seaborn: one-line code
+pairplot = sns.pairplot(data=iris, hue='irisname')
+# making graphs has never been easier!
+
+# unpacking this...
+# pairplot() is the function that - you guessed it - makes the pairplot
+# 'data' is ... where the data comes from (our pandas data frame)
+# 'hue' colors the dots based on values in the designated ('species') column in the data frame
+
+# what on earth is a pair plot?
+# a scatter plot compares two values (i.e. length and width) 
+# a pair plot simply creates a scatter plot of every possible pair of values
+# you can see which values are being compared by looking at the labels!
+# the diagonal plots however are simply the distribution of a single value (a 'univariate' distribution)
+
+# why did we name the plot?
+# without a name, an not-very-informative storage location (?) gets printed at the top of the graph...
+
+
+# now we know how striking seaborn and data visualization can be
+# let's explore the relationship between petal length and petal width using a single scatter plot
+
+scatterplot = sns.scatterplot(x='petallen', y='petalwid', data=iris, hue='irisname')
+
+# unpacking this...
+# scatterplot() is the function that - you guessed it - makes the scatterplot
+# 'x' is ... the data for the x axis
+# 'y' is ... the data for the y axis
+
+# can you find this graph in the pair plot?
+
+
+# we see that there may be some kind of linear relationship between these variables!
+# we can use a lmplot (linear model) to add regression lines to the data
+
+lmplot = sns.lmplot(x='petallen', y='petalwid', data=iris)
+
+# if you add the 'hue' parameter, the data will become separated by species and you can view the best-fit line for each species
+
+
+# let's try something else now...
+# which flowers have the longest petals?
+# you could create something like a dot plot or a box plot, but let's try a more musical approach:
+
+violinplot = sns.violinplot(x='irisname', y='petallen', data=iris, inner='stick')
+
+# unpacking this...
+# 'inner' draws a stick for each data point
+# notice that the plots get wider in areas with more sticks!
+
+# a violin plot is very similar to a box-and-whiskers plot, but has more detail (and is much cooler)
+
+
+import matplotlib.pyplot as plt
+import seaborn as sns
+sns.set_theme()
+
+# load the example flights dataset and convert to cs35_participant_2-form
+flights_long = sns.load_dataset("flights")
+flights = (
+    flights_long
+    .pivot(index="month", columns="year", values="passengers")
+)
+
+# draw a heatmap with the numeric values in each cell
+f, ax = plt.subplots(figsize=(9, 6))
+sns.heatmap(flights, annot=true, fmt="d", linewidths=.5, ax=ax)
+
+
+import matplotlib.pyplot as plt
+import seaborn as sns
+import pandas as pd
+import numpy as np
+sns.set_theme()
+
+# load the example flights dataset and convert to cs35_participant_2-form
+digits_orig = pd.read_csv('./digits.csv')
+list_of_column_names = digits_orig.columns
+
+row = 0
+column = 1
+digits2 = digits_orig.drop( list_of_column_names[-1], axis=column)  # drop the rightmost column - it's just a url!
+digitsa = digits2.values  # get a numpy array (digitsa) from the dataframe (digits2)
+
+row_to_show = 440   # choose the digit (row) you want to show...
+
+pixels_as_row = digitsa[row_to_show,0:64]
+print("pixels as 1d numpy array (row):\n", pixels_as_row)
+
+pixels_as_image = np.reshape(pixels_as_row, (8,8))   # reshape into a 2d 8x8 array (image)
+print("\npixels as 2d numpy array (image):\n", pixels_as_image)
+
+# create the figure, f, and the axes, ax:
+f, ax = plt.subplots(figsize=(9, 6))
+
+# colormap choice! fun!   www.practicalpythonfordatascience.com/ap_seaborn_palette or seaborn.pydata.org/tutorial/color_palettes.html
+our_colormap = sns.color_palette("light:b", as_cmap=true)  
+
+# draw a heatmap with the numeric values in each cell (make annot=false to remove the values)
+sns.heatmap(pixels_as_image, annot=true, fmt="d", linewidths=.5, ax=ax, cmap=our_colormap)
+
+
+
+import seaborn as sns
+sns.set_theme(style="whitegrid")
+
+penguins = sns.load_dataset("penguins")
+
+# draw a nested barplot by species and sex
+g = sns.catplot(
+    data=penguins, kind="bar",
+    x="species", y="body_mass_g", hue="sex",
+    errorbar="sd", palette="dark", alpha=.6, height=6
+)
+g.despine(left=true)
+g.set_axis_labels("", "body mass (g)")
+g.legend.set_title("")
+
+
+# you will want at least three additional visualizations here...  # here's a spot for the second...
+
+# 1. lineplot, timeseries plot with error bands
+# url: https://seaborn.pydata.org/examples/errorband_lineplots.html
+
+import seaborn as sns
+sns.set_theme(style="darkgrid")
+
+# load an example dataset with cs35_participant_2-form data
+fmri = sns.load_dataset("fmri")
+
+# plot the responses for different events and regions
+sns.lineplot(x="timepoint", y="signal",
+             hue="region", style="event",
+             data=fmri)
+
+
+# 2. displot, facetting histograms by subsets of data
+# url: https://seaborn.pydata.org/examples/faceted_histogram.html
+
+import seaborn as sns
+
+sns.set_theme(style="darkgrid")
+df = sns.load_dataset("penguins")
+sns.displot(
+    df, x="flipper_length_mm", col="species", row="sex",
+    binwidth=3, height=3, facet_kws=dict(margin_titles=true),
+)
+
+
+# 3. boxplot, grouped boxplots
+# url: https://seaborn.pydata.org/examples/grouped_boxplot.html
+
+import seaborn as sns
+sns.set_theme(style="ticks", palette="pastel")
+
+# load the example tips dataset
+tips = sns.load_dataset("tips")
+
+# draw a nested boxplot to show bills by day and time
+sns.boxplot(x="day", y="total_bill",
+            hue="smoker", palette=["m", "g"],
+            data=tips)
+sns.despine(offset=10, trim=true)
+
+
+# restarting the kernel... (i'm not sure why this is here. -zd)
+
+# from ipython.core.display import html
+# html("<script>jupyter.notebook.kernel.restart()</script>")
+
+
+#
+# the ribbon box example from 
+#     https://matplotlib.org/stable/gallery/misc/demo_ribbon_box.html
+#
+
+import numpy as np
+
+from matplotlib import cbook, colors as mcolors
+from matplotlib.image import axesimage
+import matplotlib.pyplot as plt
+from matplotlib.transforms import bbox, transformedbbox, bboxtransformto
+
+
+class ribbonbox:
+
+    original_image = plt.imread(
+        cbook.get_sample_data("minduka_present_blue_pack.png"))
+    cut_location = 70
+    b_and_h = original_image[:, :, 2:3]
+    color = original_image[:, :, 2:3] - original_image[:, :, 0:1]
+    alpha = original_image[:, :, 3:4]
+    nx = original_image.shape[1]
+
+    def __init__(self, color):
+        rgb = mcolors.to_rgb(color)
+        self.im = np.dstack(
+            [self.b_and_h - self.color * (1 - np.array(rgb)), self.alpha])
+
+    def get_stretched_image(self, stretch_factor):
+        stretch_factor = max(stretch_factor, 1)
+        ny, nx, nch = self.im.shape
+        ny2 = int(ny*stretch_factor)
+        return np.vstack(
+            [self.im[:self.cut_location],
+             np.broadcast_to(
+                 self.im[self.cut_location], (ny2 - ny, nx, nch)),
+             self.im[self.cut_location:]])
+
+
+class ribbonboximage(axesimage):
+    zorder = 1
+
+    def __init__(self, ax, bbox, color, *, extent=(0, 1, 0, 1), **kwargs):
+        super().__init__(ax, extent=extent, **kwargs)
+        self._bbox = bbox
+        self._ribbonbox = ribbonbox(color)
+        self.set_transform(bboxtransformto(bbox))
+
+    def draw(self, renderer, *args, **kwargs):
+        stretch_factor = self._bbox.height / self._bbox.width
+
+        ny = int(stretch_factor*self._ribbonbox.nx)
+        if self.get_array() is none or self.get_array().shape[0] != ny:
+            arr = self._ribbonbox.get_stretched_image(stretch_factor)
+            self.set_array(arr)
+
+        super().draw(renderer, *args, **kwargs)
+
+
+def main():
+    fig, ax = plt.subplots()
+
+    years = np.arange(2004, 2009)
+    heights = [7900, 8100, 7900, 6900, 2800]
+    box_colors = [
+        (0.8, 0.2, 0.2),
+        (0.2, 0.8, 0.2),
+        (0.2, 0.2, 0.8),
+        (0.7, 0.5, 0.8),
+        (0.3, 0.8, 0.7),
+    ]
+
+    for year, h, bc in zip(years, heights, box_colors):
+        bbox0 = bbox.from_extents(year - 0.4, 0., year + 0.4, h)
+        bbox = transformedbbox(bbox0, ax.transdata)
+        ax.add_artist(ribbonboximage(ax, bbox, bc, interpolation="bicubic"))
+        ax.annotate(str(h), (year, h), va="bottom", ha="center")
+
+    ax.set_xlim(years[0] - 0.5, years[-1] + 0.5)
+    ax.set_ylim(0, 10000)
+
+    background_gradient = np.zeros((2, 2, 4))
+    background_gradient[:, :, :3] = [1, 1, 0]
+    background_gradient[:, :, 3] = [[0.1, 0.3], [0.3, 0.5]]  # alpha channel
+    ax.imshow(background_gradient, interpolation="bicubic", zorder=0.1,
+              extent=(0, 1, 0, 1), transform=ax.transaxes, aspect="auto")
+
+    plt.show()
+
+
+main()
+
+
+# we import import our dataframe from a csv, using pandas
+iris_orig = pd.read_csv('./iris.csv')
+# iris_orig
+
+row = 0
+column = 1
+
+iris2 = iris_orig.drop('adapted from https://en.wikipedia.org/wiki/iris_flower_data_set', axis=column)
+# iris2
+
+# those last two rows look suspicious...
+iris3 = iris2.drop(142, axis=row)
+iris4 = iris3.drop(141, axis=row)
+iris = iris4
+iris                 # our final dataframe-name
+
+
+iris_sorted = iris.sort_values(by=['petalwid'])
+iris_sorted
+
+
+#
+# let's create a new column with integer values from 0 to the length of the dataframe:
+
+iris_sorted['x_value'] = np.arange(0,len(iris_sorted))   # this is like an "index," but it's just values
+iris_sorted
+
+
+#
+# now, let's plot the petalwidths against their location in the sorted list:
+
+import seaborn as sns
+sns.set_theme(style="darkgrid")
+
+# plot the responses for different events and regions
+sns.lineplot(x="x_value",y="petalwid", hue="irisname", data=iris_sorted)
+
+
+# collaborated with haven qin
+# feel free to make as many cells as you'd like here...
+
+# be sure to include the graphs in your submission!
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+import numpy as np
+
+# we import import our dataframe from a csv, using pandas
+births_orig = pd.read_csv('./births.csv')
+
+row = 0
+column = 1
+
+births2 = births_orig.drop('from http://chmullig.com/2012/06/births-by-day-of-year/', axis=column)
+
+sns.set_theme(style="whitegrid")
+
+# plot the responses for different events and regions
+sns.barplot(x="month",y="births", hue="above/below median", data=births2)
+
+
+# be sure to include the graphs in your submission!
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+import numpy as np
+
+# we import import our dataframe from a csv, using pandas
+titanic_orig = pd.read_csv('./titanic.csv')
+
+row = 0
+column = 1
+
+titanic2 = titanic_orig.drop('the original kaggle dataset!   adapted from here:   https://www.kaggle.com/c/titanic', axis=column)
+
+sns.set_theme(style="whitegrid")
+
+# plot the responses for different events and regions
+sns.barplot(x="pclass",y="survived", hue="sex", data=titanic2)
+plt.ylabel('percentage survived')
+
+
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+import numpy as np
+
+housing_orig = pd.read_csv('./housing.csv')
+h1 = housing_orig.drop('how many datasets have journal papers? this one does!  http://jse.amstat.org/v19n3/decock.pdf', axis=1)
+
+plt.figure(figsize=(15, 8))
+
+# create a box plot with swarm overlay
+sns.boxplot(data=h1, x='overall qual', y='saleprice', color='lightblue')
+sns.swarmplot(data=h1, x='overall qual', y='saleprice', size=4, alpha=0.5, color='navy')
+
+# customize the plot
+plt.title('house prices by overall quality rating', fontsize=14)
+plt.xlabel('overall quality (1-10 scale)', fontsize=12)
+plt.ylabel('sale price ($)', fontsize=12)
+
+# format y-axis to show prices in thousands
+plt.gca().yaxis.set_major_formatter(plt.funcformatter(lambda x, p: f'${x:,.0f}'))
+
+# add a grid for better readability
+plt.grid(true, alpha=0.3)
+
+plt.tight_layout()
+plt.show()
+
+
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+import numpy as np
+
+# we import import our dataframe from a csv, using pandas
+pokemon_orig = pd.read_csv('./pokemon.csv',encoding='latin1')
+
+row = 0
+column = 1
+
+pokemon2 = pokemon_orig.drop('#', axis=column)
+
+sns.set_theme(style="whitegrid")
+
+# plot the responses for different events and regions
+sns.barplot(x="legendary",y="total", hue="type 1", data=pokemon2)
+
+
+# load the iris data from iris_cleaned.csv
+import pandas as pd
+iris_df = pd.read_csv('iris_cleaned.csv')   # this is a dataframe
+
+
+
+iris_df
+
+
+# loop over all rows -- easier than trying to change how pandas displays the summary
+for row in iris_df.iterrows():
+    print(row)
+
+
+
+# create a linear regression model
+from sklearn.linear_model import linearregression
+
+# create and fit the model
+model = linearregression()
+x = iris_df[['petallen']].values  # input feature as 2d array
+y = iris_df['sepalwid'].values    # target variable as 1d array
+model.fit(x, y)
+
+# make predictions using the model
+y_pred = model.predict(x)
+
+# plot the results
+plt.figure(figsize=(8, 6))
+plt.scatter(x, y, color='blue', label='actual data')
+plt.plot(x, y_pred, color='red', label='linear regression')
+plt.xlabel('petal length')
+plt.ylabel('sepal width') 
+plt.title('linear regression: sepal width vs petal length')
+plt.legend()
+plt.show()
+
+# print the model coefficients
+print(f"slope: {model.coef_[0]:.4f}")
+print(f"intercept: {model.intercept_:.4f}")
+
+
+
+# calculate r-squared score
+r2_score = model.score(x, y)
+print(f"r-squared score: {r2_score:.4f}")
+
+
+
+def predict_sepal_width(petal_length):
+    """
+    predicts sepal width based on petal length using the trained linear regression model
+    
+    args:
+        petal_length (float): the petal length value to make prediction for
+        
+    returns:
+        float: predicted sepal width value
+    """
+    # reshape input to 2d array with 1 sample, 1 feature 
+    x_new = [[petal_length]]
+    
+    # use model to make prediction
+    prediction = model.predict(x_new)
+    
+    # return the predicted value
+    return prediction[0]
+
+# test the function with a sample value
+test_petal_length = 2.5
+predicted_width = predict_sepal_width(test_petal_length)
+print(f"for a petal length of {test_petal_length}, predicted sepal width is {predicted_width:.2f}")
+
+
+
+def predict_sepal_width_via_avg(petal_length=4.2):
+    """
+    predicts sepal width by simply returning the average sepal width,
+    ignoring the input petal length
+    
+    args:
+        petal_length (float): the petal length value (ignored)
+        
+    returns:
+        float: average sepal width value
+    """
+    # calculate average sepal width from training data
+    avg_sepal_width = iris_df['sepalwid'].mean()
+    
+    # return the average, regardless of input
+    return avg_sepal_width
+
+# test the function with same sample value
+test_petal_length = 2.5
+predicted_width_avg = predict_sepal_width_via_avg(test_petal_length)
+print(f"for a petal length of {test_petal_length}, predicted sepal width (using average) is {predicted_width_avg:.2f}")
+
+
+
+# let's run a linear regression on the pearson dataset
+
+import pandas as pd
+pearson_df = pd.read_csv('./pearson_dataset.csv')
+pearson_df
+
+
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# create scatter plot of heights data
+plt.figure(figsize=(10,6))
+sns.scatterplot(data=pearson_df, x='sheight', y='fheight', alpha=0.5)
+
+# fit linear regression
+from sklearn.linear_model import linearregression
+x = pearson_df[['sheight']].values
+y = pearson_df['fheight'].values
+reg = linearregression().fit(x, y)
+
+# plot regression line
+plt.plot(x, reg.predict(x), color='red', linewidth=2)
+
+plt.title('father vs son heights with linear regression')
+plt.xlabel('son height (inches)')
+plt.ylabel('father height (inches)')
+
+# calculate and print r-squared, slope and intercept
+r2 = reg.score(x, y)
+slope = reg.coef_[0]
+intercept = reg.intercept_
+
+print(f"r-squared: {r2:.4f}")
+print(f"slope: {slope:.4f}")
+print(f"intercept: {intercept:.4f}")
+
+
+# collaborated with haven qin
+# feel free to use these and additional cells...
+
+house_df = pd.read_csv('housing.csv')
+house_df = house_df.drop('how many datasets have journal papers? this one does!  http://jse.amstat.org/v19n3/decock.pdf', axis=1)
+# create a linear regression model
+from sklearn.linear_model import linearregression
+
+# create and fit the model
+model = linearregression()
+x = house_df[['lot area']].values  # input feature as 2d array
+y = house_df['saleprice'].values    # target variable as 1d array
+model.fit(x, y)
+
+# make predictions using the model
+y_pred = model.predict(x)
+
+# plot the results
+plt.figure(figsize=(8, 6))
+plt.scatter(x, y, color='blue', label='lot area')
+plt.plot(x, y_pred, color='red', label='linear regression')
+plt.xlabel('lot area')
+plt.ylabel('sale price') 
+plt.title('linear regression: lot area vs sale price')
+plt.legend()
+plt.show()
+
+# print the model coefficients
+print(f"slope: {model.coef_[0]:.4f}")
+print(f"intercept: {model.intercept_:.4f}")
+
+r2_score = model.score(x, y)
+print(f"r-squared score: {r2_score:.4f}")
+
+def predict_sale_price(lot_area):
+        # reshape input to 2d array with 1 sample, 1 feature 
+    x_new = [[lot_area]]
+    
+    # use model to make prediction
+    prediction = model.predict(x_new)
+    
+    # return the predicted value
+    return prediction[0]
+
+# test the function with a sample value
+test_lot_area = 8500
+predicted_price = predict_sale_price(test_lot_area)
+print(f"for a lot area of {test_lot_area}, predicted sale price is {predicted_price:.2f}")
+
+

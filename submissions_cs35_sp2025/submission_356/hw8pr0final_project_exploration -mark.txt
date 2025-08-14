@@ -1,0 +1,55 @@
+<br>
+
+## Final project preliminaries
+
+<font color="Teal"><b>Exploring how much an idea "pushes back" - including its technologies, libraries, and online resources ...</b></font>
+
+<br>
+
+#### Here are the  [cs35 project guidelines](https://docs.google.com/document/d/1DwoOJCy6GGECvzSOE4BDPVcEgVtvChglnz03-uxx7mA/edit)  with more details.
+
+And here is the [Colab version](https://colab.research.google.com/drive/1kASM8K0vqu40S5xjBS-hXf-bIDcQPZtz#scrollTo=1gAMoA_KN5L0) of this notebook. If Colab works better for your project, wonderful!
+
+<br>
+#### **What you've tried**
++ What are the things you've tried <b><u>so far</u></b> - and how has it gone?  
+  + This is the most important effort!  
+  + <b>Note</b>: If you have _lots_ of ideas and can't decide... look for online guides or walkthroughs for several of them and see which are most promising (and interesting!)
+  + include, here in the Python cells above/below, the explorations and/or experiments you've pursued
+  + if you're using plain-python files or other notebook files, submit those, in addition or instead
+    + <font size="-2">if you submit other files instead, include these reflections in the files you submit...</font>
+  + include any other <i>small</i> data files/links/resources you've collected
+
+<br>
+<br>#### **Your Project Plan,** <font size="-1">as of this moment...</font>
+
++ <b><font color="DodgerBlue">Share</font></b> a paragraph or so on your project exploration so far -- and your summer of the idea/plan + its background
+  + This is intentionally ***progress-first***
+  + **Try things out** before dedicating too much to a single, specific path...
++ <b><font color="Coral">Share</font></b>: &nbsp; What resources/libraries/walkthroughs have you found?
++ <b><font color="Coral">Share</font></b>: &nbsp; What datasets are you using? <font size="-1">if applicable for your project</font>
+
+<br>
+<br>#### **Looking ahead**
++ Specifically, what task do you plan to try <b><u>next</u></b>?
++ More generally, how do you plan to go _beyond_ existing resources...
+  + If it's not shared above, describe how you envision _personalizing_ and/or _individualizing_ your project...<br><br>
+<hr>
+<br><br>
+
+Feel free to use this notebook to summarize your prelimiaries so far ...
+
+<br>
+
+... ***or*** &nbsp;&nbsp; include your responses to these questions in other  notebooks or plain-python files!
+
+<br><br>
+<hr>
+<br><br>Ideas
+1. Predicting the price of wine using ML models. Kaggle has a dataset on wine quality. This seems like an ok and doable project. 
+
+2. Predicting whether an artist will have many records or stay a one-hit wonder using ML models. Unsure what datapoints there are available for music features e.g. bpm.
+
+3. Comparing travel options (flights from different airports + ride to/from airport) using API hops. Inspired by ISS_distance from week2 or using maps to calculate home to each airport being considered, then predicting the price of rideshare rides or calculating the cost of gas for the trip to the airport, adding that to the cost of the flights to inform user which flight to take. This is particularly meant for cost minimization, but of course time is also of the essence. E.g. Travelling from Claremont to LAX for a cheaper flight or CMC to ONT for a more expensive flight- Ubers to and from LAX are costly so will see if that ride+flight trip is <i>really</i> cheaper overall. Time commitment is definitely a no go for LAX vs ONT from Claremont. 
+
+I'm most interested in #3. Few things that need to be checked: can we use google flights API, public APIs to calculate distance, does uber/lyft have an API for their pricing (probably not).

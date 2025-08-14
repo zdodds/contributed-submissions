@@ -1,0 +1,41 @@
+#### week2 ~ the-web-as-our-filesystem: <i>to scrape or not to scrape</i> ?
+
+[the google doc with hw2's details](https://docs.google.com/document/d/1z4HwpUL1-ImGX3j-6bddyZAfdv2SkRQHRNhF5Cu3Fkk/edit?tab=t.0)
+
+<hr>#### Reading for hw2...     (hw2pr0.ipynb)
+
+
+<br>
+Problem 0:      <i><b>(When)  Is webscraping legal and/or ethical?     [10 pts]</b></i>
+
+This week's reading includes 1++ short articles:
++ The first article  is entitled, [Is Web Scraping Ethical](https://scrapeops.io/web-scraping-playbook/ethics-of-web-scraping/) by ScrapeOps.io (they're not impartial: they're a webscraping-tools company!)
+
+<br>
+
++ The "+" article is Meta's [Facebook Terms of Service](https://www.facebook.com/terms.php).  (Perhaps this should be the "+1" article?)
+  + We're definitely _not_ asking you to read the whole Facebook/Meta ToS!  Rather, find your way to Section 3, Subsection 2 ***"What you can share and do on Meta."***   It's relatively short: it's one "screenful." 
+  + The one sub-sub-section to consider especially carefully is 3.2.3.
+
+<br>
+
++ In addition, we share this _flowchart_ of webscraping, from [this article by Sophie Chou of the MIT Media Lab and Pro Publica](https://www.storybench.org/to-scrape-or-not-to-scrape-the-technical-and-ethical-challenges-of-collecting-data-off-the-web/) (you need not read the article - if you do open it, notice the first line of the <i>above-the-fold</i> Python script!)
+
+<br>
+
+<img src="https://www.storybench.org/wp-content/uploads/2016/04/flowchart_final.jpeg" height="500px">
+
+<br>
+Then, in response to these resources, reflect on any <u>one of these three prompts</u>:   
++ (**Prompt A**) Look over Sophie Chiu's "Should you scrape?" flowchart. Find one decision node that you particularly agree -- or disagree -- with and elaborate on why. (Feel free to note whether you feel this hw adheres to the chart!)  
++ (**Prompt B**) At the end of the first article there is a set of "Principles for Responsible Scraping" Looking that over, find one principle you particularly agree -- or disagree -- with and elaborate on why.  
++ (**Prompt C**) Having read some of Facebook's ToS, consider its stated requirement "You may not access or collect data from our Products using automated means..."  Elaborate on what you think "automated means" includes -- and doesn't include.   
+
+<br>
+
+As with each week's reading, responses should be carefully considered, but need not be very CS35_Participant_2 (~5 or so sentences is wonderful).  
+
+<hr>#### Reading response
+
+"I will respect your copyright, and not pass off your content as my own."
+I agree with this statement, which directly speaks into the ethics of web scraping and ownership. Similar to the AI credit blame asymmetry, I believe that whether the act of web scraping is ethical or not is left at human judgment call. That is, if a knowledgeable web scraper is confidently willing and able to be transparent about using a web scraper in producing their work, the act is likely to be ethical. Like many things made illegal, restricting web scraping will only make it a bad practice. Given the verdict that web scraping is now a fact of life, website owners (and whoever authority is responsible for the modern internet!) might instead instill responsible web scraping and accountability, ultimately making it safe, making it knowledge to know the repurcussion cost simparts on experience etc.  What if all website owners were required to enable or at the very least consider exposing a public API (Principals for a Ethical Website Owner)? Of course, privacy concerns are another issue. 

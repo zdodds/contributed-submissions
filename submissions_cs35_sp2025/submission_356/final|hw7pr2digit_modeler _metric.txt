@@ -1,0 +1,482 @@
+import numpy as np      # numpy is python's "array" library
+import pandas as pd     # pandas is python's "data" library ("dataframe" == spreadsheet)
+import matplotlib.pyplot as plt
+
+
+filename = 'digits_cleaned.csv'
+df_tidy = pd.read_csv(filename)      # encoding = "utf-8", "latin1"
+print(f"{filename} : file read into a pandas dataframe.")
+
+
+print(f"df_tidy.shape is {df_tidy.shape}\n")
+df_tidy.info()
+df_tidy.head()
+
+
+df_tidy_cat = pd.get_dummies(data=df_tidy, prefix="is", columns=['actual_digit'])
+print(df_tidy_cat.head())
+
+
+df_model1 = df_tidy_cat.copy()
+df_model1.head()
+
+
+columns = df_model1.columns          
+print(f"columns is {columns}\n")  
+
+
+col_index = {}
+for i, name in enumerate(columns):
+    col_index[name] = i  
+print(f"col_index is {col_index}\n\n")
+
+
+digits = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']   # int to str
+digits_index = {'0':0, '1':1, '2':2, '3':3, '4':4, '5':5, '6':6, '7':7, '8':8, '9':9}  # str to int
+
+
+
+for name in digits:
+    print(f"digit {name} maps to {digits_index[name]}")
+
+
+a = df_model1.to_numpy()   
+a = a.astype('float64')
+print("\nfirst few rows of array a:")
+print(a[:5,:])
+
+
+num_rows, num_cols = a.shape
+print(f"\nthe dataset has {num_rows} rows and {num_cols} cols")
+
+
+n = 42  
+print(f"digit #{n} is {a[n]}")
+
+
+pixel_cols = [col for col in col_index.keys() if col.startswith('pix')]
+label_cols = [col for col in col_index.keys() if col.startswith('is_')]
+
+
+pixel_indices = [col_index[col] for col in pixel_cols]
+label_indices = [col_index[col] for col in label_cols]
+
+
+x_all = a[:, pixel_indices]   
+y_all = a[:, label_indices]   
+
+print(f"y_all (just the labels/digits, first few rows) are \n {y_all[0:5]}")
+print()
+print(f"x_all (just the features, first few rows) are \n {x_all[0:5]}")
+
+
+indices = np.random.permutation(len(y_all))  # indices is a permutation-list
+x_all = x_all[indices]              # apply the same permutation to each
+y_all = y_all[indices]              # again...
+
+print(f"the scrambled labels/digits are \n {y_all[0:5]}")
+print()
+print(f"the corresponding data rows are \n {x_all[0:5]}")
+
+
+
+from sklearn.model_selection import train_test_split
+x_train, x_test, y_train, y_test = train_test_split(x_all, y_all, test_size=0.2)
+
+print(f"training with {len(y_train)} rows;  testing with {len(y_test)} rows\n")
+print(f"+++ testing +++   held-out data... (testing data: {len(y_test)})\n")
+print(f"y_test: {y_test[0:5,:]}\n")
+print(f"x_test (few rows): {x_test[0:5,:]}")
+print("\n")
+print(f"+++ training +++   data used for modeling... (training data: {len(y_train)})\n")
+print(f"y_train: {y_train[0:5,:]}\n")
+print(f"x_train (few rows): {x_train[0:5,:]}")
+
+
+from sklearn.preprocessing import standardscaler
+
+use_scaler = true
+
+if use_scaler == true:
+    scaler = standardscaler()
+    scaler.fit(x_train)
+else:
+    scaler = standardscaler(copy=true, with_mean=false, with_std=false)
+    scaler.fit(x_train)
+
+x_train_scaled = scaler.transform(x_train)
+x_test_scaled = scaler.transform(x_test)
+
+y_train_scaled = y_train.copy()
+y_test_scaled = y_test.copy()
+
+
+
+def ascii_table(x, y, scaler_to_invert=none):
+    """ print a table of inputs and outputs """
+    np.set_printoptions(precision=2)  # let's use less precision
+    if scaler_to_invert == none:  # don't use the scaler
+        x = x
+    else:
+        x = scaler_to_invert.inverse_transform(x)
+    print(f"{'input ':>58s} -> {'pred':^7s} {'des':<5s}")
+    for i in range(min(5, len(y))):  # show only first 5 to avoid large output
+        print(f"{str(x[i,0:5]):>58s} -> {'?':^7s} {str(y[i][0:3]):<21s}")
+    print()
+
+
+ascii_table(x_train_scaled[0:5,:], y_train_scaled[0:5], none)
+ascii_table(x_train_scaled[0:5,:], y_train_scaled[0:5], scaler_to_invert=scaler)
+
+
+from sklearn.neural_network import mlpclassifier
+
+
+nn_classifier = mlpclassifier(hidden_layer_sizes=(32, 16),  
+                    max_iter=500,
+                    verbose=true,
+                    shuffle=true,
+                    random_state=42,
+                    learning_rate_init=.05,
+                    learning_rate='adaptive')
+
+
+
+print("\n\n++++++++++  training:  begin  +++++++++++++++\n\n")
+nn_classifier.fit(x_train_scaled, y_train_scaled)
+print("\n++++++++++  training:   end  +++++++++++++++")
+print(f"the analog prediction error (the loss) is {nn_classifier.loss_}")
+
+
+def get_digit(a):
+    """ returns the digit for a ~ [1 0 0 0 0 0 0 0 0 0] or [0 1 0 0 0 0 0 0 0 0] or ... """
+    for i in range(len(digits)):
+        if a[i] == 1: 
+            return digits[i]  
+    return "no digit" 
+
+
+def ascii_table_for_classifier(xsc, y, nn, scaler):
+    """ a table including predictions using nn.predict """
+    predictions = nn.predict(xsc)            # all predictions
+    prediction_probs = nn.predict_proba(xsc) # all prediction probabilities
+    xpr = scaler.inverse_transform(xsc)      # xpr is the "x to print": the unscaled data
+    # count correct
+    num_correct = 0
+    # printing
+    print(f"{'input ':>28s} -> {'pred':^12s} {'des.':^12s}")
+    for i in range(min(20, len(y))):  # show only first 20 to avoid large output
+        pred = predictions[i]
+        desired = y[i].astype(int)
+        pred_digit = get_digit(pred)
+        des_digit = get_digit(desired)
+        if pred_digit != des_digit: 
+            result = "  incorrect"
+        else: 
+            result = "  correct" 
+            num_correct += 1
+        print(f"{i:>3}: [...] -> {pred_digit:^12s} {des_digit:12s} {result:^10s}")
+    print(f"\ncorrect predictions: {num_correct} out of {min(20, len(y))}")
+
+
+# function to visualize the testing results
+def ascii_table_for_classifier(xsc, y, nn, scaler):
+    """ a table including predictions using nn.predict """
+    predictions = nn.predict(xsc)            # all predictions
+    prediction_probs = nn.predict_proba(xsc) # all prediction probabilities
+    xpr = scaler.inverse_transform(xsc)      # xpr is the "x to print": the unscaled data
+    # count correct
+    num_correct = 0
+    # printing
+    print(f"{'input ':>28s} -> {'pred':^12s} {'des.':^12s}")
+    for i in range(min(20, len(y))):  # show only first 20 to avoid large output
+        pred = predictions[i]
+        desired = y[i].astype(int)
+        pred_digit = get_digit(pred)
+        des_digit = get_digit(desired)
+        if pred_digit != des_digit: 
+            result = "  incorrect"
+        else: 
+            result = "  correct" 
+            num_correct += 1
+        print(f"{i:>3}: [...] -> {pred_digit:^12s} {des_digit:12s} {result:^10s}")
+    print(f"\ncorrect predictions: {num_correct} out of {min(20, len(y))}")
+    
+    # calculate overall accuracy
+    all_preds = nn.predict(xsc)
+    all_correct = 0
+    for i in range(len(y)):
+        pred = all_preds[i]
+        desired = y[i].astype(int)
+        if get_digit(pred) == get_digit(desired):
+            all_correct += 1
+    print(f"overall accuracy: {all_correct/len(y)*100:.2f}%")
+
+
+
+print("\ntesting results:")
+ascii_table_for_classifier(x_test_scaled, y_test_scaled, nn_classifier, scaler)
+
+
+def predictive_model(features, model, scaler):
+    """ input: a list of 64 pixel features
+        output: the predicted digit, from 0-9
+    """
+    our_features = np.asarray([features])                 # extra brackets needed
+    scaled_features = scaler.transform(our_features)      # we have to scale the features into "scaled space"
+    predicted_cat = model.predict(scaled_features)        # then, the nnet can predict our "cat" variables
+    prediction_probs = model.predict_proba(scaled_features) # all prediction probabilities
+    predicted_digit = get_digit(predicted_cat[0])         # get the digit name
+    return predicted_digit, prediction_probs
+
+
+lod = [
+    [0,0,0,8,14,0,0,0,0,0,5,16,11,0,0,0,0,1,15,14,1,6,0,0,0,7,16,5,3,16,8,0,0,8,16,8,14,16,2,0,0,0,6,14,16,11,0,0,0,0,0,6,16,4,0,0,0,0,0,10,15,0,0,0],
+    [0,0,0,5,14,12,2,0,0,0,7,15,8,14,4,0,0,0,6,2,3,13,1,0,0,0,0,1,13,4,0,0,0,0,1,11,9,0,0,0,0,8,16,13,0,0,0,0,0,5,14,16,11,2,0,0,0,0,0,6,12,13,3,0],
+    [0,0,0,3,16,3,0,0,0,0,0,12,16,2,0,0,0,0,8,16,16,4,0,0,0,7,16,15,16,12,11,0,0,8,16,16,16,13,3,0,0,0,0,7,14,1,0,0,0,0,0,6,16,0,0,0,0,0,0,4,14,0,0,0],
+    [0,0,0,3,15,10,1,0,0,0,0,11,10,16,4,0,0,0,0,12,1,15,6,0,0,0,0,3,4,15,4,0,0,0,0,6,15,6,0,0,0,4,15,16,9,0,0,0,0,0,13,16,15,9,3,0,0,0,0,4,9,14,7,0],
+    [0,0,0,3,16,3,0,0,0,0,0,10,16,11,0,0,0,0,4,16,16,8,0,0,0,2,14,12,16,5,0,0,0,10,16,14,16,16,11,0,0,5,12,13,16,8,3,0,0,0,0,2,15,3,0,0,0,0,0,4,12,0,0,0],
+    [0,0,7,15,15,4,0,0,0,8,16,16,16,4,0,0,0,8,15,8,16,4,0,0,0,0,0,10,15,0,0,0,0,0,1,15,9,0,0,0,0,0,6,16,2,0,0,0,0,0,8,16,8,11,9,0,0,0,9,16,16,12,3,0]
+]
+
+# run prediction on each test digit
+print("\ntesting the digits from the assignment:")
+for i, digit_features in enumerate(lod):
+    model = nn_classifier
+    scaler = scaler
+    name, probs = predictive_model(digit_features, model, scaler)
+    print(f"digit {i}: i predict {name}")
+    
+    # visualize the digit
+    digit_image = np.array(digit_features).reshape(8, 8)
+    plt.figure(figsize=(2, 2))
+    plt.imshow(digit_image, cmap='gray_r')
+    plt.title(f"digit {i}: predicted as {name}")
+    plt.show()
+
+
+
+pixel_to_predict = 'pix42'
+pixel_to_predict_idx = col_index[pixel_to_predict]
+
+
+reg_y_all = a[:, pixel_to_predict_idx]
+
+
+
+other_pixel_indices = [col_index[col] for col in pixel_cols if col != pixel_to_predict]
+feature_indices = other_pixel_indices + label_indices
+
+
+
+reg_x_all = a[:, feature_indices]
+
+print(f"regression y_all (pixel {pixel_to_predict} values) shape: {reg_y_all.shape}")
+print(f"regression x_all (other features) shape: {reg_x_all.shape}")
+
+
+indices = np.random.permutation(len(reg_y_all))
+reg_x_all = reg_x_all[indices]
+reg_y_all = reg_y_all[indices]
+
+
+reg_x_train, reg_x_test, reg_y_train, reg_y_test = train_test_split(reg_x_all, reg_y_all, test_size=0.2)
+
+print(f"regression training with {len(reg_y_train)} rows; testing with {len(reg_y_test)} rows\n")
+
+
+reg_scaler = standardscaler()
+reg_scaler.fit(reg_x_train)
+
+reg_x_train_scaled = reg_scaler.transform(reg_x_train)
+reg_x_test_scaled = reg_scaler.transform(reg_x_test)
+
+
+from sklearn.neural_network import mlpregressor
+
+nn_regressor = mlpregressor(hidden_layer_sizes=(32, 16),
+                     max_iter=500,
+                     verbose=true,
+                     shuffle=true,
+                     random_state=42,
+                     learning_rate_init=.05,
+                     learning_rate='adaptive')
+
+
+print("\n\n++++++++++  regression training:  begin  +++++++++++++++\n\n")
+nn_regressor.fit(reg_x_train_scaled, reg_y_train)
+print("\n++++++++++  regression training:   end  +++++++++++++++")
+print(f"the (squared) prediction error (the loss) is {nn_regressor.loss_:<6.3f}")
+print(f"and, its square root:         {nn_regressor.loss_ ** 0.5:<6.3f}")
+print()
+
+
+def ascii_table_for_regressor(xsc, y, nn, scaler):
+    """ a table including predictions using nn.predict """
+    predictions = nn.predict(xsc) # all predictions
+    xpr = scaler.inverse_transform(xsc)  # xpr is the "x to print": unscaled data!
+    # measure error
+    error = 0.0
+    # printing
+    print(f"{'sample #':>10s} ->  {'pred':^6s}  {'des.':^6s}   {'absdiff':^10s}")
+    for i in range(min(20, len(y))):  # show only first 20 to avoid large output
+        pred = predictions[i]
+        desired = y[i]
+        result = abs(desired - pred)
+        error += result
+        print(f"{i:>10d} ->  {pred:<+6.2f}  {desired:<+6.2f}   {result:^10.2f}")
+
+    error_full = 0.0
+    for i in range(len(y)):
+        pred = predictions[i]
+        desired = y[i]
+        error_full += abs(desired - pred)
+
+    print("\n" + "+++++   +++++   +++++           ")
+    print(f"average abs diff error:   {error_full/len(y):<6.3f}")
+    print("+++++   +++++   +++++           ")
+    return error_full/len(y)
+
+
+
+print(f"\ntesting regression for pixel {pixel_to_predict}:")
+avg_error = ascii_table_for_regressor(reg_x_test_scaled, reg_y_test, nn_regressor, reg_scaler)
+
+
+def predict_pixel(pixel_name, a, pixel_indices, label_indices, test_size=0.2, hidden_layers=(32, 16), random_state=42, verbose=false):
+    """
+    create and evaluate a neural network regressor to predict a specific pixel
+    from all other pixels and digit classifications.
+    
+    args:
+        pixel_name: name of the pixel to predict (e.g., 'pix42')
+        a: the full data array including pixels and digit classifications
+        pixel_indices: dictionary mapping pixel names to column indices
+        label_indices: dictionary mapping label names to column indices
+        test_size: proportion of data to use for testing
+        hidden_layers: tuple defining the neural network architecture
+        random_state: random seed for reproducibility
+        verbose: whether to print detailed training progress
+        
+    returns:
+        avg_abs_error: average absolute error for this pixel prediction
+    """
+    # get the index of the pixel to predict
+    pixel_idx = col_index[pixel_name]
+    
+    # create x_all and y_all for regression
+    pixel_y_all = a[:, pixel_idx]
+    
+    # get indices of all other pixels and labels
+    other_pixel_indices = [idx for idx in pixel_indices if idx != pixel_idx]
+    all_feature_indices = other_pixel_indices + label_indices
+    
+    # create features array (all other pixels + labels)
+    pixel_x_all = a[:, all_feature_indices]
+    
+    if verbose:
+        print(f"regression y_all (pixel {pixel_idx} values) shape: {pixel_y_all.shape}")
+        print(f"regression x_all (other features) shape: {pixel_x_all.shape}")
+    
+    # scramble the data
+    indices = np.random.permutation(len(pixel_y_all))
+    pixel_x_all = pixel_x_all[indices]
+    pixel_y_all = pixel_y_all[indices]
+    
+    # split into training and testing sets
+    pixel_x_train, pixel_x_test, pixel_y_train, pixel_y_test = train_test_split(
+        pixel_x_all, pixel_y_all, test_size=test_size, random_state=random_state)
+    
+    if verbose:
+        print(f"regression training with {len(pixel_y_train)} rows; testing with {len(pixel_y_test)} rows\n")
+    
+    # scale the data
+    pixel_scaler = standardscaler()
+    pixel_scaler.fit(pixel_x_train)
+    
+    pixel_x_train_scaled = pixel_scaler.transform(pixel_x_train)
+    pixel_x_test_scaled = pixel_scaler.transform(pixel_x_test)
+    
+    # train the regression model
+    pixel_nn_regressor = mlpregressor(
+        hidden_layer_sizes=hidden_layers,
+        max_iter=500,
+        verbose=verbose,
+        shuffle=true,
+        random_state=random_state,
+        learning_rate_init=.05,
+        learning_rate='adaptive')
+    
+    if verbose:
+        print(f"\n\n++++++++++  regression training for pixel {pixel_idx}:  begin  +++++++++++++++\n\n")
+    
+    pixel_nn_regressor.fit(pixel_x_train_scaled, pixel_y_train)
+    
+    if verbose:
+        print(f"\n++++++++++  regression training for pixel {pixel_idx}:   end  +++++++++++++++")
+        print(f"the (squared) prediction error (the loss) is {pixel_nn_regressor.loss_:<6.3f}")
+        print(f"and, its square root:         {pixel_nn_regressor.loss_ ** 0.5:<6.3f}")
+        print()
+    
+    # calculate average absolute error
+    predictions = pixel_nn_regressor.predict(pixel_x_test_scaled)
+    abs_errors = [abs(predictions[i] - pixel_y_test[i]) for i in range(len(pixel_y_test))]
+    avg_abs_error = sum(abs_errors) / len(abs_errors)
+    
+    if verbose:
+        print(f"average absolute error for pixel {pixel_idx}: {avg_abs_error:.4f}")
+    
+    return avg_abs_error
+
+
+
+all_pixel_errors = []
+
+print("\nevaluating predictability of all 64 pixels...")
+for pixel_num in range(64):
+    pixel_name = f'pix{pixel_num}'
+    error = predict_pixel(pixel_name, a, pixel_indices, label_indices, verbose=false)
+    all_pixel_errors.append(error)
+    if (pixel_num + 1) % 8 == 0:
+        print(f"processed pixels 0-{pixel_num}")
+
+
+most_predictable = np.argmin(all_pixel_errors)
+least_predictable = np.argmax(all_pixel_errors)
+print(f"\nmost predictable pixel: {most_predictable} with error {all_pixel_errors[most_predictable]:.4f}")
+print(f"least predictable pixel: {least_predictable} with error {all_pixel_errors[least_predictable]:.4f}")
+
+
+# create a visualization of pixel predictability
+pixel_errors_2d = np.array(all_pixel_errors).reshape(8, 8)
+
+plt.figure(figsize=(10, 8))
+plt.imshow(pixel_errors_2d, cmap='viridis_r')  # viridis_r so darker is less predictable
+plt.colorbar(label='average absolute error')
+plt.title('predictability of each pixel (lower value = more predictable)')
+
+# add pixel indices as text in each cell
+for i in range(8):
+    for j in range(8):
+        pixel_idx = i * 8 + j
+        plt.text(j, i, str(pixel_idx), 
+                 ha="center", va="center", 
+                 color="white" if pixel_errors_2d[i, j] > np.mean(all_pixel_errors) else "black")
+
+plt.savefig('pixel_predictability.png')
+plt.show()
+
+# create a bar plot of all pixel errors
+plt.figure(figsize=(12, 6))
+plt.bar(range(64), all_pixel_errors)
+plt.axhline(y=np.mean(all_pixel_errors), color='r', linestyle='-', label='mean error')
+plt.xlabel('pixel index')
+plt.ylabel('average absolute error')
+plt.title('predictability of each pixel (lower = more predictable)')
+plt.xticks(range(0, 64, 4))
+plt.grid(axis='y', linestyle='--', alpha=0.7)
+plt.legend()
+plt.savefig('pixel_errors_bar.png')
+plt.show()
+
+

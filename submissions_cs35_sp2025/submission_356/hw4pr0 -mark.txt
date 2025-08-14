@@ -1,0 +1,29 @@
+<br>
+
+#### week4 ~ <i>... and into the data we dive ...</i>  &nbsp;&nbsp; (hw4pr0.ipynb)
+
+<a href="https://docs.google.com/document/d/1OdQ-01Gp7XAk9vbZ61zM3CaTdGsZVWEvZxgu1Z0toSY/edit?tab=t.0">This week's hw page</a>
+
+<hr><br>
+
+#### Reading for hw4...     (hw4pr0.ipynb)
+
+As we transition into AI/Machine Learning for the next few weeks, this week's reading takes a more <u>policy-based</u>, rather than socially-normed, view:
++ it's a NYTimes article from a few years ago -- nice, because it has a definite, wide-angle stance on regulating AI:
++ [How to Regulate Artificial Intelligence](https://www.nytimes.com/2017/09/01/opinion/artificial-intelligence-regulations-rules.html)
++ [locally-hosted pdf copy](https://drive.google.com/file/d/1EZcygQdk40J0dJTZ1vp0F20rIoQU27nH/view)
+
+Consider the author's three proposed principles, which elaborate Isaac Asimov's "laws":
++ AIs must obey human society's laws
++ AIs must disclose themselves as such
++ AIs cannot retain confidential information (w/o permission)
+
+Choose one (or more) of these principles with which to agree or disagree, bringing in your own experience and perspective. 
+
+Alternative paths and balancing acts are, as always, welcome! For example -- this article was written before conversational AI was a reality. Do you feel there are differences in the appropriate principles or guidance for regulating today's AI agents and their authors?
+
+<hr>#### Reading response
+
+(Feel free to use this cell for your response.)
+
+As an average consumer of social media, I heavily agree with Rule 2: AIs must disclose themselves as such. I've seen multiple videos- some, a parody of powerful leaders; others, clips of mysterious creatures. I'm quite gullible, so I make it a habit to read video comments, most of which call out for AI created videos. In a world where information is spread by the millisecond, the dangers of misinformation exponentially increase. We need AI to disclose themselves so that we are able to understand it and the way we interact with it accordingly. Evidently, this ties back into the overarching topic that AI should not create harm. Instead, it should be used as a tool to enhance the way we live and process information.  

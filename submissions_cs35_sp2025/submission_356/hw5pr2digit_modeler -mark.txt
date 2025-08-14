@@ -1,0 +1,47 @@
+### <font color="DodgerBlue">hw5pr2 digits modeler</font>
+
+Suggestion:
++ set up this file and the example iris_modeler, or your births_modeler, file side-by-side...
++ for each modeler cell, copy it over..
+   + edit it and make adjustments to suit the births problem (as needed)
+   + run it to make sure it all works as it should!
+
+And, by the end, you'll have re-experienced the full ML/data modeling workflow (for classification, at least)
++ Running through this workflow by hand is a great way to digest the process...
++ AI is welcome, too...  In that case, you'll then need to reconcile what's what (as always).
++ hw5ec is for another - optional - example, using your own dataset or, possibly, regression 
++ Don't forget the final experiment -- measuring the prediction-accuracy across partial digits from absurd (1 pixel) to full (64 pixels)
+  + Here are the details, also copied below:
+
+<br>
+<hr>
+<br>
+
++ <font color="DodgerBlue"><b>Partial-digit Finale:</b></font> &nbsp; The _final challenge_ is to run the whole learning-process from 1 pixel to 64 pixels:
+  + (these instructions are also repeated below)
+  + it's best to create a **single cell** over which you can loop
+  + no need to build the "final model" -- just use the cross-validation results for your measurement of prediction-accuracy
+  + be sure to plot the prediction accuracy (on the y axis) against the number of pixels (on the x axis) 
+  + extra karma - <font color="Goldenrod">not required</font> - for plotting the value of `k` (on the y axis) against the number of pixels (on the x axis)
++ Extra karma or no, do be sure to <font color="Coral">share your short reflection</font>, a few sentences on your ML/AI workflows overall... and the results of your digit-prediction across all those partial images...#### For visualizing digits!<br>
+
+### <font color="DodgerBlue">Partial-digits finale</font>
+
+This notebook's _final challenge_ is to run the whole learning-process from 1 pixel to 64 pixels:
+  + it's best to create a **single cell** over which you can loop
+  + no need to build the "final model" -- just use the cross-validation results for your measurement of prediction-accuracy
+  + be sure to plot the prediction accuracy (on the y axis) against the number of pixels (on the x axis) 
+  + extra karma - <font color="Goldenrod">not required</font> - for plotting the value of `k` (on the y axis) against the number of pixels (on the x axis)
+
++ In particular, this offers insight about the <u>redundancy</u> of the characters we use as digits...
+  + Are you surprised by how redundant - or not - our digits are?
++ Some scripts/alphabets offer more redundancy than others 
+  + Also, it depends on <i>how</i> information is added/removed.  
+  + Here, we added pixels in "English reading order," top left to lower right across each row before moving to the next row. There are lots of other ways you could imagine adding one pixel at a time... (Not needed here!) 
+
+
+
+
+
+### <font color="Coral">Overall reflection</font>
++ Do be sure to <font color="Coral">share your short reflection</font>, a few sentences on your ML/AI workflows overall, as well as the results of your digit-prediction across all those partial digits...Reflection: It is interesting to see that using the maximum number of pixels (64) does not produce the greatest CV accuracy of the model - the maximum occurs at n = 60. I wonder if there was a way to expedite the code to loop through all num_features (range from 1 to 64) and the accuracies for each case as it took me 5+ minutes to run the code. 

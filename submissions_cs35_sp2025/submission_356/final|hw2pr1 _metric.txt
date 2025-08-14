@@ -1,0 +1,668 @@
+#
+# computing-styling trick of the day     (or, of the minute...)
+#
+# the setting for word-wrapping on the output is
+#     "notebook.output.wordwrap": true,   (in your settings.json file or from code ... settings ...) 
+
+print( list(range(10)) )
+
+
+
+#
+# see if we have the requests library...
+#
+
+import requests
+
+
+#
+# if you _don't_ have the requests library, let's install it!
+#
+
+# for me, it worked to uncomment and run this command, here in this cell:
+# #3 install requests  or   # install requests
+
+# an alternative is to run, in a terminal, the command would be 
+#  #3 install requests  or    # install requests      (the ! is needed only if inside python)
+
+# it's very system-dependent how much you have to "restart" in order to use
+# the new library (the notebook, vscode, the jupyter extension, etc.)
+
+# troubles?  let us know!  we'll work on it with you...
+
+
+#
+# hopefully, this now works! (if so, running will succeed silently)
+#
+
+import requests
+
+
+#
+# let's try it on a simple webpage
+#
+
+#
+# we assign the url and obtain the api-call result into result
+#    note that result will be an object that contains many fields (not a simple string)
+# 
+
+url = "https://www.cs.hmc.edu/~dodds/demo.html"
+result = requests.get(url)
+result    
+
+# if it succeeded, you should see <response [200]>
+# see the list of http reponse codes for the full set!
+
+
+#
+# when exploring, you'll often obtain an unfamiliar object. 
+# here, we'll ask what type it is 
+type(result)
+
+
+# here is one of the data members within the result
+# it "remembers" (keeps track of) the url requested:
+result.url
+
+
+# we can print all of the data members in an object with dir
+# since dir returns a list, we will grab that list and loop over it:
+all_fields = dir(result)
+
+for field in all_fields:
+    if "_" not in field: 
+        print(field)
+
+
+#
+# let's try printing a few of those fields (data members): 
+print(f"result.url         is {result.url}")  # the original url
+print(f"result.raw         is {result.raw}")  # another object!
+print(f"result.encoding    is {result.encoding}")  # utf-8 is very common
+print(f"result.status_code is {result.status_code}")  # 200 is success!
+
+
+# in this case, the result is a text file (html) let's see it!
+contents = result.text
+print(contents)
+
+
+# yay!  
+# this shows that you are able to "scrape" an arbitrary html page... 
+
+# now, we're off to more _structured_ data-gathering...
+
+
+#
+# we assign the url and obtain the api-call result into result
+#    note that result will be an object that contains many fields (not a simple string)
+# 
+
+import requests
+
+url = "http://api.open-notify.org/iss-now.json"   # this is sometimes called an "endpoint" ...
+result = requests.get(url)
+result    
+
+# if it succeeds, you should see <response [200]>
+
+
+#
+# let's try printing those shorter fields from before:
+print(f"result.url         is {result.url}")  # the original url
+print(f"result.raw         is {result.raw}")  # another object!
+print(f"result.encoding    is {result.encoding}")  # utf-8 is very common
+print(f"result.status_code is {result.status_code}")  # 200 is success!
+
+
+#
+# in this case, we know the result is a json file, and we can obtain it that way:
+
+json_contents = result.json()
+print(json_contents)
+
+# remember:  json_contents will be a _dictionary_
+
+
+#
+# let's re-remind ourselves how dictionaries work:
+
+json_contents['message']       # challenge:  could we access the other components? what _types_ are they?!!
+
+
+json_contents['timestamp']
+
+
+cs35_participant_2 = float(json_contents['iss_position']['longitude'])
+cs35_participant_2
+
+
+#
+# in python, we can use the resulting dictionary... let's see its keys:
+print(list(json_contents.keys()))  
+
+# also, watch out for string vs. numeric types, e.g., for latitude and longitude.
+# at heart, _all_ web data are strings... .
+
+# these experiments will be helpful for problem 1, below :)
+
+
+lat = float(json_contents['iss_position']['latitude'])
+
+
+
+def haversine(lat1, long1, lat2, long2):
+    """
+    calculate the great circle distance in kilometers between two points
+    on the earth (specified in decimal degrees)
+    """
+    from math import sin, cos, radians, asin, sqrt   # this import is for the sin, cos, radians, ...
+    # convert decimal degrees to radians
+
+    long1, lat1, long2, lat2 = map(radians, [long1, lat1, long2, lat2])
+
+    # haversine formula
+    dlong = long2 - long1
+    dlat = lat2 - lat1
+    trig = sin(dlat/2)**2 + cos(lat1) * cos(lat2) * sin(dlong/2)**2
+    # radius of earth. use 3956 for miles. 6371 for km.
+    radius = 3956  # we'll use miles!
+    return radius * 2 * asin(sqrt(trig))
+
+haversine(-42.6203,-8.7386,34.0967,-117.719)
+
+
+# json is a javascript dictionary format -- almost the same as a python dictionary:
+data = { 'key':'value',  'fave':42,  'list':[5,6,7,{'mascot':'aliiien'}] }
+print(data)
+
+# we can write in json format to a local file, named small42.json:
+import json 
+
+with open("small.json", "w") as f:
+    json.dump( data, f )
+
+
+# we can also read from a json file
+# the resulting data will be a _dictionary_:
+
+with open("small.json", "r") as f:
+    dictionary = json.load( f )
+
+print(f"the {dictionary = }")
+
+
+# let's access this dictionary -- first, the keys:
+list(dictionary.keys()) # how do we get 'aliiien' from newdata?
+
+
+# task: use the dictionary to obtain (a) 'value' , (b) 42 , (c) 'aliiien'  [tricky!]
+
+# remember that there are two ways to get the value from a key:
+# way 1:  dictionary['key']            # errors if 'key' isn't present
+# way 2:  dictionary.get('key')        # returns none if 'key' isn't present
+
+dictionary['key'] #a
+dictionary['fave'] #b
+dictionary['list'][3]['mascot'] #c
+
+
+import requests 
+
+# here, we will obtain plain-text results from a request
+url = "https://www.cs.hmc.edu/~dodds/demo.html"  # try it + source
+# url = "https://www.scrippscollege.edu/"          # another possible site...
+# url = "https://www.pitzer.edu/"                  # another possible site...
+# url = "https://www.cmc.edu/"                     # and another!
+# url = "https://www.cgu.edu/"
+result = requests.get(url)        
+print(f"result is {result}")        # hopefully it's 200
+
+
+# if the request was successful, the response will be [200]. 
+# then, we can grab the text - or json - from the site:
+
+text = result.text                  # provides the html page as a large string...
+print(f"len(text) is {len(text)}")  # let's see how large the html page is... 
+
+print("\nthe first 242 characters are\n")
+print(text[:242])                  # we'll print the first few characters...  
+
+# change this to text[:] to see the whole document...
+# notice that we can run many different analyses without having to re-call/re-scrape the page (this is good!)
+
+
+#
+# we assign the url and use requests.get to obtain the result into result_astro
+#
+#    remember, result_astro will be an object that contains many fields (not a simple string)
+# 
+
+import requests
+
+url = "http://api.open-notify.org/astros.json"   # this is sometimes called an "endpoint" ...
+result_astro = requests.get(url)
+result_astro
+
+# if it succeeded, you should see <response [200]>
+
+
+# if the request succeeded, we know the result is a json file, and we can obtain it that way.
+# let's call our dictionary something more specific:
+
+astronauts = result_astro.json()
+print(astronauts)
+d = astronauts     # d is shorter to type
+
+# remember:  d and astronauts will be a _dictionary_
+
+note = """ here's yesterday's result - it _should_ be the same today!
+
+{"people": [{"craft": "iss", "name": "oleg kononenko"}, {"craft": "iss", "name": "nikolai chub"},
+{"craft": "iss", "name": "tracy caldwell dyson"}, {"craft": "iss", "name": "matthew dominick"},
+{"craft": "iss", "name": "michael barratt"}, {"craft": "iss", "name": "jeanette epps"},
+{"craft": "iss", "name": "alexander grebenkin"}, {"craft": "iss", "name": "butch wilmore"},
+{"craft": "iss", "name": "sunita williams"}, {"craft": "tiangong", "name": "li guangsu"},
+{"craft": "tiangong", "name": "li cong"}, {"craft": "tiangong", "name": "ye guangfu"}], "number": 12, "message": "success"}
+"""
+""
+
+
+#
+# cell to try out parsing d  (astronauts)
+#
+
+
+
+
+#
+# let's try the  count  endpoint, with geojson format (json with geographical data)
+#
+
+url = "https://earthquake.usgs.gov/fdsnws/event/1/count?format=geojson&minmagnitude=5.0&starttime=2024-01-01&endtime=2024-02-01"
+
+result = requests.get(url)                       # a named input, params, taking the value param_d, above
+print(f"result is {result}")                     # hopefully, this is 200
+print(f"the full url used was\n {result.url}")   # it's nice to be able to see this
+
+
+# if it worked, we should be able to obtain the json. remember, it's a dictionary. let's use d:
+
+d = result.json()
+
+print(f"{d =}")
+
+
+#
+# here is the endpoint
+#
+url = "https://earthquake.usgs.gov/fdsnws/event/1/count"
+
+# let's use variables for three of the parameters:
+min_mag = 5.0               # the minimum magnitude considered a quake (min_mag)
+start_time = "2025-01-01"   # this is the year-month-day format of the start
+finish_time = "2025-02-01"  # similar for the end
+
+# we assemble a dictionary of our parameters, let's name it param_dictionary
+# there are many more parameters available. the problems below ask you to explore them...
+param_dictionary = { "format":"geojson",         # this is simply hard-coded to obtain json
+                     "starttime":start_time,
+                     "endtime":finish_time,
+                     "minmagnitude":min_mag,
+                     }
+
+# here, we use requests to make the request. the parameters will be added by this api call:
+result = requests.get(url, params=param_dictionary)
+print(f"result is {result}")                     # hopefully, this is 200
+print(f"the full url used was\n {result.url}")   # this will include the parameters!
+
+
+# if it worked, we should be able to see the json results:
+
+d = result.json()
+print(f"json returned was {d = }")
+
+
+#
+# how many quakes of magnitude >= 4.2 have been within 300km of claremont 
+#     + in jan 2025
+#     + in dec 2025
+#
+url = "https://earthquake.usgs.gov/fdsnws/event/1/count"
+
+# let's use variables for three of the parameters:
+min_mag = 2.2               # the minimum magnitude considered a quake (min_mag)
+start_time = "2025-01-01"   # this is the year-month-day format of the start
+finish_time = "2025-02-01"  # similar for the end
+# start_time = "2024-01-01"   # similar, but for a year-cs35_participant_2 span...
+# finish_time = "2025-01-01"  # similar for the end
+radius_in_km = 300
+
+# we assemble a dictionary of our parameters, let's name it param_dictionary
+# there are many more parameters available. the problems below ask you to explore them...
+param_dictionary = { "format":"geojson",         # this is simply hard-coded to obtain json
+                     "starttime":start_time,
+                     "endtime":finish_time,
+                     "minmagnitude":min_mag,
+                     "latitude":34.0967,
+                     "longitude":-117.7198,
+                     "maxradiuskm":radius_in_km,
+                     }
+
+# here, we use requests to make the request. the parameters will be added by this api call:
+result = requests.get(url, params=param_dictionary)
+print(f"result is {result}")                     # hopefully, this is 200
+print(f"the full url used was\n {result.url}")   # this will include the parameters!
+
+# we'll extract the final result in another cell:
+
+
+# let's finish up here:
+quake_count = result.json()
+print(f"{quake_count = }")
+
+
+#
+# here is the endpoint
+#
+url = "https://earthquake.usgs.gov/fdsnws/event/1/query"
+
+# let's use variables for three of the parameters:
+min_mag = 6.5 
+max_mag = 7.0              # the minimum magnitude considered a quake (min_mag)
+start_time = "2025-01-01"   # this is the year-month-day format of the start
+finish_time = "2025-02-01"  # similar for the end
+
+# we assemble a dictionary of our parameters, let's name it param_dictionary
+# there are many more parameters available. the problems below ask you to explore them...
+param_dictionary = { "format":"geojson",         # this is simply hard-coded to obtain json
+                     "starttime":start_time,
+                     "endtime":finish_time,
+                     "minmagnitude":min_mag,
+                     "maxmagnitude":max_mag
+                     }
+
+# here, we use requests to make the request. the parameters will be added by this api call:
+result = requests.get(url, params=param_dictionary)
+print(f"result is {result}")                     # hopefully, this is 200
+print(f"the full url used was\n {result.url}")   # this will include the parameters!
+
+
+# if it worked, we should be able to see the json results:
+
+d = result.json()
+print(f"json returned was {d = }")
+
+
+#
+# that's hard to read!
+# let's pretty-print it with the json library
+#       also, this version can be pasted into online formatters, e.g., https://jsonformatter.org/
+
+import json 
+nice_string = json.dumps(d)   # this outputs a "nicely formatted string" using double quotes
+print(nice_string)
+
+
+
+import json 
+nicer_string = json.dumps(d, indent=4)   # we can specify the indentation. 
+print(nicer_string)                      # it's another tree structure... !
+
+
+#
+# hw2: iss tasks 1 and 2 ...
+# 
+# two functions:  iss_now(), iss_distance()
+import requests
+
+url = "http://api.open-notify.org/iss-now.json"   # this is sometimes called an "endpoint" ...
+result = requests.get(url)
+json_contents = result.json()
+
+#
+# use the iss examples above to write a function, named 
+#     
+#      iss_now()
+#
+# that uses requests to return the current latitude and longitude -- as floating-point values -- right now.
+# be sure to test it! 
+
+def iss_now():
+    lat1 = float(json_contents['iss_position']['latitude'])
+    long1 = float(json_contents['iss_position']['longitude'])
+    return lat1, long1
+
+iss_now()
+
+
+
+# 
+# once your iss_now() function is working, write a new function
+#
+#       iss_distance()
+#
+# which uses iss_now to obtain the lat/cs35_participant_2 of the iss and then
+# uses the haversine distance (look up a python implementation or use one of ours... :)
+# to compute the iss's distance from a city of your choice.
+#
+# the haversine distance computes the "great circle" distance from two points on the globe
+#     using latitude and longitude  
+#
+def iss_distance():
+    """
+    calculate the distance of the iss at any given time to manila, philippines
+    """
+    from math import sin, cos, radians, asin, sqrt   # this import is for the sin, cos, radians, ...
+    # convert decimal degrees to radians
+
+    lat1, long1 = iss_now()
+    # hardcoded the latitude and longitude of manila, philippines
+    lat2 = 14.5995
+    long2 = 120.9842
+
+    long1, lat1, long2, lat2 = map(radians, [long1, lat1, long2, lat2])
+
+    # haversine formula
+    dlong = long2 - long1
+    dlat = lat2 - lat1
+    trig = sin(dlat/2)**2 + cos(lat1) * cos(lat2) * sin(dlong/2)**2
+    
+    # radius of earth. use 3956 for miles. 6371 for km.
+    radius = 3956  # we'll use miles!
+    return radius * 2 * asin(sqrt(trig))
+
+distance = iss_distance()
+
+# print the result
+print(f"distance of iss from manila, ph: {distance:.2f} miles")
+
+
+
+#
+# open-ended possibility:  
+#    (a) create a new function iss_distance(place) that takes in a place name
+#    (b) find a service by which you can look up the lat + cs35_participant_2 using the place name
+#         (b*)  i'm not sure how to do this - it's exploratory! 
+#    (c) then, continue with the previous computation to find the iss distance! :) 
+#
+d = {}
+
+import requests
+from math import sin, cos, radians, asin, sqrt
+
+def iss_distance(place):
+
+    url = f"https://api.geodatasource.com/format=json&"
+    result = requests.get(url).json()
+    
+    if result:
+        lat = d[place]
+        cs35_participant_2 = float(result[0]['cs35_participant_2'])
+        return lat, cs35_participant_2
+    
+place_name = "manila"
+distance = iss_distance(place_name)
+
+print(f"distance of iss from {place_name}: {distance:.2f} miles")
+
+# the final problem of this hw2 is to take on _one_ open-ended possibility. 
+#     (this iss-themed one is only the first possibility.)
+#     others, below, involve earthquakes, or your own choice of api exploration...
+
+
+import requests
+import time
+
+def get_num_quakes(start_time, finish_time, min_mag, latitude, longitude, max_radius_km):
+   """ returns the number of quakes in month (of '24)
+           of at least magnitude ...
+   """
+   url = "https://earthquake.usgs.gov/fdsnws/event/1/count"
+ 
+   # we assemble a dictionary of our parameters, let's name it param_dictionary
+   # there are many more parameters available. the problems below ask you to explore them...
+   param_dictionary = { "format":"geojson",         # this is simply hard-coded to obtain json
+                        "starttime":start_time,
+                        "endtime":finish_time,
+                        "minmagnitude":min_mag,
+                        "latitude": latitude,         
+                        "longitude": longitude,      
+                        "maxradiuskm": max_radius_km
+                       }
+   
+   result = requests.get(url, params=param_dictionary)
+   # return f"({result} the result.url is {result.url})"
+   d = result.json()
+   count = d.get('count')
+   return count
+
+# manila to rest of luzon is a 200 km radius but max_radius_km max is 180
+print(get_num_quakes("2024-01-01","2024-04-01",4.0,14.5995,120.9842,180))
+print(get_num_quakes("2024-01-01","2024-04-01",4.0,34.0967,-117.7198,180))
+
+
+#
+# hw2: usgs tasks 3 and 4 ...
+# 
+# two functions:  quake_loop(), quake_compare(place1, place2)
+
+#
+# use the usgs (earthquake) examples above to write a function, named 
+#     
+import requests
+import time
+
+magnitudes = [2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,10.0] # the strongest earthquake magnitude was 9.5 in 1960!
+loq = []
+
+def quake_loop():
+    ''' loops over different magnitudes to collect earthquake counts ''' 
+    start_time = "2024-01-01"   
+    finish_time = "2024-04-01"
+    
+    latitude = 14.5995 #34.0967 
+    longitude = 120.9842 #-117.7198 
+    max_radius_km = 180  
+
+    loq = []
+
+    for magnitude in magnitudes:
+        count = get_num_quakes(start_time, finish_time, magnitude, latitude, longitude, max_radius_km)
+        loq.append(count)
+        
+    return loq
+loq = quake_loop()
+
+print(f"between 2024-01-01 and 2024-04-01, there were the following earthquakes")
+for i, magnitude in enumerate([2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0]):
+    print(f"magnitude {magnitude}: {loq[i]} quakes")
+#
+# that uses requests within a loop of your own design in order to
+#   + obtain at least 10 distinct, comparable data elements (counts are encouraged; other items ok)
+#   + see the assignment page for an example where the looping iterates over the _month_
+#
+#   + choose your favorite parameter(s) to vary, e.g., magnitude, time, radius, location, etc.
+#   + it should collect all of those data elements into a list
+#   + and render the list in a neatly formatted chart (f-strings welcome; not required)
+#
+#   + in addition, include a overall reflection on the results, as well as a comment on additional effort
+#     that could expand your results (you need not run it), and any concerns or caveats about the data...
+#   + feel free to copy-paste-edit the markdown "reflection-template," above  
+
+
+# 
+# once your quake_loop() function is working, write a new function
+#
+def quake_compare(place1, place2):
+    ''' determines which of two places is quakier based on specified time span, magnitude, and radius around the two chosen places'''
+#
+# and then your function should compare which of the two places is "quakier" (not a real word)
+# for a given time span (you choose), and a given strength-of-quakes (you choose), and
+# for a specific radius around each of the two places (you choose)
+#
+    start_time = f"2024-01-01"   
+    finish_time = f"2024-04-01"
+    min_mag = 4.0
+    max_radius_km = 180  
+
+    lat1, long1 = place1 
+    lat2, long2 = place2
+
+    count1 = get_num_quakes(start_time, finish_time, min_mag, lat1, long1, max_radius_km)
+    count2 = get_num_quakes(start_time, finish_time, min_mag, lat2, long2, max_radius_km)
+
+    print(f"between {start_time} and {finish_time}, with magnitude ≥ {min_mag} and radius ≤ {max_radius_km} km:")
+    print(f"claremont {place1} had {count1} quakes.")
+    print(f"manila {place2} had {count2} quakes.")
+
+    if count1 > count2:
+        print(f"claremont {place1} is quakier than manila {place2}.")
+    elif count2 > count1:
+        print(f"manila {place2} is quakier than claremont {place1}.")
+    else:
+        print(f"claremont {place1} and manila {place2} are just as quaky.")
+
+place1 = (34.0967,-117.7198) # claremont
+place2 = (14.5995,120.9842) # manila
+
+quake_compare(place1,place2)
+
+# as is clear, there is lots of freedom to design a "comparison of quakiness" -- wonderful!
+# feel free to start somewhere, and tune the results.
+#
+# your function should print the results it finds (in this case, it's not important to return
+# and specific value -- though you're encouraged (not required) to create a helper function and 
+# then call it twice for the two locations! (that helper function would need a return value!)
+#
+#
+
+
+#
+import requests
+
+# 
+
+def get_ye_quotes():
+   """ returns a funfact about the number of letters in a random kanye west quote ...
+   """
+   url = "https://api.kanye.rest"
+
+   result = requests.get(url)
+   # return f"({result} the result.url is {result.url})"
+   d = result.json()
+   quote = d.get('quote')
+   print(quote)
+   number = str(len(quote)) 
+   
+   url2 = f"http://numbersapi.com/{number}/trivia"
+
+   result2 = requests.get(url2)
+   print(result2.text) # get plain text
+
+get_ye_quotes()
+
+#
+
+

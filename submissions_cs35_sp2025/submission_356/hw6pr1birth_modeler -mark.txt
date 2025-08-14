@@ -1,0 +1,27 @@
+#### Births Modeler: &nbsp; Using Decision Trees and Random Forests
+
++ births clasification via decision trees and random forests...
++ You're classifying "above" (above-median popularity of birthdays) vs "below" (below-median popularity of birthdays)
++ Feel free to re-use the cleaned data from previous weeks (already here)
++ Suggestion:  &nbsp; go cell-by-cell using the iris_modeler example, copying-and-adapting as you go...## Data set up...
++ Use the cleaned data from prior weeks (it should be here in this folder as births_cleaned.csv)
++ Be sure to get rid of the column with the **number of births** &nbsp;&nbsp; That makes the prediction "too easy"!
++ Instead, see how well the DT/RF techniques can predict above/below-median popularity, just based on month and day...
++ (It's quite a hard estimation problem!)## First: &nbsp; _Decision Trees_## Then: &nbsp; _Random Forests_<br>
+<hr>
+<br>
+
+### Final, big-picture question:  
++ What are the relative "feature importances" of the two features
+  + month
+  + day
++ ... at least, in terms of "birthday popularity," as we've defined it?
+
+Reflect, in a sentence or two, on the values of feature importances that you found.
++ To use Erica Thompson's framing, 
++ how much trust (or weight) would you attribute to this model and its feature importances, "outside of Model Land"? [0.78243405 0.21756595]
+
+Feature        month has   78.24% of the decision-making importance.
+Feature          day has   21.76% of the decision-making importance.
+
+It makes sense that the month is of more importance of the two features in determining birthday popularity i.e. whether a date is above or below the median in birth counts. We may attribute these to seasonality patterns, but in using Erica Thompson's framing, we might not fully trust this Births Modeler and its feature importances. Given that such a model is a simplification of reality, we can only assume the that seasonality patterns and perhaps holidays have influenced birth counts. A holiday does not directly cause a change in birth counts. The model does not fully capture the complexities of the real world such as policy events, etc that may have influenced birth counts throughout the year.

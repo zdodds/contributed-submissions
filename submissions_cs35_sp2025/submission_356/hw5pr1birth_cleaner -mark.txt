@@ -1,0 +1,12 @@
+### hw5pr1 births cleaner
+
+Suggestion:
++ set up this file and the example iris-cleaner file side-by-side...
++ for each iris-cleaner cell, copy it over...
+   + edit it and make adjustments to suit the births problem (as needed)
+   + run it to make sure it works
+
+And, by the end, you'll have experienced the full data-cleaning workflow.
++ Running through this workflow by hand is a great way to digest the process...
++ hw5pr2 will ask you to do this again, with the digits
++ hw5ec is for another - optional - example, using your own dataset or, possibly, regression 
