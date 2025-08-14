@@ -1,0 +1,637 @@
+#
+# python is a popular language for executable expression
+#     this is a python cell
+#     try this shortcut: control-return or control-enter runs it:
+
+x = 43
+print("x is", x)
+
+x -= 1
+
+# notice that the last expression is the cell's output.
+# printing and outputting are different!
+
+
+#
+# let's fit all of python into the next five or so cells!
+#
+
+l = [7,8,9]
+
+print("l[1:] equals", l[1:])    # slicing!
+
+print(f"l[1:] equals {l[1:]}")  # f strings!
+
+print(f"{l[1:] = }")            # cool = syntax, new for me...
+
+print()
+
+colleges = 'cmc scripps pitzer hmc'
+print(colleges)
+
+'c' in colleges          # in is in!
+
+
+x = 42
+
+print("x =", x)    # "regular" print
+
+print(  f"{x = }" )  # f-string print
+
+
+"""wrong = 41"""
+snack = "poptarts"
+
+# fs = f"{snack}? i'll take {wrong+1}!"
+# print(fs)
+
+for i in range(40,42+1):
+    print(f"{snack}? i'll take {i}!")
+
+
+
+print(f"{l=}  l.index(9) is", l.index(9))     # calling methods (functions after a ".")
+print()
+print("colleges.title() returns ", colleges.title())        # ditto!  let's shout!
+print()
+print("# of c's in colleges:", colleges.count('c'))
+print()
+print(colleges.replace('c','c'))
+
+
+low = colleges.split()
+print("low is", low)
+
+los = colleges.split('c')
+print("los is", los)
+
+
+low = [ "word", "leisa", "we", "some" ]
+''.join(low)
+
+
+#
+# f-strings!
+#
+
+interface = "jupyter"
+language = "python"
+application = "vscode"
+
+print(f"hello from {interface}, running {language}, within {application}...!")
+print()
+
+company = "meta"
+print(f"{company} would be proud!")
+print()
+
+#
+# feel free to create your own quippy example here or in a new cell...
+#
+
+hometown = "manila"
+college = "claremont mckenna"
+year = "senior"
+
+print(f"i am originally from {hometown}, now a {year} at {college}.")
+
+
+# i <3 list comprehensions!
+[ 2*x for x in range(20,24) ]
+
+
+#
+# here is an example that uses list comprehensions to
+# count how many of the first 1000 integers are even
+
+lc = [ x for x in range(1000) if x % 2 == 0 ]
+print(f"lc = {lc}")
+print()
+
+answer = len(lc)
+print(f"answer = {answer}")
+
+
+
+# remember pwd? it's short for "print working directory"  (that is, your current folder)
+# it's a shell command, i.e., to be run at the terminal or command-line (or shell).
+
+# since this is not python, python needs to know it's a special command:  # does the trick
+
+
+
+# another important shell command:  ls (lists contents)
+
+
+
+# the following cell shows cd, changing the current directory.
+# we will also try # (to "move up" one level)
+
+# warning:  when cd does work, the _whole notebook_ has changed what it considers
+#           its "current directory"  you'll see this here:
+
+
+
+# and, we need to be able to move "up" or "outward"!
+# to do this, use   #     here, in jupyter:
+
+
+
+
+# we can keep going!   # "goes up" one directory level
+
+
+
+# you don't need a new cell each time...
+
+
+
+# really, each notebook cell is a script, sharing state with the others
+
+# here, our code is guarded by an if true:
+
+if false:
+    print(f"it was false!")
+
+# try changing the true to false.
+# there's no need to change the printing, because it won't print...
+
+# when submitting notebooks, we ask you to submit notebooks that run...
+# however, feel free to keep any+all non-running code! simply comment it out
+# for example, with if false:
+# hashtags and """ triple-quoted strings """ also work ...
+# ... though they lose the code-structure and syntax highlighting! (as you see! :-)
+
+
+# reminder: in each cell (script) all lines are run; only the last line is output
+y = 58
+x = y-7
+x = x-1
+x = x-8
+
+
+
+# beware:  variables are global through the notebook!
+# here, y will be 58, from the cell above... if you've run that cell!
+
+
+
+# a good starting point!
+
+def plus1( n ):
+    """ returns a number one larger than its input """
+    return n+1
+
+if true:
+    print(f"plus1(41) -> {plus1(41)} should be {42}")
+    print(f"plus1(9000) -> {plus1(9000)} should be {9001}")
+    assert plus1(41) == 42
+    assert plus1(9000) == 9001
+
+# print tests succeed and fail "out loud"
+# assert tests succeed silently and only fail "out loud" (and crash!)
+
+
+#
+# an infinite loop...
+#
+
+print(f"start!")
+i = 0
+
+while true:
+    print(i, end=" ", flush=true)
+    i = i+1
+
+print(f"end.")
+
+
+
+#
+# let's loop!
+#
+
+snack = "poptarts"
+
+for i in range(0,5):
+        print(f"{snack}? i'll take {i}!")
+
+
+# countdown( n )    emphasizes looping and printing (there is no return value!)
+#
+import time
+
+def countdown( n ):
+    """ counts downward from n to 0, printing  """
+    for i in range(n,-1,-1):  # starts at n, ends at 0, steps by -1
+        print("i ==", i)
+        time.sleep(0.2)
+
+    return    # no return value here!
+
+# testing countdown
+if true:
+    print("testing countdown(5):")
+    countdown(5)  # should print things -- with dramatic pauses!
+
+
+if true:
+    """ a cell for trying out the previous two cells """
+
+    # sign on
+    print(f"[[ start! ]]\n")
+
+    # testing plus1
+    result = plus1( 41 )
+    print(f"plus1(41) -> {result}")
+    print()
+
+    # testing countdown
+    print("testing countdown(4):")
+    countdown(4)  # should print things -- with dramatic pauses!
+
+    # sign off
+    print("\n[[ fin. ]]")
+
+
+def mystery1( s ):
+    """ mystery function #1 """
+    ''' return the number of i or is in input string s'''
+    result = 0
+
+    for i in range(len(s)):
+        if s[i] in 'ii':
+            result += 1
+
+    return result
+
+result = mystery1("aliens <3 caffeine")
+print(result)
+
+
+def mystery2( s ):
+    """ mystery function #2 """
+    ''' return the number of i or is in input string s'''
+    result = ""
+
+    for let in s:
+        if let in 'ii':
+            result += let
+
+    return result
+
+result = mystery2("i like caffeine")
+print(result)
+
+
+def count_eyes( s ):
+    """ returns the number of times i or i appears in the input string s """
+    result = 0
+
+    for letter in s:
+        if letter in 'ii':  #  equivalent:   letter == 'i' or letter == 'i'
+            result += 1     #  add one to our overall result (our count)
+
+    return result           #  after the loop, we're done!
+
+print("count_eyes('yiiikes!') =",count_eyes('yiiikes!'))
+print(f"{count_eyes('yiiikes!') = }")   # f-strings ⋮)
+print()
+print(f"{count_eyes('italy, icily, livelily!') = }")
+
+
+def just_eyes( s ):
+    """ returns a string of only the letters i or i that appear in the input s """
+    result = ''
+
+    for letter in s:
+        if letter in 'ii':    #  equivalent:   letter == 'i' or letter == 'i'
+            result += letter  #  add _the letter_ to our overall result, now a string
+
+    return result             #  after the loop, we're done!
+
+print("just_eyes('yiiikes!') =",just_eyes('yiiikes!'))
+print(f"{just_eyes('yiiikes!') = }")   # f-strings ⋮)
+print()
+print(f"{just_eyes('italy, icily, livelily!') = }")
+
+
+def get_string_from_file(filename=none):
+    """ return all of the contents from the file, filename
+        will error if the file is not present, then return the empty string ''
+    """
+    try:
+        if filename == none:  filename = "input.txt"
+        input_filename = "input.txt"
+        input_file = open(input_filename, "r", encoding='utf-8')    # how to open a file
+        data = input_file.read()                                    # and get all its contents
+        input_file.close()                                          # close the file (optional)
+        #print(data)                                                # if we want to see it
+        return data                                                 # definitely want to return it!
+    except filenotfounderror:                   # wasn't there
+        print(f"file not found: {filename}")    # print error
+        return ''                               # return empty string ''
+
+# split is a wonderful function, it returns a list.  try it!
+input_string = get_string_from_file("input.txt")
+
+# let's print only some of this large string, with all of shakespeare's sonnets:
+print(input_string[0:200])
+
+
+
+input_string = get_string_from_file("input.txt")
+input_list = input_string.split("\n")  # '\n'
+
+for s in input_list:                   # let's test it on each string (line) in our list
+    inp = s                            # the input
+    out = count_eyes(inp)              # the output
+    # print(f"{inp} -> {out}")           # print result
+    print(f"{inp:>50s} -> {out:<d}")   # f-strings have formatting options: (> right) (< left)
+
+
+input_string = get_string_from_file("input.txt")
+input_list = input_string.split("\n")  # '\n'
+
+allresults = []
+
+for s in input_list:                   # let's test it on each string (line) in our list
+    inp = s                            # the input
+    out = count_eyes(inp)              # the output
+    # print(f"{inp} -> {out}")           # print result
+    print(f"{inp:>50s} -> {out:<d}")   # f-strings have formatting options: (> right) (< left)
+    allresults.append( [out,inp] )       # append the output and input as a _sublist_
+
+maximum_line = max(allresults)          # take the maximum
+print("the max and maximum line:", maximum_line)
+
+
+#
+# using python's string library
+#
+
+import string
+
+print(string.digits)
+print(string.punctuation)
+print(string.ascii_lowercase)
+
+
+# plus1, countdown, count_eyes, and just_eyes are already complete :-)
+
+
+#
+# times42( s ):      	which should print the string s 42 times (on separate lines)
+#
+
+def times42( s ):
+    ''' returns input string s 42 times on separate lines
+    '''
+
+    for x in range(42):
+        print(s)
+
+    pass
+times42("cs35")
+
+
+#
+# alien( n ):          	which should return the string "aliii...iiien" with exactly n "i"s
+#
+
+def alien( n ):
+    ''' returns string "alien" with n "i"s
+    '''
+    eyes = "i" * n
+    print(f"al{eyes}en")
+
+    pass
+
+print(alien(12))
+
+
+#
+# count_digits( s ):   returns the number of digits in the input string s
+#
+
+def count_digits( s ):
+    ''' returns number of digits in input string s '''
+    result = 0
+    
+    for i in s:
+        if i.isdigit():
+            result += 1
+
+    return result
+
+    pass
+
+print(count_digits("cs35+42"))
+
+
+#
+# just_digits( s ):   returns only the digits in the input string s
+#
+
+def just_digits( s ):
+    ''' returns only the digits in input string s '''
+    
+    digits = []
+
+    for i in s:
+        if i.isdigit():
+            digits.append(i)
+
+    return ''.join(digits)
+
+    pass
+
+print(just_digits("cs35+42"))
+
+
+#
+# just_text( s ):   returns a new version of s, where
+#                    everything has been lower-cased, and
+#                    all non-letters and non-spaces have been removed
+#                    (that is, just keep the "text")
+#
+#                    hint: s.lower() returns an all lower-case version of s
+
+def just_text( s ):
+    ''' returns only the letters now in lower-case
+    '''
+    text = []
+
+    for i in s.lower():
+        if i.isalpha() or i == '':
+            text.append(i)
+
+    return ''.join(text)
+    
+    pass
+
+print(just_text("cs35+42"))
+
+
+#
+# your own string-transforming function:  up to you
+#    the goal: come up with something uniquely yours ...
+#              ... no need to go overboard (more challenges ahead!)
+#
+# be sure to show off at least two of your own tests, too
+#
+
+# here's my example:
+
+def poptart_score(s):
+    """ returns the wordle score vs. "poptart" (exactly 7 letters)
+          $ will represent the correct letter in a correct spot
+          ~ will represent the correct letter in an incorrect spot
+    """
+    # let's make sure s has exactly 7 letters
+    s = s + "*"*7   # add extra asterisks at the end to have at least 7 letters
+    s = s[0:7]      # trim to 7 letters using a slice
+
+    result = ""
+    for i in range(len(s)):  # loop over each index i, from 0 to len(s)-1
+        if "poptart"[i] == s[i]:
+            result += '$'    # correct letter, correct spot
+        elif s[i] in "poptart":
+            result += '~'    # correct letter, wrong spot
+        else:
+            result += ' '    # not a correct letter
+
+    return result
+
+#
+# be sure to run on a large string
+#
+input_string = """scripps claremontmckenna pitzer mudd pomona sci50l poptart"""
+input_list = input_string.split()
+for s in input_list:              # let's test it on each string (word) in our list
+    inp = s                       # the function input
+    out = poptart_score(s)       # the function output
+    inp7 = (s + "*"*7)[:7]          # a seven-character (padded/sliced) input
+    print(f"{inp:>25s}  ->  |{inp7}|")
+    print( f"{'':>25s}      |{out}|")      # f-strings to show the transformation
+    print( f"{'':>25s}      |{'poptart'}|\n")
+
+
+#
+# also be sure to run on at least one file find the results
+#     can be only printing, but if there's something to maximize or minimize,
+#     it is always fun to see what's "best" or "worst"
+#
+
+input_string = get_string_from_file("input.txt")
+input_list = input_string.split("\n")  # '\n'
+
+allresults = []
+
+for s in input_list:              # let's test it on each string (word) in our list
+    inp = s                       # the function input
+    out = poptart_score(s)       # the function output
+    inp7 = (s + "*"*7)[:7]          # a seven-character (padded/sliced) input
+    print(f"{inp[0:20]:>25s}  ->  |{inp7}|")
+    print( f"{'':>25s}      |{out}|")      # f-strings to show the transformation
+    print( f"{'':>25s}      |{'poptart'}|\n")
+    this_score = out.count("$")*4 + out.count("~")*2  # my scoring system!
+    allresults.append( [out,inp] )       # append the output and input as a _sublist_
+
+maximum_line = max(allresults)          # take the maximum
+print("the max and maximum line:", maximum_line)
+
+
+#
+# your own string-transforming function:  up to you
+#    encouraged: come up with something uniquely yours (or your team's)
+#                ... but no need to go overboard (more problems are ahead!)
+#
+# be sure to show off a couple of your own tests, too
+#
+
+# here's kenneth and charlie's:
+
+
+def obish(s):
+    '''
+    input: a string, s
+    output: the string converted to obish (https://www.instructables.com/how-to-speak-obish/)
+    '''
+    vowels = 'aeiouy'
+    outputstr = ""
+    for i in s:
+        if i in vowels:
+            outputstr += "ob"
+        outputstr += i
+    return outputstr
+
+print(obish('bingus'))
+print(obish('kenneth goes to my school.'))
+print(obish('brb i have to get my laundry'))
+assert obish('bingus') == 'bobingobus'
+assert obish('kenneth goes to my school.') == 'kobennobeth goboobes tobo moby schoboobol.'
+assert obish('brb i have to get my laundry') == 'brb i hobavobe tobo gobet moby lobaobundroby'
+
+#
+# note from zd:  not sure what i'd maximize here, but so be it!
+#
+
+
+#
+# your own string-quantifying function:  again, up to you
+#   something uniquely yours: a question not-yet-asked :)
+#
+# be sure to show off at least two of your own tests, too
+#
+
+import random 
+
+def tennis():
+    ''' simulates a simplified tennis match and returns score for every point randomly played'''
+    ### tennis matches don't necessarily declare 50 or whatever abstract number to close the game
+    ### deuces also not incorporated
+
+    print(f"ready!")
+
+    points = [0,15,30,40,50] # define what the points of the match is 
+    player1 = 0 # player 1 starts at 0
+    player2 = 0 # player 2 starts at 0
+    score = (player1,player2) # first number in a score is the player who serves, for simplicity's sake player1
+    
+    print(f"initial score: {score}-- love all")
+
+    while true:
+        if random.choice([true,false]):
+            player1 = points[points.index(player1) + 1] if player1 !=50 else "game"
+            print(f"player 1 scores. {player1,player2}") # always declare the score after every point
+            if player1 == 50:
+                print(f"game! player 1 wins.") 
+                break
+        else:
+            player2 = points[points.index(player2) + 1] if player2 !=50 else "game"
+            print(f"player 2 scores. {player1,player2}")
+            if player2 == 50:
+                print(f"game! player 2 wins.")
+                break
+
+tennis()
+
+
+# team with cs35_participant_2 lim
+
+def hello_patrick(text):
+    """
+    converts string to randomly alternate uppercase/lowercase letters).
+    """
+    return ''.join(random.choice([char.upper(), char.lower()]) for char in text)
+
+test1 = "python is super fun!"
+test2 = "i love mcnuggets!"
+test3 = "let's be friends!"
+
+print(hello_patrick(test1))
+print(hello_patrick(test2))
+print(hello_patrick(test3))
+
+
