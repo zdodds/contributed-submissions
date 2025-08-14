@@ -1,0 +1,24 @@
+#### Births Modeler: &nbsp; Using Decision Trees and Random Forests
+
++ births clasification via decision trees and random forests...
++ You're classifying "above" (above-median popularity of birthdays) vs "below" (below-median popularity of birthdays)
++ Feel free to re-use the cleaned data from previous weeks (already here)
++ Suggestion:  &nbsp; go cell-by-cell using the iris_modeler example, copying-and-adapting as you go...## Data set up...
++ Use the cleaned data from prior weeks (it should be here in this folder as births_cleaned.csv)
++ Be sure to get rid of the column with the **number of births** &nbsp;&nbsp; That makes the prediction "too easy"!
++ Instead, see how well the DT/RF techniques can predict above/below-median popularity, just based on month and day...
++ (It's quite a hard estimation problem!)## First: &nbsp; _Decision Trees_## Then: &nbsp; _Random Forests_<br>
+<hr>
+<br>
+
+### Final, big-picture question:  
++ What are the relative "feature importances" of the two features
+  + month
+  + day
++ ... at least, in terms of "birthday popularity," as we've defined it?
+
+Reflect, in a sentence or two, on the values of feature importances that you found.
++ To use Erica Thompson's framing, 
++ how much trust (or weight) would you attribute to this model and its feature importances, "outside of Model Land"? Month seems to have much greater importance than day, both in the decision tree and random forest approaches. This appears visually in the heatmap above, as you can see there is a clear cutoff around month 5 (may) where nearly all days before that month have below median predicted births, and most days after that month have above median predicted births. There are no such clear trends in days, although there are a few below-average outliers in the late months for days that are later in the month. In that case, the day reverses the month-based trend, and captures the decrease in births seen around Christmas. 
+
+I wouldn't trust the model and its feature importances that greatly 'outside of Model Land' because many of the trends leading to changes in birth popularity are better explained with knowledge of greater context (weather, holidays, tax system, etc.) rather than solely through the data itself using decision trees, random forests or regression. 

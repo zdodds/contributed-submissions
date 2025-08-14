@@ -1,0 +1,162 @@
+## hw1pr1: <i>Files!</i>
++ walking through folders and files  (500 files - or many more!)
++ analyzing, counting, inquiring, and <i>insight-producing</i> as we go!  By the way, when I run the above cell on my desktop machine (Mac), the response is
+
+``'/Users/zacharydodds/Desktop/cs35/week1/starting_notebooks'``
+
+on a Windows laptop, the path uses a different separator. Mine is
+
+``'c:\\Users\\dodds\\OneDrive\\Desktop\\cs35\\week1\\starting_notebooks'``
+
+Your results will almost certainly differ.
+
+In fact, if they *don't* differ ... I'm _very_ interested! 🤔 🦔In 2024, my Mac setup succeeds with a ``UserWarning`` that tells me to install the ``pickleshare`` library.
+
+I refuse based on snack-sharing principles!
+
+One can only share freely, not under admonishment/warning!
+
+(If this happens to you - let me know and we'll fix it...)On first glance, it seems we can't open the file ``nottrue.ipynb`` ...
+
+It's in the folder ``intro_first`` -- see if you can open it ...We *could* use the command-line ``cat`` or ``type`` one file at a time ...
+
+But, what if we have to walk _500 files_ ?!  <font size="-2">(Alas, this joke stays around for at least this whole week!)</font>
+
+  + Then, we need a function - and script - to access its contents. 
+  + We started this last week, let's revisit it again here:Notice that, in Python, the Mac/forwardslash/style paths work, _even on Windows_#### But, we have 500 files...
+
+Let's write <font color="DodgerBlue">_steppingstone_ functions</font> to make sense of our 500 files...
+
+Let's start by reminding ourselves we can write a function that returns.
+
+We'll call this Version 0:<hr>#### Introducing ``os.walk``
+
+The function ``os.walk(path)`` will walk _any number_ of files...
+
+Before we write a function, let's try  ``os.walk`` immediately:Here's a line-wrapped version of the list ``L``
+  + Below it, is a picture of the folder-and-file structure!  
+  + Our goal: mind-mapping the two representations!!``L = [('./intro_first', ['cs', 'sci'], ['.DS_Store', 'nottrue.ipynb']), 
+('./intro_first/cs', [], ['.DS_Store', 'file35.txt', 'file181y.txt']), 
+('./intro_first/sci', ['50', '10'], ['.DS_Store']), ('./intro_first/sci/50', [], ['IDE.txt']), ('./intro_first/sci/10', [], ['IDE.txt'])]``See if you can match the _syntactic_ structure (the text!) with the _visual_ structure (the image!) 
+
+<hr>
+
+Onward!#### Now, let's incorporate ``os.walk`` into a series of functions...Ok!  But we didn't actually "walk" the folders -- or files! 
+
+That is, we only counted, and didn't <u>consider</u>, each one...
+
+Let's print all of the folder names!
+If you're on Windows, you likely see some "hidden MACOSX" directories, ``__MACOSX``
+
+<font color="DodgerBlue"><b>Task!</b></font> 
+
+Change the above code so that it _skips_ any path that contains the string ``__MACOSX``
+
+We'll do this together...<hr>But, we want to see the files!
+
+Let's print all their full filenames (the full paths)!**Aside**: &nbsp;&nbsp; It's possible to assemble paths using the operating system's "correct" character:Notice that it _joined_ the path and the file.
+
+<br>
+
+Since Python is happy with ``/`` we'll use that for now.
+
+<hr>#### But, we want to get all of the files' _contents_  !
+
+<u>Notice</u> there are lots of files named ``".DS_Store"`` ...
+
+They are binary data used by MacOS - they will cause trouble!
+
+Let's see the trouble, and then fix it:#### The encoding was wrong!  
+
+(Those ``.DS_store`` files are binary, not human-readable.)
+
+We could change to, say, latin-1 and see the bytes. But, let's not...
+
+We really just want to _algorithmically_ skip over those files. Let's try it:
+
+<font color="DodgerBlue"><b>Task to try</b></font>
+
+Add an if statement in the above "steppingstone function" in order to simply skip over any file that begins with a dot (a period character: ``"."``)
+
+Then, run it again. (It's ok to leave those dot files' pathnames - or not...)<hr>####  Two examples leading into our 10,000-file challenges! 
+
+<u>Example 1</u> &nbsp; Let's count how many ``.txt`` files we have... <font color="DodgerBlue"><b>This is an example</b></font> of a short (1-3 sentence) markdown cell, giving interpretation and context for the above result...
+
+#### Number of ``.txt`` files
+  + It seems that this folder, ``intro_first`` has four (4) ``.txt`` files.  This seems reasonable!
+  + We could go further and see what _percentage_ of files are ``.txt`` ... 
+  + It's also worth noting that we're trusting the file extension ``.txt`` here: some text files could be masquerading as other things... 😊?!The key idea is to ...
+  + share the results found, contextualized for us sapiens ...
+  + consider what else could be done, even if we're not doing so ...
+  + note possible incompletenesses, countervailing forces, concerns in general ...
+  + use emojis 🦔 !<hr>####  Second example: using file *contents* 
+
+<u>Example 2</u> &nbsp; Let's count how many of the ``.txt`` files contain the substring ``'CS'`` -- not in the filename, but in the file ***contents***<font color="Coral"><b>Results:</b></font> 
+
+#### Number of ``CS``-content ``.txt`` files
+  + It seems that this folder, ``intro_first`` has two ``'CS'``-containing ``.txt`` files, out of four total ``.txt`` files, that is, ``50%`` <br><br>
+  + <u>Reflection</u>: _This seems computationally balanced._ <br><br>
+  + <u>Opportunities</u>: We could go further and try this in larger folders - such as this whole machine! Or, we could look for other things (like phone numbers or names in various formats). Or, really, we could ask-and-answer almost any algorithmic question about any subset of files on any machine at all... <br><br>
+  +   _The fox knows many things, but the hedgehog knows one big thing._ - [Archilochus](https://www.goodreads.com/author/quotes/7614908.Archilochus#:~:text=Archilochus%20Quotes&text=We%20don't%20rise%20to,the%20level%20of%20our%20training.&text=The%20fox%20knows%20many%20things,hedgehog%20knows%20one%20big%20thing.&text=Heart%2C%20my%20heart%2C%20so%20battered,the%20men%20who%20hate%20us.) 🦔 #### Trying other directories/folders
+
+The ``path`` can be _any_ folder on your local machine, allowing for _arbitrary_ local exploration and discovery...
+
+For example, this next cell will count <font color="Coral"><b>how many folders</b></font> do I have, starting at some ``path``
++ to count <font color="Coral"><b>files</b></font>, you'll need to build from the examples above#### <font color="DodgerBlue"><b>Your task</b></font>: The Rolodex challenge!
++ Here is [the homework page that describes hw1's challenges...](https://docs.google.com/document/d/1SXgPlR00aIxahDi3OYR8y9-AODNwBuLbQsLLt9AKSa4/edit)
++ A few questions are "our" design
++ Then, ask-and-answer more are of _your_ design
++ And, you'll answer _your_ questions from at least two other "root" directories (the ``path`` that gets everything started is sometimes called the "root": the folder whose files your functions _walk_! :)
++ Create a short <font color="Coral"><b>Results:</b></font> section after each of "our" and _your_ questions. Feel free to use the template above.
++ Good luck, walking <i>far more</i> than one thousand files!
+
+<br>
+<font color="Coral"><b>Results:</b></font> 
+
+#### File counting and phone numbers
+  + It seems that this folder, files_challenge has a ``total of 6361 .txt files``
+  + The ``maximum depth within files_challenge is 12`` with the path ./files_challenge/phonebook 2020/more/test/sub1/superSub1/superDuperSub2/deeply_hidden_folder/a/c/fortytwo
+  + The files_challenge folder contains ``671 phone numbers of length 7, 102 phone numbers of length 11 and 5283 of length 10``. 
+  + I counted ``597 phone numbers with the area code 909``
+
+##### Reflection
+  + There are a lot of .txt files and a lot of folders in the files_challenge folder! It is impressive that we are able to look through all of them and extract information like phone number length and area code so rapidly using Python. 
+<font color="Coral"><b>Results:</b></font> 
+
+#### Names: First and Last
+  + Counting ``3 'i's``: 0 in intro_first, 2 in intro_second (ERIC WILLIAMS and KEVIN WILLIAMS) and ``289 in files_challenge``. 
+  + Counting ``max 'i's``: 2 in intro_first, 3 in intro_second and 5 in files_challenge, with ``Cindi Wisnieski``
+  + Counting ``'Khaby'``: appears in files_challenge ``27 times``: 4 times as a first name and 23 times as a last name. 
+  + Counting ``'D'Amelio'``: appears in files_challenge ``53 times``: 45 times as a last name and 8 times as a first name. 
+  + Counting ``my name``: CS35_Participant_3 appears as a last name ``17 times``, CS35_Participant_3 appears as a first name ``19 times``. 
+  + Counting other names: ``CS35_Participant_9 appeared 29 times`` as a first name and ``Julien appeared 57 times`` as a last name!
+
+  ##### Reflection
+  + This is a very interesting data set of names: Khaby and D'Amelio showed up many times each, but the first name 'Julie' showed up zero times! That's how I ended up looking at the last name 'Julien' because I went to confirm that Julie showed up zero times and only found files with the name Julien. The name CS35_Participant_9 showed up many times, which was what I expected. 
+<font color="Coral"><b>Results:</b></font> 
+
+#### Extra three questions on the files_challenge dataset
+  + I found the most common last name to be ``Li with 191 instances``
+  + I found ``two symmetrical phone numbers`` in the dataset: 4127777214 and 2462642
+  + I found that ``1180 phone numbers contain the substring '42'``
+
+
+##### Reflection
+  + I appreciated the opportunity to refresh my knowledge on using dictionaries for the 'most common name' question -- I initially tried to solve the problem just using a lot of nested loops and it was way too slow to ever complete. Using a dictionary made the problem a  lot easier and faster!
+  + I expected there to be a few more 'symmetrical' phone numbers, but it was interesting to see the two that did exist in the dataset
+  + A lot of the phone numbers contained the substring '42'! Perhaps not too surprising given the relative length of that substring and the total phone number lengths <font color="Coral"><b>Results:</b></font> 
+
+#### Exploring your own files! 
+  + I found that there were many more files than expected in my 'Previous Classes' folder: ``1236 total files``!
+  + I found that I had ``146 .ino files`` which was the most of several I tested: .png, .tif, .docx, .xls, .py, .jpg. These are Arduino files from an electronics class I took. 
+  + In the 'Previous Classes' folder, the ``maximum depth is 12``
+  
+
+#### Three of my own questions
+  + What is the breakdown of file types and the most popular file type in my 'Previous Classes' folder? I found the ``max was .TXT with 400 files``, but that there were many other file types within this folder, including .pde, .pse and .hmmm 
+  + How many of the files have my first or last name in the title? Surprisingly, only ``11 files have my first name or last name`` of the 1236
+  + What is the most full folder (counting both files and subfolders?) The ``/Users/isabelburger/Documents/Previous Classes/Arduino/libraries/WaveHC/FilesForExamples/fill`` folder has ``400 folders and files`` directly within it
+
+##### Reflection
+  + This was fun because it showed me I can use this to learn more about my own files and deal with large quantities of files/folders. 
+  + It also made me realize how many folders and files there are in my computer that were created by programs like Arduino, which I previously had no idea stored so many additional files on my machine...

@@ -1,0 +1,72 @@
+<br>
+
+## Final project preliminaries
+
+<font color="Teal"><b>Exploring how much an idea "pushes back" - including its technologies, libraries, and online resources ...</b></font>
+
+<br>
+
+#### Here are the  [cs35 project guidelines](https://docs.google.com/document/d/1DwoOJCy6GGECvzSOE4BDPVcEgVtvChglnz03-uxx7mA/edit)  with more details.
+
+And here is the [Colab version](https://colab.research.google.com/drive/1kASM8K0vqu40S5xjBS-hXf-bIDcQPZtz#scrollTo=1gAMoA_KN5L0) of this notebook. If Colab works better for your project, wonderful!
+
+<br>
+#### **What you've tried**
++ What are the things you've tried <b><u>so far</u></b> - and how has it gone?  
+  + This is the most important effort!  
+  + <b>Note</b>: If you have _lots_ of ideas and can't decide... look for online guides or walkthroughs for several of them and see which are most promising (and interesting!)
+  + include, here in the Python cells above/below, the explorations and/or experiments you've pursued
+  + if you're using plain-python files or other notebook files, submit those, in addition or instead
+    + <font size="-2">if you submit other files instead, include these reflections in the files you submit...</font>
+  + include any other <i>small</i> data files/links/resources you've collected
+<br>
+<br>#### **Your Project Plan,** <font size="-1">as of this moment...</font>
+
++ <b><font color="DodgerBlue">Share</font></b> a paragraph or so on your project exploration so far -- and your summary of the idea/plan + its background
+  + This is intentionally ***progress-first***
+  + **Try things out** before dedicating too much to a single, specific path...
+
+  I have looked through and run example code from scikit-image that displays microscopy images, segments nuceli within cells and quantifies colocalization of two cellular components using varying metrics. I have applied this knowledge to my own data from research I conducted this summer, looking at multi-dimensional nd2 images which have a number of fluorescence channels and fields of view. I have successfully displayed individual channels from fluorescence images and overlayed two channels to look at colocalization. In addition, I have worked at looking into ways to adjust image contrast and thresholding in order to improve segmentation of nuclei and proteins/nucelic acids in my own images. I successfully ran code to segment nuclei on my own images. 
+
+  The summary of my goal for my project is to explore what I can do using scikit-image to analyze example fluorescence images that I have from reserach I conducted this summer. My total goals will be to adjust thresholding of images, segment cells/nuclei, count cells in larger image with many cells, and display and quantify colocalization. This project connects most closely to our work in class on data visualization, so along with the data visualization involved in just processing and displaying image data in plots, I would like to create additional plots comparing the colocalization quantifications that I will perform. 
+
+
++ <b><font color="Coral">Share</font></b>: &nbsp; What resources/libraries/walkthroughs have you found?
+
+The main libraries I will be using here are scikit-image, matplotlib, nd2 and numpy. 
+
+Here are a number of resources from scikit-image which may be helpful for looking into colocalization, cell/nuclei segmentation and thresholding. 
+
+https://scikit-image.org/docs/0.25.x/auto_examples/applications/plot_colocalization_metrics.html#sphx-glr-auto-examples-applications-plot-colocalization-metrics-py
+https://scikit-image.org/docs/0.25.x/auto_examples/segmentation/plot_watershed.html#sphx-glr-auto-examples-segmentation-plot-watershed-py
+https://scikit-image.org/docs/0.25.x/auto_examples/applications/plot_fluorescence_nuclear_envelope.html
+https://scikit-image.org/docs/0.25.x/auto_examples/applications/plot_human_mitosis.html
+https://scikit-image.org/docs/0.25.x/auto_examples/applications/plot_thresholding_guide.html
+
++ <b><font color="Coral">Share</font></b>: &nbsp; What datasets are you using? <font size="-1">if applicable for your project</font>
+
+I will be using my own data from this summer looking at fluorescence images of cells which include channels for brightfield images, a nuclear stain, fluorescent DNA, and fluorescent protein cargo of two types. These are nd2 files. 
+
+<br>
+<br>#### **Looking ahead**
++ Specifically, what task do you plan to try <b><u>next</u></b>?
++ More generally, how do you plan to go _beyond_ existing resources...
+  + If it's not shared above, describe how you envision _personalizing_ and/or _individualizing_ your project...
+
+  I plan to continue working on thresholding images to improve segmentation. Once this is done I will be able to work towards quantification of colocalization using my images. 
+
+  I plan to go beyond existing resources by combining the resources I have found from scikit-image with the nd2 library, as the nd2 fluorescence image datatype is not the data form of these examples. In addition, I hope to go beyond merely displaying images by creating several figures of my own that will quantify the colocalization of the various fluorescent compounds in my images. 
+
+  This project is individualized to me as I am using my own data from this summer which I had not previously been able to analyze using Python, just display. <br><br>
+<hr>
+<br><br>
+
+Feel free to use this notebook to summarize your prelimiaries so far ...
+
+<br>
+
+... ***or*** &nbsp;&nbsp; include your responses to these questions in other  notebooks or plain-python files!
+
+<br><br>
+<hr>
+<br><br>

@@ -1,0 +1,1345 @@
+#
+#  feel free to interleave markdown or plain-text throughout...
+#
+#       if your project doesn't work well with notebooks, plain-python is 100% ok.
+#
+
+
+import matplotlib.pyplot as plt
+import numpy as np
+from matplotlib.colors import linearsegmentedcolormap
+from scipy import ndimage as ndi
+import skimage as ski
+import pooch
+
+rng = np.random.default_rng()
+
+# segment nucleus
+nucleus = ski.data.protein_transport()[0, 0, :, :180]
+smooth = ski.filters.gaussian(nucleus, sigma=1.5)
+thresh = smooth > ski.filters.threshold_otsu(smooth)
+fill = ndi.binary_fill_holes(thresh)
+nucleus_seg = ski.segmentation.clear_border(fill)
+
+# protein blobs of varying intensity
+proteina = np.zeros_like(nucleus, dtype="float64")
+proteina_seg = np.zeros_like(nucleus, dtype="float64")
+
+for blob_seed in range(10):
+    blobs = ski.data.binary_blobs(
+        180, blob_size_fraction=0.5, volume_fraction=(50 / (180**2)), rng=blob_seed
+    )
+    blobs_image = ski.filters.gaussian(blobs, sigma=1.5) * rng.integers(50, 256)
+    proteina += blobs_image
+    proteina_seg += blobs
+
+# plot data
+fig, ax = plt.subplots(3, 2, figsize=(8, 12), sharey=true)
+ax[0, 0].imshow(nucleus, cmap=plt.cm.gray)
+ax[0, 0].set_title('nucleus')
+
+ax[0, 1].imshow(nucleus_seg, cmap=plt.cm.gray)
+ax[0, 1].set_title('nucleus segmentation')
+
+black_magenta = linearsegmentedcolormap.from_list("", ["black", "magenta"])
+ax[1, 0].imshow(proteina, cmap=black_magenta)
+ax[1, 0].set_title('protein a')
+
+ax[1, 1].imshow(proteina_seg, cmap=black_magenta)
+ax[1, 1].set_title('protein a segmentation')
+
+ax[2, 0].imshow(proteina, cmap=black_magenta)
+ax[2, 0].imshow(nucleus_seg, cmap=plt.cm.gray, alpha=0.2)
+ax[2, 0].set_title('protein a\nwith nucleus overlaid')
+
+ax[2, 1].imshow(proteina_seg, cmap=black_magenta)
+ax[2, 1].imshow(nucleus_seg, cmap=plt.cm.gray, alpha=0.2)
+ax[2, 1].set_title('protein a segmentation\nwith nucleus overlaid')
+
+for a in ax.ravel():
+    a.set_axis_off()
+
+
+ski.measure.intersection_coeff(proteina_seg, nucleus_seg)
+
+
+ski.measure.manders_coloc_coeff(proteina, nucleus_seg)
+
+
+# generating protein b data that is correlated to protein a for demo
+proteinb = proteina + rng.normal(loc=100, scale=10, size=proteina.shape)
+
+# plot images
+fig, ax = plt.subplots(1, 2, figsize=(8, 8), sharey=true)
+
+ax[0].imshow(proteina, cmap=black_magenta)
+ax[0].set_title('protein a')
+
+black_cyan = linearsegmentedcolormap.from_list("", ["black", "cyan"])
+ax[1].imshow(proteinb, cmap=black_cyan)
+ax[1].set_title('protein b')
+
+for a in ax.ravel():
+    a.set_axis_off()
+
+# plot pixel intensity scatter
+fig, ax = plt.subplots()
+ax.scatter(proteina, proteinb)
+ax.set_title('pixel intensity')
+ax.set_xlabel('protein a intensity')
+ax.set_ylabel('protein b intensity')
+
+
+pcc, pval = ski.measure.pearson_corr_coeff(proteina, proteinb)
+print(f"pcc: {pcc:0.3g}, p-val: {pval:0.3g}")
+
+
+import itertools
+from pathlib import path
+import numpy as np
+from tqdm import tqdm
+import matplotlib.pyplot as plt
+import pandas as pd
+import seaborn as sns
+import nd2
+dir = path("/users/isabelburger/documents/previous research/amgen/data/07_19")
+
+
+conditions = [
+    #"07_19_tfx_dextran_transferrin",
+    "07_19_tfx_dextran_transferrin_40x"
+]
+
+im_pool = dict()
+fovs = [
+    [0, 2, 4, 6, 8],
+    [0, 2, 4, 6, 8]
+]
+
+for i, cond in enumerate(tqdm(conditions)):
+    im_file = list(dir.glob(f"{cond}.nd2"))[0]
+    with nd2.nd2file(im_file) as im:
+        im = np.array(im)
+        print(im.shape)
+        im_pool[cond + "_dmso"] = [np.array(im[fovs[i][0], j])[950:1100, 1150:1300] for j in range(0, 5)]
+        im_pool[cond + "_okanin"] = [np.array(im[fovs[i][1], j])[670:820, 300:450] for j in range(0, 5)]
+        im_pool[cond + "_salb"] = [np.array(im[fovs[i][2], j])[600:750, 150:300] for j in range(0, 5)] #50:200, 0:150
+        im_pool[cond + "_eipa"] = [np.array(im[fovs[i][3], j])[400:550, 425:575] for j in range(0, 5)]
+        im_pool[cond + "_lata"] = [np.array(im[fovs[i][4], j])[325:475, 375:525] for j in range(0, 5)]
+
+
+import matplotlib.pyplot as plt
+import numpy as np
+import nd2
+from pathlib import path
+from tqdm import tqdm
+from matplotlib.colors import linearsegmentedcolormap
+
+# define your condition and field of view (fov) coordinates for dmso
+condition = "07_19_tfx_dextran_transferrin_40x"
+fovs = [0, 2, 4, 6, 8]  # adjust as needed
+
+# initialize image pool for dmso
+im_pool = dict()
+
+# load nd2 file for dmso and extract the fovs for different channels
+dir = path("/users/isabelburger/documents/previous research/amgen/data/07_19")  # specify the correct directory
+im_file = list(dir.glob(f"{condition}.nd2"))[0]  # get the first matching nd2 file
+
+with nd2.nd2file(im_file) as im:
+    im = np.array(im)
+    print(f"loaded image with shape: {im.shape}")
+    
+    # extract different channels from the nd2 image for dmso
+    # you will need to adjust the channel indexing based on the structure of your nd2 file
+    # assuming the channels are organized in the second dimension (axis=1)
+    
+    # example: extracting channels 0, 1, 2 (assuming red, green, blue)
+    # adjust the slicing based on your nd2 data structure
+    im_pool["dmso_brightfield"] = [np.array(im[fovs[0], 0])[950:1100, 1150:1300] for fov in fovs]
+    im_pool["dmso_561"] = [np.array(im[fovs[0], 1])[950:1100, 1150:1300] for fov in fovs]
+    im_pool["dmso_405"] = [np.array(im[fovs[0], 2])[950:1100, 1150:1300] for fov in fovs]
+    im_pool["dmso_488"] = [np.array(im[fovs[0], 3])[950:1100, 1150:1300] for fov in fovs]
+    im_pool["dmso_640"] = [np.array(im[fovs[0], 4])[950:1100, 1150:1300] for fov in fovs]
+
+# plot the color channels
+fig, ax = plt.subplots(3, 2, figsize=(10, 12), sharey=true)
+
+# plot red, green, and blue channels for dmso
+ax[0, 0].imshow(im_pool["dmso_brightfield"][0], cmap='gray')  # using 'reds' colormap for the red channel
+ax[0, 0].set_title('dmso brightfield')
+
+ax[0, 1].imshow(im_pool["dmso_561"][1], cmap='inferno')  # using 'greens' colormap for the green channel
+ax[0, 1].set_title('dmso fluoroligo 561 nm ')
+
+ax[1, 0].imshow(im_pool["dmso_405"][2], cmap='inferno')  # using 'blues' colormap for the blue channel
+ax[1, 0].set_title('dmso hoechst 405 nm')
+
+ax[1, 1].imshow(im_pool["dmso_488"][2], cmap='magma')  # using 'blues' colormap for the blue channel
+ax[1, 1].set_title('dmso dextran 488 nm')
+
+ax[2, 0].imshow(im_pool["dmso_640"][2], cmap='viridis')  # using 'blues' colormap for the blue channel
+ax[2, 0].set_title('dmso transferrin 640 nm')
+
+# example: overlay all three channels (rgb) for dmso
+ax[2, 1].imshow(im_pool["dmso_561"][1], cmap='magma')
+#ax[2, 1].imshow(im_pool["dmso_405"][2], cmap='blues', alpha=0.5)
+ax[2, 1].imshow(im_pool["dmso_488"][3], cmap='viridis', alpha=0.5)
+#ax[2, 1].imshow(im_pool["dmso_640"][4], cmap='oranges', alpha=0.5)
+ax[2, 1].set_title('dmso rgb overlay - fov 0')
+
+# optionally, add more fovs or adjust for other visualizations
+for a in ax.ravel():
+    a.set_axis_off()
+
+# scatter plot for colocalization between red, green, and blue channels (dmso)
+fig, ax = plt.subplots()
+
+pink_channel = np.array(im_pool["dmso_561"][1]).flatten()
+blue_channel = np.array(im_pool["dmso_405"][2]).flatten()
+green_channel = np.array(im_pool["dmso_488"][3]).flatten()
+orange_channel = np.array(im_pool["dmso_640"][3]).flatten()
+
+# scatter plot comparing two channels (e.g., red vs green)
+ax.scatter(pink_channel, green_channel, alpha=0.1, label="561 vs 488")
+ax.set_title('pixel intensity comparison: 561 vs 488 (dmso)')
+ax.set_xlabel('561nm intensity')
+ax.set_ylabel('488nm intensity')
+
+plt.tight_layout()
+plt.show()
+
+
+import matplotlib.pyplot as plt
+import numpy as np
+import skimage as ski
+import scipy.ndimage as ndi
+import nd2
+from pathlib import path
+from matplotlib.colors import linearsegmentedcolormap
+
+# define your condition and field of view (fov) coordinates for dmso
+condition = "07_19_tfx_dextran_transferrin_40x"
+fovs = [0, 2, 4, 6, 8]  # adjust as needed
+
+# initialize image pool for dmso
+im_pool = dict()
+
+# load nd2 file for dmso and extract the fovs for different channels
+dir = path("/users/isabelburger/documents/previous research/amgen/data/07_19")  # specify the correct directory
+im_file = list(dir.glob(f"{condition}.nd2"))[0]  # get the first matching nd2 file
+
+with nd2.nd2file(im_file) as im:
+    im = np.array(im)
+    #print(f"loaded image with shape: {im.shape}")
+    
+    # extract the specific fov and channel (assuming fovs and channels are in the right dimensions)
+    # for example, we are taking the 0th fov and 0th channel (which could be brightfield)
+    nucleus = np.array(im[fovs[0], 2])[950:1100, 1150:1300]  # extracting a region for nucleus
+    
+    # segmentation of the nucleus region
+    smooth = ski.filters.gaussian(nucleus, sigma=1.5) #1.5
+    thresh = smooth > ski.filters.threshold_otsu(smooth)
+    fill = ndi.binary_fill_holes(thresh)
+    nucleus_seg = ski.segmentation.clear_border(fill)
+
+
+    # **use protein a data from the nd2 file**
+    proteina = np.array(im[fovs[0], 3])[950:1100, 1150:1300]  # extract protein a channel (assuming it is channel 2)
+    smoothproteina = ski.filters.gaussian(proteina, sigma=-0) #1.5
+    threshproteina = smoothproteina > ski.filters.threshold_otsu(smoothproteina)
+    fillproteina = ndi.binary_fill_holes(threshproteina)
+    #proteina_seg = np.zeros_like(proteina, dtype="float64")
+    proteina_seg = fillproteina
+
+    # plot data
+    fig, ax = plt.subplots(3, 2, figsize=(8, 12), sharey=true)
+    
+    # display nucleus and segmentation
+    ax[0, 0].imshow(nucleus, cmap=plt.cm.gray)
+    ax[0, 0].set_title('nucleus')
+
+    ax[0, 1].imshow(nucleus_seg, cmap=plt.cm.gray)
+    ax[0, 1].set_title('nucleus segmentation')
+
+    # display protein a and segmentation
+    black_magenta = linearsegmentedcolormap.from_list("", ["black", "magenta"])
+    ax[1, 0].imshow(proteina, cmap=black_magenta)
+    ax[1, 0].set_title('protein a')
+
+    ax[1, 1].imshow(proteina_seg, cmap=black_magenta)
+    ax[1, 1].set_title('protein a segmentation')
+
+    # overlay nucleus segmentation on protein a
+    ax[2, 0].imshow(proteina, cmap=black_magenta)
+    ax[2, 0].imshow(nucleus_seg, cmap=plt.cm.gray, alpha=0.2)
+    ax[2, 0].set_title('protein a\nwith nucleus overlaid')
+
+    ax[2, 1].imshow(proteina_seg, cmap=black_magenta)
+    ax[2, 1].imshow(nucleus_seg, cmap=plt.cm.gray, alpha=0.2)
+    ax[2, 1].set_title('protein a segmentation\nwith nucleus overlaid')
+
+    # turn off axes
+    for a in ax.ravel():
+        a.set_axis_off()
+
+    plt.tight_layout()
+    plt.show()
+
+
+
+ski.measure.intersection_coeff(proteina_seg, nucleus_seg)
+
+
+ski.measure.manders_coloc_coeff(proteina, nucleus_seg)
+
+
+import numpy as np
+from skimage import exposure
+from pathlib import path
+import nd2  # make sure the `nd2` module is installed
+
+def adjust_image(im_data, fov, channel, row_slice=none, col_slice=none, adjust_thresh=[2, 98], contrast=false):
+    """
+    adjusts the image by applying thresholding and contrast adjustment.
+    
+    parameters:
+    - im_data: the image data in a numpy array format (loaded from nd2 file).
+    - fov: the field of view to extract.
+    - channel: the channel to extract (usually 0 for grayscale).
+    - row_slice: slice object for rows to crop (optional).
+    - col_slice: slice object for columns to crop (optional).
+    - adjust_thresh: threshold for contrast adjustment (default is [2, 98] percentiles).
+    - contrast: boolean to specify whether to apply contrast stretching.
+    
+    returns:
+    - adjusted_image: the adjusted image as a numpy array.
+    """
+    # extract the image (field of view and channel)
+    image = im_data[fov, channel]
+
+    # if row_slice and col_slice are provided, crop the image
+    if row_slice and col_slice:
+        image = image[row_slice, col_slice]
+    elif row_slice:  # only apply row slicing
+        image = image[row_slice]
+    elif col_slice:  # only apply column slicing
+        image = image[:, col_slice]
+
+    # apply threshold adjustment (contrast stretching)
+    if adjust_thresh:
+        p2, p98 = np.percentile(image, adjust_thresh)
+        image = exposure.rescale_intensity(image, in_range=(p2, p98))
+    
+    # apply contrast stretching (optional)
+    if contrast:
+        image = exposure.equalize_hist(image)  # histological equalization for contrast adjustment
+    
+    # return the adjusted image
+    return image
+
+# example usage
+conditions = ["07_19_tfx_dextran_transferrin_40x"]
+dir = path("/users/isabelburger/documents/previous research/amgen/data/07_19")  # specify the correct directory
+
+# load nd2 file for the specified condition
+im_file = list(dir.glob(f"{conditions[0]}.nd2"))[0]  # get the first matching nd2 file
+
+fovs = [
+    [0, 2, 4, 6, 8],
+    [0, 2, 4, 6, 8]
+]
+
+# open the nd2 file and extract the image data
+with nd2.nd2file(im_file) as im:
+    # convert the nd2 file to a numpy array
+    im_data = np.array(im)
+    
+    # define row and column slicing parameters
+    row_slice = slice(950, 1100)  # rows 950 to 1100
+    col_slice = slice(1150, 1300)  # columns 1150 to 1300
+
+    # adjust image (apply thresholding and optional contrast adjustment)
+    image_before_adjustment = im_data[fovs[0][0], 2][950:1100, 1150:1300]
+    adjusted_image = adjust_image(im_data, fov=fovs[0][0], channel=2, row_slice=row_slice, col_slice=col_slice, contrast=true)
+    
+    # display or process the adjusted image as needed
+    print(f"adjusted image shape: {adjusted_image.shape}")
+    # optionally save or visualize the adjusted image here if needed (e.g., using matplotlib)
+
+
+# create a figure to show images before and after adjustment
+fig, ax = plt.subplots(1, 4, figsize=(10, 5))
+plt.subplots_adjust(hspace=0.1, wspace=0.1)
+
+# display the image before threshold adjustment
+ax[0].imshow(image_before_adjustment, cmap=plt.cm.gray)
+ax[0].set_title("before adjustment")
+ax[0].axis("off")
+
+# segmentation of the nucleus region pre adjustment 
+smooth = ski.filters.gaussian(image_before_adjustment, sigma=1.75) #1.5
+thresh = smooth > ski.filters.threshold_otsu(smooth)
+fill = ndi.binary_fill_holes(thresh)
+nucleus_seg = ski.segmentation.clear_border(fill)
+ax[1].imshow(nucleus_seg, cmap=plt.cm.gray)
+ax[1].set_title("segmented")
+ax[1].axis("off")
+
+# display the adjusted image in the second subplot
+ax[2].imshow(adjusted_image, cmap=plt.cm.gray)  # crop the image for display
+ax[2].set_title("after adjustment")
+ax[2].axis("off")
+
+# segmentation of the nucleus region
+smooth = ski.filters.gaussian(adjusted_image, sigma=1.75) #1.5
+thresh = smooth > ski.filters.threshold_otsu(smooth)
+fill = ndi.binary_fill_holes(thresh)
+nucleus_seg = ski.segmentation.clear_border(fill)
+ax[3].imshow(nucleus_seg, cmap=plt.cm.gray)
+ax[3].set_title("segmented")
+ax[3].axis("off")
+
+
+
+
+import numpy as np
+from skimage import exposure
+from pathlib import path
+import nd2  # make sure the `nd2` module is installed
+
+
+# example usage
+conditions = ["07_19_tfx_dextran_transferrin_40x"]
+dir = path("/users/isabelburger/documents/previous research/amgen/data/07_19")  # specify the correct directory
+
+# load nd2 file for the specified condition
+im_file = list(dir.glob(f"{conditions[0]}.nd2"))[0]  # get the first matching nd2 file
+
+fovs = [
+    [0, 2, 4, 6, 8],
+    [0, 2, 4, 6, 8]
+]
+
+# open the nd2 file and extract the image data
+with nd2.nd2file(im_file) as im:
+    # convert the nd2 file to a numpy array
+    im_data = np.array(im)
+    
+    # define row and column slicing parameters
+    row_slice = slice(950, 1100)  # rows 950 to 1100
+    col_slice = slice(1150, 1300)  # columns 1150 to 1300
+
+    # adjust image (apply thresholding and optional contrast adjustment)
+    image_before_adjustment = im_data[fovs[0][0], 3][950:1100, 1150:1300]
+    adjusted_image = adjust_image(im_data, fov=fovs[0][0], channel=3, row_slice=row_slice, col_slice=col_slice, contrast=true)
+    
+    # display or process the adjusted image as needed
+    print(f"adjusted image shape: {adjusted_image.shape}")
+    # optionally save or visualize the adjusted image here if needed (e.g., using matplotlib)
+
+
+# create a figure to show images before and after adjustment
+fig, ax = plt.subplots(1, 4, figsize=(10, 5))
+plt.subplots_adjust(hspace=0.1, wspace=0.1)
+
+# display the image before threshold adjustment
+ax[0].imshow(image_before_adjustment, cmap=plt.cm.gray)
+ax[0].set_title("before adjustment")
+ax[0].axis("off")
+
+# segmentation of the nucleus region pre adjustment 
+smooth = ski.filters.gaussian(image_before_adjustment, sigma=0.5) #1.5
+thresh = smooth > ski.filters.threshold_otsu(smooth)
+fill = ndi.binary_fill_holes(thresh)
+nucleus_seg = ski.segmentation.clear_border(fill)
+ax[1].imshow(nucleus_seg, cmap=plt.cm.gray)
+ax[1].set_title("segmented")
+ax[1].axis("off")
+
+# display the adjusted image in the second subplot
+ax[2].imshow(adjusted_image, cmap=plt.cm.gray)  # crop the image for display
+ax[2].set_title("after adjustment")
+ax[2].axis("off")
+
+# segmentation of the nucleus region
+smooth = ski.filters.gaussian(adjusted_image, sigma=0.5) #1.5
+thresh = smooth > ski.filters.threshold_otsu(smooth)
+fill = ndi.binary_fill_holes(thresh)
+nucleus_seg = ski.segmentation.clear_border(fill)
+ax[3].imshow(nucleus_seg, cmap=plt.cm.gray)
+ax[3].set_title("segmented")
+ax[3].axis("off")
+
+
+
+import matplotlib.pyplot as plt
+import numpy as np
+import skimage as ski
+import scipy.ndimage as ndi
+import nd2
+from pathlib import path
+from matplotlib.colors import linearsegmentedcolormap
+from skimage.filters import threshold_local
+
+# define your condition and field of view (fov) coordinates for dmso
+condition = "07_19_tfx_dextran_transferrin_40x"
+fovs = [0, 2, 4, 6, 8]  # adjust as needed
+
+# initialize image pool for dmso
+im_pool = dict()
+
+# load nd2 file for dmso and extract the fovs for different channels
+dir = path("/users/isabelburger/documents/previous research/amgen/data/07_19")  # specify the correct directory
+im_file = list(dir.glob(f"{condition}.nd2"))[0]  # get the first matching nd2 file
+
+with nd2.nd2file(im_file) as im:
+    im = np.array(im)
+    #print(f"loaded image with shape: {im.shape}")
+    
+    # extract the specific fov and channel (assuming fovs and channels are in the right dimensions)
+    # for example, we are taking the 0th fov and 0th channel (which could be brightfield)
+    nucleus = np.array(im[fovs[0], 2])[950:1100, 1150:1300]  # extracting a region for nucleus
+    
+    # segmentation of the nucleus region
+    smooth = ski.filters.gaussian(nucleus, sigma=1.5) #1.5
+    thresh = smooth > ski.filters.threshold_otsu(smooth)
+    fill = ndi.binary_fill_holes(thresh)
+    nucleus_seg = ski.segmentation.clear_border(fill)
+
+
+    # **use protein a data from the nd2 file**
+    proteina = np.array(im[fovs[0], 3])[950:1100, 1150:1300]  # extract protein a channel (assuming it is channel 2)
+    #smoothproteina = ski.filters.gaussian(proteina, sigma=0) #1.5
+    smoothproteina = proteina 
+    threshproteina = smoothproteina > ski.filters.threshold_otsu(smoothproteina)
+    fillproteina = ndi.binary_fill_holes(threshproteina)
+    #proteina_seg = np.zeros_like(proteina, dtype="float64")
+    proteina_seg = fillproteina
+
+    # **use protein b data from the nd2 file**
+    proteinb = np.array(im[fovs[0], 4])[950:1100, 1150:1300]  # extract protein a channel (assuming it is channel 2)
+    #smoothproteinb = ski.filters.gaussian(proteinb, sigma=0) #1.5
+    smoothproteinb = proteinb
+    threshproteinb = smoothproteinb > ski.filters.threshold_otsu(smoothproteina)
+    fillproteinb = ndi.binary_fill_holes(threshproteinb)
+    #proteina_seg = np.zeros_like(proteina, dtype="float64")
+    proteinb_seg = fillproteinb
+
+    # plot data
+    fig, ax = plt.subplots(3, 2, figsize=(8, 12), sharey=true)
+
+    # display protein a and segmentation
+    black_magenta = linearsegmentedcolormap.from_list("", ["black", "magenta"])
+    ax[0, 0].imshow(proteina, cmap=black_magenta)
+    ax[0, 0].set_title('protein a')
+
+    ax[0, 1].imshow(proteina_seg, cmap=black_magenta)
+    ax[0, 1].set_title('protein a segmentation')
+
+    # display protein b and segmentation
+    black_cyan = linearsegmentedcolormap.from_list("", ["black", "cyan"])
+    ax[1, 0].imshow(proteinb, cmap=black_cyan)
+    ax[1, 0].set_title('protein b')
+
+    ax[1, 1].imshow(proteinb_seg, cmap=black_cyan) #proteinb_seg
+    ax[1, 1].set_title('protein b segmentation')
+
+    # overlay nucleus segmentation on protein a
+    ax[2, 0].imshow(proteina, cmap=black_magenta)
+    ax[2, 0].imshow(proteinb, cmap=black_cyan, alpha=0.2)
+    ax[2, 0].set_title('protein a\nwith protein b segmentation overlaid')
+
+    ax[2, 1].imshow(proteina_seg, cmap=black_magenta)
+    ax[2, 1].imshow(proteinb_seg, cmap=plt.cm.gray, alpha=0.2)
+    ax[2, 1].set_title('protein a segmentation\nwith protein b segmentation overlaid')
+
+    # turn off axes
+    for a in ax.ravel():
+        a.set_axis_off()
+
+    plt.tight_layout()
+    plt.show()
+
+
+# loading protein data from im
+proteina = np.array(im[fovs[0], 3])[950:1100, 1150:1300]  # extract protein a channel (assuming it is channel 3)
+proteinb = np.array(im[fovs[0], 4])[950:1100, 1150:1300]  # extract protein b channel (assuming it is channel 4)
+
+# plot images
+fig, ax = plt.subplots(1, 2, figsize=(8, 8), sharey=true)
+
+ax[0].imshow(proteina, cmap=black_magenta)
+ax[0].set_title('dextran')
+
+black_cyan = linearsegmentedcolormap.from_list("", ["black", "cyan"])
+ax[1].imshow(proteinb, cmap=black_cyan)
+ax[1].set_title('transferrin')
+
+for a in ax.ravel():
+    a.set_axis_off()
+
+# plot pixel intensity scatter
+fig, ax = plt.subplots()
+ax.scatter(proteina, proteinb)
+ax.set_title('pixel intensity')
+ax.set_xlabel('dextran intensity')
+ax.set_ylabel('transferrin intensity')
+
+pcc, pval = ski.measure.pearson_corr_coeff(proteina, proteinb)
+print(f"pcc: {pcc:0.3g}, p-val: {pval:0.3g}")
+
+
+# loading protein data from im
+proteina = np.array(im[fovs[0], 2])[950:1100, 1150:1300]  # extract protein a channel (assuming it is channel 3)
+proteinb = np.array(im[fovs[0], 4])[950:1100, 1150:1300]  # extract protein b channel (assuming it is channel 4)
+
+# plot images
+fig, ax = plt.subplots(1, 2, figsize=(8, 8), sharey=true)
+
+ax[0].imshow(proteina, cmap=black_magenta)
+ax[0].set_title('hoechst')
+
+black_cyan = linearsegmentedcolormap.from_list("", ["black", "cyan"])
+ax[1].imshow(proteinb, cmap=black_cyan)
+ax[1].set_title('transferrin')
+
+for a in ax.ravel():
+    a.set_axis_off()
+
+# plot pixel intensity scatter
+fig, ax = plt.subplots()
+ax.scatter(proteina, proteinb)
+ax.set_title('pixel intensity')
+ax.set_xlabel('hoechst intensity')
+ax.set_ylabel('transferrin intensity')
+
+pcc, pval = ski.measure.pearson_corr_coeff(proteina, proteinb)
+print(f"pcc: {pcc:0.3g}, p-val: {pval:0.3g}")
+
+
+# loading protein data from im
+proteina = np.array(im[fovs[0], 2])[950:1100, 1150:1300]  # extract protein a channel (assuming it is channel 3)
+proteinb = np.array(im[fovs[0], 3])[950:1100, 1150:1300]  # extract protein b channel (assuming it is channel 4)
+
+# plot images
+fig, ax = plt.subplots(1, 2, figsize=(8, 8), sharey=true)
+
+ax[0].imshow(proteina, cmap=black_magenta)
+ax[0].set_title('hoechst')
+
+black_cyan = linearsegmentedcolormap.from_list("", ["black", "cyan"])
+ax[1].imshow(proteinb, cmap=black_cyan)
+ax[1].set_title('dextran')
+
+for a in ax.ravel():
+    a.set_axis_off()
+
+# plot pixel intensity scatter
+fig, ax = plt.subplots()
+ax.scatter(proteina, proteinb)
+ax.set_title('pixel intensity')
+ax.set_xlabel('hoechst intensity')
+ax.set_ylabel('dextran intensity')
+
+pcc, pval = ski.measure.pearson_corr_coeff(proteina, proteinb)
+print(f"pcc: {pcc:0.3g}, p-val: {pval:0.3g}")
+
+
+# loading protein data from im
+proteina = np.array(im[fovs[0], 1])[950:1100, 1150:1300]  # extract protein a channel (assuming it is channel 3)
+proteinb = np.array(im[fovs[0], 3])[950:1100, 1150:1300]  # extract protein b channel (assuming it is channel 4)
+
+# plot images
+fig, ax = plt.subplots(1, 2, figsize=(8, 8), sharey=true)
+
+ax[0].imshow(proteina, cmap=black_magenta)
+ax[0].set_title('fluoroligo')
+
+black_cyan = linearsegmentedcolormap.from_list("", ["black", "cyan"])
+ax[1].imshow(proteinb, cmap=black_cyan)
+ax[1].set_title('dextran')
+
+for a in ax.ravel():
+    a.set_axis_off()
+
+# plot pixel intensity scatter
+fig, ax = plt.subplots()
+ax.scatter(proteina, proteinb)
+ax.set_title('pixel intensity')
+ax.set_xlabel('fluoroligo intensity')
+ax.set_ylabel('dextran intensity')
+
+pcc, pval = ski.measure.pearson_corr_coeff(proteina, proteinb)
+print(f"pcc: {pcc:0.3g}, p-val: {pval:0.3g}")
+
+
+# loading protein data from im
+proteina = np.array(im[fovs[0], 1])[950:1100, 1150:1300]  # extract protein a channel (assuming it is channel 3)
+proteinb = np.array(im[fovs[0], 4])[950:1100, 1150:1300]  # extract protein b channel (assuming it is channel 4)
+
+# plot images
+fig, ax = plt.subplots(1, 2, figsize=(8, 8), sharey=true)
+
+ax[0].imshow(proteina, cmap=black_magenta)
+ax[0].set_title('fluoroligo')
+
+black_cyan = linearsegmentedcolormap.from_list("", ["black", "cyan"])
+ax[1].imshow(proteinb, cmap=black_cyan)
+ax[1].set_title('transferrin')
+
+for a in ax.ravel():
+    a.set_axis_off()
+
+# plot pixel intensity scatter
+fig, ax = plt.subplots()
+ax.scatter(proteina, proteinb)
+ax.set_title('pixel intensity')
+ax.set_xlabel('fluoroligo intensity')
+ax.set_ylabel('transferrin intensity')
+
+pcc, pval = ski.measure.pearson_corr_coeff(proteina, proteinb)
+print(f"pcc: {pcc:0.3g}, p-val: {pval:0.3g}")
+
+
+import matplotlib.pyplot as plt
+import numpy as np
+from scipy import ndimage as ndi
+
+import skimage as ski
+
+image = ski.data.human_mitosis()
+
+fig, ax = plt.subplots()
+ax.imshow(image, cmap='gray')
+ax.set_title('microscopy image of human cells stained for nuclear dna')
+plt.show()
+
+
+fig, ax = plt.subplots(figsize=(5, 5))
+qcs = ax.contour(image, origin='image')
+ax.set_title('contour plot of the same raw image')
+plt.show()
+
+
+thresholds = ski.filters.threshold_multiotsu(image, classes=3)
+regions = np.digitize(image, bins=thresholds)
+
+fig, ax = plt.subplots(ncols=2, figsize=(10, 5))
+ax[0].imshow(image)
+ax[0].set_title('original')
+ax[0].set_axis_off()
+ax[1].imshow(regions)
+ax[1].set_title('multi-otsu thresholding')
+ax[1].set_axis_off()
+plt.show()
+
+
+cells = image > thresholds[0]
+dividing = image > thresholds[1]
+labeled_cells = ski.measure.label(cells)
+labeled_dividing = ski.measure.label(dividing)
+naive_mi = labeled_dividing.max() / labeled_cells.max()
+print(naive_mi)
+
+
+fig, ax = plt.subplots(ncols=3, figsize=(15, 5))
+ax[0].imshow(image)
+ax[0].set_title('original')
+ax[0].set_axis_off()
+ax[1].imshow(dividing)
+ax[1].set_title('dividing nuclei?')
+ax[1].set_axis_off()
+ax[2].imshow(cells)
+ax[2].set_title('all nuclei?')
+ax[2].set_axis_off()
+plt.show()
+
+
+higher_threshold = 125
+dividing = image > higher_threshold
+
+smoother_dividing = ski.filters.rank.mean(
+    ski.util.img_as_ubyte(dividing), ski.morphology.disk(4)
+)
+
+binary_smoother_dividing = smoother_dividing > 20
+
+fig, ax = plt.subplots(figsize=(5, 5))
+ax.imshow(binary_smoother_dividing)
+ax.set_title('dividing nuclei')
+ax.set_axis_off()
+plt.show()
+
+
+distance = ndi.distance_transform_edt(cells)
+
+local_max_coords = ski.feature.peak_local_max(
+    distance, min_distance=7, exclude_border=false
+)
+local_max_mask = np.zeros(distance.shape, dtype=bool)
+local_max_mask[tuple(local_max_coords.t)] = true
+markers = ski.measure.label(local_max_mask)
+
+segmented_cells = ski.segmentation.watershed(-distance, markers, mask=cells)
+
+
+fig, ax = plt.subplots(ncols=2, figsize=(10, 5))
+ax[0].imshow(cells, cmap='gray')
+ax[0].set_title('overlapping nuclei')
+ax[0].set_axis_off()
+ax[1].imshow(ski.color.label2rgb(segmented_cells, bg_label=0))
+ax[1].set_title('segmented nuclei')
+ax[1].set_axis_off()
+plt.show()
+
+
+import matplotlib.pyplot as plt
+
+# define your condition and field of view (fov) coordinates for dmso
+condition = "07_19_tfx_dextran_transferrin_40x"
+fovs = [0, 2, 4, 6, 8]  # adjust as needed
+
+# initialize image pool for dmso
+im_pool = dict()
+
+# load nd2 file for dmso and extract the fovs for different channels
+dir = path("/users/isabelburger/documents/previous research/amgen/data/07_19")  # specify the correct directory
+im_file = list(dir.glob(f"{condition}.nd2"))[0]  # get the first matching nd2 file
+
+with nd2.nd2file(im_file) as im:
+    im = np.array(im)
+    im_pool["dmso_405"] = [np.array(im[fovs[0], 2]) for fov in fovs]
+
+plt.figure(figsize=(6, 6))  # set the figure size
+plt.imshow(im_pool["dmso_405"][0], cmap='gray')  # display the image in grayscale
+plt.title('dmso brightfield')
+plt.axis('off')  # optional: hides the axes for a cleaner look
+plt.show()
+
+
+
+
+fig, ax = plt.subplots(figsize=(5, 5))
+qcs = ax.contour(im_pool["dmso_405"][0], origin='image')
+ax.set_title('contour plot of the same raw image')
+plt.show()
+
+
+thresholds = ski.filters.threshold_multiotsu(im_pool["dmso_405"][0], classes=2)
+regions = np.digitize(im_pool["dmso_405"][0], bins=thresholds)
+
+fig, ax = plt.subplots(ncols=2, figsize=(10, 5))
+ax[0].imshow(im_pool["dmso_405"][0])
+ax[0].set_title('original')
+ax[0].set_axis_off()
+ax[1].imshow(regions)
+ax[1].set_title('multi-otsu thresholding')
+ax[1].set_axis_off()
+plt.show()
+
+
+
+
+thresholds = ski.filters.threshold_multiotsu(im_pool["dmso_405"][0], classes=2)
+regions = np.digitize(im_pool["dmso_405"][0], bins=thresholds)
+cells = im_pool["dmso_405"][0] > thresholds[0]
+labeled_cells = ski.measure.label(cells)
+print(len(labeled_cells))
+
+
+
+from skimage.filters import sobel
+import numpy as np
+import skimage.io as skio
+from scipy import ndimage as ndi
+from skimage import segmentation, morphology
+import skimage.measure as skm
+
+def count_dapi(filepath):
+    dapi_img = skio.imread(filepath, plugin='tifffile')
+    imggray = dapi_img[:, :, 2]  # selects greenchannel
+    #gets elevation map
+    elevation_map = sobel(imggray)
+    # array indexing, selects only elements <10 and set to value 1
+    markers = np.zeros_like(imggray)
+    markers[imggray < 10] = 1
+    markers[imggray > 50] = 2
+    #segment from elevation map
+    segmentation_img = segmentation.watershed(elevation_map, mask=markers)
+    #label area of interests
+    label_cleaned = morphology.remove_small_objects(segmentation_img, 10)
+    label_cleaned = ndi.binary_fill_holes(label_cleaned)
+    labeled_dapi, _ = ndi.label(label_cleaned)
+    cell_label = skm.regionprops(labeled_dapi)
+    cell_count = len(cell_label)
+
+    return cell_count
+
+def est_cellcount(imagecount):
+    cellpersquarecm = imagecount /0.010593
+    return int(cellpersquarecm)
+
+
+import matplotlib.pyplot as plt
+
+# define your condition and field of view (fov) coordinates for dmso
+condition = "07_19_tfx_dextran_transferrin_40x"
+fovs = [0, 2, 4, 6, 8]  # adjust as needed
+
+# initialize image pool for dmso
+im_pool = dict()
+
+# load nd2 file for dmso and extract the fovs for different channels
+dir = path("/users/isabelburger/documents/previous research/amgen/data/07_19")  # specify the correct directory
+im_file = list(dir.glob(f"{condition}.nd2"))[0]  # get the first matching nd2 file
+
+with nd2.nd2file(im_file) as im:
+    im = np.array(im)
+    im_pool["dmso_405"] = [np.array(im[fovs[0], 2]) for fov in fovs]
+imggray = im_pool["dmso_405"][0]
+elevation_map = sobel(imggray)
+# array indexing, selects only elements <10 and set to value 1
+markers = np.zeros_like(imggray)
+markers[imggray > 300] = 1
+#segment from elevation map
+segmentation_img = segmentation.watershed(elevation_map, mask=markers)
+#label area of interests
+label_cleaned = morphology.remove_small_objects(segmentation_img, 10)
+label_cleaned = ndi.binary_fill_holes(label_cleaned)
+#labeled_regions, num_labels = ndi.label(label_cleaned)
+labeled_dapi, _ = ndi.label(label_cleaned)
+cell_label = skm.regionprops(labeled_dapi)
+cell_count = len(cell_label)
+print(cell_count)
+fig, axs = plt.subplots(1, 3, figsize=(12, 12))
+axs[0].imshow(markers)
+axs[1].imshow(segmentation_img)
+axs[2].imshow(label_cleaned)
+#plt.imshow(im_pool["dmso_405"][0], cmap='gray')  # display the image in grayscale
+#plt.title('dmso brightfield')
+plt.axis('off')  # optional: hides the axes for a cleaner look
+plt.show()
+
+
+
+conditions = ["07_19_tfx_dextran_transferrin_40x"]
+dir = path("/users/isabelburger/documents/previous research/amgen/data/07_19")  # specify the correct directory
+
+# load nd2 file for the specified condition
+im_file = list(dir.glob(f"{conditions[0]}.nd2"))[0]  # get the first matching nd2 file
+
+fovs = [
+    [0, 2, 4, 6, 8],
+    [0, 2, 4, 6, 8]
+]
+
+# open the nd2 file and extract the image data
+with nd2.nd2file(im_file) as im:
+    # convert the nd2 file to a numpy array
+    im_data = np.array(im)
+    
+    # define row and column slicing parameters
+    row_slice = slice(950, 1100)  # rows 950 to 1100
+    col_slice = slice(1150, 1300)  # columns 1150 to 1300
+
+    # adjust image (apply thresholding and optional contrast adjustment)
+    image_before_adjustment = im_data[fovs[0][0], 2]
+    adjusted_image = adjust_image(im_data, fov=fovs[0][0], channel=2, contrast=true)
+    
+    # display or process the adjusted image as needed
+    print(f"adjusted image shape: {adjusted_image.shape}")
+    # optionally save or visualize the adjusted image here if needed (e.g., using matplotlib)
+
+
+# create a figure to show images before and after adjustment
+fig, ax = plt.subplots(1, 4, figsize=(10, 5))
+plt.subplots_adjust(hspace=0.1, wspace=0.1)
+
+# display the image before threshold adjustment
+ax[0].imshow(image_before_adjustment, cmap=plt.cm.gray)
+ax[0].set_title("before adjustment")
+ax[0].axis("off")
+
+# segmentation of the nucleus region pre adjustment 
+smooth = ski.filters.gaussian(image_before_adjustment, sigma=5) #1.5
+thresh = smooth > ski.filters.threshold_otsu(smooth)
+fill = ndi.binary_fill_holes(thresh)
+nucleus_seg = ski.segmentation.clear_border(fill)
+ax[1].imshow(nucleus_seg, cmap=plt.cm.gray)
+ax[1].set_title("segmented")
+ax[1].axis("off")
+
+# display the adjusted image in the second subplot
+ax[2].imshow(adjusted_image, cmap=plt.cm.gray)  # crop the image for display
+ax[2].set_title("after adjustment")
+ax[2].axis("off")
+
+# segmentation of the nucleus region
+smooth = ski.filters.gaussian(adjusted_image, sigma=5) #1.5
+thresh = smooth > ski.filters.threshold_otsu(smooth)
+fill = ndi.binary_fill_holes(thresh)
+nucleus_seg = ski.segmentation.clear_border(fill)
+ax[3].imshow(nucleus_seg, cmap=plt.cm.gray)
+ax[3].set_title("segmented")
+ax[3].axis("off")
+
+
+labeled_cells = ski.measure.label(nucleus_seg)
+print(len(labeled_cells))
+
+
+img = im_pool["dmso_405"][0]
+
+# get the 2nd and 98th percentile of the intensity as our range.
+p2, p98 = np.percentile(img, (2, 90))
+
+img_stretch = rescale_intensity(img, in_range=(p2, p98))
+
+# create a figure to show images before and after adjustment
+fig, ax = plt.subplots(1, 4, figsize=(10, 5))
+plt.subplots_adjust(hspace=0.1, wspace=0.1)
+
+# display the image before threshold adjustment
+ax[0].imshow(img, cmap=plt.cm.gray)
+ax[0].set_title("before adjustment")
+ax[0].axis("off")
+
+# segmentation of the nucleus region pre adjustment 
+smooth = ski.filters.gaussian(img, sigma=5) #1.5
+thresh = smooth > ski.filters.threshold_otsu(smooth)
+fill = ndi.binary_fill_holes(thresh)
+nucleus_seg = ski.segmentation.clear_border(fill)
+ax[1].imshow(nucleus_seg, cmap=plt.cm.gray)
+ax[1].set_title("segmented")
+ax[1].axis("off")
+
+# display the adjusted image in the second subplot
+ax[2].imshow(img_stretch, cmap=plt.cm.gray)  # crop the image for display
+ax[2].set_title("after adjustment")
+ax[2].axis("off")
+
+# segmentation of the nucleus region
+smooth = ski.filters.gaussian(img_stretch, sigma=5) #1.5
+thresh = smooth > ski.filters.threshold_otsu(smooth)
+fill = ndi.binary_fill_holes(thresh)
+nucleus_seg = ski.segmentation.clear_border(fill)
+ax[3].imshow(nucleus_seg, cmap=plt.cm.gray)
+ax[3].set_title("segmented")
+ax[3].axis("off")
+
+
+from skimage.exposure import rescale_intensity
+# define your condition and field of view (fov) coordinates for dmso
+condition = "07_19_tfx_dextran_transferrin_40x"
+fovs = [0, 2, 4, 6, 8]  # adjust as needed
+
+# initialize image pool for dmso
+im_pool = dict()
+
+# load nd2 file for dmso and extract the fovs for different channels
+dir = path("/users/isabelburger/documents/previous research/amgen/data/07_19")  # specify the correct directory
+im_file = list(dir.glob(f"{condition}.nd2"))[0]  # get the first matching nd2 file
+
+with nd2.nd2file(im_file) as im:
+    im = np.array(im)
+    img = [np.array(im[fovs[0], 0]) for fov in fovs][0]
+
+
+# get the 2nd and 98th percentile of the intensity as our range.
+p2, p98 = np.percentile(img, (2, 90))
+
+img_stretch = rescale_intensity(img, in_range=(p2, p98))
+
+# create a figure to show images before and after adjustment
+fig, ax = plt.subplots(1, 4, figsize=(10, 5))
+plt.subplots_adjust(hspace=0.1, wspace=0.1)
+
+# display the image before threshold adjustment
+ax[0].imshow(img, cmap=plt.cm.gray)
+ax[0].set_title("before adjustment")
+ax[0].axis("off")
+
+# segmentation of the nucleus region pre adjustment 
+smooth = ski.filters.gaussian(img, sigma=5) #1.5
+thresh = smooth > ski.filters.threshold_otsu(smooth)
+fill = ndi.binary_fill_holes(thresh)
+nucleus_seg = ski.segmentation.clear_border(fill)
+ax[1].imshow(nucleus_seg, cmap=plt.cm.gray)
+ax[1].set_title("segmented")
+ax[1].axis("off")
+
+# display the adjusted image in the second subplot
+ax[2].imshow(img_stretch, cmap=plt.cm.gray)  # crop the image for display
+ax[2].set_title("after adjustment")
+ax[2].axis("off")
+
+# segmentation of the nucleus region
+smooth = ski.filters.gaussian(img_stretch, sigma=5) #1.5
+thresh = smooth > ski.filters.threshold_otsu(smooth)
+fill = ndi.binary_fill_holes(thresh)
+nucleus_seg = ski.segmentation.clear_border(fill)
+ax[3].imshow(nucleus_seg, cmap=plt.cm.gray)
+ax[3].set_title("segmented")
+ax[3].axis("off")
+
+
+import numpy as np
+from skimage.exposure import rescale_intensity
+from scipy import ndimage as ndi
+from skimage import measure
+from skimage import morphology
+from skimage.exposure import rescale_intensity
+# define your condition and field of view (fov) coordinates for dmso
+condition = "07_19_tfx_dextran_transferrin_40x"
+fovs = [0, 2, 4, 6, 8]  # adjust as needed
+
+# initialize image pool for dmso
+im_pool = dict()
+
+# load nd2 file for dmso and extract the fovs for different channels
+dir = path("/users/isabelburger/documents/previous research/amgen/data/07_19")  # specify the correct directory
+im_file = list(dir.glob(f"{condition}.nd2"))[0]  # get the first matching nd2 file
+
+with nd2.nd2file(im_file) as im:
+    im = np.array(im)
+    img = [np.array(im[fovs[0], 2]) for fov in fovs][0]
+
+# get the 2nd and 98th percentile of the intensity as our range.
+p2, p98 = np.percentile(img, (2, 98))
+
+img_stretch = rescale_intensity(img, in_range=(p2, p98))
+
+# segmentation of the nucleus region
+smooth = ski.filters.gaussian(img_stretch, sigma=1.5) #1.5
+print(ski.filters.threshold_otsu(smooth))
+thresh = smooth > ski.filters.threshold_otsu(smooth)/2
+#thresh = smooth > 0.2
+cleaned = morphology.remove_small_objects(thresh, min_size=500)
+fill = ndi.binary_fill_holes(cleaned)
+nucleus_seg = ski.segmentation.clear_border(fill)
+
+print("min pixel value:", np.min(img))
+print("max pixel value:", np.max(img))
+print("min pixel value:", np.min(img_stretch))
+print("max pixel value:", np.max(img_stretch))
+print("min pixel value:", np.min(smooth))
+print("max pixel value:", np.max(smooth))
+print("min pixel value:", np.min(thresh))
+print("max pixel value:", np.max(thresh))
+
+
+fig, ax = plt.subplots(1, 5, figsize=(20, 10))
+ax[0].imshow(img_stretch, cmap='gray')
+ax[0].set_title("rescaled image")
+ax[0].axis("off")
+ax[1].imshow(smooth, cmap='gray')
+ax[1].set_title("smoothed image")
+ax[1].axis("off")
+ax[2].imshow(thresh, cmap='gray')
+ax[2].set_title("thresholded image")
+ax[2].axis("off")
+ax[3].imshow(cleaned, cmap='gray')
+ax[3].set_title("cleaned image")
+ax[3].axis("off")
+ax[4].imshow(fill, cmap='gray')
+ax[4].set_title("filled image")
+ax[4].axis("off")
+
+labeled_cells, num_cells = ndi.label(fill)
+print(num_cells)
+
+
+
+
+
+distance = ndi.distance_transform_edt(fill)
+
+local_max_coords = ski.feature.peak_local_max(
+    distance, min_distance=10, exclude_border=false 
+)
+local_max_mask = np.zeros(distance.shape, dtype=bool)
+local_max_mask[tuple(local_max_coords.t)] = true
+markers = ski.measure.label(local_max_mask)
+
+segmented_cells = ski.segmentation.watershed(-distance, markers, mask=fill)
+
+
+fig, ax = plt.subplots(ncols=2, figsize=(10, 5))
+ax[0].imshow(fill, cmap='gray')
+ax[0].set_title('overlapping nuclei')
+ax[0].set_axis_off()
+ax[1].imshow(ski.color.label2rgb(segmented_cells, bg_label=0))
+ax[1].set_title('segmented nuclei')
+ax[1].set_axis_off()
+plt.show()
+
+
+from skimage.measure import regionprops
+from skimage.measure import label 
+
+# label connected components
+labeled_img = label(segmented_cells)
+
+# count unique regions (excluding background)
+num_cells = np.max(labeled_img)
+
+print(f"number of cells: {num_cells}" + '!!!!!!!!!!!!!')
+
+
+import numpy as np
+from skimage.exposure import rescale_intensity
+from scipy import ndimage as ndi
+from skimage import measure
+from skimage import morphology
+from skimage.exposure import rescale_intensity
+# define your condition and field of view (fov) coordinates for dmso
+condition = "07_19_tfx_dextran_transferrin_40x"
+fovs = [0, 2, 4, 6, 8]  # adjust as needed
+
+# initialize image pool for dmso
+im_pool = dict()
+
+# load nd2 file for dmso and extract the fovs for different channels
+dir = path("/users/isabelburger/documents/previous research/amgen/data/07_19")  # specify the correct directory
+
+conditions = [
+    #"07_19_tfx_dextran_transferrin",
+    "07_19_tfx_dextran_transferrin_40x"
+]
+
+im_pool = dict()
+fovs = [
+    [0, 2, 4, 6, 8],
+    [0, 2, 4, 6, 8]
+
+]
+for i, cond in enumerate(tqdm(conditions)):
+    im_file = list(dir.glob(f"{cond}.nd2"))[0]
+    with nd2.nd2file(im_file) as im:
+        im = np.array(im)
+        print(im.shape)
+        im_pool[cond + "_dmso"] = [np.array(im[fovs[i][0], j])[1000:2000, 1000:2000] for j in range(1, 3)]
+        im_pool[cond + "_salb"] = [np.array(im[fovs[i][1], j])[1000:2000, 1000:2000] for j in range(1, 3)]
+        im_pool[cond + "_okanin"] = [np.array(im[fovs[i][2], j])[1000:2000, 1000:2000] for j in range(1, 3)]
+
+
+import matplotlib.pyplot as plt
+import numpy as np
+import skimage as ski
+import scipy.ndimage as ndi
+import nd2
+from pathlib import path
+from matplotlib.colors import linearsegmentedcolormap
+from skimage.filters import threshold_local
+
+condition = "07_19_tfx_dextran_transferrin_40x"
+fovs = [0, 2, 4, 6, 8]  # adjust as needed
+
+# initialize image pool for dmso
+im_pool = dict()
+
+# load nd2 file for dmso and extract the fovs for different channels
+dir = path("/users/isabelburger/documents/previous research/amgen/data/07_19")  # specify the correct directory
+
+conditions = [
+    #"07_19_tfx_dextran_transferrin",
+    "07_19_tfx_dextran_transferrin_40x"
+]
+
+im_pool = dict()
+fovs = [
+    [0, 2, 4, 6, 8],
+    [0, 2, 4, 6, 8]
+
+]
+for i, cond in enumerate(tqdm(conditions)):
+    im_file = list(dir.glob(f"{cond}.nd2"))[0]
+
+with nd2.nd2file(im_file) as im:
+    
+    im = np.array(im)
+    img = [np.array(im[fovs[0], 2]) for fov in fovs][0]
+    #print(f"loaded image with shape: {im.shape}")
+
+
+# get the 2nd and 98th percentile of the intensity as our range.
+p2, p98 = np.percentile(img, (2, 98))
+
+img_stretch = rescale_intensity(img, in_range=(p2, p98))
+
+# segmentation of the nucleus region
+smooth = ski.filters.gaussian(img_stretch, sigma=1.5) #1.5
+print(ski.filters.threshold_otsu(smooth))
+thresh = smooth > ski.filters.threshold_otsu(smooth)/2
+#thresh = smooth > 0.2
+cleaned = morphology.remove_small_objects(thresh, min_size=500)
+fill = ndi.binary_fill_holes(cleaned)
+nucleus_seg = ski.segmentation.clear_border(fill)
+
+# extract the specific fov and channel (assuming fovs and channels are in the right dimensions)
+# for example, we are taking the 0th fov and 0th channel (which could be brightfield)
+# nucleus = np.array(im[fovs[0], 2])[950:1100, 1150:1300]  # extracting a region for nucleus
+
+# # segmentation of the nucleus region
+# smooth = ski.filters.gaussian(nucleus, sigma=1.5) #1.5
+# thresh = smooth > ski.filters.threshold_otsu(smooth)
+# fill = ndi.binary_fill_holes(thresh)
+# nucleus_seg = ski.segmentation.clear_border(fill)
+
+
+
+# **use protein a data from the nd2 file**
+proteina = np.array(im[fovs[0], 3])[950:1100, 1150:1300]  # extract protein a channel (assuming it is channel 2)
+#smoothproteina = ski.filters.gaussian(proteina, sigma=0) #1.5
+smoothproteina = proteina 
+threshproteina = smoothproteina > ski.filters.threshold_otsu(smoothproteina)/2
+fillproteina = ndi.binary_fill_holes(threshproteina)
+#proteina_seg = np.zeros_like(proteina, dtype="float64")
+proteina_seg = fillproteina
+
+# **use protein b data from the nd2 file**
+proteinb = np.array(im[fovs[0], 4])[950:1100, 1150:1300]  # extract protein a channel (assuming it is channel 2)
+#smoothproteinb = ski.filters.gaussian(proteinb, sigma=0) #1.5
+smoothproteinb = proteinb
+threshproteinb = smoothproteinb > ski.filters.threshold_otsu(smoothproteina)
+fillproteinb = ndi.binary_fill_holes(threshproteinb)
+#proteina_seg = np.zeros_like(proteina, dtype="float64")
+proteinb_seg = fillproteinb
+
+# plot data
+fig, ax = plt.subplots(3, 2, figsize=(8, 12), sharey=true)
+
+# display protein a and segmentation
+black_magenta = linearsegmentedcolormap.from_list("", ["black", "magenta"])
+ax[0, 0].imshow(proteina, cmap=black_magenta)
+ax[0, 0].set_title('protein a')
+
+ax[0, 1].imshow(proteina_seg, cmap=black_magenta)
+ax[0, 1].set_title('protein a segmentation')
+
+# display protein b and segmentation
+black_cyan = linearsegmentedcolormap.from_list("", ["black", "cyan"])
+ax[1, 0].imshow(proteinb, cmap=black_cyan)
+ax[1, 0].set_title('protein b')
+
+ax[1, 1].imshow(proteinb_seg, cmap=black_cyan) #proteinb_seg
+ax[1, 1].set_title('protein b segmentation')
+
+# overlay nucleus segmentation on protein a
+ax[2, 0].imshow(proteina, cmap=black_magenta)
+ax[2, 0].imshow(proteinb, cmap=black_cyan, alpha=0.2)
+ax[2, 0].set_title('protein a\nwith protein b segmentation overlaid')
+
+ax[2, 1].imshow(proteina_seg, cmap=black_magenta)
+ax[2, 1].imshow(proteinb_seg, cmap=plt.cm.gray, alpha=0.2)
+ax[2, 1].set_title('protein a segmentation\nwith protein b segmentation overlaid')
+
+# turn off axes
+for a in ax.ravel():
+    a.set_axis_off()
+
+plt.tight_layout()
+plt.show()
+
+

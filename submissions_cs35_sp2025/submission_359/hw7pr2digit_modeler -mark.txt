@@ -1,0 +1,24 @@
+<br>
+
+###   <font color="Coral">hw7pr2digits_modeler</font>
++ digits clasification -- and regression -- via NNets
+
+Feel free to re-use your previous digits_cleaned.csv file 
+### First, use the iris example to create a digit-predicting NNet
+
+This is similar to the past two digits challenges, hw5 and hw6
+
+**However**, because we're using NNets, you'll need to
++ create TEN categorical variables. You can use just one ``get_dummies`` pandas call
++ use a SCALER to make sure the network can, in a fair way, "hear" all of the inputs ### Second, from the iris example create a _pixel-predicting_ &nbsp; NNet
+
+Choose a pixel to predict!
++ It _can_ be #42 -- or choose another one?!
++ This will be _regression_, not classification
++ It will show off NNets' ability to generate or "hallucinate" pixels/digits/images/etc.!
++ The _digit dreaming_ problem will extend this further...<b>Predict-a-pixel</b> (regression)...
++ As the penultimate part of this digits-analysis with NNets, 
++ create a regressor that predicts pixel 42 from the other 63 pixels!
++ Remember that pixel 42 will be `A[:,42]`
++ and, the other 63, plus the digit-species, will be `np.concatenate((A[:,0:42], A[:,43:]),axis=1)`
++ see the iris_modeler for an example for the irises' botanical features...

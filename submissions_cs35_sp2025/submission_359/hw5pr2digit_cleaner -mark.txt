@@ -1,0 +1,12 @@
+### <font color="DodgerBlue">hw5pr2 digits cleaner</font>
+
+Suggestions:
++ set up this file and the example iris_cleaner (or your births_cleaner) file side-by-side...
++ for each cell, copy it over...
+   + edit it and make adjustments to suit the births problem (as needed)
+   + run it to make sure it works... and you obtain your cleaned digits data.
+
+Hints:
++ This data set is almost completely clean -- ***tidy*** in data-science parlance 
++ So, the goal of this is building familiarity. 
++ That is, no new tricks or situations are added here...
