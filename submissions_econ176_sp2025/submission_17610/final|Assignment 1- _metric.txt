@@ -1,0 +1,1031 @@
+# we assign the url and obtain the api-call result into result
+#    note that result will be an object that contains many fields (not a simple string)
+#
+
+import requests
+
+url = "http://api.open-notify.org/iss-now.json"   # this is sometimes called an "endpoint" ...
+result = requests.get(url)
+
+# if it succeeds, you should see <response [200]>
+
+
+#
+# in this case, we know the result is a json file, and we can obtain it that way:
+
+json_contents = result.json()      # needs to convert the text to a json dictionary...
+print(f"json_contents is {json_contents}")     # aha!  let's re/introduce f-strings...
+
+# take a look... remember that a json object is a python dictionary:
+
+
+#
+# let's remind ourselves how dictionaries work:
+
+lat = json_contents['iss_position']['latitude']
+lat = float(lat)
+print("lat: ", lat)
+
+
+#
+# let's make sure we "unpack the process" w/o ai
+#
+from math import *
+
+
+def haversine(lat1, long1, lat2, long2):
+    """
+    calculate the great circle distance in kilometers between two points
+    on the earth (specified in decimal degrees)
+    """
+    # convert decimal degrees to radians
+    long1, lat1, long2, lat2 = map(radians, [long1, lat1, long2, lat2])
+
+    # haversine formula
+    dlong = long2 - long1
+    dlat = lat2 - lat1
+    trig = sin(dlat/2)**2 + cos(lat1) * cos(lat2) * sin(dlong/2)**2
+    # radius of earth. use 3956 for miles. 6371 for km.
+    radius = 3956  # we'll use miles!
+    return radius * 2 * asin(sqrt(trig))
+
+
+url = "http://api.open-notify.org/iss-now.json"   # this is sometimes called an "endpoint" ...
+result = requests.get(url)
+json_contents = result.json()
+
+
+iss_lat = float(json_contents['iss_position']['latitude'])
+iss_long = float(json_contents['iss_position']['longitude'])
+
+my_lat = 34.1063626
+my_long = -117.7111075
+
+
+haversine(iss_lat, iss_long, my_lat, my_long)
+
+
+#
+# then, let's compare with ai's result...
+#
+
+
+#
+# we assign the url and use requests.get to obtain the result into result_astro
+#
+#    remember, result_astro will be an object that contains many fields (not a simple string)
+#
+
+import requests
+
+url = "http://api.open-notify.org/astros.json"   # this is sometimes called an "endpoint" ...
+result_astro = requests.get(url)
+result_astro
+
+# if it succeeded, you should see <response [200]>
+
+
+# if the request succeeded, we know the result is a json file, and we can obtain it that way.
+# let's call our dictionary something more specific:
+
+astronauts = result_astro.json()
+d = astronauts   # a shorter variable for convenience..
+
+
+# remember:  astronauts will be a _dictionary_
+note = """ here's yesterday evening's result - it _should_ be the same this morning!
+
+{"people": [{"craft": "iss", "name": "oleg kononenko"}, {"craft": "iss", "name": "nikolai chub"},
+{"craft": "iss", "name": "tracy caldwell dyson"}, {"craft": "iss", "name": "matthew dominick"},
+{"craft": "iss", "name": "michael barratt"}, {"craft": "iss", "name": "jeanette epps"},
+{"craft": "iss", "name": "alexander grebenkin"}, {"craft": "iss", "name": "butch wilmore"},
+{"craft": "iss", "name": "sunita williams"}, {"craft": "tiangong", "name": "econ176_participant_6 guangsu"},
+{"craft": "tiangong", "name": "econ176_participant_6 cong"}, {"craft": "tiangong", "name": "ye guangfu"}], "number": 12, "message": "success"}
+"""
+print(d)
+
+
+d['people']
+
+
+#
+# try it - from a browser or from here...
+
+import requests
+
+url = "https://fvcjsw-5000.csb.app/econ176_mystery0?x=0&y=0"    # perhaps try from browser first!
+result_ft = requests.get(url)
+# print(result_ft)              # prints the status_code
+
+d = result_ft.json()            # here are the _contents_
+
+# multiplication
+
+
+#
+# try it - from a browser or from here...
+
+import requests
+
+url = "https://fvcjsw-5000.csb.app/econ176_mystery1?x=15&y=4"    # perhaps try from browser first!
+result_ft = requests.get(url)
+# print(result_ft)              # prints the status_code
+
+d = result_ft.json()            # here are the _contents_
+
+
+# if x odd, then y*2, if x even, then y
+
+
+#
+# a larger api call to the same codesandbox server
+
+import requests
+
+url = "https://fvcjsw-5000.csb.app/fintech"    # try this from your browser first!
+result_ft = requests.get(url)
+result_ft
+
+
+#
+# let's view ... then parse and interpret!
+
+d = result_ft.json()                  # try .text, as well...
+print(f"the resulting data is {d}")
+
+
+#
+# see if you can extract only your initials from d
+d['initials'][-17]
+
+# we're not finished yet! :)
+
+
+#
+# let's request!   just using the demo, for now:
+
+import requests
+
+url = "https://www.alphavantage.co/query?function=time_series_daily&symbol=msft&apikey=demo"    # demo version
+result = requests.get(url)
+
+
+
+#
+# let's view ... then parse and interpret!
+
+d = result.json()                       # probably _don't_ try .text here!
+print(f"the resulting data's keys are {list(d.keys())}")
+
+
+#
+# let's look at all of the keys...
+
+for k in d['time series (daily)']:
+    print(k)
+
+# aha! they are dates... let's create a function to compare two dates
+
+
+#
+# here is one way to make a list of all of the dates:
+
+dates = list(d['time series (daily)'].keys())
+
+# notice, they're backwards!
+
+
+#
+# let's flip the dates around:
+dates.reverse()
+
+# yay!
+
+
+# oooh... now let's see what's in each key (date)
+
+d['time series (daily)']['2025-01-21']  # aha! it's a dictionary again!  we will need to index again!!
+
+
+# a small function to get the closing price on a date (date) using data (dictionary) d
+def get_closing(date, d):
+    close = float(d['time series (daily)'][date]['4. close'])
+    return close
+
+
+# a loop to find the minimum closing price
+#
+
+min_price = 10000000
+min_key = "nothing"
+
+for date in d['time series (daily)']:
+    closing =  get_closing(date, d)
+    # print(f"date is {date} and closing is {closing}")
+    if closing < min_price:
+        min_price = closing
+        min_price_date = date
+
+print(f"min_price_date is {min_price_date} and {min_price = }")
+
+
+api_key = ''
+
+
+from google.colab import userdata
+api_key = userdata.get('api_key')
+
+
+import requests
+
+
+def single_share_analysis(symbol, api_key):
+
+
+    url = f"https://www.alphavantage.co/query?function=time_series_daily&symbol={symbol}&apikey={api_key}"    # demo version
+    result = requests.get(url)
+    if result.status_code != 200:
+        raise exception(f"result.status_code = {result.status_code}")
+    d = result.json()
+
+
+
+    # prompt: find the maximum and the minimum
+    # also find the date of the max and the date of the min
+    # be sure to print those out...
+
+
+    dates = list(d['time series (daily)'].keys())
+    dates.reverse()
+
+    # programmatically extract the 100 prices (let's use the closing price)
+    # create a list with them
+
+    prices = []
+
+    for date in d['time series (daily)']:
+        close = float(d['time series (daily)'][date]['4. close'])
+        prices.append((date, close))
+
+
+    # find the maximum and minimum closing prices and their corresponding dates
+    max_price = -1
+    min_price = float('inf')
+    max_date = none
+    min_date = none
+
+    for date, price in prices:
+        if price > max_price:
+            max_price = price
+            max_date = date
+        if price < min_price:
+            min_price = price
+            min_date = date
+
+    print(f"maximum closing price: {max_price} on {max_date}")
+    print(f"minimum closing price: {min_price} on {min_date}")
+
+    # single-share analysis: find the buy day and sell day that maximize profit
+    max_profit = 0
+    buy_date = none
+    sell_date = none
+
+    for i in range(len(prices)):
+        for j in range(i, len(prices)):
+            profit = prices[j][1] - prices[i][1]
+            if profit > max_profit:
+                max_profit = profit
+                buy_date = prices[i][0]
+                sell_date = prices[j][0]
+
+    print(f"maximum profit: {max_profit}")
+    print(f"buy date: {buy_date}")
+    print(f"sell date: {sell_date}")
+
+    # graphing (using matplotlib)
+    import matplotlib.pyplot as plt
+
+    dates = [date for date, price in prices]
+    prices_only = [price for date, price in prices]
+
+    plt.figure(figsize=(12, 6))
+    plt.plot(dates, prices_only)
+    plt.xlabel("date")
+    plt.ylabel("closing price")
+    plt.title(f"{symbol} stock prices")
+    plt.xticks(rotation=45)
+
+    # highlight the maximum and minimum points
+    plt.scatter(max_date, max_price, color='green', label='maximum')
+    plt.scatter(min_date, min_price, color='red', label='minimum')
+    plt.scatter(buy_date, prices_only[dates.index(buy_date)], color='blue', label='buy')
+    plt.scatter(sell_date, prices_only[dates.index(sell_date)], color='orange', label='sell')
+
+
+    plt.legend()
+    plt.tight_layout()  # adjust layout to prevent labels from overlapping
+    plt.show()
+
+
+
+single_share_analysis('goog', api_key)
+
+
+single_share_analysis('fybr', api_key)
+
+
+# import necessary libraries
+import pandas as pd
+import numpy as np
+import requests
+import matplotlib.pyplot as plt
+from sklearn.linear_model import linearregression
+from sklearn.metrics import mean_squared_error, r2_score
+
+
+
+def get_stock_data(symbol, api_key, start_date=none):
+    url = f"https://www.alphavantage.co/query?function=time_series_daily&outputsize=full&symbol={symbol}&apikey={api_key}"
+    response = requests.get(url)
+    if response.status_code != 200:
+        raise exception(f"error: status code {response.status_code}")
+    data = response.json()
+
+    # convert the json data into a dataframe
+    time_series = data.get("time series (daily)", {})
+    df = pd.dataframe.from_dict(time_series, orient='index')
+    df.index = pd.to_datetime(df.index)
+    df = df.sort_index()
+
+    # convert closing price to float
+    df['close'] = df['4. close'].astype(float)
+
+    # filter by start_date if provided
+    if start_date:
+        start_date = pd.to_datetime(start_date)
+        df = df[df.index >= start_date]
+
+    return df[['close']]
+
+
+# example usage:
+symbol = "nvda"
+start_date = "2022-04-01"
+stock_df = get_stock_data(symbol, api_key, start_date)
+# adjust for stock split on 2024-06-10
+split_date = pd.to_datetime("2024-06-10")
+stock_df.loc[stock_df.index < split_date, 'close'] /= 10
+stock_df
+
+
+
+# v2
+
+import requests
+from datetime import datetime, timedelta
+import json
+import os
+
+# define a cache file name
+cache_file = 'sentiment_cache.json'
+
+# load existing cache if available, otherwise create an empty cache dictionary
+if os.path.exists(cache_file):
+    with open(cache_file, 'r') as f:
+        cache = json.load(f)
+else:
+    cache = {}
+
+def get_sentiment_data_segment(symbol, time_from, time_to, api_key, sort='latest', limit="1000"):
+    """
+    fetch sentiment data for a single time segment from time_from to time_to.
+    uses caching to avoid repeated api calls.
+    """
+    # build a unique cache key based on the parameters
+    cache_key = f"{symbol}_{time_from}_{time_to}_{sort}_{limit}"
+    if cache_key in cache:
+        print("using cached data for:", cache_key)
+        return cache[cache_key]
+
+    # build the url using the provided documentation attributes:
+    # - time_from and time_to in the format yyyymmddthhmm
+    # - sort parameter (default 'latest')
+    # - limit parameter (default "1000")
+    url = (f"https://www.alphavantage.co/query?function=news_sentiment&tickers={symbol}"
+           f"&time_from={time_from}&time_to={time_to}&sort={sort}&limit={limit}&apikey={api_key}")
+    response = requests.get(url)
+    if response.status_code != 200:
+        raise exception(f"error: status code {response.status_code}")
+
+    sentiment_data = response.json()
+
+    # cache the result for future runs
+    cache[cache_key] = sentiment_data
+    with open(cache_file, 'w') as f:
+        json.dump(cache, f)
+
+    return sentiment_data
+
+def get_sentiment_data(symbol, start_time, end_time, api_key, segment_hours=24, sort='latest', limit="1000"):
+    """
+    loop over the time range from start_time to end_time in segments,
+    fetching and appending sentiment data from each segment.
+
+    parameters:
+      - symbol: ticker symbol for filtering news
+      - start_time: start of the time range (yyyymmddthhmm format)
+      - end_time: end of the time range (yyyymmddthhmm format)
+      - api_key: your api key for alphavantage
+      - segment_hours: the length of each segment in hours (default: 24)
+      - sort: sort order for the api (default: 'latest')
+      - limit: maximum number of articles per segment (default: "1000")
+
+    returns:
+      a dictionary with combined sentiment data.
+    """
+    # convert the provided start and end times into datetime objects
+    start_dt = datetime.strptime(start_time, "%y%m%dt%h%m")
+    end_dt = datetime.strptime(end_time, "%y%m%dt%h%m")
+    all_feed = []
+
+    current_from = start_dt
+    while current_from < end_dt:
+        current_to = current_from + timedelta(hours=segment_hours)
+        if current_to > end_dt:
+            current_to = end_dt
+
+        # convert back to string format required by the api
+        time_from_str = current_from.strftime("%y%m%dt%h%m")
+        time_to_str = current_to.strftime("%y%m%dt%h%m")
+        print(f"fetching sentiment data from {time_from_str} to {time_to_str}")
+
+        segment_data = get_sentiment_data_segment(symbol, time_from_str, time_to_str, api_key, sort, limit)
+        if "feed" in segment_data:
+            all_feed.extend(segment_data["feed"])
+        else:
+            print("no feed data in segment:", time_from_str, "to", time_to_str)
+
+        current_from = current_to
+
+    # combine the data from all segments into a single dictionary.
+    # we also include the sentiment score and relevance definitions from the last segment fetched.
+    combined_data = {
+        "items": len(all_feed),
+        "sentiment_score_definition": segment_data.get("sentiment_score_definition", ""),
+        "relevance_score_definition": segment_data.get("relevance_score_definition", ""),
+        "feed": all_feed
+    }
+    return combined_data
+
+# example usage:
+# define your api key, symbol, and desired time range:
+symbol = "nvda"
+start_time = "20220410t0130"  # example start time (yyyymmddthhmm)
+end_time = "20250214t2359"    # example end time (yyyymmddthhmm)
+
+sentiment_data = get_sentiment_data(symbol, start_time, end_time, api_key, segment_hours=24)
+print("combined sentiment data items:", sentiment_data["items"])
+
+
+
+import pandas as pd
+from datetime import datetime
+
+# inspect main keys and number of feed items
+print("main keys in sentiment_data:", sentiment_data.keys())
+print("total number of feed items:", sentiment_data["items"])
+
+# convert the feed data into a dataframe for easier analysis
+feed_df = pd.dataframe(sentiment_data["feed"])
+print("\nfeed dataframe head:")
+print(feed_df.head())
+
+# convert 'time_published' to datetime format (extracting date portion)
+def parse_time_published(time_str):
+    # assuming format "yyyymmddthhmmss"
+    return datetime.strptime(time_str, "%y%m%dt%h%m%s")
+
+# apply the conversion if the column exists
+if 'time_published' in feed_df.columns:
+    feed_df['datetime'] = feed_df['time_published'].apply(parse_time_published)
+    feed_df['date'] = feed_df['datetime'].dt.date
+
+    # check the time range available in the feed data
+    min_date = feed_df['datetime'].min()
+    max_date = feed_df['datetime'].max()
+    print("\ntime range in sentiment data:")
+    print(f"from: {min_date} to: {max_date}")
+
+    # show basic sentiment statistics
+    if 'overall_sentiment_score' in feed_df.columns:
+        print("\nsentiment score stats:")
+        print(feed_df['overall_sentiment_score'].describe())
+else:
+    print("no 'time_published' column found in the feed data.")
+
+# at this point, feed_df should have a 'date' column that you can use to merge with the stock data.
+
+
+
+# 7
+
+# aggregate sentiment data by date: average overall sentiment score per day
+daily_sentiment = feed_df.groupby('date')['overall_sentiment_score'].mean().reset_index()
+daily_sentiment.rename(columns={'overall_sentiment_score': 'daily_sentiment'}, inplace=true)
+print("daily sentiment head:")
+print(daily_sentiment.head())
+
+# check time range of aggregated sentiment data
+print("aggregated sentiment time range: {} to {}".format(daily_sentiment['date'].min(), daily_sentiment['date'].max()))
+
+
+
+# 8: merge stock data with daily sentiment data
+
+# convert daily_sentiment 'date' column to datetime (if not already)
+daily_sentiment['date'] = pd.to_datetime(daily_sentiment['date'])
+
+# reset index for stock_df and ensure the 'date' column is datetime
+stock_df_reset = stock_df.reset_index().rename(columns={'index': 'date'})
+stock_df_reset['date'] = pd.to_datetime(stock_df_reset['date'])
+
+# merge on the 'date' column using a left join
+merged_df = pd.merge(stock_df_reset, daily_sentiment, on='date', how='left')
+
+# fill missing sentiment values with forward fill, then backward fill as a safeguard
+merged_df['daily_sentiment'] = merged_df['daily_sentiment'].ffill().bfill()
+
+print("merged dataframe head after subsetting:")
+print(merged_df.head())
+
+
+
+# 8.5 get excess return
+
+symbol = "spy"
+start_date = "2022-04-01"
+index_df = get_stock_data(symbol, api_key, start_date)
+# reset index for index_df and ensure the 'date' column is datetime
+index_df_reset = index_df.reset_index().rename(columns={'index': 'date'})
+index_df_reset['date'] = pd.to_datetime(index_df_reset['date'])
+index_df
+
+
+
+
+# 9 v2
+# 9: compute daily returns, excess returns, and sentiment derivative
+
+# --- for the stock ---
+# ensure merged_df is sorted by date and compute the stock's daily return
+merged_df = merged_df.sort_values('date')
+merged_df['return'] = merged_df['close'].pct_change()
+merged_df = merged_df.dropna(subset=['return'])  # remove first row with nan return
+
+print("merged dataframe with stock returns:")
+print(merged_df.head())
+
+# --- for the index (spy) ---
+# ensure index_df_reset is sorted by date and compute spy's daily return
+index_df_reset = index_df_reset.sort_values('date')
+index_df_reset['index_return'] = index_df_reset['close'].pct_change()
+index_df_reset = index_df_reset.dropna(subset=['index_return'])
+
+print("\nindex dataframe with returns:")
+print(index_df_reset.head())
+
+# --- merge stock data with index data on 'date' ---
+# we use an inner join to keep only dates that exist in both datasets.
+merged_all = pd.merge(merged_df, index_df_reset[['date', 'index_return']], on='date', how='inner')
+
+# --- calculate excess return ---
+# excess return = stock return - index return
+merged_all['excess_return'] = merged_all['return'] - merged_all['index_return']
+
+# --- calculate the derivative (change) of sentiment over time ---
+# this is simply the daily difference in the aggregated sentiment value.
+merged_all = merged_all.sort_values('date')
+merged_all['sentiment_change'] = merged_all['daily_sentiment'].diff()
+merged_all = merged_all.dropna(subset=['sentiment_change'])  # drop first row with nan sentiment change
+
+print("\nmerged dataframe with excess returns and sentiment change:")
+print(merged_all.head())
+
+merged_all
+
+
+# explore 10 v2
+
+# 10: exploratory analysis of relationships between variables
+
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# select the variables of interest
+vars_of_interest = merged_all[['daily_sentiment', 'sentiment_change', 'return', 'index_return', 'excess_return']]
+
+# print the correlation matrix
+print("correlation matrix:")
+print(vars_of_interest.corr())
+
+# create a pairplot to visualize relationships between variables
+sns.pairplot(vars_of_interest)
+plt.suptitle("pairplot of sentiment and return variables", y=1.02)
+plt.show()
+
+# scatter plot: sentiment_change vs. excess_return
+plt.figure(figsize=(8, 6))
+plt.scatter(merged_all['sentiment_change'], merged_all['excess_return'], alpha=0.6)
+plt.xlabel("sentiment change")
+plt.ylabel("excess return")
+plt.title("scatter plot: sentiment change vs. excess return")
+plt.show()
+
+# scatter plot: daily_sentiment vs. excess_return
+plt.figure(figsize=(8, 6))
+plt.scatter(merged_all['daily_sentiment'], merged_all['excess_return'], alpha=0.6, color='green')
+plt.xlabel("daily sentiment")
+plt.ylabel("excess return")
+plt.title("scatter plot: daily sentiment vs. excess return")
+plt.show()
+
+
+
+# 11 v2: regression analysis: daily sentiment vs. excess return
+
+from sklearn.linear_model import linearregression
+from sklearn.metrics import mean_squared_error, r2_score
+
+# prepare the features (x) and target (y)
+x = merged_all[['daily_sentiment']].values  # predictor: daily sentiment
+y = merged_all['excess_return'].values      # target: excess return
+
+# build and fit the regression model
+reg_model = linearregression()
+reg_model.fit(x, y)
+
+# make predictions
+y_pred = reg_model.predict(x)
+
+# evaluate the model
+mse = mean_squared_error(y, y_pred)
+r2 = r2_score(y, y_pred)
+print(f"mean squared error: {mse}")
+print(f"r-squared: {r2}")
+print("coefficient:", reg_model.coef_[0])
+print("intercept:", reg_model.intercept_)
+
+# plot scatter plot with regression line
+plt.figure(figsize=(10, 6))
+plt.scatter(merged_all['daily_sentiment'], y, color='blue', alpha=0.6, label='actual excess return')
+plt.plot(merged_all['daily_sentiment'], y_pred, color='red', label='fitted line')
+plt.xlabel("daily sentiment")
+plt.ylabel("excess return")
+plt.title("regression: daily sentiment vs. excess return")
+plt.legend()
+plt.show()
+
+
+
+# 9: compute daily returns
+
+# if daily returns haven't been computed, calculate percentage change for 'close'
+# if returns already exist in stock_df, ensure they are included. otherwise, calculate here:
+merged_df = merged_df.sort_values('date')  # ensure data is sorted by date
+merged_df['return'] = merged_df['close'].pct_change()
+merged_df = merged_df.dropna(subset=['return'])  # remove the first row with nan return
+
+# display the first few rows to confirm the 'return' column
+print("merged dataframe with returns:")
+merged_df
+
+
+
+
+# 10?: compute cumulative values and inspect sample data
+
+# ensure data is sorted by date
+merged_df = merged_df.sort_values('date')
+
+# compute cumulative return (starting with an initial value of 1)
+merged_df['cum_return'] = (1 + merged_df['return']).cumprod()
+
+# compute cumulative sentiment as the cumulative sum of daily sentiment
+merged_df['cum_sentiment'] = merged_df['daily_sentiment'].cumsum()
+
+# output sample data points
+print("first 10 rows:")
+print(merged_df[['date', 'close', 'return', 'cum_return', 'daily_sentiment', 'cum_sentiment']].head(10))
+
+print("\nlast 10 rows:")
+print(merged_df[['date', 'close', 'return', 'cum_return', 'daily_sentiment', 'cum_sentiment']].tail(10))
+
+
+
+# 10: dual-axis plot for cumulative return and cumulative sentiment
+
+import matplotlib.pyplot as plt
+
+# create a dual-axis plot
+fig, ax1 = plt.subplots(figsize=(12,6))
+
+# plot cumulative return on the left y-axis
+color = 'tab:blue'
+ax1.set_xlabel('date')
+ax1.set_ylabel('cumulative return', color=color)
+ax1.plot(merged_df['date'], merged_df['cum_return'], color=color, label='cumulative return')
+ax1.tick_params(axis='y', labelcolor=color)
+
+# create a second y-axis for cumulative sentiment
+ax2 = ax1.twinx()
+color = 'tab:red'
+ax2.set_ylabel('cumulative sentiment', color=color)
+ax2.plot(merged_df['date'], merged_df['cum_sentiment'], color=color, label='cumulative sentiment')
+ax2.tick_params(axis='y', labelcolor=color)
+
+fig.tight_layout()
+plt.title("cumulative return and cumulative sentiment over time")
+plt.xticks(rotation=45)
+plt.show()
+
+# output sample cumulative values for inspection
+print("sample cumulative values:")
+print(merged_df[['date', 'cum_return', 'cum_sentiment']].tail(10))
+
+
+
+
+# prepare the features (x) and target (y) for regression
+x = merged_df[['daily_sentiment']].values  # predictor: daily sentiment
+y = merged_df['return'].values              # target: daily stock return
+
+# build the regression model using linearregression from scikit-learn
+from sklearn.linear_model import linearregression
+from sklearn.metrics import mean_squared_error, r2_score
+
+model = linearregression()
+model.fit(x, y)
+
+# make predictions
+y_pred = model.predict(x)
+
+# evaluate the model
+mse = mean_squared_error(y, y_pred)
+r2 = r2_score(y, y_pred)
+
+print(f"mean squared error: {mse}")
+print(f"r-squared: {r2}")
+print("coefficient:", model.coef_[0])
+print("intercept:", model.intercept_)
+
+# plot the actual vs predicted returns over time
+import matplotlib.pyplot as plt
+
+plt.figure(figsize=(10, 6))
+plt.scatter(merged_df['date'], y, color='blue', label='actual returns', alpha=0.6)
+plt.plot(merged_df['date'], y_pred, color='red', label='predicted returns')
+plt.xlabel("date")
+plt.ylabel("daily return")
+plt.title("regression: daily returns vs. daily sentiment")
+plt.legend()
+plt.xticks(rotation=45)
+plt.tight_layout()
+plt.show()
+
+
+import pandas as pd
+import numpy as np
+import requests
+import matplotlib.pyplot as plt
+from sklearn.linear_model import linearregression
+from sklearn.metrics import mean_squared_error, r2_score
+from datetime import datetime, timedelta
+import json
+import os
+
+
+
+
+def get_stock_data(symbol, api_key, start_date=none):
+    url = f"https://www.alphavantage.co/query?function=time_series_daily&outputsize=full&symbol={symbol}&apikey={api_key}"
+    response = requests.get(url)
+    if response.status_code != 200:
+        raise exception(f"error: status code {response.status_code}")
+    data = response.json()
+
+    # convert the json data into a dataframe
+    time_series = data.get("time series (daily)", {})
+    df = pd.dataframe.from_dict(time_series, orient='index')
+    df.index = pd.to_datetime(df.index)
+    df = df.sort_index()
+
+    # convert closing price to float
+    df['close'] = df['4. close'].astype(float)
+
+    # filter by start_date if provided
+    if start_date:
+        start_date = pd.to_datetime(start_date)
+        df = df[df.index >= start_date]
+
+    return df[['close']]
+
+
+
+# example usage for stock data:
+symbol = "nvda"
+start_date = "2022-04-01"
+stock_df = get_stock_data(symbol, api_key, start_date)
+
+# adjust for stock split on 2024-06-10
+split_date = pd.to_datetime("2024-06-10")
+stock_df.loc[stock_df.index < split_date, 'close'] /= 10
+
+stock_df
+
+
+
+# define cache file for sentiment data
+cache_file = 'sentiment_cache.json'
+
+# load cache if available; otherwise, create an empty cache
+if os.path.exists(cache_file):
+    with open(cache_file, 'r') as f:
+        cache = json.load(f)
+else:
+    cache = {}
+
+def get_sentiment_data_segment(symbol, time_from, time_to, api_key, sort='latest', limit="1000"):
+    """
+    fetch sentiment data for a single time segment from time_from to time_to.
+    uses caching to avoid repeated api calls.
+    """
+    cache_key = f"{symbol}_{time_from}_{time_to}_{sort}_{limit}"
+    if cache_key in cache:
+        print("using cached data for:", cache_key)
+        return cache[cache_key]
+
+    url = (f"https://www.alphavantage.co/query?function=news_sentiment&tickers={symbol}"
+           f"&time_from={time_from}&time_to={time_to}&sort={sort}&limit={limit}&apikey={api_key}")
+    response = requests.get(url)
+    if response.status_code != 200:
+        raise exception(f"error: status code {response.status_code}")
+
+    sentiment_data = response.json()
+
+    cache[cache_key] = sentiment_data
+    with open(cache_file, 'w') as f:
+        json.dump(cache, f)
+
+    return sentiment_data
+
+def get_sentiment_data(symbol, start_time, end_time, api_key, segment_hours=24, sort='latest', limit="1000"):
+    """
+    loop over the time range from start_time to end_time in segments,
+    fetching and appending sentiment data from each segment.
+    """
+    start_dt = datetime.strptime(start_time, "%y%m%dt%h%m")
+    end_dt = datetime.strptime(end_time, "%y%m%dt%h%m")
+    all_feed = []
+
+    current_from = start_dt
+    while current_from < end_dt:
+        current_to = current_from + timedelta(hours=segment_hours)
+        if current_to > end_dt:
+            current_to = end_dt
+
+        time_from_str = current_from.strftime("%y%m%dt%h%m")
+        time_to_str = current_to.strftime("%y%m%dt%h%m")
+        print(f"fetching sentiment data from {time_from_str} to {time_to_str}")
+
+        segment_data = get_sentiment_data_segment(symbol, time_from_str, time_to_str, api_key, sort, limit)
+        if "feed" in segment_data:
+            all_feed.extend(segment_data["feed"])
+        else:
+            print("no feed data in segment:", time_from_str, "to", time_to_str)
+
+        current_from = current_to
+
+    combined_data = {
+        "items": len(all_feed),
+        "sentiment_score_definition": segment_data.get("sentiment_score_definition", ""),
+        "relevance_score_definition": segment_data.get("relevance_score_definition", ""),
+        "feed": all_feed
+    }
+    return combined_data
+
+
+
+# example usage for sentiment data:
+symbol = "nvda"
+start_time = "20220410t0130"  # format: yyyymmddthhmm
+end_time = "20250214t2359"    # format: yyyymmddthhmm
+
+sentiment_data = get_sentiment_data(symbol, start_time, end_time, api_key, segment_hours=24)
+print("combined sentiment data items:", sentiment_data["items"])
+
+
+
+# cell 7 – aggregate and merge sentiment with stock data
+
+if 'time_published' in feed_df.columns:
+    feed_df['time_published'] = pd.to_datetime(feed_df['time_published'])
+    feed_df['date'] = feed_df['time_published'].dt.date
+else:
+    raise keyerror("column 'time_published' not found in feed_df.")
+
+# aggregate sentiment data by date: average overall sentiment score per day
+daily_sentiment = feed_df.groupby('date')['overall_sentiment_score'].mean().reset_index()
+daily_sentiment.rename(columns={'overall_sentiment_score': 'daily_sentiment'}, inplace=true)
+print("daily sentiment head:")
+print(daily_sentiment.head())
+
+print("aggregated sentiment time range: {} to {}".format(daily_sentiment['date'].min(), daily_sentiment['date'].max()))
+
+# merge with stock data:
+# convert stock_df index to a date column matching the format in daily_sentiment
+stock_df_reset = stock_df.reset_index().rename(columns={'index': 'date'})
+stock_df_reset['date'] = pd.to_datetime(stock_df_reset['date']).dt.date
+
+merged_df = pd.merge(stock_df_reset, daily_sentiment, on='date', how='left')
+
+# fill missing sentiment values with forward fill, then backward fill as a safeguard
+merged_df['daily_sentiment'] = merged_df['daily_sentiment'].ffill().bfill()
+
+print("merged dataframe head after subsetting:")
+print(merged_df.head())
+
+
+
+# 8
+
+# get index data for symbol "spy"
+symbol_index = "spy"
+index_df = get_stock_data(symbol_index, api_key, start_date)
+index_df_reset = index_df.reset_index().rename(columns={'index': 'date'})
+index_df_reset['date'] = pd.to_datetime(index_df_reset['date'])
+
+# display the index data dataframe
+index_df
+
+
+
+# 9
+
+# sort merged data by date and compute percentage change in 'close'
+merged_df = merged_df.sort_values('date')
+merged_df['return'] = merged_df['close'].pct_change()
+merged_df = merged_df.dropna(subset=['return'])
+
+print("merged dataframe with returns:")
+print(merged_df.head())
+
+
+
+# cell 10 – perform regression analysis and plot results with enhanced visualization
+
+# prepare features (x) and target (y)
+x = merged_df[['daily_sentiment']].values  # predictor: daily sentiment
+y = merged_df['return'].values              # target: daily stock return
+
+# build and train the regression model
+model = linearregression()
+model.fit(x, y)
+
+# make predictions
+y_pred = model.predict(x)
+
+# evaluate the model
+mse = mean_squared_error(y, y_pred)
+r2 = r2_score(y, y_pred)
+
+print(f"mean squared error: {mse}")
+print(f"r-squared: {r2}")
+print("coefficient:", model.coef_[0])
+print("intercept:", model.intercept_)
+
+# create a visually appealing plot with a refined theme
+plt.style.use('dark_background')  # set a nice theme for the plot
+plt.figure(figsize=(12, 7))
+
+# plot actual returns as a scatter plot
+plt.scatter(merged_df['date'], y, color='mediumblue', label='actual returns', alpha=0.7, s=60)
+
+# plot predicted returns as a line plot
+plt.plot(merged_df['date'], y_pred, color='crimson', linewidth=2, label='predicted returns')
+
+# enhance plot aesthetics
+plt.xlabel("date", fontsize=14)
+plt.ylabel("daily return", fontsize=14)
+plt.title("regression: daily returns vs. daily sentiment", fontsize=16, fontweight='bold')
+plt.legend(fontsize=12)
+plt.xticks(fontsize=12, rotation=45)
+plt.yticks(fontsize=12)
+plt.tight_layout()
+
+# add grid lines for clarity
+plt.grid(true, which='both', linestyle='--', linewidth=0.5)
+
+plt.show()
+
+
+
