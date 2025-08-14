@@ -1,0 +1,511 @@
+# we assign the url and obtain the api-call result into result
+#    Note that result will be an object that contains many fields (not a simple string)
+#
+
+import requests
+
+url = "http://api.open-notify.org/iss-now.json"   # this is sometimes called an "endpoint" ...
+result = requests.get(url)
+
+# if it succeeds, you should see <Response [200]>
+
+
+#
+# In this case, we know the result is a JSON file, and we can obtain it that way:
+
+json_contents = result.json()      # needs to convert the text to a json dictionary...
+print(f"json_contents is {json_contents}")     # Aha!  Let's re/introduce f-strings...
+
+# Take a look... remember that a json object is a Python dictionary:
+
+
+#
+# Let's remind ourselves how dictionaries work:
+
+lat = json_contents['iss_position']['latitude']
+lat = float(lat)
+print("lat: ", lat)
+
+
+#
+# Let's make sure we "unpack the process" w/o AI
+#
+from math import *
+
+lat = json_contents['iss_position']['latitude']
+lat = float(lat)
+
+long = json_contents['iss_position']['longitude']
+long = float(long)
+
+def haversine(lat1, long1, lat2, long2):
+    """
+    Calculate the great circle distance in kilometers between two points
+    on the earth (specified in decimal degrees)
+    """
+    # convert decimal degrees to radians
+    long1, lat1, long2, lat2 = map(radians, [long1, lat1, long2, lat2])
+
+    # haversine formula
+    dlong = long2 - long1
+    dlat = lat2 - lat1
+    trig = sin(dlat/2)**2 + cos(lat1) * cos(lat2) * sin(dlong/2)**2
+    # Radius of earth. Use 3956 for miles. 6371 for km.
+    radius = 3956  # we'll use miles!
+    return radius * 2 * asin(sqrt(trig))
+
+print(haversine(lat, long, 34.1007, -117.7065))
+
+
+#
+# Then, let's compare with AI's result...
+#
+
+from geopy.distance import geodesic
+
+def calculate_distance(coord1, coord2):
+    """
+    Calculates the geodesic distance between two latitude/longitude pairs.
+
+    Parameters:
+    coord1 (tuple): A tuple containing (latitude, longitude) of the first location.
+    coord2 (tuple): A tuple containing (latitude, longitude) of the second location.
+
+    Returns:
+    float: Distance in kilometers between the two points.
+    """
+    return geodesic(coord1, coord2).kilometers
+
+lat = json_contents['iss_position']['latitude']
+lat = float(lat)
+
+long = json_contents['iss_position']['longitude']
+long = float(long)
+
+coord1 = (lat, long)
+coord2 = (34.1007, -117.7065)
+print(calculate_distance(coord1, coord2))
+
+
+#
+# we assign the url and use requests.get to obtain the result into result_astro
+#
+#    Remember, result_astro will be an object that contains many fields (not a simple string)
+#
+
+import requests
+
+url = "http://api.open-notify.org/astros.json"   # this is sometimes called an "endpoint" ...
+result_astro = requests.get(url)
+result_astro
+
+# if it succeeded, you should see <Response [200]>
+
+
+# If the request succeeded, we know the result is a JSON file, and we can obtain it that way.
+# Let's call our dictionary something more specific:
+
+astronauts = result_astro.json()
+d = astronauts   # a shorter variable for convenience..
+
+
+# Remember:  astronauts will be a _dictionary_
+note = """ here's yesterday evening's result - it _should_ be the same this morning!
+
+{"people": [{"craft": "ISS", "name": "Oleg Kononenko"}, {"craft": "ISS", "name": "Nikolai Chub"},
+{"craft": "ISS", "name": "Tracy Caldwell Dyson"}, {"craft": "ISS", "name": "Matthew Dominick"},
+{"craft": "ISS", "name": "Michael Barratt"}, {"craft": "ISS", "name": "Jeanette Epps"},
+{"craft": "ISS", "name": "Alexander Grebenkin"}, {"craft": "ISS", "name": "Butch Wilmore"},
+{"craft": "ISS", "name": "Sunita Williams"}, {"craft": "Tiangong", "name": "Econ176_Participant_6 Guangsu"},
+{"craft": "Tiangong", "name": "Econ176_Participant_6 Cong"}, {"craft": "Tiangong", "name": "Ye Guangfu"}], "number": 12, "message": "success"}
+"""
+print(d)
+
+
+d['people']
+
+
+#
+# Try it - from a browser or from here...
+
+import requests
+
+url = "https://fvcjsw-5000.csb.app/econ176_mystery0?x=1&y=3"    # perhaps try from browser first!
+result_ft = requests.get(url)
+print(result_ft)              # prints the status_code
+
+d = result_ft.json()            # here are the _contents_
+
+
+
+#
+# A larger API call to the same CodeSandbox server
+
+import requests
+
+url = "https://fvcjsw-5000.csb.app/fintech"    # try this from your browser first!
+result_ft = requests.get(url)
+result_ft
+
+
+#
+# Let's view ... then parse and interpret!
+
+# d = result_ft.json()                  # try .text, as well...
+# print(f"The resulting data is {d}")
+
+d = {'Number': 176, 'Initials': ['AC', 'AL', 'AN', 'AP', 'AZ', 'CL', 'CM', 'CW', 'CZ', 'DS', 'EC', 'ED', 'EG', 'ES', 'HV', 'IC', 'IG', 'JB', 'JN', 'JT', 'KR', 'LA', 'LG', 'LS', 'LW', 'MD', 'ND', 'NM', 'NV', 'NW', 'OB', 'RK', 'RL', 'RP', 'SB', 'SC', 'SD', 'SF', 'SS', 'TC', 'TS', 'VN', 'VVP', 'YM', 'ZD', 'ZY'], 'Departments': ['Econ', 'CS']}
+
+
+
+#
+# see if you can extract only your initials from d
+
+print(d['Initials'][5])
+
+# we're not finished yet! :)
+
+
+#
+# Let's request!   Just using the demo, for now:
+
+import requests
+
+url = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=MSFT&apikey=demo"    # demo version
+result = requests.get(url)
+
+
+
+#
+# Let's view ... then parse and interpret!
+
+d = result.json()
+print(d)
+
+
+#
+# Let's look at all of the keys...
+
+for k in d['Time Series (Daily)']:
+    print(k)
+
+# Aha! they are dates... let's create a function to compare two dates
+
+
+#
+# here is one way to make a list of all of the dates:
+
+DATES = list(d['Time Series (Daily)'].keys())
+
+# Notice, they're backwards!
+
+
+#
+# Let's flip the DATES around:
+DATES.reverse()
+
+# Yay!
+
+
+# Oooh... Now let's see what's in each key (date)
+
+val = float(d['Time Series (Daily)']['2025-01-21']['4. close'])  # Aha! it's a dictionary again!  We will need to index again!!
+
+
+
+# A small function to get the closing price on a date (date) using data (dictionary) d
+def get_closing(date, d):
+    close = float(d['Time Series (Daily)'][date]['4. close'])
+    return close
+
+
+# A loop to find the minimum closing price
+#
+
+min_price = 10000000
+min_key = "nothing"
+
+for date in d['Time Series (Daily)']:
+    closing =  get_closing(date, d)
+    # print(f"date is {date} and closing is {closing}")
+    if closing < min_price:
+        min_price = closing
+        min_price_date = date
+
+print(f"min_price_date is {min_price_date} and {min_price = }")
+
+
+import requests
+import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
+import pandas as pd
+
+
+# API is working
+
+# url with my API key
+# doing analysis on Disney stock
+url = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=DIS&outputsize=compact&apikey=1UMWVTKBKEGLJKQN"
+
+result = requests.get(url)
+
+
+
+# get data
+
+d = result.json()
+# print(d)
+
+# compact data with last 100 days
+
+# print(len(d["Time Series (Daily)"]))
+
+# extract 100 closing prices and create a list with them
+
+closing_prices = []
+
+sorted_dates = sorted(d["Time Series (Daily)"].keys())
+
+dates = [pd.to_datetime(date) for date in sorted_dates]
+
+for date in sorted_dates:
+    closing_prices.append(float(d["Time Series (Daily)"][date]["4. close"]))
+
+print(closing_prices)
+
+# find the maximum and minimum closing prices
+
+max_price = max(closing_prices)
+date_max = sorted_dates[closing_prices.index(max_price)]
+min_price = min(closing_prices)
+date_min = sorted_dates[closing_prices.index(min_price)]
+
+print((max_price, date_max), (min_price, date_min))
+
+
+# plot closing prices against dates
+
+plt.plot(dates, closing_prices)
+
+plt.gca().xaxis.set_major_locator(mdates.WeekdayLocator())
+plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%b %d, %Y'))
+plt.xticks(rotation=90)
+
+plt.xlabel('Date(Weekly)')
+plt.ylabel('Closing Price(USD)')
+plt.title('Disney Closing Prices in the Last 100 Days')
+
+# highlight max and min
+plt.scatter(pd.to_datetime(date_max), max_price, color='green', label=f'Max: {max_price}')
+plt.scatter(pd.to_datetime(date_min), min_price, color='red', label=f'Min: {min_price}')
+
+plt.text(pd.to_datetime(date_max), max_price, f"  Max: {max_price}", color='green', verticalalignment='bottom')
+plt.text(pd.to_datetime(date_min), min_price, f"  Min: {min_price}", color='red', verticalalignment='top')
+
+
+plt.show()
+
+
+# single share analysis
+
+max_profit = 0
+best_profit = ()
+
+for i in range(len(closing_prices)):
+  for j in range(i+1, len(closing_prices)):
+    if (closing_prices[j] - closing_prices[i]) > max_profit:
+      max_profit = (closing_prices[j] - closing_prices[i])
+      best_profit = (closing_prices[i], closing_prices[j])
+
+buy_date = sorted_dates[closing_prices.index(best_profit[0])]
+sell_date = sorted_dates[closing_prices.index(best_profit[1])]
+print("Buy on " + buy_date + " for $" + str(best_profit[0]) + ", and sell on " + sell_date + " for $" + str(best_profit[1]) + ".")
+profit = round(best_profit[1]-best_profit[0], 2)
+print("You will make $" + str(profit) + ".")
+
+
+# regraph based on calculated results
+
+plt.plot(dates, closing_prices)
+
+plt.gca().xaxis.set_major_locator(mdates.WeekdayLocator())
+plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%b %d, %Y'))
+plt.xticks(rotation=90)
+
+plt.xlabel('Date(Weekly)')
+plt.ylabel('Closing Price(USD)')
+plt.title('Disney Closing Prices in the Last 100 Days')
+
+plt.scatter(pd.to_datetime(sell_date), best_profit[1], color='green', label=f'Sell: {best_profit[1]}')
+plt.scatter(pd.to_datetime(buy_date), best_profit[0], color='red', label=f'Buy: {best_profit[0]}')
+
+plt.text(pd.to_datetime(sell_date), best_profit[1], f'  Sell: {best_profit[1]}', color='green', verticalalignment='bottom')
+plt.text(pd.to_datetime(buy_date), best_profit[0], f'  Buy: {best_profit[0]}', color='red', verticalalignment='top')
+
+plt.show()
+
+
+# function that takes in stock symbol and finds best times to buy and sell
+
+
+def highest_stock_profit(stock_symbol):
+  url = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=" + stock_symbol + "&outputsize=compact&apikey=1UMWVTKBKEGLJKQN"
+
+  result = requests.get(url)
+  d = result.json()
+
+  closing_prices = []
+
+  sorted_dates = sorted(d["Time Series (Daily)"].keys())
+
+  dates = [pd.to_datetime(date) for date in sorted_dates]
+
+  for date in sorted_dates:
+      closing_prices.append(float(d["Time Series (Daily)"][date]["4. close"]))
+
+  # single share analysis
+
+  max_profit = 0
+  best_profit = ()
+
+  for i in range(len(closing_prices)):
+    for j in range(i+1, len(closing_prices)):
+      if (closing_prices[j] - closing_prices[i]) > max_profit:
+        max_profit = (closing_prices[j] - closing_prices[i])
+        best_profit = (closing_prices[i], closing_prices[j])
+
+  buy_date = sorted_dates[closing_prices.index(best_profit[0])]
+  sell_date = sorted_dates[closing_prices.index(best_profit[1])]
+  print("Buy on " + buy_date + " for $" + str(best_profit[0]) + ", and sell on " + sell_date + " for $" + str(best_profit[1]) + ".")
+  profit = round(best_profit[1]-best_profit[0], 2)
+  print("You will make $" + str(profit) + ".")
+
+  # graph based on calculated results
+
+  plt.plot(dates, closing_prices)
+
+  plt.gca().xaxis.set_major_locator(mdates.WeekdayLocator())
+  plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%b %d, %Y'))
+  plt.xticks(rotation=90)
+
+  plt.xlabel('Date(Weekly)')
+  plt.ylabel('Closing Price(USD)')
+  plt.title(stock_symbol + ' Closing Prices in the Last 100 Days')
+
+  plt.scatter(pd.to_datetime(sell_date), best_profit[1], color='green', label=f'Sell: {best_profit[1]}')
+  plt.scatter(pd.to_datetime(buy_date), best_profit[0], color='red', label=f'Buy: {best_profit[0]}')
+
+  plt.text(pd.to_datetime(sell_date), best_profit[1], f'  Sell: {best_profit[1]}', color='green', verticalalignment='bottom')
+  plt.text(pd.to_datetime(buy_date), best_profit[0], f'  Buy: {best_profit[0]}', color='red', verticalalignment='top')
+
+  plt.show()
+
+highest_stock_profit("MNST")
+
+
+import requests
+from datetime import datetime
+
+
+# getting data on the global price of sugar
+
+url = "https://www.alphavantage.co/query?function=SUGAR&symbol=DIS&apikey=1UMWVTKBKEGLJKQN"
+result = requests.get(url)
+d = result.json()
+
+# find the average price of sugar each year for the past 10 years
+
+# filter data for last 10 years
+
+current_year = datetime.now().year
+
+sugar_prices = []
+
+for i in d["data"]:
+    year = int(i["date"][:4])
+    if current_year - year < 11:
+        sugar_prices.append(i)
+
+# calculate yearly averages
+
+def average(year):
+  adding = 0
+  for entry in sugar_prices:
+    if int(entry["date"][0:4]) == year:
+      adding += float(entry["value"])
+
+  return round(adding/12, 2)
+
+years = [2024, 2023, 2022, 2021, 2020, 2019, 2018, 2017, 2016, 2015]
+
+averages_list = []
+
+for year in years:
+  averages_list.append((year, average(year)))
+
+print(averages_list)
+
+
+import pandas as pd
+from darts import TimeSeries
+import requests
+from darts.metrics import rmse
+
+
+# used the monthly stock series instead of daily to match sugar
+stock_url = "https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY&symbol=DIS&apikey=1UMWVTKBKEGLJKQN"
+sugar_url = "https://www.alphavantage.co/query?function=SUGAR&symbol=DIS&apikey=1UMWVTKBKEGLJKQN"
+stock_result = requests.get(stock_url)
+sugar_result = requests.get(sugar_url)
+
+stock_data = stock_result.json()
+sugar_data = sugar_result.json()
+
+
+# find stock averages
+
+def stock_average(year, dataset):
+    adding = 0
+    for date, values in dataset["Monthly Time Series"].items():
+        if int(date[:4]) == year:
+            adding += float(values["4. close"])
+    return round(adding / 12, 2)
+
+years = [2024, 2023, 2022, 2021, 2020, 2019, 2018, 2017, 2016, 2015]
+
+stock_averages_list = [(stock_average(year, stock_data)) for year in years]
+
+# finding sugar averages
+
+sugar_averages_list = []
+
+for year in years:
+  sugar_averages_list.append((average(year)))
+
+date_index = pd.date_range(start=f"{years[-1]}-01-01", periods=len(years), freq="YE")
+
+stock_series = TimeSeries.from_times_and_values(date_index, stock_averages_list)
+sugar_series = TimeSeries.from_times_and_values(date_index, sugar_averages_list)
+
+
+root_mean_squared_error = rmse(stock_series, sugar_series)
+print(round(root_mean_squared_error, 2))
+
+
+
+# Disney stock vs Monster stock
+
+mnst_stock_url = "https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY&symbol=MNST&apikey=1UMWVTKBKEGLJKQN"
+
+mnst_result = requests.get(mnst_stock_url)
+
+mnst_data = mnst_result.json()
+
+mnst_averages_list = [(stock_average(year, mnst_data)) for year in years]
+
+mnst_series = TimeSeries.from_times_and_values(date_index, mnst_averages_list)
+
+stock_rmse = rmse(stock_series, mnst_series)
+print(round(stock_rmse, 2))
+
+

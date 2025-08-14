@@ -1,0 +1,461 @@
+# some of the libraries have warnings we want to ignore...
+import warnings
+warnings.filterwarnings("ignore")
+
+# ai/ml libraries
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.datasets import fetch_openml
+
+
+
+
+# fetch the insurance-claim dataset from the openml repository  (an api call! :)
+all = fetch_openml(data_id=45106, as_frame=true)
+
+
+# extract the pieces of the api result from the openml api call
+df_all = all.data
+df_all["claim_nb"] = all.target
+
+print("shape of full data:", df_all.shape)
+df_all.head(15)    # print the first five rows of data
+
+
+df_all.describe()
+
+
+# a histogram of all the drivers' ages
+
+plt.figure(figsize=(8, 6))
+plt.hist(df_all['driver_age'], bins=30, edgecolor='black')
+plt.xlabel('driver age')
+plt.ylabel('frequency')
+plt.title('distribution of driver ages')
+plt.show()
+
+# a histogram of all the the cars' ages
+
+plt.figure(figsize=(8, 6))
+plt.hist(df_all['car_age'], bins=30, edgecolor='black')
+plt.xlabel('car age')
+plt.ylabel('frequency')
+plt.title('distribution of car ages')
+plt.show()
+
+# a histogram of the claim numbers, claim_nb
+
+plt.figure(figsize=(8, 6))
+plt.hist(df_all['claim_nb'], bins=30, edgecolor='black')
+plt.xlabel('number of claims')
+plt.ylabel('frequency')
+plt.title('distribution of claim numbers')
+plt.show()
+
+# a scatter plot of how the car's age varies with the driver's age
+
+plt.figure(figsize=(8, 6))
+plt.scatter(df_all['driver_age'], df_all['car_age'], alpha=0.5)
+plt.xlabel('driver age')
+plt.ylabel('car age')
+plt.title('car age vs. driver age')
+plt.show()
+
+# a scatter plot of how the claim_nb varies with the driver's age
+
+plt.figure(figsize=(8, 6))
+plt.scatter(df_all['driver_age'], df_all['claim_nb'], alpha=0.5)
+plt.xlabel('driver age')
+plt.ylabel('number of claims')
+plt.title('number of claims vs. driver age')
+plt.show()
+
+# scatter plot of car power vs number of claims
+plt.figure(figsize=(8, 6))
+plt.scatter(df_all['car_power'], df_all['claim_nb'], alpha=0.5)
+plt.xlabel('car power')
+plt.ylabel('number of claims')
+plt.title('number of claims vs. car power')
+plt.show()
+
+
+# let's make sure everything runs first... using only 100,000 rows (instead of 1,000,000)
+
+df_all = df_all.sample(frac=1.0, random_state=42)  # this shuffles the 1,000,000-row dataset
+
+numrows = 100000
+df = df_all.iloc[0:numrows,:].copy()    # this uses only the first 100,000 rows (or numrows rows) for speed...
+
+
+# we split into 90% training data and 10% testing data
+
+from sklearn.model_selection import train_test_split
+
+train, test = train_test_split(df, test_size=0.1, random_state=30)
+print("shape of training data:", train.shape)
+print("shape of test data:", test.shape)
+
+
+# define target name (y) and feature names (x)
+y, x = df.columns[-1], list(df.columns[:-1])
+
+print("the response name:", y)
+print("the feature names:", x)
+
+
+
+
+
+#
+# there's not much code to build our model!
+#
+from glum import generalizedlinearregressor
+
+glm_model = generalizedlinearregressor(family="poisson", alpha=1e-6)
+glm_model.fit(x=train[x], y=train[y])
+
+print("coefficients")
+pd.series(np.append(glm_model.intercept_, glm_model.coef_), index=["intercept"] + x)
+
+
+from math import exp
+exp(0.36)
+
+
+exp(0.360105)    # for each unit of "townness,"  we multiply the expected claims by 1.433:
+
+
+exp(0.360105) ** 2   # so, we multiply twice for _two_ units of "townness":
+
+
+exp(-0.003272)    # for each year of driver_age, you multiply the expected claims by 0.9967:
+
+
+0.9967 ** 15
+
+
+exp(-0.003272)**(88-18)
+
+
+1/0.7952
+
+
+# car_age
+
+exp(-0.022168) # for each additional year of car_age, you multiply the expected claims by 0.978
+
+
+exp(-0.022168)**10 # the model expects that a car 10 years older has 80% claims of a car 10 years younger
+
+
+exp(-0.022168)**(23-0) # cars at the max age will make 60% less claims than the newest cars
+
+
+# car_power
+
+exp(0.004117) # for each additional unit of car power, you multiply the expected claims by 1.004
+
+
+exp(0.004117)**100 # if a car has 100 additional units of power, the chance of it making a claim is 1.51 times more
+
+
+exp(0.004117)**(341-50) # the cars with max hp will be 3.3 times more likely to file a claim than the cars with lowest hp
+
+
+import shap
+
+
+import shap
+
+# first, extract background data. this is the same for all models to interpret:
+x_bg = train[x].sample(200, random_state=8366)    # grab 200 samples from our training data - 200 is a lot...
+
+# exploring the space...   this will take a while...
+glm_explainer = shap.kernelexplainer(lambda x: np.log(glm_model.predict(x)), data=x_bg)     # don't worry about the warnings!
+
+# then, we can choose any data to explain. we'll choose 1,000 rows randomly called x_explain
+x_explain = train[x].sample(n=1000, random_state=937)
+shap_glm = glm_explainer.shap_values(x_explain, nsamples=30) # there are 30 non-trivial subsets of 6 features
+
+
+x_explain[0:1]
+
+
+shap_glm[0:1]
+
+
+#
+# a function to create all of the dependence plots among our features
+#
+def all_dep_plots(x, shap_values, x):
+    """ dependence plots for all features x. """
+    fig, _ = plt.subplots(nrows=2, ncols=3, figsize=(10, 6), sharey=true)
+
+    for i, ax in enumerate(fig.axes):
+        xvar = x[i]
+        shap.dependence_plot(
+            xvar,
+            shap_values,
+            features=x,
+            x_jitter=0.2 * (xvar in ("town", "year")),
+            ymin=-0.5,
+            ymax=1,
+            ax=ax,
+            show=false,
+        )
+        ax.set_title(xvar, fontdict={"size": 16})
+        ax.set_ylabel("shap values" if i % 3 == 0 else "")
+        ax.grid()
+    plt.tight_layout()
+
+print("the all_dep_plots function has been defined.")
+print("run the next cell to plot the features and their impacts")
+
+
+all_dep_plots(x, shap_glm, x_explain)
+
+
+# scale features to [-1, 1]
+from sklearn.preprocessing import minmaxscaler
+
+nn_preprocessor = minmaxscaler(feature_range=(-1, 1))
+x_train = nn_preprocessor.fit_transform(train[x])
+
+print("output after the data has been scaled:")
+pd.dataframe(x_train[0:5], columns=x)
+
+
+#
+# neural nets are worthy of their own course, for sure...
+#
+import tensorflow as tf
+from tensorflow import keras
+from keras import layers
+from keras.callbacks import earlystopping, reducelronplateau
+from keras.optimizers import adam
+cb = [earlystopping(patience=20), reducelronplateau(patience=5)]  # "callbacks" for training (see below)
+
+# architecture
+inputs = keras.input(shape=(len(x),))
+# additional layers can be added here!
+outputs = layers.dense(1, activation="exponential")(inputs)
+nn_model_shallow = keras.model(inputs=inputs, outputs=outputs)
+
+nn_model_shallow.summary()
+
+# calculate gradients
+nn_model_shallow.compile(optimizer=adam(learning_rate=1e-4), loss="poisson")
+
+
+#
+# train the network!
+#
+
+tf.random.set_seed(4349)
+
+history_shallow = nn_model_shallow.fit(
+    x=x_train,
+    y=train[y],
+    epochs=200,
+    batch_size=10_000,
+    validation_split=0.1,
+    callbacks=cb,
+    verbose=1,         # consider running both values 0 (no printing) and 1 (printing)
+)
+
+
+# prompt: could you show a heatmap of the values of the neuron's weights in the above model, named nn_model?
+
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# here, nn_model_shallow is the keras (nnet) model
+weights = nn_model_shallow.layers[1].get_weights()[0]  # get weights from this layer (omitting the intercepts, which are in [1])
+weights = np.transpose(weights)
+
+# create a heatmap of the weights
+plt.figure(figsize=(10, 8))
+sns.heatmap(weights, annot=false, cmap='viridis')
+plt.title("neuron weights heatmap of the input layer")
+plt.xlabel("input features (6)")
+plt.ylabel("neurons from inputs to output")
+plt.show()
+
+
+def nn_predict_shallow(x):
+    """prediction function of the neural network (log scale)."""
+    df = pd.dataframe(x, columns=x)
+    df_scaled = nn_preprocessor.transform(df)
+    pred = nn_model_shallow.predict(df_scaled, verbose=0, batch_size=10_000).flatten()
+    return np.log(pred)
+
+
+nn_explainer = shap.kernelexplainer(nn_predict_shallow, data=x_bg)
+shap_nn = nn_explainer.shap_values(x_explain, nsamples=30)
+
+all_dep_plots(x, shap_nn, x_explain)
+
+
+#
+# let's add a second layer to our network:
+
+import tensorflow as tf
+from tensorflow import keras
+from keras import layers
+from keras.callbacks import earlystopping, reducelronplateau
+from keras.optimizers import adam
+cb = [earlystopping(patience=20), reducelronplateau(patience=5)]  # "callbacks" for training (see below)
+
+# architecture: adding layers
+inputs = keras.input(shape=(len(x),))            # here is the input layer
+
+z = layers.dense(7, activation="tanh")(inputs)   # here is the new layer: 7 neurons, inputs are the input, and z is the output. use "tanh"
+
+# for more layers, you can continue using z.     # here is a commented-out example:
+# z = layers.dense(3, activation="tanh"))(z)     # this is another layer: 3 neurons, z is the input, and z is the output
+
+outputs = layers.dense(1, activation="exponential")(z)   # here, we convert the previous layer's results (z) into the overall output
+nn_model_2layer = keras.model(inputs=inputs, outputs=outputs)   # the final layer often uses a different activation function
+
+nn_model_2layer.summary()
+
+nn_model_2layer.compile(optimizer=adam(learning_rate=1e-4), loss="poisson")
+
+
+tf.random.set_seed(4349)
+
+history_2layer = nn_model_2layer.fit(
+    x=x_train,
+    y=train[y],
+    epochs=200,
+    batch_size=10_000,
+    validation_split=0.1,
+    callbacks=cb,
+    verbose=1,         # consider running both values 0 (no printing) and 1 (printing)
+)
+
+
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+weights = nn_model_2layer.layers[1].get_weights()[0]  # get weights from this layer (omit the intercept, which is [1])
+weights = np.transpose(weights)
+
+# create a heatmap of the weights
+plt.figure(figsize=(10, 8))
+sns.heatmap(weights, annot=false, cmap='viridis')
+plt.title("neuron weights heatmap of the input layer")
+plt.xlabel(f"input features (6)")
+plt.ylabel("neurons from inputs to layer1 (7)")
+plt.show()
+
+
+
+# next layer
+weights = nn_model_2layer.layers[2].get_weights()[0]  # get weights from this layer (omit the intercept, which is [1])
+weights = np.transpose(weights)
+
+# create a heatmap of the weights
+plt.figure(figsize=(10, 8))
+sns.heatmap(weights, annot=false, cmap='viridis')
+plt.title("neuron weights heatmap of next layer")
+plt.xlabel("neurons from layer 1 (of 7)")
+plt.ylabel("neurons from layer 1 to layer 2 (of 1)")
+plt.show()
+
+
+
+def nn_predict_2layer(x):
+    """prediction function of the neural network (log scale)."""
+    df = pd.dataframe(x, columns=x)
+    df_scaled = nn_preprocessor.transform(df)
+    pred = nn_model_2layer.predict(df_scaled, verbose=0, batch_size=10_000).flatten()
+    return np.log(pred)
+
+nn_explainer = shap.kernelexplainer(nn_predict_2layer, data=x_bg)
+shap_nn = nn_explainer.shap_values(x_explain, nsamples=30)
+
+all_dep_plots(x, shap_nn, x_explain)   # create all feature-dependency plots
+
+
+#
+# the age is a much more complicated - non-linear - feature
+def age_effect(age):
+    x = (age - 66) / 60
+    return 0.05 + x**8 + 0.4 * x**3 + 0.3 * x**2 + 0.06 * x
+
+#
+# here is the true model for this dataset:
+def true_model(x):
+    """returns pd.series of true expected frequencies."""
+    df = pd.dataframe(x, columns=x)  # needed because shap turns df to np.array
+    log_lambda = (
+        0.15 * df.town
+        + np.log(age_effect(df.driver_age))
+        + (0.3 + 0.15 * df.town) * df.car_power / 100
+        - 0.02 * df.car_age
+    )
+    return np.exp(log_lambda)
+
+
+import shap
+
+true_model_explainer = shap.kernelexplainer(lambda x: np.log(true_model(x)), data=x_bg)
+shap_true = true_model_explainer.shap_values(x_explain, nsamples=30)
+
+all_dep_plots(x, shap_true, x_explain)
+
+
+#
+# let's add a second layer to our network:
+
+import tensorflow as tf
+from tensorflow import keras
+from keras import layers
+from keras.callbacks import earlystopping, reducelronplateau
+from keras.optimizers import adam
+cb = [earlystopping(patience=20), reducelronplateau(patience=5)]  # "callbacks" for training (see below)
+
+# architecture: adding layers
+inputs = keras.input(shape=(len(x),))            # here is the input layer
+
+z = layers.dense(120, activation="tanh")(inputs)
+z = layers.dense(60, activation="tanh")(z)
+z = layers.dense(30, activation="tanh")(z)
+z = layers.dense(15, activation="tanh")(z)
+
+outputs = layers.dense(1, activation="exponential")(z)   # here, we convert the previous layer's results (z) into the overall output
+nn_model_2layer = keras.model(inputs=inputs, outputs=outputs)   # the final layer often uses a different activation function
+
+nn_model_2layer.summary()
+
+nn_model_2layer.compile(optimizer=adam(learning_rate=1e-4), loss="poisson")
+
+
+tf.random.set_seed(4349)
+
+history_2layer = nn_model_2layer.fit(
+    x=x_train,
+    y=train[y],
+    epochs=200,
+    batch_size=500,
+    validation_split=0.1,
+    callbacks=cb,
+    verbose=0,         # consider running both values 0 (no printing) and 1 (printing)
+)
+
+
+def nn_predict_2layer(x):
+    """prediction function of the neural network (log scale)."""
+    df = pd.dataframe(x, columns=x)
+    df_scaled = nn_preprocessor.transform(df)
+    pred = nn_model_2layer.predict(df_scaled, verbose=0, batch_size=500).flatten()
+    return np.log(pred)
+
+nn_explainer = shap.kernelexplainer(nn_predict_2layer, data=x_bg)
+shap_nn = nn_explainer.shap_values(x_explain, nsamples=30)
+
+all_dep_plots(x, shap_nn, x_explain)   # create all feature-dependency plots
+
+
