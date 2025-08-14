@@ -1,0 +1,317 @@
+# Linear Models and Neural Nets Lab (Econ 176 '25)
+
+This lab will guide you through a _modeling_ task, inspired by the I&RE module:
++ it's based on a widely-studied French third-party-liability dataset [here on Kaggle](https://www.kaggle.com/datasets/floser/french-motor-claims-datasets-fremtpl2freq)
++ this variation has seven features and is available from [OpenML](https://openml.org/). (It's also widely studied: Cited below.)
++ of the seven features, six are used as predictive features and one is the target (to be predicted from the other six)
++ the target (to be predicted) is the _number of claims filed_ &nbsp; ``claim_nb`` by an individual. We'll call these _claims_ or _incidents_.
++ the features are
+  + the ``year`` &nbsp;&nbsp; (there are only years 2018 and 2019)
+  + whether the driver lives in a ``town`` <font size="-1">``town == 1.0``</font> or in a more rural area <font size="-1">``town == 0.0``</font>
+  + the _driver's_ age (in years) &nbsp;&nbsp; ``driver_age``
+  + the car's _weight_ (in kg) &nbsp;&nbsp; ``car_weight``
+  + the car's engine _power_ (in hp) &nbsp;&nbsp; ``car_power``
+  + the _car's_ age (in years) &nbsp;&nbsp; ``car_age``
+
+<br>
+
+You'll model the
+The notebook will guide you through
++ loading the data and inspecting it, a bit
++ modeling the data with linear models (linear regression)## Loading and inspecting data   
+
+&nbsp;&nbsp; <font color="Coral">there are two tasks here...</font>These two cells grab and extract the data - one millon rows and seven features - from OpenML:Here are the brief descriptions of each of the features:
++ the first six are the features we will use to _make_ predictions
+  + the ``year`` &nbsp;&nbsp; (there are only years 2018 and 2019)
+  + whether the driver lives in a ``town`` <font size="-1">``town == 1.0``</font> or in a more rural area <font size="-1">``town == 0.0``</font>
+  + the _driver's_ age (in years) &nbsp;&nbsp; ``driver_age``
+  + the car's _weight_ (in kg) &nbsp;&nbsp; ``car_weight``
+  + the car's engine _power_ (in hp) &nbsp;&nbsp; ``car_power``
+  + the _car's_ age (in years) &nbsp;&nbsp; ``car_age``
++ the seventh <b><tt>claim_nb</tt></b>, the number of claims files during that year, is the target to _be predicted_#### <font color="Coral"><b>Task 1</b></font>
+
+With full encouragement to use the built-in Colab AI -- or another of your choice, create five specific visualizations and an additional one:
++ create a histogram of all the drivers' ages, and
++ a histogram of all the the cars' ages, and
++ a histogram of the claim numbers, `claim_nb`
++ create a scatter plot of how the car's age varies with the driver's age
++ create a scatter plot of how the `claim_nb` varies with the driver's age
++ <font color="Coral"><b>also</b></font>, create one more - different - scatter plot of your choice, using this data
+
+<br>
+
+<font color="DodgerBlue">Below for task 2, write a short reflection</font> on the results of these data-visualizations. One sentence on what you see in each is perfect.  <br> <font size="-1">(There's another cell below reminding you of this!)</font>#### <font color="Coral"><b>Task 2</b></font>
+
+<font color="DodgerBlue">Here, write a short reflection</font> -- a sentence or two for each of these is wonderful -- that describes the data-trends you see in the visualizations above.
+
+As a reminder, they were
++ histograms for the drivers' ages and the cars' ages and the claim numbers, `claim_nb`
++ a scatter plot of how the car's age varies with the driver's age
++ a scatter plot of how the `claim_nb` varies with the driver's age
++ <font color="Coral"><b>and</b></font>, one other - different - scatter plot that visualizes some of this data
+
+<br>
+<hr>
+<br>
+
+<b>Histogram of drivers' ages:</b> Based on the structure of the histogram, it appears to be a normal distribution with the average being around 38 to 42 years old. Which is something to be expected because at these ages and close to these ages, most people are working and need to commute. A funny thing is how we have more drivers on average with 80 years of age that those at 20 years old. Does this means old dirvers are better than young ones? Most likely....
+
+<b>Histogram of cars' afes:</b> The distribution is pretty sparse but the structure is similar to a normal distribution centered around 3 years old. Looks like most people are keeping up with the trend by staying within a 6 year car generation.
+
+<b>Histogram of claim_nb:</b> Spread over two values. Best thing I believe for an insurance company because most people claiming haven't been in a car crash so few expense coverage for them? It also might mean they have competent customers. Some REALLY GOOOOD drivers!!!
+
+<b>Scatterplots:</b> The data is sort of congested and that makes them a little bit less intuitive. We tried R<sup>2</sup> regression and we can only see an increasing trend showing that old peoople tend to opt for older cars which is much expected. However it is the other way around for claim_nb
+
+<b>Car power scatterplot:</b> We expected younger people to go for heavy tuned cars with lot of power but apparently everybody wants that across all driver's ages. The plot also looks like a pixelated brick wall in minecraft which we found funny. But like other scatterplots, it's still less intuitive due to clustered datapoints
+
+
+
+<br>
+<br>
+<br>
+<br>## Modeling
+
+You will build two models for the <b><tt>claim_nb</tt></b> target:
++ a **linear-regression** model &nbsp;&nbsp; <font size="-2">since the target is a "number of occurrences" over a span of time, we use a _Poisson_ model</font>
++ a **neural-network** model &nbsp;&nbsp;  <font size="-2">of the same sort</font>
+
+You'll experiment with
++ interpreting the models
++ then, building some "deeper" neural networks
++ seeing how the two modeling approaches differ in the relationships they can express### Part 1: &nbsp;&nbsp; Data splitting
+
+The dataset has a million rows.
++ For speed of training, we will use only 100,000 of them.
++ At the end, you'll try changing at least three model parameters. This is one of those options! 😃### Part 2: &nbsp; A (Generalized) Linear Model (GLM)
+
+Here, we build a linear-regression model of the data.
+
+We'll use [Glum](https://glum.readthedocs.io/en/latest/), a high-performance implementation in Python. <br> <font size="-2"><tt>glum</tt> stands for _generalized linear modeling" ... not sure about the <tt>u</tt></font>In Colab, you are likely to need to install `glum` once:
+We can use that library to build a linear model:We did it!  &nbsp;&nbsp; But what _is_ it?!#### As an absolute model, this is <u>not</u> very useful!
+
+**Everyone** has a very high likelihood of NOT having an auto incident/filing a claim. <i>This is good!</i>
+
+This means _everyone's_ expected number of incidents is 0 &nbsp; (Well, very close to it.)#### In comparing the ***relative*** impact of a feature, the model <u>is</u> useful.
+
+Here is a full description of the ***relative*** relationships expressed by those coefficients [(cite)](https://ademos.people.uic.edu/Chapter19.html#:~:text=Rather%20than%20odds%20ratios%20(which,variable%5D%20is%20%5Bcoefficient%5D.):
+
+
+> <font color="DodgerBlue">The expected log count for each unit increase/decrease (depending on the sign of the coefficient) in [outcome variable] given [predictor variable] is [coefficient].</font>
+
+
+Wow!  &nbsp;&nbsp; This needs some unpacking...
+
+<hr>
+<br>
+
+
+
+<font size="+1" color="Blue">Interpreting</font> <font size="+1" > coefficients, part one: &nbsp;&nbsp; <tt><b>town</b></tt> example</font>
+
+
+In practice, it's more straightforward than this suggests:
+
+Suppose your coefficient for `town` is 0.36. &nbsp; <font size="-2">That was one of my test-run values.</font>
+
+This means that "one unit" of `town` increases the <u>log of the claim count</u> by 0.36.  <br> <i><font color="Blue">But log-counts aren't very intuitive!</font></i> &nbsp; Let's _undo_ the log:
+
+
+`exp(0.36)` is about `1.43` &nbsp;&nbsp;&nbsp; Let's see that this is true:
+This means that "one unit" of `town` ***multiplies*** &nbsp; the frequency of incidents by 1.43
+
+Since `town` only has values 0 and 1, this means that
+
+**when `town` is 1, the likelihood of an incident is 1.43 times higher then when it's 0**
+
+<br>
+
+<font color="Coral"><b>Aha!</b></font>
+
+<br>
+
+This ***incident-rate ratio*** is really useful!
++ for assessing the threat of an event that is relatively rare and/or
++ the _value_ of small changes to an individual's particular situation.
+
+In theory, the multiplier can be used many times:This means, if `town == 2`, the expected claims for those individuals would be 2.05x higher:
++ because, as above, `1.433 ** 2 == 1.433*1.433 == 2.05`
+
+There _isn't_ such a value in the dataset...
++ ... but models will allow this kind of extrapolation. Be careful!
+<font size="+1" color="Blue">Interpreting</font> <font size="+1"> coefficients, part two: &nbsp;&nbsp; <tt><b>driver_age</b></tt> example</font>
+
+Let's try an example where there are multiple values, for example, for <b><tt>driver_age</tt></b> :
++ My coefficient for <tt><b>driver_age</b></tt> was <tt>-0.003272</tt>
++ And <tt>exp(-0.003272) == 0.9967</tt> &nbsp;&nbsp; <font size="-2">Let's confirm:</font>
+This means that, for this model, the number of claims is multiplied by <tt>0.9967</tt> ***for each additional year of age***
+
+<br>
+
+What if an individual is fifteen years older?the model expects the number of claims to be 95% with that "additional experience"
+
+<br>
+
+What if we compare the oldest (88) and youngest (18) in the dataset:
+Which states that our octogenerians will make 0.79 the claims as our 18-year-olds.
+
+Taking the reciprocal, the model is saying that moving across the dataset's full age-span, from old to young, multiplies the number of claims by 1.25:
+There is definitely room for skepticism here! 😀
+
+But we've successfully interpreted the model coefficients!   
+
+Next, try two of your own:#### <font color="Coral"><b>Task 3</b></font> &nbsp; Two more model-interpretations:  
+
+Following the approach of the two examples above, choose **two more** features from the coefficients and:  
++ compute the _per-unit_ incident-rate multiplier for that feature
++ decide on a "reasonable" number of units (years, kg, hp, ...)
++ compute the incident-rate multiplier for _that many units_
++ find the "full span" of units in the dataset (it's printed above ...)
++ compute the incident-rate multiplier for _that full span_
++ and reflect on what this is saying about the incidents in this data.
+
+Specifically, share how well does these _match your intution_ about these factors for auto incidents/insurance claims? Reasonable? Skeptical? Other?
+
+<br>
+<hr>
+<br>
+
+Feel free to use this cell or new ones just below:
+
+<br>
+<br>**This means that for this model, claims are multiplied by 0.987 for each added year of age for the car, and claims are multiplied by 1.004 for each added horsepower.**
+
+Since from the histograms we found that most people own 4 year old cars, what is the incident multiplier for this car age? What about an additional 50 horsepower?**The model expects the claims to be 91% with cars of average age of 4 years old and 123% for a car with a greater advantage of 50 hp****People with really old cars as old as 23 years make 60% claims as people who have new cars which is sort of expected because people with old cars have less incentive to worry about fixing or even claiming over something that is too old. Howvever, it appears that the effect is more extreme for people with cars of more horsepower with claims as high as 331% probably because these cars are prone to accidents since they're too fast plus they are also more expensive exolaining why owners would make more claims since they don't want to bear too much cost in terms of repairs.****The model on multiplies by 1.6. We believe this means that the model assumes that claims do go up as cars get older which is to be expected. However, the multiplier for horsepower is low showing that faster cars feature lower claims than slower cars. This makes sense in some way given that these cars are usually under heavy contracts some of them requiring only owners to dirve them but no one else. This usually applies to 1000+ hp cars and might not be case for 341 hp cars but the reasoning can be linked.**### Part 3. &nbsp; **Automatic** model-interpretation
+
+A technique called SHAP, short for SHapley Additive exPlanation, is able to estimate the feature-by-feature effects of _any_ model.
+
+It _should_ be here already:SHAP works by sampling the model at several points and then surveying the space around those points to see how the model is changing. It integrates all of this information in order to be able to compare the influence of all of the variables with the same units, known as SHAP values. They are again relative values, and they indicate how the target varies with changes to each feature -- in light of _all_ the features in the model.
+
+Linear models like the one above are already interpretable. However, other models - like neural nets - are much less so.
+
+To get started, let's run SHAP for our linear model:Let's see one of the explained individuals:and, let's see their SHAP values:Ok!
+
+These numbers are (the sign and) relative weight of each of this individual's **per-feature contributions** to their risk (their expected number of claims).
+
+For example, in this model,
++ their age makes a claim less likely
++ their car's age make a claim more likely
+
+Plus, the <tt><b>SHAPvalue</b></tt> units are commensurate:
++ the impact of the driver's age carries almost three times the weight of their car's age
+
+<br>
+
+Better to plot all of them. &nbsp; Let's do that next:#### <font color="Coral"><b>Task 4</b></font> &nbsp; How did SHAP do?
+
+In Task 3, you chose two features and examined their effects on the target value, the number of incidents.
+
+Here, revisit those two features, and in a couple of sentences, describe whether the effects you measured match the plots above.
+
+<br>
+
+**Note/Hints**  There are lots of dimensions here! And lots of information! The x-axis of each plot shows the feature values. The y-axis is the SHAP value (the relative impact on the number of claims).
+
+The red/blue coloring of datapoints shows how the _most influential **other** feature_ overlays onto the current plot. That **other** feature is the most influential for the one labeled on the x-axis, and so it will often be different for different plots.  
+
+<br>
+
+As an example of this feature-comparison, remember that one <tt><b>town</b></tt> unit multiplied the claims by 1.4, and the full span of <tt><b>driver_age</b></tt> multiplied the claims by 1.25.
+
+This matches well!  In the above plot, the span for <tt><b>town</b></tt> is a little bit larger than the span for <tt><b>driver_age</b></tt>.
+
+The SHAP units are not the same, and SHAP takes into account more than linear dependencies, but it has captured the sign and the magnitude of the model it was interpreting.
+  
+
+<br>
+<hr>
+<br>
+
+For your two reflections, feel free to use this cell or new ones just below this one:
+
+<b>Car Age vs Car Power:</b> The model says that claims are multiplied by 1.6 across the span of car age ehile the multiplier is only 0.3 for car power. Both of these are sort of counterintuitive to what the SHAP prediction above shows because for example the model expects claims to increase as cars become more powerful but our multiplier expects a decrease. Same for car age. Multiplier shows increased claims but model expects a decrease. In the real world, there could be different reasons to show why the multipliers might make sense:
+
+More powerful cars being more expensive → driven more cautiously → less claims
+
+Older cars → more problems → more claims
+
+<br>
+<br>### Part 4: &nbsp;&nbsp; A Neural Network model
+
+Here, we TensorFlow to fit a "shallow" neural net.
+
+Your task is to improve the results -- by adding more layers and retraining...
+
+Plus, the resulting layered network will be able to extract nonlinear relationships among the features <br> <font size="-1">(in exchange for much more training time...)</font>Neurons work best when all their data is ***roughly the same magnitude***
+
+Our brains handle this at the sensor level -- our hearing and vision systems continually try to re-establish the ambient baseline to help convert their inputs into computable magnitudes:
++ light sensitivity increases in the dark and decreases in bright light
++ for sound, loud repetitive even soft sounds are heightened when in a quiet place.
+
+<br>
+
+For neural nets, we can scale each feature to be between -1 and 1:Above, you see the artictecture of the network.
+
+This includes the total number of neuron-connections (parameters) to train.
+
+Let's train!And, let's see how the model does... using `shap`#### Next, let's add a "hidden" layer to our network...
+
+Here, we add a middle, "hidden," layer to our network in line 14, below. Notice that
++ the value 7 is the number of neurons
++ the inputs from the initial layer are, in fact, the inputs to this middle layer
++ the variable z holds the outputs of this layer.
++ the output layer uses z as its input (and then estimates the goal, the number of claims from there)
+
+Additional layers are able to continue this pattern (one example is commented out on line 17):Let's see the neurons!
+
+At least as a heatmap of the weights:Next layer!Let's run `shap` to see if it does better...Notice that these features do not _yet_ match the ones computed by the linear regression model we interpreted above.
+
+Thus far, the NNet is too primitive to be able to learn the real relationships among those dataset features.
+
+<font color="Coral">Your task</font> is to experiment below, in order to create a larger, more faithful NNet model.### The "Real" data model
+
+Usually datasets do not have a "real" model. At least not one that's known!
+
+This dataset, however, does have a _real_ underlying model! (It was inspired by the real data and then used to generate this dataset.)
+
+Here is the real model:`shap` is not specific to NNets or linear regression models. It supports the interpretation of _any_ model, including the real one.
+
+Here is `shap`'s interpretation of this real model:Things to notice:
++ the relationship between driver_age and the number of claims is "highly non-linear!"
++ there are also _two slopes_ for the linear car_power feature (so, officially, it's "not linear")
++ note, too, that car_weight has no impact on the output...
+  + Challenge question (not really a hw task): <br>  _**Why** do the modeling techniques above observe an impact of the car_weight feature?_## Final challenge: <font color="DodgerBlue">_Improve the NNet_</font>
+
+#### <font color="Coral"><b>Task Finale</b></font>
+
+From here, your task is to
++ create a more-capable neural network... with the goal of representing the actual data interactions ***better*** than the linear-regression model
++ consider using more layers (but not too many)
++ consider the "step-down" architecture, where
+  + the first post-input layer has the most neurons ("feature building")
+  + then, subsequent layers have fewer...
+  + tapering into the output layer
+
+You'll find that the NNet won't represent the "real" model perfectly, but it will
++ find its own features
++ represent the non-linear relationship (for driver_age)
++ and, for me, it could _start_ to represent the dependence of car_power on town
+
+<br>
+
+### Use the cells below to experiment with NNet building...
+
+Use the above `2layer` example as a template, and then - below -
++ experiment and create a new model -- and
++ show its `shap` interpretation... -- and
++ be sure to include a <font color="DodgerBlue">3-5 sentence <b>reflection</b> on</font> your experimentation (how long it took!) and how well the resulting NNet does at capturing the feature relationships of the actual, underlying "reality" ...
+
+<br>
+
+Worth remembering:  _We're **all** neural nets!_
++ It would seem we're always "keeping this in mind" 😀We first of all changed the activation function to relu which more advantageous in situatuions where we have hidden layers and data that has potential non-linear characteristics. This reduces strain on the training model and allows us to even move and predict faster.
+
+We added new hidden layers and increased number of neurons to allow the model to crunch numbers properly and prevent it from overweighing some parameters.
+
+We also increased number of epochs and lowered the batch size to allow more frequent test per epoch.
+
+Training, resting, splitting and vizualizing the model took 6 minutes and the result looks really close but not as perfect as we would want. We mainly wanted the NN to recogninze that driver_age data is non linear and forma parabola which is what it did. Our model started forming a slight curve to follow the data.
