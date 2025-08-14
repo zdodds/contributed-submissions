@@ -1,0 +1,56 @@
+<br>
+
+##   hw6pr2digits_modeler 
++ digits clasification via decision trees and random forests...
++ Remember: feel free to re-use the cleaned data from previous weeks (already here)
+## Data set up...
++ Use the cleaned data from prior weeks (it should be here in this folder as digits_cleaned.csv)
++ (I don't think there's too much more to adjust, data-wise...)
++ Next, let's see how well the DT/RF techniques can predict the digit, based on its 64 pixels...## First: &nbsp; _Decision Trees_### We start with the _cleaned_ data### Drop columns not part of our model...
+
+in this case, we drop actual_digit### Nice to have variables for everything
+
+just in case...
+### Convert to a numpy array### We have access to each data element 
+
+and and all of its attributes### We define the features (X_all) and the target to be predicted (y_all) ### Permute!### Create an 80/20 train/test split of the data<br>
+
+#### Here is where the model-buidling begins in earnest...## First: &nbsp; _Decision Trees_<br>
+
+#### That's it! :-)
+
+Let's see how it did...## Then: &nbsp; _Random Forests_### We can visualize each tree
+
+Let's count the ways...Or, let's use <tt>matplotlib</tt> right here in the notebook:### Cross-validate to find the "best" tree-depth ### Let's see the deeper tree### Feature importances
+
+This is a wonderful _feature_ of decision trees:### Feature importances, final version...# Random Forests!
+
+are lots and lots of decision trees:
++ each is trained on only a subset of the data
++ they "vote" for the classification### Building a Random Forest is as smooth as the others:
+
+RFs need two parameters
++ the best depth (max_depth)
++ the number of trees (n_estimators)### Let's test!### Let's see one of the forest's trees...### Cross validation over _two_ parameters### Build a tuned model
+
+... with the new parameter values### Let's test the tuned model### We build a final model...
+
++ using all of the data
++ using our best-tuned parameters ### Feature importances ...
+
+... tend to be even more meaningful when tapped from Random Forests
+
+This is because the "wisdom of the crowd" can emerge:### We can visualize parameter space
+
+for any model:<br>
+<hr>
+<br>
+
+### Final task: &nbsp; _Visualizing_ pixel-importance:
++ using your best Random Forest model, find the 64 _relative feature importances_ for all 64 of the digits' pixels!
+  + Show these as a list of 64 values (they will be difficult to imagine, but you will see that they vary a great deal, pixel-to-pixel)
++ Then, grab-and-adapt the code for visualizing individual digits in order to visualize the "importance image" of pixels...
++ that is, you'll create a heat map visualization, which is really just another image, of how relatively-important each of the 64 pixels is in your final Random Forest
+
+This visualization will be a "low-res image" similar to the digits, ***but it won't itself be a digit*** 
++ Instead, it will show _how much_ each of the 64 spots, across all of the 8x8 grids in the dataset, contribute in classifying each digit...Create a heat map

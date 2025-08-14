@@ -1,0 +1,663 @@
+#
+# hw8pr2.py ~ cs35 ~ word embeddings: computing with word _meanings_
+#
+
+# our usual libraries
+import numpy as np
+import matplotlib.pyplot as plt  
+import seaborn as sns
+
+
+# most important for hw8 is gensim, the word-embedding (word2vec) library
+# see if you already have it installed:
+#import gensim
+
+# if not, try         
+
+
+
+# # install gensim
+
+
+# the word-embeddings are in the large file word2vec_model.txt
+
+# make sure that file is here:
+
+
+
+#
+# this function, read_word2vec_model, wraps the creation of a gensim model, let's say, m
+#
+#      to use it, run the line   m = read_word2vec_model()
+#
+
+from gensim.models import keyedvectors
+
+def read_word2vec_model(filename = "word2vec_model.txt"):  
+    """ a function that reads a word2vec model from the file
+        "word2vec_model.txt" and returns a model object that
+        we will usually name m or model...
+    """
+    try:
+        print("starting to load the model in ", filename, "...")
+        model = keyedvectors.load_word2vec_format(filename, binary=false)
+        print("model loaded.\n")
+    except filenotfounderror as e:
+        print(f"  [warning]    the file {filename} was not found.     [warning]  ")
+        return none   # returning a placeholder, not a model
+
+    # let's print some attributes
+    print("the model built is", model, "\n")
+    print("the vocabulary has", model.vectors.shape[0], "words")   # the vocabulary has 43981 words
+    print("each word is a vector of size", model.vector_size)  # 300
+    print("\ntry m.get_vector('python') to see a the vector for 'python'!")
+    print("m is dictionary-like, e.g., try 'python' in m\n")
+    model.fill_norms()  # freezes the model, m, as-is (no more training)
+    # we weren't going to train more, so no worries (in week7, at least)
+    return model
+
+
+
+# 
+# best to run this only once... or once in a while, as needed
+#
+
+m = read_word2vec_model()
+
+
+print(f"m is {m}")   # let's see how it prints...
+
+
+'python' in m
+
+
+m.get_vector('python')
+
+
+'queen' in m
+
+
+m.get_vector('queen')
+
+
+if 'poptart' in m:
+    print("that word is in m")
+else:
+    print("that word is not in m")
+
+
+#
+# so, we can check the "meaning" of 'king', 'queen', 'snake', and 'python':
+#
+m.get_vector('snake')   # m.get_vector('queen')  m.get_vector('snake')   m.get_vector('king')
+
+# which are not very useful ... until we compare them to other meanings:
+
+
+# let's see the built-in similarity method
+m.similarity('python','snake')   # should be .6606292...
+
+#
+
+
+# first, a couple of variable-assignment statements
+# these might start to feel disturbingly meta ...
+python = m.get_vector('python')
+snake = m.get_vector('snake')
+language = m.get_vector('language')
+code = m.get_vector('code')
+queen = m.get_vector('queen')
+
+
+import numpy as np
+print(f"{np.linalg.norm(python) = }")  # this is the length of the vector - always 1, watch out for rounding
+
+# the dot product is available in the numpy library
+print(f"{np.dot(python, snake) = }")
+
+# this is exactly the built-in similarity:
+
+
+# we can use np to find the angle, in degrees, between the two vectors :-)
+deg = np.degrees(np.arccos(0.66063))  # dot is cosine; converting from radians to degrees
+print(f"...which is {deg:7.2f} degrees")
+
+# for unit vectors, "dot product" is the same as the "cosine similarity"  
+#     which is the cos of the angle between the two vectors
+
+
+# let's again see the built-in similarity method:
+m.similarity('python','snake')   # should be the same .6606292...
+
+
+m.distance( 'python', 'snake' )   # the distance is 1 minus the similarity
+
+
+m.distance( 'python', 'coffee' )   # let's see...
+
+
+m.similarity('python','coffee')
+
+
+# with similarity, the biases of the datset can show through: let's check "programmer" vs "woman" and "man"
+#
+simw = m.similarity("programmer","woman")   # president  programmer
+print(f"similarity w 'woman':  {simw:7.3f}")
+
+simm = m.similarity("programmer","man")     # president  programmer
+print(f"similarity w 'man':    {simm:7.3f}")
+
+# notice that the values provide a starting-point to _quantify_ the bias in the dataset
+# quantifying dataset bias is currently a very active area of research
+# it would also be possible to compare both of these with 
+print()
+simprs = m.similarity("programmer","person")    # try it!
+print(f"similarity w 'person': {simprs:7.3f}")
+
+
+#
+# the dataset will reflect the biases of the training data / source-texts  (6b tokens from google news)
+#
+# for task#2, as you explore possibilities, see if there is a way for the similarity-scores to quantify the biases present...
+# 
+# key constraint: lots of tokens are missing...
+
+
+# let's compare multiple similarities:
+
+python_snake = m.similarity('python','snake')
+python_coffee = m.similarity('python','coffee')
+snake_coffee = m.similarity('snake','coffee')
+
+print(f"python_snake  similarity: {python_snake}")   # try :4.2f after the variable for formatting
+print(f"python_coffee similarity: {python_coffee}")  # 4 characters wide, 2 places after the decimal point
+print(f"snake_coffee  similarity: {snake_coffee}")
+
+
+#
+# let's define an "odd-one-out" from any collection of words, 
+# simply by considering all possible similarities (and adding them up for each word)
+
+"""
+here, for example:
+
+python_snake  similarity: .66
+python_coffee similarity: .02
+snake_coffee  similarity: .08
+
+so, summing the similarities for each word separately:
+  python:  .66 + .02 == .68
+  coffee:  .08 + .02 == .10
+  snake:   .66 + .08 == .74
+
++++ in this case, "coffee" is the odd one out  (intuitive, in some ways)
+
+
+# what do you think about python, serpent, snake?
+# or python, serpent, snake, code?
+
+"""
+
+
+
+# notice that the split function makes creating lists-of-words a bit easier
+initial_words = "snake serpent python code ai ml programming".split()
+initial_words
+
+
+#
+# here is a _single_ keyword, with similarities computed against every word w in initial_words
+key = 'python'
+
+los = []
+low = []
+for w in initial_words:
+    if w in m:  # is the word, w present in the vocabulary?
+        similarity = m.similarity(key,w)
+        print(f"similarity between {key} and {w}: {similarity:6.2f}", )
+        los.append( similarity )
+        low.append( w )
+    else:
+        print(f"  __  {w}  __ was not in the vocabulary", )   # not every word will be present
+
+print(f"los is {los}")
+print(f"low is {low}")
+
+
+
+# let's compare multiple similarities:
+
+musician_philosopher = m.similarity('musician','philosopher')
+musician_mathematician = m.similarity('musician','mathematician')
+musician_physicist = m.similarity('musician','physicist')
+musician_artist = m.similarity('musician','artist')
+
+print(f"musician_philosopher  similarity: {musician_philosopher}")   # try :4.2f after the variable for formatting
+print(f"musician_mathematician similarity: {musician_mathematician}")  # 4 characters wide, 2 places after the decimal point
+print(f"musician_physicist  similarity: {musician_physicist}")
+print(f"musician_artist  similarity: {musician_artist}")
+
+
+people = "musician philosopher mathematician physicist scientist artist".split()
+
+
+
+key = 'musician'
+
+los = []
+low = []
+for p in people:
+    if p in m:  # is the word, w present in the vocabulary?
+        similarity = m.similarity(key,p)
+        print(f"similarity between {key} and {p}: {similarity:6.2f}", )
+        los.append( similarity )
+        low.append( p )
+    else:
+        print(f"  __  {p}  __ was not in the vocabulary", )   # not every word will be present
+
+print(f"los is {los}")
+print(f"low is {low}")
+
+
+key = 'philosopher'
+
+los = []
+low = []
+for p in people:
+    if p in m:  # is the word, w present in the vocabulary?
+        similarity = m.similarity(key,p)
+        print(f"similarity between {key} and {p}: {similarity:6.2f}", )
+        los.append( similarity )
+        low.append( p )
+    else:
+        print(f"  __  {p}  __ was not in the vocabulary", )   # not every word will be present
+
+print(f"los is {los}")
+print(f"low is {low}")
+
+
+key = 'mathematician'
+
+los = []
+low = []
+for p in people:
+    if p in m:  # is the word, w present in the vocabulary?
+        similarity = m.similarity(key,p)
+        print(f"similarity between {key} and {p}: {similarity:6.2f}", )
+        los.append( similarity )
+        low.append( p )
+    else:
+        print(f"  __  {p}  __ was not in the vocabulary", )   # not every word will be present
+
+print(f"los is {los}")
+print(f"low is {low}")
+
+
+key = 'physicist'
+
+los = []
+low = []
+for p in people:
+    if p in m:  # is the word, w present in the vocabulary?
+        similarity = m.similarity(key,p)
+        print(f"similarity between {key} and {p}: {similarity:6.2f}", )
+        los.append( similarity )
+        low.append( p )
+    else:
+        print(f"  __  {p}  __ was not in the vocabulary", )   # not every word will be present
+
+print(f"los is {los}")
+print(f"low is {low}")
+
+
+key = 'scientist'
+
+los = []
+low = []
+for p in people:
+    if p in m:  # is the word, w present in the vocabulary?
+        similarity = m.similarity(key,p)
+        print(f"similarity between {key} and {p}: {similarity:6.2f}", )
+        los.append( similarity )
+        low.append( p )
+    else:
+        print(f"  __  {p}  __ was not in the vocabulary", )   # not every word will be present
+
+print(f"los is {los}")
+print(f"low is {low}")
+
+
+key = 'artist'
+
+los = []
+low = []
+for p in people:
+    if p in m:  # is the word, w present in the vocabulary?
+        similarity = m.similarity(key,p)
+        print(f"similarity between {key} and {p}: {similarity:6.2f}", )
+        los.append( similarity )
+        low.append( p )
+    else:
+        print(f"  __  {p}  __ was not in the vocabulary", )   # not every word will be present
+
+print(f"los is {los}")
+print(f"low is {low}")
+
+
+los = []
+low = []
+for p in people:
+    for j in people:  # is the word, w present in the vocabulary?
+        if p != j:
+            similarity = m.similarity(p,j)
+            print(f"similarity between {p} and {j}: {similarity:6.2f}", )
+            los.append( similarity )
+            low.append( p + "/" + j )
+
+print(f"los is {los}")
+print(f"low is {low}")
+
+
+print(los)
+print(low)
+word_compare = {}
+for i in range(len(los)):
+    word_compare[low[i]] = los[i]
+print(word_compare)
+
+
+#
+# here is a signature line for odd_one_out (a starting point)
+#
+sum_dic = {}
+def odd_one_out( low, m ):
+    """ 
+        odd_one_out should take in low, a list-of-words
+        odd_one_out also takes in m, a gensim word-embedding model (of type keyedvectors)
+        and it should return the word, w, in low that is _least_ like all the others
+
+        the idea:  run a pairwise-comparison of all words!
+        then find the sum of the dis-similarities (and return the one with the largest sum)
+    """
+    for i in low:
+        for j in low:
+            if i not in low or j not in low:
+                print("some word is not included in the list :)")
+            if i != j:
+                wordsum = m.similarity(i, j)
+                print(f"the similarity for {i} is {wordsum}")
+                sum_dic[i] = wordsum 
+    max_key,max_value = max(sum_dic.items(), key=lambda item: item[1])               
+    print(sum_dic)
+    print(f"the word with the largest sum is {max_key}, and the sum is {max_value}")
+
+
+
+                
+
+
+        
+
+
+
+
+
+    
+
+
+
+
+
+
+
+#
+# create and run three examples - of at least 4 words each - for your odd_one_out function.
+# for example,
+#        low = "apple banana cat pear".split()
+#
+# also, note if you would describe them as successful, unsuccessful, or "other" !
+
+
+wordlist1 = "king queen prince coffee".split()
+wordlist2 = "musician philosopher mathematician physicist scientist artist".split()
+wordlist3 = "coffee tea cs math".split()
+print(odd_one_out(wordlist1, m))
+print(odd_one_out(wordlist2,m))
+print(odd_one_out(wordlist3,m))
+        
+
+
+#
+# this is an alternative view of the data -- within a projection of word-embedding space itself
+# this is in 2d. a 3d version is here: https://www.cs.cmu.edu/~dst/wordembeddingdemo/index.html
+#
+# let's see the word vectors in two dimensions!
+#
+def visualize_wordvecs(wordlist, model):
+    """ example of finding an outlier with word2vec and graphically """
+    # 
+    # are all of the works in the model?
+    #
+    for w in wordlist:
+        if w not in model:
+            print("aargh - the model does not contain", w)
+            print("stopping...")
+            return
+    #
+    # next, we use pca, principal components analysis, to toss out 298 dimensions!
+    # and create a scatterplot of the words...
+    #
+    # intuitive description of pca:   https://setosa.io/ev/principal-component-analysis/
+    #
+    from sklearn.decomposition import pca
+    import matplotlib.pyplot as plt
+    import numpy
+
+    pca = pca(n_components=2)             # 2 dimensions
+    pca_model = pca.fit(model.vectors)    # all 43,981 words with 300 numbers each!
+    lom = [model.get_vector(w) for w in wordlist]   # list of models for each word w
+    
+    word_vectors = numpy.vstack(lom)     # vstack creates a vertical column from a list
+    transformed_words = pca_model.transform(word_vectors)  # transform to our 2d space
+
+    # scatterplot
+    plt.subplots(figsize=(15,10))  # (18, 12)
+    plt.scatter(transformed_words[:,0],transformed_words[:,1])
+    
+    # this is matplotlib's code for _annotating_ graphs (yay!)
+    for i, word in enumerate(wordlist):
+        plt.annotate(word, (transformed_words[i,0], transformed_words[i,1]), size='large')
+        # it's possible to be more sophisticated, but this is ok for now
+
+    plt.show()
+    return
+
+
+#
+# example of calling visualize_wordvecs...
+#
+#low = "breakfast lunch dinner coffee snake senate".split()     #  cereal python, one two three four five twelve
+low = "one two three four".split() 
+#low = "breakfast lunch dinner".split()  
+visualize_wordvecs(low, m)    
+
+
+#
+# example of calling visualize_wordvecs...
+#
+#low = "breakfast lunch dinner coffee snake senate".split()     #  cereal python, one two three four five twelve
+low2 = "america japan china india france".split() 
+visualize_wordvecs(low2, m)    
+
+
+# comparing language
+low3 = "english french german russian chinese japanese".split() 
+visualize_wordvecs(low3, m) 
+
+
+# comparing stem subjects
+low4 = "engineering math physics biology chemistry".split()
+visualize_wordvecs(low4,m)
+
+
+# starting point for visualizing 2d similarity via a heat map
+
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+sns.set_theme(style="darkgrid")
+
+# adaptation of the previous similarity-based code
+key = 'python'      # this is a _single_ word - the task is to loop over the list, perhaps named keys
+los = []
+low = []
+for w in initial_words:
+    if w in m:  # is the word, w present in the vocabulary?
+        similarity = m.similarity(key,w)
+        print(f"similarity between {key} and {w}: {similarity:6.2f}", )
+        los.append( similarity )
+        low.append( w )
+    else:
+        print(f"  __  {w}  __ was not in the vocabulary", )   # not every word will be present
+
+print(f"los is {los}")
+print(f"low is {low}")
+
+my_data_list = [ los ]
+my_dataframe = pd.dataframe(my_data_list, columns=low)
+
+
+# draw a heatmap with the numeric values in each cell
+f, ax = plt.subplots(figsize=(15,10))  # (18, 12)
+sns.heatmap(data=my_dataframe, annot=true, fmt="4.2f", linewidths=2, yticklabels=["python"], square=true, cmap="purples", cbar=false, ax=ax)
+
+ylocs, ylabels = plt.yticks()
+plt.setp(ylabels, rotation=0, fontsize=15)
+xlocs, xlabels = plt.xticks()
+plt.setp(xlabels, rotation=70, fontsize=15)
+"result:"
+
+# the goal is to output a square heatmap with all of the similarities plotted...
+
+
+#
+# let's take a look at some additional "geometry" of word-meanings (cool!)
+#
+
+m.most_similar(positive='python', topn=10)  # negative='snake'
+
+
+#
+# with this most_similar method, we can "subtract" vectors, too:
+#
+
+m.most_similar(positive='python', negative='snake', topn=10) 
+
+
+#
+# here, see if you can determine the analogy that is being computed using word embeddings:
+# 
+
+m.most_similar(positive=['king','woman'], negative=['man'], topn=10) 
+
+
+# 
+# this problem is about building and testing analogies...
+# 
+# this function has a hard-coded set of words, i.e., 'woman', 'king', and 'man'
+# your tasks:
+#      + add inputs to the function 
+#
+def test_most_similar(m):
+    """ example of most_similar """
+    print("testing most_similar on the king - man + woman example...")
+    #results = m.most_similar(positive=['woman', 'king'], negative=['man'], topn=10) # topn == # of results
+    results = m.most_similar(positive=['woman', 'king'], negative=['man'], topn=100) # topn == # of results
+    return results
+
+hard_coded_results = test_most_similar(m)
+hard_coded_results
+
+
+hard_coded_results[99]
+
+
+#
+# here is a starting point for generate_analogy:
+
+def generate_analogy(w1, w2, w3, m):
+  """ returns word2vec's "answer" for w1:w2 :: w3:?? """
+  if w1 not in m:  # example check
+    print(f"{w1} was not in the model.")
+    return
+  if w2 not in m:  # example check
+    print(f"{w2} was not in the model.")
+    return
+  if w3 not in m:  # example check
+    print(f"{w3} was not in the model.")
+    return
+  else:
+    results = m.most_similar(positive=[w3, w2], negative=[w1], topn=100)
+    return results[0]
+
+  
+
+
+    return none
+
+  return "queen"   # somtimes correct! :-)
+
+
+#
+# be sure to test -- and show off some of your own that work (and some that don't)
+#
+
+generate_analogy("man", "king", "woman", m)  
+generate_analogy("germany", "berlin", "france", m)  
+
+
+#
+# your check_analogy function
+#
+def check_analogy(w1,w2,w3,w4,m):
+    '''return a "score" on how well the word2vec model `m` does at solving the analogy provided'''
+    results = m.most_similar(positive=[w3, w2], negative=[w1], topn=100)
+    score = 100
+    for result in results:
+        if w4 == result[0]:
+            return score  #score
+            
+        score -= 1
+    return score
+
+
+   
+ #       print("the 4th word is not contained in the list")
+  #      return
+   # else:
+    #    print(f"given {w1},{w2}.{w3},{w4}, the value is {i}")
+
+
+
+print(check_analogy( "man", "king", "woman", "bishop", m ))
+print(check_analogy( "woman", "man", "bicycle", "fish", m ))
+print(check_analogy( "woman", "man", "bicycle", "pedestrian", m ))
+print(check_analogy( "man", "king", "woman", "sultans", m ))
+print(check_analogy( "man", "king", "woman", "maids", m ))
+print(check_analogy( "man", "king", "woman", "beauteous", m ))
+print(check_analogy( "man", "king", "woman", "throne", m ))
+
+
+
+
+
+
+
+
+#
+# and examples from each quartile!
+#
+
+
+
+

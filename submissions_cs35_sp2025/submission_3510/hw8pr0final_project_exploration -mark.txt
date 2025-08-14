@@ -1,0 +1,52 @@
+<br>
+
+## Final project preliminaries
+
+<font color="Teal"><b>Exploring how much an idea "pushes back" - including its technologies, libraries, and online resources ...</b></font>
+
+<br>
+
+#### Here are the  [cs35 project guidelines](https://docs.google.com/document/d/1DwoOJCy6GGECvzSOE4BDPVcEgVtvChglnz03-uxx7mA/edit)  with more details.
+
+And here is the [Colab version](https://colab.research.google.com/drive/1kASM8K0vqu40S5xjBS-hXf-bIDcQPZtz#scrollTo=1gAMoA_KN5L0) of this notebook. If Colab works better for your project, wonderful!
+
+<br>
+#### **What you've tried**
++ What are the things you've tried <b><u>so far</u></b> - and how has it gone?  
+  + This is the most important effort!  
+  + <b>Note</b>: If you have _lots_ of ideas and can't decide... look for online guides or walkthroughs for several of them and see which are most promising (and interesting!)
+  + include, here in the Python cells above/below, the explorations and/or experiments you've pursued
+  + if you're using plain-python files or other notebook files, submit those, in addition or instead
+    + <font size="-2">if you submit other files instead, include these reflections in the files you submit...</font>
+  + include any other <i>small</i> data files/links/resources you've collected
+
+<br>
+<br>Previously I was thinking about developing a program that literally helps you untangeling a knot you draw using Reidmeister moves, which are fundamental moves developed by a mathematician called Reidmeister that help you untangeling a knot or transforming a knot in math. I've also discussed this with my math professor. However, a very important idea behind Reidmeister moves is the adoption of free groups, which, informally speaking, is about attmeping expressing a knot using a word like "ababab" or "abcb^{-1}c", where each letter is a generator of the group, and different combinations of the letters refer to different types of crossings in the knot. To figure out these complicated things may take up a lot of time, and maybe it's just out of my capability to encorporate all these at one time in my program, especially considering that I'm overloading this semester.
+
+Therefore, I switched to a program about separating the sound of the orchestra and the sound of piano to derive only the piano part or the orchestra part of a piano concerto. This could be extended to other musical pieces like separating the sound of the orchestra and the violin for a violin sonata, or, even more challenging, separating the sound of two pianos given a double piano concerto.
+
+At this point, I've only looked up for some libraries about separating different components of a music pieces like spleeter and nussl, but I haven't conducted tests about these libraries. I plan to first try some relatively easier piano concertos like piano concerto from Bach and Mozart and see how these libraries work and what I can improve. Later, I will test these libraries with some more complicated piano concertos like piano concertos from Chopin and Rachmaninoff and see what I can improve. If my program works well for the piano concerto, I may try concertos for other instruments or even double piano concertos. #### **Your Project Plan,** <font size="-1">as of this moment...</font>
+
++ <b><font color="DodgerBlue">Share</font></b> a paragraph or so on your project exploration so far -- and your summer of the idea/plan + its background
+  + This is intentionally ***progress-first***
+  + **Try things out** before dedicating too much to a single, specific path...
++ <b><font color="Coral">Share</font></b>: &nbsp; What resources/libraries/walkthroughs have you found?
++ <b><font color="Coral">Share</font></b>: &nbsp; What datasets are you using? <font size="-1">if applicable for your project</font>
+
+<br>
+<br>#### **Looking ahead**
++ Specifically, what task do you plan to try <b><u>next</u></b>?
++ More generally, how do you plan to go _beyond_ existing resources...
+  + If it's not shared above, describe how you envision _personalizing_ and/or _individualizing_ your project...<br><br>
+<hr>
+<br><br>
+
+Feel free to use this notebook to summarize your prelimiaries so far ...
+
+<br>
+
+... ***or*** &nbsp;&nbsp; include your responses to these questions in other  notebooks or plain-python files!
+
+<br><br>
+<hr>
+<br><br>

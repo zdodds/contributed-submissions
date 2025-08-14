@@ -1,0 +1,67 @@
+<br>
+
+###   <font color="Coral">hw7pr2digits_modeler</font>
++ digits clasification -- and regression -- via NNets
+
+Feel free to re-use your previous digits_cleaned.csv file 
+### First, use the iris example to create a digit-predicting NNet
+
+This is similar to the past two digits challenges, hw5 and hw6
+
+**However**, because we're using NNets, you'll need to
++ create TEN categorical variables. You can use just one ``get_dummies`` pandas call
++ use a SCALER to make sure the network can, in a fair way, "hear" all of the inputs #### Reading the data#### We have full access to individual data elements### Defining X_all (our features) and y_all (our target to predict) ### Permute...### Separate into training and testing
++ X_train, y_train will be used for model-building
++ X_test, y_test will be used for testing, later### NNets often need a ***Scaler***
+
+This scales all of the data so that it's of a similar size, e.g., -1 to 1
+
+Notice that this cell produces
++ X_train_scaled &nbsp; (the scaled training data)
+   + y_train_scaled is the same as y_train &nbsp; (no scaling needed for the target)
++ X_test_scaled &nbsp; (the scaled testing data)
+   + y_test_scaled is the same as y_test &nbsp; (no scaling needed for the target)
+
+After this, we just use the scaled data...### Intuition-building for the Scaled data### Training ML models is no problem
+
+that is, if the library does it for us! &nbsp;&nbsp; 😃 🧶 ⛄️ 🌊 🪺 🦔 :-)### Now, let's test!### Let's see the network's weights...### The predictive model<br>
+
+#### We _could_ use cross-validation to find the "right"/"best" size and shape of the NNet...
+
+<font color="Coral">But, let's not...</font>
+
+### Second, from the iris example create a _pixel-predicting_ &nbsp; NNet
+
+Choose a pixel to predict!
++ It _can_ be #42 -- or choose another one?!
++ This will be _regression_, not classification
++ It will show off NNets' ability to generate or "hallucinate" pixels/digits/images/etc.!
++ The _digit dreaming_ problem will extend this further...<b>Predict-a-pixel</b> (regression)...
++ As the penultimate part of this digits-analysis with NNets, 
++ create a regressor that predicts pixel 42 from the other 63 pixels!
++ Remember that pixel 42 will be `A[:,42]`
++ and, the other 63, plus the digit-species, will be `np.concatenate((A[:,0:42], A[:,43:]),axis=1)`
++ see the iris_modeler for an example for the irises' botanical features...### Permute!
+
+<font size="-2">I like this because it adds an element of randomness to the whole process...</font>### Split into training and testing sets
+
+We'll stick with 80% training, 20% testing...### It's a nnet - this time, we _should_ use a <u>Scaler</u>
+
+<font size="-2">Note that, for our <u>own</u> neural nets, this is performed by our senses:
++ our sense of hearing scales sounds from whispers to shouts... 
+    + ... into a single amplitude for interpretation. 
+    + and, we keep the scale itself as an additional signal!
++ similarly, our visual system scales across many orders of magnitude of brightness
+    + plus, our eyes can "adapt" to low light (and, less, to bright-light )
++ less dramatically, for taste, touch, and smell...
++ this scaling ### Create and train the model
+
+Note that hidden_layer_sizes is an important parameter.
++ for this hw, we're simply trying things out
++ no need to optimize via cross-validation### Let's test!  
+
+Testing is different for regression!  
+<font size="-1">
++ it's floating-point, so it's no longer "right" or "wrong"
++ instead, the _difference_ is what matters
++ in fact, the <u> _absolute difference_ </u> is usually what matters: </font>

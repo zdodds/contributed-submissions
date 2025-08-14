@@ -1,0 +1,119 @@
+### <font color="DodgerBlue">hw5pr1 births modeler</font>
+
+Suggestion:
++ set up this file and the example iris_modeler file side-by-side...
++ for each iris_modeler cell, copy it over..
+   + edit it and make adjustments to suit the births problem (as needed)
+   + run it to make sure it all works!
+
+And, by the end, you'll have experienced the full ML/data modeling workflow (for classification, at least)
++ Running through this workflow by hand is a great way to digest the process...
++ hw5pr2 will ask you to do this again, with the digits
++ hw5ec is for another - optional - example, using your own dataset or, possibly, regression 
+
+### <font color="Coral">Final, _big-picture_ question</font>   
++ Which phenomenon, iris-species or birthday-popularity, is more "modelable"?
++ ... at least, as far as these two datasets are concerned?!
+
+Note that you might want to wait until _after_ modeling the births data to answer this...
+
+<hr>
+
+Below ... after finishing the model-building ... share your thoughts on which (irises/births) is more "modelable" and why ...
+
+<br><br>## Modeling birthdays
+
+Remember: Be sure to **drop** the column with the official birth numbers.
+
+The goal is to model whether a birthday is above-average or below-average in popularity, based on two features: <tt>month</tt> and <tt>day</tt>### Drop columns we don't want (or shouldn't use)
++ Here, we don't need `above/below median` , because we have `a/b num` and `sklearn` needs only numeric features
++ <font color="Coral"><b>and</b></font>, for the births dataset, you'll need to drop the raw birth numbers 
+   + leaving the raw birth numbers would be "cheating" for the classification
+   + if you get over 95% of the births correct, go back and drop the raw birth numbers!### Create variables for columns and species 
++ we may not need these, but it's good to know we have them
++ the <tt>COLUMNS</tt> are the features and target 
++ and the <tt>SPECIES</tt> map the strings and numbers that describe the different target values (species)
++ you might remember that the "cleaning" file had this same cell... it's copied from there:<br><br>
+<hr>
+<br><br>### We could reweight our columns
+
+It's nice to have numpy arrays to do this..### We convert from pandas (a spreadsheet) to numpy (an array)
+
+All of the modeling happens on arrays of data (numpy arrays)### We define our **features** (<tt>X_all</tt>) and our **target** (<tt>y_all</tt>)
+
+Notice that we can define _any_ column be the target (the predicted value, y_all) 
++ whether it makes _sense_ to do so is another question,
++ which is up to us...### We permute the data to avoid dependence on its order...### Next, we split into training and testing data portions of the dataset
+
+Usually,
++ 80% training data (X_train, with y_train known)
++ 20% testing data (X_test, with y_test known)<br>
+
+#### Here is where the model-buidling begins in earnest...<br>
+
+# That's it! :-)
+
+In fact, the model is complete!  Let's test...   
+
+
+<font size="-2">Then, let's build a <i>better</i> model.</font>### Let's format things more carefully...## Is that it?!!
+
+So, it may not be great. 
+
+Even so, let's use the predictive model to make predictions and try it out!### Cross-validation
+
+This splits up **only** the training data, X_train (with known y_train) into
++ a deeper 80/20 split, of the training data 
+   + into "temporary train/test" portions
+   + (this is 64/16, relative to the overall dataset)
++ and does this, randomly, five times...
++ measures how accurately it predicts on the "temporary test" set each time
++ averages those five and reports the results:### This feels like an excuse to use seaborn...### Let's use the "correct value" of k
+
+It will not always be the same, because cross-validation is randomized...### We've made a (better!) model
+
+Let's see how it does...### To make a FINAL predictive model, we use <b>all</b> the data -- with the <u>tuned</u> parameter <tt>k</tt>
+
+That is, we 
++ use the best value of <tt>k</tt>, as computed above by cross-validation
++ then, we train on _all_ of the data!
+
+Notice that this next cell uses X_all and y_all:### Predictive models aren't perfect!
++ Notice that the last prediction above the [0,0,0,0] is (probably) wrong
+  + It probably predicted _versicolor_, but it was actually a _virginica_
+  + In essence, it was a _virginica_ iris that "looked more like" a _versicolor_ ... ***from these four features!***
+  + A botanist would use more than these four features to classify difference species...
+
++ **Key**: Even when the modeling process runs "perfectly," the models are likely to be imperfect...
++ ... it's just that we won't know where the imperfections are -- until future observations arrive!### That's it! Our model is complete...
+
+... not perfect, but **complete** 
+
+What does this mean?
+
+It means that the model -- the function (above) -- is ***already*** prepared to provide an output for every possible input!
+
+We can see this in a plot of the outputs for every input in the "sepal" plane (length vs. width) as well as the "petal" plane:### Make the month dimension constant and vary the other dimensions### We're ready to deploy our "final + best" predictive model!### Congrats!
+
+You've created a birthday-popularity modeler!
+
+The rest of the hw - and the rest of our ML module - is to run more ML workflows:   
++ for different datasets:  &nbsp; (2) Digits, (ec) your own data, or Titanic, or Housing, or ...
++ and, starting next time, for different algorithms: &nbsp; decision trees and random forests, then nnets, ...
+
+### Remember to answer the "which dataset is more modelable?" question: _births_ or _irises_ ?  
+
+It's here: Irises is more modelable<br>
+
+### <font color="Coral">Final, _big-picture_ question</font>  
++ Which phenomenon, iris-species or birthday-popularity, is more "modelable"?
++ ... at least, as far as these two datasets are concerned?!
+
+Note that you might want to wait until _after_ modeling the births data to answer this...
+
+<hr>
+
+Here, share your thoughts on which (irises/births) is more "modelable" and why:
+
+<br><br>
+<br><br>
