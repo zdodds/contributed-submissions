@@ -1,0 +1,106 @@
+# Transformers, what can they do?  
+
+### &nbsp;&nbsp; ... and how to *call*  &nbsp;&nbsp; them, in Python?  &nbsp;&nbsp; [Econ176 version]
+
+<br>
+
+***Be sure to make your own copy of this notebook***
+
+<br>
+
+This notebook follows the advice, arc, and ideas of the [Hugging Face Natural Language Processing course](https://huggingface.co/learn/nlp-course/chapter1/1?fw=pt) &nbsp; <font size="-1">with many thanks to all at HF!</font>
+
+<br>
+
+The idea is to get familiar with the interactions available from Transformer models, including what they do well (and not so well), in library form.
+
+It will be surprising if you ***don't*** overlap with the prompting, fine-tuning, and programmatic access of these models in the future!
+
+<br>
+
+In this notebook, you'll see <font color="DodgerBlue">Econ176 Tasks</font> at various points...
+
+Most of them invite you to create new examples for each Transformer capability --
+
+and to comment on how well - <i>or not</i> - the LLMs can handle those tasks:#### Installing the libraries needed
+
+These next cells should install the Transformers, Datasets, and Evaluate libraries to run this notebook.<hr>
+
+## Sentiment-classification
+
+This is an "encoding-only" application
+
+It uses one classification layer on top of the encoder's "semantic connections":#### <font color="DodgerBlue">Econ176 Task</font>
++ create a list of 5-6 sentences below and run them through the classifier...
++ briefly, comment on how much you agree/disagree with the LLM's judgments!
++ You'll note that the default sentiment classifier is "extreme": it very rarely gives _neutral_ scores, i.e., ones near 0.
++ See if you can find a sentence whose score is less than .9, either way<hr>
+
+## <i>Zero-shot</i> classification (no additional training)
+
+This is another encoder-based application of transformers.
+
+Above, the classifier used _positive_ and _negative_
+
+Here, you get to choose the classification-categories themselves -- because it is tunable, it's more likely to have value in business applications:#### <font color="DodgerBlue">Econ176 Task</font>
++ First, create another example of the above classifier, where <font color="Coral"><i>business</i></font> results in being the most likely label
++ Then, create a <i>completely different example</i>, with <i><b>three other</b></i> <tt>candidate_labels</tt>, or more...
++ Construct an example to show that _each label_ you have chosen is the likliest for that sentence or text
++ Briefly comment on how much you agree/disagree with the LLM's judgements...<hr>
+
+## Text generation applications
+
+This is a "decoder-only" application of transformers.
+
+Admittedly, the encoder has been trained when training the decoder, so it's not truly decoder-only:#### <font color="DodgerBlue">Econ176 Task</font>
++ Run the above prompt 2-3 more times to see the results...
++ Then, create a <i>completely different prompt</i>, and again run it 2-3 times to get a sense of the "space of possibilities" the generator will create...
++ As before, briefly comment on ***how smoothly expressed*** and ***how  thematically natural*** the generator's results are ...The generator’s responses were generally smooth and grammatically coherent, especially considering they were produced without any fine-tuning. Most completions followed the initial prompt in a logical way and used formal language appropriate for educational or policy-related topics. However, some outputs felt slightly disjointed or ended abruptly, likely due to the max_length limit or the model’s tendency to trail off. A few responses included repetitive phrases or vague generalities, which slightly reduced the overall naturalness.<hr>
+
+## Mask-filling / word-replacement applications#### <font color="DodgerBlue">Econ176 Task</font>
++ Create <i>another prompt</i>, and take a look at the top five or so mask-fill suggestions...
++ As with each example, briefly comment on how well you feel the model has done, relative to your intuition (or overall human expectations)<hr>
+
+## Named-entity recognition and question-answering
+
+<font color="DodgerBlue">Econ176 Task</font> &nbsp;&nbsp; Run these two examples, then <font color="black"><i>create another example - for each - of your own design</i></font> &nbsp;&nbsp; How does it do?<hr>
+
+## Summarization
+
+Run this example - and then <font color="DodgerBlue"><i>create another of your own design</i></font> &nbsp;&nbsp; How does it do?
+
+Feel free to grab <i>some of your own writing in the past</i> for it to summarize -- or something else that would be interesting to see...<hr>
+
+## Translation!
+
+This was the original application that motivated the development of the Transformer model.#### <font color="DodgerBlue">Econ176 Task</font>
++ Look around and find _another language model_ that HF offers
++ See if you can load it (use the "copy" button that looks like to pieces of paper -- often it includes the _whole path_ to the library)
++ Then, create two more <i>translation prompts</i>, and
++ As with each example, briefly comment on how well you feel the model has done, relative to your intuition (or overall human expectations)
++ Languages in which we've found success so far include Spanish, French, and Hindi - feel free to use one of these or try another...
+  <br>
+<br>
+
+<hr>
+
+## You've _transformed_ !
+
+In fact, you've completed -- and expanded upon -- <font color="DodgerBlue"><b>Section 1</b></font> of the [Hugging Face NLP course](https://huggingface.co/learn/llm-course/en/chapter1/1) ...
+
+That is all that's asked for this _Transformer-based_ assignment.
+
+That said, you may find your future path, whether for Econ 176 or something else entirely, that bring you back to experiment more with Natural Language processing.
+
+If so, you'll be able to pick up where you left off, and then
++ look inside the Transformer models' individual components
++ fine-tune existing models into special-purpose classifiers
+  + fine-tuning might help with some of the business-exploration
++ other resources from the HF collection of models and libraries
++ all with the goal of increase our own sophistication, namely about how sophisticated (or not) LLMs are...
+
+<br>
+
+Big-picture, _programming-focused_ launching points, like Hugging Face, are likely to be a more and more common means to interact with computational libraries in the future. And _Transformers_ are likely to be around - and improving - for a while!
+
+
