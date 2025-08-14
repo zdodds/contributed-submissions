@@ -1,0 +1,398 @@
+# we assign the url and obtain the api-call result into result
+#    note that result will be an object that contains many fields (not a simple string)
+#
+
+import requests
+
+url = "http://api.open-notify.org/iss-now.json"   # this is sometimes called an "endpoint" ...
+result = requests.get(url)
+
+# if it succeeds, you should see <response [200]>
+
+
+#
+# in this case, we know the result is a json file, and we can obtain it that way:
+
+json_contents = result.json()      # needs to convert the text to a json dictionary...
+print(f"json_contents is {json_contents}")     # aha!  let's re/introduce f-strings...
+
+# take a look... remember that a json object is a python dictionary:
+
+
+#
+# let's remind ourselves how dictionaries work:
+
+lat = json_contents['iss_position']['latitude']
+lat = float(lat)
+print("lat: ", lat)
+
+
+from math import *
+def haversine(lat1, long1, lat2, long2):
+    """
+    calculate the great circle distance in kilometers between two points
+    on the earth (specified in decimal degrees)
+    """
+    # convert decimal degrees to radians
+    long1, lat1, long2, lat2 = map(radians, [long1, lat1, long2, lat2])
+
+    # haversine formula
+    dlong = long2 - long1
+    dlat = lat2 - lat1
+    trig = sin(dlat/2)**2 + cos(lat1) * cos(lat2) * sin(dlong/2)**2
+    # radius of earth. use 3956 for miles. 6371 for km.
+    radius = 3956  # we'll use miles!
+    return radius * 2 * asin(sqrt(trig))
+
+
+import requests
+
+url = "http://api.open-notify.org/iss-now.json"   # this is sometimes called an "endpoint" ...
+result = requests.get(url)
+
+json_contents = result.json()      # needs to convert the text to a json dictionary...
+print(f"json_contents is {json_contents}")
+
+lat = json_contents['iss_position']['latitude']
+lat = float(lat)
+print("lat: ", lat)
+
+
+lon = json_contents['iss_position']['longitude']
+lon = float(lon)
+print("lon: ", lon)
+
+claremont_lat = 34.0967
+claremont_lon = 117.7198
+result = haversine(lat, lon, claremont_lat, claremont_lon)
+
+print(result)
+
+
+#
+# then, let's compare with ai's result...
+#
+
+
+#
+# we assign the url and use requests.get to obtain the result into result_astro
+#
+#    remember, result_astro will be an object that contains many fields (not a simple string)
+#
+
+import requests
+
+url = "http://api.open-notify.org/astros.json"   # this is sometimes called an "endpoint" ...
+result_astro = requests.get(url)
+result_astro
+
+# if it succeeded, you should see <response [200]>
+
+
+# if the request succeeded, we know the result is a json file, and we can obtain it that way.
+# let's call our dictionary something more specific:
+
+astronauts = result_astro.json()
+d = astronauts   # a shorter variable for convenience..
+
+
+# remember:  astronauts will be a _dictionary_
+note = """ here's yesterday evening's result - it _should_ be the same this morning!
+
+{"people": [{"craft": "iss", "name": "oleg kononenko"}, {"craft": "iss", "name": "nikolai chub"},
+{"craft": "iss", "name": "tracy caldwell dyson"}, {"craft": "iss", "name": "matthew dominick"},
+{"craft": "iss", "name": "michael barratt"}, {"craft": "iss", "name": "jeanette epps"},
+{"craft": "iss", "name": "alexander grebenkin"}, {"craft": "iss", "name": "butch wilmore"},
+{"craft": "iss", "name": "sunita williams"}, {"craft": "tiangong", "name": "econ176_participant_6 guangsu"},
+{"craft": "tiangong", "name": "econ176_participant_6 cong"}, {"craft": "tiangong", "name": "ye guangfu"}], "number": 12, "message": "success"}
+"""
+print(d)
+
+
+d['people']
+
+
+print(len(d))
+
+
+print(type(d['people']))
+
+
+count = 0
+for entry in d['people']:
+  if entry['craft'] == "iss":
+    count += 1
+print(count)
+
+
+print(d['people'][-4]['name'])
+
+
+print(d['people'][0]['name'][7:9])
+
+
+#
+# try it - from a browser or from here...
+
+import requests
+
+url = "https://fvcjsw-5000.csb.app/econ176_mystery0?x=1&y=3"    # perhaps try from browser first!
+result_ft = requests.get(url)
+# print(result_ft)              # prints the status_code
+
+#d = result_ft.json()            # here are the _contents_
+#d
+
+
+#
+# a larger api call to the same codesandbox server
+
+import requests
+
+url = "https://fvcjsw-5000.csb.app/fintech"    # try this from your browser first!
+result_ft = requests.get(url)
+result_ft
+
+
+#
+# let's view ... then parse and interpret!
+
+#d = result_ft.json()                  # try .text, as well...
+print(f"the resulting data is {d}")
+
+
+#
+# see if you can extract only your initials from d
+
+# we're not finished yet! :)
+
+
+#
+# let's request!   just using the demo, for now:
+
+import requests
+
+url = "https://www.alphavantage.co/query?function=time_series_daily&symbol=msft&apikey=demo"    # demo version
+result = requests.get(url)
+
+
+
+#
+# let's view ... then parse and interpret!
+
+d = result.json()                       # probably _don't_ try .text here!
+print(f"the resulting data's keys are {list(d.keys())}")
+
+
+#
+# let's look at all of the keys...
+
+for k in d['time series (daily)']:
+    print(k)
+
+# aha! they are dates... let's create a function to compare two dates
+
+
+#
+# here is one way to make a list of all of the dates:
+
+dates = list(d['time series (daily)'].keys())
+
+# notice, they're backwards!
+
+
+#
+# let's flip the dates around:
+dates.reverse()
+
+# yay!
+
+
+# oooh... now let's see what's in each key (date)
+
+d['time series (daily)']['2025-01-21']  # aha! it's a dictionary again!  we will need to index again!!
+
+
+# a small function to get the closing price on a date (date) using data (dictionary) d
+def get_closing(date, d):
+    close = float(d['time series (daily)'][date]['4. close'])
+    return close
+
+
+# a loop to find the minimum closing price
+#
+
+min_price = 10000000
+min_key = "nothing"
+
+for date in d['time series (daily)']:
+    close =  get_closing(date, d)
+    # print(f"date is {date} and closing is {closing}")
+    if close < min_price:
+        min_price = close
+        min_price_date = date
+
+print(f"min_price_date is {min_price_date} and {min_price = }")
+
+
+import requests
+
+
+url = "https://www.alphavantage.co/query?function=time_series_daily&symbol=msft&apikey=147lgxmnkzfu94bn"
+result = requests.get(url)
+d = result.json()
+
+url = "https://www.alphavantage.co/query?function=time_series_daily&symbol=tsla&apikey=147lgxmnkzfu94bn"
+result2 = requests.get(url)
+d2 = result2.json()
+
+
+
+import matplotlib.pyplot as plt
+import pandas as pd
+
+def get_closing(date, d):
+    close = float(d['time series (daily)'][date]['4. close'])
+    return close
+
+prices = []
+for date in d['time series (daily)']:
+  prices.append((get_closing(date, d), date))
+
+prices2 = []
+for date in d2['time series (daily)']:
+  prices2.append((get_closing(date, d2), date))
+
+prices= sorted(prices, key=lambda x: x[1])
+prices2= sorted(prices2, key=lambda x: x[1])
+dates = [pair[1] for pair in prices]
+closing_prices = [pair[0] for pair in prices]
+
+max_price = max(closing_prices)
+min_price = min(closing_prices)
+
+dates = pd.to_datetime(dates)
+
+max_date = dates[closing_prices.index(max_price)]
+min_date = dates[closing_prices.index(min_price)]
+
+print(f"maximum price: {max_price} on {max_date.strftime('%y-%m-%d')}")
+print(f"minimum price: {min_price} on {min_date.strftime('%y-%m-%d')}")
+
+plt.figure(figsize=(10, 5))
+plt.plot(dates, closing_prices, label='closing prices', color='b')
+
+plt.scatter(max_date, max_price, color='r', label=f'max: {max_price} on {max_date.strftime("%y-%m-%d")}', zorder=5)
+plt.scatter(min_date, min_price, color='g', label=f'min: {min_price} on {min_date.strftime("%y-%m-%d")}', zorder=5)
+
+plt.title('closing prices with max and min highlighted')
+plt.xlabel('date')
+plt.ylabel('closing price')
+plt.xticks(rotation=45)
+plt.legend()
+
+plt.tight_layout()
+plt.show()
+
+
+
+#calculating buy day and sell day
+
+left, right = 0, 1
+profit = 0
+buyday = ""
+sellday = ""
+buydayprice = 0
+selldayprice = 0
+while right < len(prices):
+    if prices[left][0] < prices[right][0]:
+        current_profit = prices[right][0] - prices[left][0]
+        if current_profit > profit:
+          profit = current_profit
+          buyday = prices[left][1]
+          sellday = prices[right][1]
+          buydayprice = prices[left][0]
+          selldayprice = prices[right][0]
+    else:
+        left = right
+    right += 1
+print(f"buy day: {buyday} with a price of {buydayprice}")
+print(f"sell day: {sellday} with a price of {selldayprice}")
+print(f"profit:  {profit}")
+
+
+
+
+
+plt.figure(figsize=(10, 5))
+plt.plot(dates, closing_prices, label='closing prices', color='b')
+
+buyday_dt = pd.to_datetime(buyday)
+sellday_dt = pd.to_datetime(sellday)
+
+plt.scatter(max_date, max_price, color='r', label=f'max: {max_price} on {max_date.strftime("%y-%m-%d")}', zorder=5)
+plt.scatter(min_date, min_price, color='g', label=f'min: {min_price} on {min_date.strftime("%y-%m-%d")}', zorder=5)
+plt.scatter(sellday_dt, selldayprice, color='b', marker='o', s=100, label=f'sell: {max_price} on {max_date.strftime("%y-%m-%d")}')
+plt.scatter(buyday_dt, buydayprice, color='y', marker='o', s=100, label=f'buy: {min_price} on {min_date.strftime("%y-%m-%d")}')
+
+
+plt.title('closing prices with max and min highlighted')
+plt.xlabel('date')
+plt.ylabel('closing price')
+plt.xticks(rotation=45)
+plt.legend()
+
+plt.tight_layout()
+plt.show()
+
+
+#exploring with other api
+import requests
+
+
+url = "https://www.alphavantage.co/query?function=insider_transactions&symbol=goog&apikey=147lgxmnkzfu94bn"    # demo version
+result = requests.get(url)
+d = result.json()
+
+print(d)
+
+
+#api exploration continued
+import heapq
+mp = {}
+for entry in d['data']:
+  if entry['executive'] not in mp:
+    mp[entry['executive']] = 1
+  else:
+    mp[entry['executive']] += 1
+
+
+top_5_items = heapq.nlargest(5, mp.items(), key=lambda x: x[1])
+
+top_5_dict = dict(top_5_items)
+
+print(top_5_dict)
+
+
+#extra credit
+
+import yfinance as yf
+from scipy.stats import pearsonr
+import pandas as pd
+
+
+# function to compute pearson correlation coefficient between two stock prices
+def compute_pearson_correlation(stock_data_1, stock_data_2):
+    # align the data based on the common dates
+    merged_data = pd.merge(stock_data_1, stock_data_2, on='date', how='inner')
+    correlation, _ = pearsonr(merged_data['price_x'], merged_data['price_y'])
+    return correlation
+
+df1 = pd.dataframe(prices, columns=["price", "date"])
+df2 = pd.dataframe(prices2, columns=["price", "date"])
+
+# compute correlation
+correlation = compute_pearson_correlation(df1, df2)
+print(f"pearson correlation coefficient between msft and tsla: {correlation}")
+
+
