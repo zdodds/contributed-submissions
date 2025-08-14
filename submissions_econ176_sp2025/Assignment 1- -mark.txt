@@ -1,0 +1,264 @@
+### Econ 176 APIs Day 2 - and ***first computing assignment***
+
+We're back! [Here was Day 1](https://colab.research.google.com/drive/1laKhKCXTFtCAGKrOqQfisbGPyQE-xexm#scrollTo=nCAN5xmzEP9t&uniqifier=1)
+
+<font size="-1">Today, we'll continue building familiarity with APIs through calling and analyzing the results (using Python, of course!)#### Where were we?
+
+We had tried the International Space Station API at [http://api.open-notify.org/iss-now.json](http://api.open-notify.org/iss-now.json) :Here is a function that returns the distance detween two (lat/long) pairs:
+
+
+<font size="-2">
+
+```   
+def haversine(lat1, long1, lat2, long2):
+    """
+    Calculate the great circle distance in kilometers between two points
+    on the earth (specified in decimal degrees)
+    """
+    from math import *
+    # convert decimal degrees to radians
+    long1, lat1, long2, lat2 = map(radians, [long1, lat1, long2, lat2])
+
+    # haversine formula
+    dlong = long2 - long1
+    dlat = lat2 - lat1
+    trig = sin(dlat/2)**2 + cos(lat1) * cos(lat2) * sin(dlong/2)**2
+    # Radius of earth. Use 3956 for miles. 6371 for km.
+    radius = 3956  # we'll use miles!
+    return radius * 2 * asin(sqrt(trig))
+```
+</font>#### <font color="Coral"><b>Task 0</b></font> &nbsp;&nbsp; Let's, together, create a program that finds the distance from the ISS to Claremont
++ It can just be a cell, it doesn't have to be its own function.
++ But, let's definitely use the haversine function, above...
+
+
+
+Vice-versa is ok, too...
+
+<br>
+<hr>
+<br><b>Let's try another ISS "endpoint" ~ one with all of the <i>people</i> in space.</b>
+
+It's at this url:  [http://api.open-notify.org/astros.json](http://api.open-notify.org/astros.json)This is pretty intricate!
+
+Let's try unpacking this - _parsing it_ - with an in-class, break-out challenge...#### <font color="Coral"><b>Task 1</b></font>: &nbsp;&nbsp; In-class break-out ...
+
+<br>
+<hr>
+<br>### Ok!  
+
+#### You should add to your resume that
++ you have experience with traditional _web-scraping_
++ and with making - and interpreting - _API calls_
++ whether they convey plain-text or json-structured data...
+
+<br>
+
+Let's go deeper, to
++ see how the API "endpoints" themselves are implemented
++ see how parameters can be used in calling API endpoints
+  + at least, with GET requests
+  + POST requests are also common - that's for another day
+### _Behind the Curtain_ of an API:
+
+Let's watch _inside_ API calls, using CodeSandbox...
+
+Specifically, let's practice using <u>parameters</u> to an API call:
+### GET parameters
+
+The GET request includes all of the information needed in the URL itself!
+
+Here are a couple of images showing the _pieces_ of urls:
+
+<img src="https://static.semrush.com/blog/uploads/media/ca/37/ca3737d8edb5cf079aaf1f11ae01d286/mMREmiwXSrryVyv8IxbVFgje7ICFhfqWnca7W0db36KjX35vzLTnStkFynEd9NBoXXH-JYKCm2deskxgLo_vxzEvl-qLpVOgtwc78rhFI2Rm1pBK-j2SwMKWz0CXU42STjzUVcF1vaRTFbw_6wvH_5A.webp">#### Using query-string parameters
+
+**Challenge!**
+
+Team up with people nearby and make API calls to the endpoints
+
++ `url = "https://fvcjsw-5000.csb.app/econ176_mystery0"`
++ `url = "https://fvcjsw-5000.csb.app/econ176_mystery1"`
++ `url = "https://fvcjsw-5000.csb.app/econ176_mystery2"`
++ `url = "https://fvcjsw-5000.csb.app/econ176_mystery3"`
+
+_each_ of which uses query-string parameters
++ `x` (an integer) and
++ `y` (an integer)
+
+and see if you can determine what each one is doing... and how the parameters are being used?!
+
+<br>
+
+We can create larger custom API calls, as well...
+
+For example,**Challenge**:   extract your initials from `d`   &nbsp;&nbsp; 😀
+
+
+<b><font color="DodgerBlue">Hint</font></b>: &nbsp;&nbsp; Start with &nbsp;&nbsp;  ``d[ <something> ]``   &nbsp;&nbsp;   What's the ``something``?
+
+<i>Only do one step at a time...</i>  &nbsp;&nbsp; This is key!<br>
+<hr>
+<br>
+
+### Another API, now _finance-inspired_ ...
+
+There are **lots** of finance APIs. I'm currently skeptical that they're materially different, though I'm happy to be convinced... .
+
+One material difference is price! The kind folks at _Alphavantage_ have offered us an Econ176-specific set of API keys. Let's dive in!
+
+Before using your key, try a demonostration call at this endpoint:
+
+`https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=IBM&apikey=demo`
+
+which, as ever, is this link:
+
+[https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=IBM&apikey=demo](https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=IBM&apikey=demo)
+
+You'll see that it's the last 100 days of information from IBM. To obtain other symbols' data - or other data - you'll need to use your API key. Notice that the demo url, above, has `demo` as the `apikey` (it only works for IBM 😀)
+
+You should have your own API key, from class on 2/6:
++ if you use that string of characters in place of ``demo`` above, you should be able to make calls to _any_ of the Alphavantage APIs
++ it has "medium" bandwidth - for us, we are making single calls and then analyzing them, which will not stress any limits <br> <font size="-2">(Do avoid fast loops: if too much bandwidth is used, they APIs will automatically disable the key.)</font>
++ _Experiment!_### Getting comfortable with documentation...
+
+APIs come with widely varying documentation
++ sometimes you're guessing (as we did above!)
++ more often, they're documented... **but** the documentation tends to have lots of idiosynrasies (there's not as much standardization as one might hope on how these things are discussed, the computing languages presumed, etc.)
+
+So, it's a worthy task - and challenge - to get familiar with the many kinds and conventions of documentation out there.
+
+Take a look at the [Alphvantage documentation](https://www.alphavantage.co/documentation/):
++ specifically, find the section for the `TIME_SERIES_DAILY` function
++ read over the parameters
++ click on some of the examples
++ see if you can reconcile the outputs you're seeing with the parameters provided
+
+Next, we'll try it out...
+
+... and will determine the best "single-share" strategy for investing -- for your choice of stock -- over the past 100 days. <br> <font size="-2">(You might remember this as a cs5 homework, the ["TT Securities" problem](https://www.cs.hmc.edu/twiki/bin/view/CS5Fall2023/TTSecuritiesGold).)</font>
+
+<br>
+<hr>
+<br>### Your tasks!
+
+**<font color="Coral">Part 1</font>: &nbsp;&nbsp; <font color="DodgerBlue">Single-share Analysis</font>** &nbsp; using TIME_SERIES_DAILY
+
+So, your tasks include
++ get your API working - the first cell below will help
++ make sure you're getting data! - the second cell below will help with that!
++ choose another stock symbol
+  + for now, let's stick with the compact data of the last 100 days
+  + also, be sure to make _one_ call and then code-develop with that data
+  + it will quickly annoy API providers if you make too many calls
+  + there are automatic "shutoffs" to stop responding in this case...
+  + it's not clear when the "shutoff" stops - possibly never
+
+<br>
+
+So, after making one call, explore the resulting data (dictionary) so that you
++ programmatically extract the 100 prices (let's use the **closing** price)
++ create a list with them
++ find the maximum and the minimum
+  + also find the _date_ of the max and the _date_ of the min
+  + be sure to print those out...
++ create a **graph** of your list &nbsp; (suggestion: use AI for graphing help)
+  + get the AI to highlight the max and the min
++ "Single-share" analysis: &nbsp; Find the buy day and sell day that maximize `(sell price - buy price)`
+  + make sure that you sell _at or after_ you buy...
++ print your results
++ re-graph your 100-day signal, and highlight the buy day and the sell day you just found
+  + you might ask to use ``seaborn`` or ``matplotlib`` - both are libraries available in Colab (and libraries that the AI knows well)
+
+<br>
+
+Once you have a workflow that works, try it with a different stock symbol!
++ do the same thing for the other signal: print the best single-share strategy - and graph
++ compare the results in your overall reflection below
++ you could wrap the workflow pieces into a function that takes a stock symbol as input! (This is optional and cs-y.)
+
+<br>
+
+**<font color="Coral">Part 2</font>: &nbsp;&nbsp; <font color="DodgerBlue">Use and Analyze <u>another</u> Alphavantage API</font>** &nbsp; ... of your choice
++ Look over the left-hand column of APIs in the [Alphavantage documentation](https://www.alphavantage.co/documentation/)
++ Choose another API that seems interesting to you, then
++ Explore and tinker to successfully use it, then
++ Analyze a subset of the data from the resulting call, then
++ Share, briefly, what you found.
+  + The analysis does not need to be involved. For example,
+  + finding the max and min of a value is wonderful - and definitely enough
+  + or, the average, or sum, or ... really anything,
+  + as long as it means you've looked through each time step of the data-sequence received  <font size="-1">(not each piece of data, just each time step)</font>
++ <font color="Coral"><b>EC</b></font> Totally optional: <font size="-1">Find a function for comparing time-series trends, import it, and then use it to compare one of your stock prices with your _other_ Alphavantage signal. Report what you find! (up to +10%) &nbsp;&nbsp; Initial library leads: ``statsmodels``, ``darts``, and/or ``sktime`` ...</font>
+
+<br>
+
+Some of the other APIs that look especially interesting, at least to me:
++ News & Sentiments
++ Income Statement / Balance Sheet
++ GDP per capita
++ Exchange rates
++ Coffee!
+
+<br>
+<hr>
+<br>
+
+### Onward!#### Onward into the tasks, as listed above...
++ perhaps first, make sure you can repeat the above cells with a _different_ stock ticker
++ perhaps then create a **list** of all of the closing prices
++ from there, you're ready for the analysis + graphing...<br>
+<hr>
+<br>
+
+### You're off and ~~running~~ **API'ing** !
+
+There's no stopping now...
+
+Include in this notebook - below - a short 4-6 sentence summary of
++ Which of your two (or more) stocks offers better "profit" opportunity -- for a single-share -- if you had a time machine that worked for the past 100 days?
++ What other API did you choose to try? What did you analyze from it?
++ How difficult/accessible did you find the Alphavantage documentation?
++ You're welcome to use AI for help + debugging
+  + what are your thoughts: &nbsp; Was AI helpful on this?  &nbsp;&nbsp;  Was AI <i>un</i>helpful on this? &nbsp; Both? &nbsp; Neither?
++ Big-picture, how the API'ing and Python'ing went overall?
+### Markdown cell for thoughts on this API/JSON/Python "API and Analysis" challenge:
+
+Feel free to use this cell for that reflection...
+
+<hr>
+
+- AppLovin offers a better profit opportunity with a profit of $384.01 vs Toast's $16.45.
+
+- I tried the Time_Series_weekly API and analyzed the week-end closing prices of IBM throughout time. IBM has existed for so long that I thought it would be interesting to see how the price changed throughout time. I analyzed the max and min price, as well as the average.
+
+- The Alphavantage documentation was very accessible and it helped me understand what the different parameters in the URL are used for.
+
+- AI was only helpful for the plotting of the graphs. This was my first time using AI to code within the notebook and I was surprised by how well it integrated into my existing code!
+
+- It was exciting to learn about API'ing, because understanding how to make these calls gives me so much more data to potentially create a fintech application with!
+
+<br>
+<br>
+<br>
+<br>
+
+<hr>
+
+<br>
+### Lab/Office hours...
+
+We'll have in-lab grutoring hours, in HMC's McGregor 205:
++ Thursday, 2/13 from 7-9pm
++ Friday, 2/14 from 1:30-3pm
++ Sunday, 2/16 from 7:30-9:30pm
+
+<br>
+
+### Submitting...
+
+This "API + Analysis" challenge will be due:
++ now, <font color="DarkRed">Sunday</font> evening @ 11pm  (Feb. 16th)  
++ Download this notebook and Submit to GradeScope
++ Join Econ176 by adding Gradescope course code <tt><b>R7G3NG</b></tt>
+
+Onward!
