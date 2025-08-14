@@ -1,0 +1,132 @@
+### Jupyter Notebooks and Markdown!
++ At heart, cs35 is about bridge-building between human expression and executable expression
++ markdown is a popular language for human expression  (this cell is markdown)
+  + control-enter renders the Markdown  ("runs" it)
++ python is a popular language for executable expression (see cells below!)#### This is a Markdown cell, a <i>fourth-level</i> header
++ If you've already used Markdown, e.g., in Discord, wiki editing, etc., wonderful!
++ If you haven't used it, [this Markdown link](https://www.markdownguide.org/basic-syntax/) is a reference...
++ Equally or more welcome: &nbsp; Dive in! &nbsp; Share! &nbsp; Ask!#### <font color="Coral">First task</font> -- is "to markdown":
++ Here, use your markdown knowledge or research to...
++ **bold** this item
++ italicize this item
++ strikethrough this item
++ use fixed-width formatting for this item, i.e., code-style
++ and then do something else (your choice) with this item
++ BUT... <i><b><u>don't</u></b></i> use mark<u>up</u>, as this item does. Use mark<u>down</u>!
++ That is to say, don't use tags like <tt>\<i\>this\</i\></tt> for any of the challenges above...I jupyter: **bold text**.
+
+
+A *cat* meow.
+
+
+ ~~Strikethrough this item~~  
+
+
+`Use fixed-width formatting for this item, i.e., code-style` 
+
+
+**And then do something else (your choice) with this item**
+#### <font color="Coral">Second task</font> -- Be sure to
++ Change this list so that it uses <u>your</u> name and includes at least three "fun facts" about yourself, including at least two links and at least one link to a picture of you somewhere...
++ For example, my answers are
++ Zach Dodds
++ I <3 poptarts
++ I <3 the [Great British Baking Show](https://www.netflix.com/title/80063224) and probably follow the <font color="DodgerBlue">Dodgers</font> too closely, as well as <font color="Purple">Wimbledon</font>.
++ Also a fan of [Beethoven's piano sonatas](https://www.youtube.com/watch?v=o5dL-65mKe0&list=PLmdMr9Or9Em58wxArIIYr9X7u3YPYlF8T&index=1)
++ I <3 3, 42, and a subset of the other integers...
++ and, be sure to include a link to an page that (a) has you/is about you, or (b) something else about you, or (c) something else you'd like to share:
++ For my example, I'll share [this 1990's-style static web page](http://www.cs.hmc.edu/~dodds/demo.html) For (a) and (b), the images in each of the two Python cells below:#### <font color="Coral">Third task</font> include a linked image via url: This is a _different_ Zach Dodds...
+
+Specifically, the one who knows 3d printing :-)
+
+<img src="https://blog.foster.uw.edu/wp-content/uploads/2018/10/dodds-zach.jpg" height=142>## CS35_Participant_9 ##
+I am currently watching [XO Kitty](https://www.netflix.com/watch/81706697?source=35) and still searching for other <font color="purple">shows</font> to watch. 
+I <font color="red">love</font> listening to music and my favorite artists are [SZA](https://www.google.com/search?q=sza&rlz=1C5GCCM_en&oq=sza&gs_lcrp=EgZjaHJvbWUyBggAEEUYOTIGCAEQIxgnMgYIAhAjGCcyBggDEEUYOzIMCAQQLhhDGIAEGIoFMgYIBRBFGDwyBggGEEUYPDIGCAcQRRg80gEHNDkxajBqMagCALACAA&sourceid=chrome&ie=UTF-8) and [Rex Orange County](https://www.google.com/search?q=rex+orange+county&sca_esv=bbdc9f29fea0b018&rlz=1C5GCCM_en&sxsrf=AHTn8zpQ6RLIOto6sglj3g7dNrSOqMjjrQ%3A1738216058423&ei=ehKbZ43PGe3fkPIP9cOGOA&gs_ssp=eJzj4tVP1zc0TE-zSCs3Tk8yYPQSLEqtUMgvSsxLT1VIzi_NK6kEALcDC1Y&oq=rex+&gs_lp=Egxnd3Mtd2l6LXNlcnAiBHJleCAqAggAMg0QLhiABBixAxhDGIoFMgoQABiABBhDGIoFMgoQLhiABBhDGIoFMgoQLhiABBhDGIoFMggQLhiABBixAzIIEC4YgAQYsQMyChAuGIAEGEMYigUyCxAuGIAEGLEDGIMBMgUQABiABDILEC4YgAQYsQMYgwEyHBAuGIAEGLEDGEMYigUYlwUY3AQY3gQY3wTYAQFIrwxQAFiUA3AAeAGQAQCYAZoBoAGGA6oBAzMuMbgBAcgBAPgBAZgCBKAClgPCAgoQIxiABBgnGIoFwgIEECMYJ8ICEBAuGIAEGNEDGEMYxwEYigXCAg0QLhiABBhDGNQCGIoFwgIWEC4YgAQYsQMY0QMYQxiDARjHARiKBcICCBAAGIAEGLEDmAMAugYGCAEQARgUkgcDMy4xoAeKdQ&sclient=gws-wiz-serp)
+
+This is a picture of **me**:
+[click to see it](https://claremont-courier.com/schools/courier-fall-2023-high-school-athletes-of-the-season-75930/")
+### Onward to Python!#### Python review in about 5-10 cells!
+
+cs5 in one day!#### Let's use f-strings more carefully ...
+#### Notice that variables persist from cell to cell...
+
+Here, ``L`` and ``colleges`` are variables defined above.
+Their values are still present:
+#### ``split`` is a _really_ useful function
+
+Notice that it is called <i>by</i> the string being split.
+
+It returns a list!
+
+(Q'n: <i>How in the input being used?</i>)
+#### ``join`` is the _opposite_ of split#### <font color="Coral">Fourth task</font>: &nbsp; add another example in the spirit of the one below...
++ create (at least) three more variables and
++ a sentence using all of them and
++ render them in a single strings using f-strings...    
+
+Experiment!#### **Remember**  _list comprehensions_  ?
++ they are "loops-in-lists"
++ or "lists-with-loops"
+
+#### <font color="Coral">Fifth task</font>: &nbsp; <b>LC Challenge</b>
+
+Use list comprehensions to find how many of the first 1000 integers, _when squared_, contain the digit 4?
++ Remember: ``str(x)`` converts ``x`` to a string
+
+Then, create a variation of this question -- of your own design -- and answer it! For example,
++ what about checking for ``'4'`` and ``'2'`` ?
++ what about checking for ``'4'`` or ``'2'`` ?
++ even better: something else you've devised!
+
+Then , in a sentence-ish, explain your thinking:
+  + <i>why that question</i>
+  + <i>how did you answer it computationally?</i>
+  + <i>does the answer seem reasonable?</i>#### Let's function!  A first example, `plus1` and  its tests...### Let's loop!
+
+Below,
++ run this infinite loop - a while loop
++ practice using the "Interrupt" (the square at the upper left of the cell) to kill it
++ then, use the three-dots menu at the lower left to delete the cell's output...
+#### For-loop reminders....#### The next cell shows a larger <b>script</b>, which calls the previous two functions:#### The two mystery functions from our in-class exercise:#### Let's show two more functions:  
++ ``count_eyes( s )`` and
++ ``just_eyes( s )``#### Now, let's test our ``count_eyes`` function on all of the Sonnets:#### Now, let's <i>maximize</i> our ``count_eyes`` across all Sonnet lines:#### Thoughts on the most i-y line:
+
+The line with the most 'i's was ``So CS35_Participant_2 lives this and this gives life to thee.``
+
+Of all the sonnets, I'm surprised that no line contained more than 5 "i"s.
+
+But, trying it again looking for 't's, the result was again 5! It was
+
+``When in eternal lines to time thou growest:``
+
+Maybe 5 is a more reasonable maximum than originally thought. (There are fewer than 50 characters per line, after all...).#### <b><font color="Coral">Functions</font></b> to write for hw0pr1
++ Python's <tt>str</tt> functions are documented at this [str documentation page](https://docs.python.org/3/library/stdtypes.html#text-sequence-type-str)
+  + find and read over how <tt>split</tt> works... (that way, too, you'll have a feel for the documentation)
++ Python's <tt>string</tt> library, used via <tt>import string</tt> is at [the string library documentation page](https://docs.python.org/3/library/string.html)
+  + this has some useful constants and other capabilities. Most functionality is in the <tt>str</tt> datatype (class)
+  + not needed but fun: [all of Python's built-in modules](https://docs.python.org/3/py-modindex.html)
++ Be sure to include at least two tests that run - and work - for each of these functions.#### Then, add two functions that you brainstorm, implement, and test...
+
+Here are a couple of examples - one of mine and one from a prior cs35 - to help the brainstorming.
+
+The key is that yours should be, well, yours! That is, something that would only have been created by you/your team -- explain the reasoning, the process you went through, and the process that ended up working.
+
+Here, both algorithmic creativity and content creativity are equally the goal. That said, the aim is 15-20 minutes. (Remember you can always adapt the individualized outcome you're aiming for!)
+#### Example stolen from the past...
++ And Kenneth + Charlie's function, as well...
+  + K+C's is more representative of what's imagined...
+  + Up to you!#### <b><font color="Coral">Reflections</font></b>
+
+In a short 4-6 sentence markdown cell, share
++ Did you use AI?  (We hope so!)
++ If so, which one(s)? was it helpful?
++ Was there anything surprising about what it could help with?
++ Was there anything surprising about what it _couldn't_ help with?
+
+Key question:
++ Did you feel there was more reinforcement -- or more tension --    between "helping accomplish" and "helping understand"?#### <b><font color="Coral">Submitting</font></b>
++ _Do_ keep your cell outputs intact: <i>Don't clear them</i>
++ If needed, use your choice of "commenting out":
++ `if False:` , `# hashes` , `''' triple quotes '''`   for code that does not work
++ _Do_ add context in comments or markdown both for things that worked (optional and welcome) and for things that you didn't get working (it shows you _know_ it's not working!)
+

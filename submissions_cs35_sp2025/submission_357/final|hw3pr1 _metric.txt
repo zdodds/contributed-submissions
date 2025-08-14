@@ -1,0 +1,568 @@
+import requests
+
+url = "https://www.cs.hmc.edu/~dodds/demo.html"
+result = requests.get(url)
+print(f"{result = }")
+
+
+# let's print the text we just grabbed:
+snack_page = result.text
+print(snack_page)
+
+text = snack_page         # ok to have many names...
+
+
+#hw3pr1a
+
+end = 0
+
+while true:
+    start = snack_page.find('<li class="snack">', end)
+    if start == -1: 
+        break  # stop if no more snacks are found
+
+    end = snack_page.find('</li>', start)  # find the closing tag
+    if end == -1:
+        break  # prevent errors if no closing tag is found
+
+    snack_content = snack_page[start+len('<li class="snack">'):end]  # extract content
+    print(f"snack: {snack_content.strip()}")  # strip to remove spaces/newlines
+
+print("\ncomplete!")
+
+
+#    0         1         2             # ten's place
+#    0123456789012345678901234567      # one's place
+s = "abcdefghijklmnopqrstuvwxy&jk"
+s.find("e")                            # try 'a', 'j', 'hi', 'hit', and 'z' ! jk!
+
+                                       # s.find("a",15)   # try ("j",15)
+
+
+
+end = 0
+
+while true:
+    start = snack_page.find('<li class="snack">', end)
+    if start == -1: break     # stop if we're done!
+    end = start + 42          # 42 characters!
+    
+    snack_slice = snack_page[ start:end ]
+    print(f"{snack_slice = }")
+
+print("\ncomplete!")
+
+
+
+end = 0
+
+while true:
+    start = snack_page.find('<li class="snack">', end)
+    if start == -1: break     # stop if we're done!
+    end = snack_page.find('</li>', start)  # find the correct ending!
+    
+    snack_slice = snack_page[ start:end+5 ]
+    print(f"{snack_slice = }")
+
+print("\ncomplete!")
+
+
+# we need the length of the search string!
+front = len('<li class="snack">')
+
+end = 0
+
+while true:
+    start = snack_page.find('<li class="snack">', end)
+    if start == -1: break     # stop if we're done!
+    end = snack_page.find('</li>', start)  # find the correct ending!
+    
+    snack_slice = snack_page[ start+front:end ]
+    print(f"{snack_slice = }")
+
+print("\nyay!!!")
+
+
+import requests
+
+url = "https://www.cs.hmc.edu/people/faculty/"
+result = requests.get(url)
+print(f"{result = }")
+snack_page = result.text
+print(snack_page)
+
+text = snack_page 
+
+
+
+
+#
+# hw3pr1, part (b)
+#
+
+#
+# feel free to use this cell - and additional ones...
+#
+
+# listing the names of nobel laureates in physics
+import requests
+
+# fetch the wikipedia page
+url = "https://en.wikipedia.org/wiki/list_of_nobel_laureates_in_physics"
+result = requests.get(url)
+
+# extract html text
+wiki_page = result.text
+
+# define search term for laureates' names (they are linked inside <td> tags)
+search_term = '<th scope="row" data-sort-value="'  # all laureates have wikipedia links
+front = len(search_term)
+
+end = 0
+
+while true:
+    start = wiki_page.find(search_term, end)
+    if start == -1:
+        break  # stop when no more winners are found
+
+    # find the first three quotes
+    start = wiki_page.find('"', start) + 1  # first quote (before data-sort-value)
+    start = wiki_page.find('"', start) + 1  # second quote (before the actual name)
+    start = wiki_page.find('"', start) + 1  # third quote (beginning of name)
+
+    # find the fourth quote, which marks the end of the name
+    end = wiki_page.find('"', start)  
+    if end == -1:
+        break  
+
+    # extract and clean the winner's name
+    winner_name = wiki_page[start:end].strip()
+
+    # print formatted output
+    print(f"{winner_name = }")
+
+print("\nyay!!!")
+
+
+
+
+
+
+
+# let's import the regular expression library (it should be built-in)
+import re
+
+
+# res are a whole language! 
+# let's see a strategic use, to get our snacks from the snack_page above:
+import re
+
+m = re.findall(r'<li class="snack">(.*)</li>', snack_page )      # yikes!    common functions: findall, sub, search, match  
+
+print(f"{m = }")                                                 # wow!!!
+
+
+# let's try some smaller examples to build up to the snack_page example:
+
+# fundamental capabilities:  regex matching and substitution  
+#
+#    the regex:
+#      matcher:    replacer:   in this string:
+re.sub(r"harvey",  "mildred",  "harvey mudd")           # the 'r' is for 'raw' strings. they're best for re's.
+
+
+re.sub(r"car", "cat",  "this car is careful!")          # we'll stick with substitution for now...  uh oh!  space or ,1
+
+
+re.sub(r"d", "dd", "harvey mud")          # try "mildred mudd"
+
+
+# anchors:  patterns can be anchored:   $ meand the _end_
+re.sub(r"d$", "dd", "mildred mud" )   # $ signifies (matches) the end of the line
+
+
+# anchors:  patterns can be anchored:   ^  means the _start_ 
+re.sub(r"^m", "ℳ", "mildred mudd" )   # ^ signifies (matches) the start of the line  (unicode m :)
+
+
+# plus  +   means one or more:
+re.sub(r"i+", "i", "isn't the aliiien skiing this weekend? aiiiiiiiiiiiiieee!" )   # try replacing with "" or "i" or "𝒾" or "ⓘ"
+
+
+# squarebrackets  [ii]  mean any from that character group:
+re.sub(r"[ii]+", "i", "isn't the aliiien skiing this weekend? aiiiiiiiiiiiiieee!" )   # it can vary within the group!
+
+
+# squarebrackets allow ranges, e.g., [a-z]
+re.sub(r"[a-z]", "*", "aha! you've found my secret: 42!")       # use a +,  add a-z, show \w, for "word" character
+
+
+# let's try the range [0-9] and +
+re.sub(r"[0-9]+", "42",  "aliens <3 pets! they have 45 cats, 6 lemurs, and 789 manatees!")   # discuss!  no +? how to fix?!
+
+
+re.sub( r"or", "and", "words or phrases" )
+re.sub( r"s", "-", "words or phrases" )
+re.sub( r"[aeiou]", "-", "words or phrases" )
+
+re.sub( r"$", " [end]", "words or phrases" )
+re.sub( r"^", "[start] ", "words or phrases" )
+
+# challenge! the dot . matches _any_ single character:  
+re.sub( r".", "-", "words or phrases" )   # what will this do?
+
+re.sub( r".s", "-s", "words or phrases" )  # and this one?!
+
+re.sub( r".+s", "-s", "words or phrases" )  # and this one?!!
+
+
+# the star (asterisk) matches zero or more times...
+re.sub(r"42*", "47", "favorite #'s:  4 42 422 4222 42222 422222")       # try + {2}  {1,3}   (42)
+
+
+m = re.findall(r'<li class="snack">(.*)</li>', snack_page )   # parens are a "capture group"   # try w/o it  # try search & sub
+                                                   # each set of parents "captures" the text inside it
+print(f"{m = }")                                   # it can even be used later, as \1, \2, \3, etc. 
+
+
+#
+# here is a code cell, with the entire first-draft markdown of the previous cell 
+# 
+# stored in the python variable      original_markdown
+#
+
+original_markdown = """
+
+# claremont's colleges - markdown version
+
+the claremont colleges are a *consortium* of **five** socal institutions. <br>
+we list them here.
+
+## the 5cs: a list
++ [pomona](https://www.pomona.edu/)
++ [cmc](https://www.cmc.edu/)
++ [pitzer](https://www.pitzer.edu/)
++ [scripps](https://www.scrippscollege.edu/)
++ [hmc](https://www.hmc.edu/)
+
+the above's an _unordered_ list.  <br>
+at the 5cs, we all agree there's __no__ order!
+
+---
+
+## today's featured college: [cmc](https://coloradomtn.edu/)
+
+<img src="https://ygzm5vgh89zp-u4384.pressidiumcdn.com/wp-content/uploads/2017/06/gws_campusview_1000x627.jpg" height=160>
+
+---
+
+### also featured: &nbsp; scripps and pitzer and mudd and pomona
+
+<img src="https://i0.wp.com/tsl.news/wp-content/uploads/2018/09/scripps.png?w=1430&ssl=1" height=100px> &nbsp; 
+<img src="https://upload.wikimedia.org/wikipedia/commons/f/f9/brant_clock_tower%2c_pitzer_college%2c_2016_%28cropped%29.jpg" height=100px> &nbsp; 
+<img src="https://www.hmc.edu/about/wp-content/uploads/sites/2/2020/02/campus-gv.jpg" height=100px> &nbsp;
+<img src="https://upload.wikimedia.org/wikipedia/commons/4/46/smith_tower_and_the_san_gabriel_mountains.jpg" height=100px>
+
+are there _other_ schools in claremont?
+
+### claremont destinations
++ _pepo melo_, a fantastic font of fruit!
++ **starbucks**, the center of claremont's "city," not as good as scripps's _motley_ 
++ ***sancho's tacos***, the village's newest establishment
++ ~~in-and-out cs35_participant_3~~ (not in claremont, alas, but close! cmc-supported!)
++ `42`nd street bagel, an hmc fave, definitely _well-numbered_
++ trader joe's, providing fuel for the walk back to pitzer _from trader joe's_
+
+---
+
+#### regular expression code-of-the-day 
+`import re`               
+`pet_statement = re.sub(r'dog', 'cat', 'i <3 dogs')`
+
+#### new construction of the ~~day~~ _decade_!
+
+<img src="https://www.cs.hmc.edu/~dodds/roberts_uc.png" height=150> <br><br>
+
+cmc's **_roberts science center_, also known as _"the rubiks cube"_** <br>
+currently under construction, under deadline, and undeterred by socal sun, or rain... 
+
+<br><br>
+
+
+"""
+
+
+#
+# here is a function to write a string to a file (default name: output.html)
+#
+
+def write_to_file(contents, filename="output.html"):
+    """ writes the string final_contents to the file filename """
+    f = open(filename,"w")
+    print(contents, file=f)
+    print(f"{filename = } written. try opening it in a browser!")
+    f.close()
+
+
+#
+# let's write our original_markdown to file...
+#
+
+write_to_file(original_markdown)
+
+
+# here is a function to change markdown to markup
+#
+import re
+
+def handle_down_to_up(contents):
+    """ replace all instances of markdown with markup """
+    new_contents = re.sub(r"markdown", r"markup", contents)  # simple substitution
+    return new_contents
+
+# let's test this!
+if true:
+    old_contents = "this is markdown text"
+    new_contents = handle_down_to_up(old_contents) 
+    print(new_contents)
+
+
+
+# here is a function to handle blank lines (making them <br>)
+#
+import re
+
+def handle_newlines(contents):
+    """ replace all of the just-newline characters \n with html newlines <br> """
+    newlines = []
+    oldlines = contents.split("\n")
+
+    for line in oldlines:
+        new_line = re.sub(r"^\s*$", r"<br>", line)  # if a line has only space characters, \s, we make an html newline <br>
+        newlines.append(new_line)
+
+    new_contents = "\n".join(newlines)   # join with \n characters so it's readable by humans
+    return new_contents
+
+
+# let's test this!
+if true:
+    old_contents = """
+# title
+    
+# another title"""
+    new_contents = handle_newlines(old_contents)
+    print(new_contents)
+
+
+# here is a function to handle headers - right now only h1 (top-level)
+#
+import re
+
+def handle_headers(contents):
+    """ replace all of the #, ##, ###, ... ###### headers with <h1>, <h2>, <h3>, ... <h6> """
+    newlines = []
+    oldlines = contents.split("\n")
+
+    for line in oldlines:
+        new_line = re.sub(r"^# (.*)$", r"<h1>\1</h1>", line)  # capture the contents and wrap with <h1> and </h1>
+                                                              # aha! you will be able to handle the other headers here!
+        newlines.append(new_line)
+
+    new_contents = "\n".join(newlines)   # join with \n characters so it's readable by humans
+    return new_contents
+
+# let's test this!
+if true:
+    old_contents = """
+# title
+<br>
+# another title"""
+    new_contents = handle_headers(old_contents)
+    print(new_contents)
+
+
+# here is a function to handle code - using markdown backticks
+#
+import re
+
+def handle_code(contents):
+    """ replace all of the backtick content with <code> </code> """
+    newlines = []
+    oldlines = contents.split("\n")
+
+    for line in oldlines:
+        new_line = re.sub(r"`(.*)`", r"<tt>\1</tt>", line)  # capture the contents and wrap with <code> and </code>
+        newlines.append(new_line)
+
+    new_contents = "\n".join(newlines)   # join with \n characters so it's readable by humans
+    return new_contents
+
+# let's test this!
+if true:
+    old_contents = """\
+this is <tt>42</tt>   
+<br> 
+our regex library:  <tt>import re</tt>"""
+    new_contents = handle_code(old_contents)
+    print(new_contents)
+
+
+#
+# overall mardown-to-markup transformer
+#
+
+contents_v1 = original_markdown              # here is the input - be sure to run the functions, below:
+
+contents_v2 = handle_newlines(contents_v1)   #   blank lines to <br>
+contents_v3 = handle_headers(contents_v2)    #   # title to <h1>title</h1>  (more needed: ## to <h2>, ... up to <h6>)
+contents_v4 = handle_code(contents_v3)       #   `code` to <tt>code</tt>
+
+final_contents = contents_v1                 # here is the output - be sure it's the version you want!
+
+write_to_file(final_contents, "output.html") # now, written to file:  reload it in your browser!
+
+
+# we can also print the final output's source - this should show the html (so far)
+print(final_contents)    
+# in addition, _do_ open up output.html in your browser and then view source to see the same html (so far)
+
+
+#my hw3pr1 (c)
+import re
+
+# [#1] handle all six levels of headers <h1> through <h6>
+def handle_headers(contents):
+    """ convert markdown headers (#, ##, ###, etc.) into html headers """
+    newlines = []
+    oldlines = contents.split("\n")
+
+    for line in oldlines:
+        new_line = re.sub(r"^###### (.*)$", r"<h6>\1</h6>", line)  # handle <h6>
+        new_line = re.sub(r"^##### (.*)$", r"<h5>\1</h5>", new_line)  # handle <h5>
+        new_line = re.sub(r"^#### (.*)$", r"<h4>\1</h4>", new_line)  # handle <h4>
+        new_line = re.sub(r"^### (.*)$", r"<h3>\1</h3>", new_line)  # handle <h3>
+        new_line = re.sub(r"^## (.*)$", r"<h2>\1</h2>", new_line)  # handle <h2>
+        new_line = re.sub(r"^# (.*)$", r"<h1>\1</h1>", new_line)  # handle <h1>
+
+        newlines.append(new_line)
+
+    return "\n".join(newlines)
+
+# [#2] handle five word-stylings:
+
+# strikethrough: ~~text~~ → <s>text</s>
+def handle_strikethrough(contents):
+    return re.sub(r'~~(.*?)~~', r'<s>\1</s>', contents)
+
+# bold: **bold** or __bold__ → <b>bold</b>
+def handle_bold(contents):
+    return re.sub(r'\*\*(.*?)\*\*|__(.*?)__', r'<b>\1\2</b>', contents)
+
+# italic: *italic* or _italic_ → <i>italic</i>
+def handle_italic(contents):
+    return re.sub(r'(?<!\\)(\*|_)([^\1]+?)\1', r'<i>\2</i>', contents)
+
+# unordered lists: + item → <ul><li>item</li></ul>
+def handle_unorderedlists(contents):
+    lines = contents.split("\n")
+    new_lines = []
+    in_list = false
+
+    for line in lines:
+        if line.startswith("+ "):
+            if not in_list:
+                new_lines.append("<ul>")
+                in_list = true
+            new_lines.append(f"<li>{line[2:]}</li>")
+        else:
+            if in_list:
+                new_lines.append("</ul>")
+                in_list = false
+            new_lines.append(line)
+
+    if in_list:
+        new_lines.append("</ul>")
+
+    return "\n".join(new_lines)
+
+# urls: [text](link) → <a href="link">text</a>
+def handle_url(contents):
+    return re.sub(r'\[(.*?)\]\((.*?)\)', r'<a href="\2">\1</a>', contents)
+
+# [#3] three extra stylings:
+
+# escape sequences: \*word* → *word* instead of <i>word</i>
+def handle_backslash(contents):
+    """ convert \*word* to *word* and \_word_ to _word_ instead of escaping them """
+    contents = re.sub(r'\\\*', '*', contents)  # unescape * 
+    contents = re.sub(r'\\_', '_', contents)  # unescape _
+    return contents
+
+
+# superscript and subscript: ^sup^ → <sup>sup</sup>, ~sub~ → <sub>sub</sub>
+def handle_superscript_subscript(contents):
+    contents = re.sub(r'\^([^\^]*)\^', r'<sup>\1</sup>', contents)
+    contents = re.sub(r'~([^~]*)~', r'<sub>\1</sub>', contents)
+    return contents
+
+# hide "cs35_participant_9" by making it invisible
+def handle_anna(contents):
+    return re.sub(r'\banna\b', '<span style="background:white;">cs35_participant_9</span>', contents, flags=re.ignorecase)
+
+# master function to apply all transformations
+def markdown_to_html(markdown_text):
+    markdown_text = handle_headers(markdown_text)
+    markdown_text = handle_strikethrough(markdown_text)
+    markdown_text = handle_bold(markdown_text)
+    markdown_text = handle_italic(markdown_text)
+    markdown_text = handle_unorderedlists(markdown_text)
+    markdown_text = handle_url(markdown_text)
+    markdown_text = handle_backslash(markdown_text)
+    markdown_text = handle_superscript_subscript(markdown_text)
+    markdown_text = handle_anna(markdown_text)
+    return markdown_text
+
+# test markdown input
+markdown_text = """
+# welcome to my blog
+
+## about me
+hi! i'm a student at **the webb schools**, and i love **listening to music**, *playing with my cat*, and ~~watching netflix shows~~.  
+i am playing around with **markdown-to-html conversions**—  
+
+### hello again!  
+ 
+#### facts  
++ my name is cs35_participant_9  
++ \*wow\* 
++ \_\_bold\_\_
++ i live in south hutch  
+
+##### here's a useful link  
+check out [google](https://google.com) for anything you need!  
+
+###### more things to try out
+- superscript: ^this^
+- subscript: ~that~.
+"""
+
+# convert markdown to html
+html_output = markdown_to_html(markdown_text)
+
+# save output to file
+def write_to_file(contents, filename="output.html"):
+    with open(filename, "w") as f:
+        f.write(contents)
+    print(f"file '{filename}' written successfully!")
+
+# write the output html file
+write_to_file(html_output)
+
+# print final html
+print(html_output)
+
+
+
+
+
