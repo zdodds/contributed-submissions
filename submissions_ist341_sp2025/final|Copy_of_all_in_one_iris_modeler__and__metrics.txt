@@ -1,0 +1,958 @@
+#
+# modern modeling ~ iris_modeler:  all-in-one iris clasification via nearest neighbors
+
+
+
+# section 1:  libraries
+#
+import sklearn          # if not present, use a variant of  #3 install -u scikit-learn
+import numpy as np      # numpy is python's "array" library
+import pandas as pd     # pandas is python's "data" library ("dataframe" == spreadsheet)
+
+# section 2:  read the already-cleaned data  (+ view, if you wish)
+#
+cleaned_filename = "iris_cleaned.csv"     # data should be "tidy" already...
+df_tidy = pd.read_csv(cleaned_filename)   # can add encoding="utf-8" if needed
+if false:
+    print(f"{cleaned_filename} : file read into a pandas dataframe.")
+    print("df_tidy is\n", df_tidy)
+    print("df_tidy.info() is"); df_tidy.info()
+
+# section 3:  drop any columns we don't want to use
+row = 0
+column = 1
+df_model1 = df_tidy.drop('irisname', axis=column )
+if false:  print("df_model1 is\n", df_model1)
+
+# section 4:  create columns and species variables to show we're organized + know what's happening...
+columns = df_model1.columns                     # int to str
+species = ['setosa','versicolor','virginica']   # int to str
+species_index = { s:i for i,s in enumerate(species) }  # str to int   {'setosa':0,'versicolor':1,'virginica':2}
+columns_index = { c:i for i,c in enumerate(columns) }  # str to int   {'sepallen':0,'sepalwid':1,'petallen':2, <more> }
+if false:  print(f"{columns = } \n {columns_index = } \n {species = } \n {species_index = }")
+
+# section 5:  convert from pandas (spreadsheet) to numpy (array)
+a = df_model1.to_numpy()    # yields the underlying numpy array
+a = a.astype('float64')     # make sure everything is floating-point
+num_rows, num_cols = a.shape   # let's have num_rows and num_cols around
+if false:  print(f"\nthe dataset has {num_rows} rows and {num_cols} cols")
+
+# section 6:  define our features (x_all) and our target-to-predict (y_all)
+x_all = a[:,0:4]  # x (features) watch out! this is likely to change from model to model...
+y_all = a[:,4]    # y (labels) watch out! this is likely to change from model to model...
+if false:
+    print(f"the labels/species are \n {y_all} \n ");
+    print(f"the first few data rows are \n {x_all[0:5,:]}")
+
+# section 7:  80/20 split into training and testing sets:  x_train and y_train, x_test and y_test
+from sklearn.model_selection import train_test_split      # this function splits into training + testing sets
+x_train, x_test, y_train, y_test = train_test_split(x_all, y_all, test_size=0.20)  # random_state=42 # 20% testing
+if false:
+    print(f"training with {len(y_train)} rows;  testing with {len(y_test)} rows\n" )
+    print(f"held-out testing data... (testing data: {len(y_test)} rows)")
+    print(f"y_test: {y_test}")
+    print(f"x_test (first few rows): {x_test[0:5,:]}\n")
+    print(f"training data used for modeling... (training data: {len(y_train)} rows)")
+    print(f"y_train: {y_train}")
+    print(f"x_train (first few rows): {x_train[0:5,:]}")  # 5 rows
+
+# section 8:  here's where the model-building happens!  first, we guess at the parameters (k=84)
+from sklearn.neighbors import kneighborsclassifier
+k = 84   # we don't know what k to use, so we guess!  (this will _not_ be a good value)
+knn_model = kneighborsclassifier(n_neighbors=k)       # here, k is the "k" in knn
+knn_model.fit(x_train, y_train)      # we train the model ... it's one line!
+if false:  print("created and trained a knn classifier with k =", k)
+
+# section 9:  let's see how our naive model does on the test data!
+predicted_labels = knn_model.predict(x_test)      # this is the key line:  predict
+actual_labels = y_test
+if true:
+    print("predicted labels:", predicted_labels)
+    print("actual  labels  :", actual_labels)
+    num_correct = sum(predicted_labels == actual_labels)
+    total = len(actual_labels)
+    print(f"\nresults on test set:  {num_correct} correct out of {total} total, for {num_correct*100/total:5.2f}%\n")
+
+# section 10:  let's cross-validate to find the "best" value of k, best_k:
+import time
+from sklearn.model_selection import cross_val_score
+all_accuracies = []
+best_k = 84  # not correct!
+best_accuracy = 0.0  # also not correct...
+for k in range(1,85):    # note that we are cross-validating using only our training data!
+    knn_cv_model = kneighborsclassifier(n_neighbors=k)   # build a knn_model for every k
+    cv_scores = cross_val_score( knn_cv_model, x_train, y_train, cv=5 )  # cv=5 means 80/20
+    this_cv_accuracy = cv_scores.mean()               # mean() is numpy's built-in average function
+    if false: print(f"k: {k:2d}  cv accuracy: {this_cv_accuracy:7.4f}")
+    if this_cv_accuracy > best_accuracy:  # is this one better?
+        best_accuracy = this_cv_accuracy  # track the best accuracy
+        best_k = k                        # with the best k
+    all_accuracies.append(this_cv_accuracy)
+    time.sleep(0.002)   # dramatic pauses!
+if true: print(f"best_k = {best_k}  \n    yields the highest cv accuracy: {100*best_accuracy:5.2f}%")  # print the best one
+
+# section 11:  here's where the model-building happens with the best-found parameters:
+knn_model_final = kneighborsclassifier(n_neighbors=best_k)
+knn_model_final.fit(x_all, y_all)      # we train the model ... on _all_ the data!
+if true:  print("\ncreated and trained a classifier named knn_model_final with best_k =", best_k)
+
+
+
+#
+# let's print things in a vertical table
+#
+
+def compare_labels(predicted_labels, actual_labels):
+    """ a more neatly formatted comparison """
+    num_labels = len(predicted_labels)
+    num_correct = 0
+
+    print()
+    print(f'row {"#":>3s} : {"predicted":>12s} {"actual":<12s}   {"result"}')
+
+    for i in range(num_labels):
+        p = int(round(predicted_labels[i]))         # round protects from fp error
+        a = int(round(actual_labels[i]))
+        result = "incorrect"
+        if p == a:  # if they match,
+            result = ""       # no longer incorrect
+            num_correct += 1  # and we count a match!
+
+        print(f"row {i:>3d} : {species[p]:>12s} {species[a]:<12s}   {result}")
+
+    print()
+    print("correct:", num_correct, "out of", num_labels)
+    return num_correct
+
+# let's try it out!
+print("the untuned model results (not the final model):")
+compare_labels(predicted_labels,actual_labels)
+
+
+#
+# ok!  we have our knn model, let's use it...
+#
+# ... in a data-trained predictive model (k-nearest-neighbors), using scikit-learn
+#
+# warning: this model has not yet been tuned to its "best k"
+#
+def predictive_model( features ):
+    """ input: a list of four features
+                [ sepallen, sepalwid, petallen, petalwid ]
+        output: the predicted species of iris, from
+                  setosa (0), versicolor (1), virginica (2)
+    """
+    our_features = np.asarray([features])                      # extra brackets needed so it's 2d
+    predicted_species_list = knn_model_final.predict(our_features)   # predict!
+
+    predicted_species = int(round(predicted_species_list[0]))  # unpack the one element it contains
+    name = species[predicted_species]                          # look up the species
+    return name
+
+#
+# try it!
+#
+# features = eval(input("enter new features: "))
+#
+listoffeatures = [ [6.7,3.3,5.7,2.1],
+                   [5.8,2.7,4.1,1.0],
+                   [4.6,3.6,3.0,2.2],
+                   [6.7,3.3,5.7,2.1],
+                   [4.2,4.2,4.2,4.2],
+                   [1,42,4.7,3.01],        # -4.7? .01?  0?
+                   ]
+
+for features in listoffeatures:
+    result = predictive_model( features )
+    print(f"from the features {features}, i predict {result}")
+
+
+### let's see all the accuracies!
+
+import pandas as pd
+# let's create a pandas dataframe out of the above cell's data
+crossvalidation_df = pd.dataframe( {"k_value":np.asarray(range(1,84+1)),
+                                    "accuracy":np.asarray(all_accuracies)}
+                                    )
+
+import seaborn as sns
+sns.set_theme(style="darkgrid")
+# plot the responses for different events and regions
+sns.lineplot(x="k_value", y="accuracy",  #  hue="region", style="event",
+             data=crossvalidation_df)
+
+
+#
+# final predictive model (k-nearest-neighbor), with tuned k + all data incorporated
+#
+
+def predictive_model( features, model ):                 # to allow the input of any model
+    """ input: a list of four features
+                [ sepallen, sepalwid, petallen, petalwid ]
+        output: the predicted species of iris, from
+                  setosa (0), versicolor (1), virginica (2)
+    """
+    our_features = np.asarray([features])                 # extra brackets needed for 2d
+    predicted_species = model.predict(our_features)       # the model's prediction!
+    predicted_species = int(round(predicted_species[0]))  # unpack the extra brackets
+    return predicted_species
+
+#
+# try it!
+#
+
+lof = [
+[4.8, 3.1, 1.6, 0.2 ],   # actually setosa
+[5.7, 2.9, 4.2, 1.3 ],   # actually versicolor
+[5.8, 2.7, 5.1, 1.9 ],   # actually virginica
+[5.2, 4.1, 1.5, 0.1 ],   # actually setosa
+[5.4, 3.4, 1.5, 0.4 ],   # actually setosa
+[5.1, 2.5, 3.0, 1.1 ],   # actually versicolor
+[6.2, 2.9, 4.3, 1.3 ],   # actually versicolor
+[6.3, 3.3, 6.0, 2.5 ],   # actually virginica
+[5.7, 2.8, 4.1, 1.3 ],   # actually virginica  <-- almost always wrong!
+
+[0.0,0.0,0.0,0.0],               # used as a separator here
+
+[3.7, 2.8, 2.1, 0.3 ],   # let's use this for our own "new" iris ...
+]
+
+# run on each one:
+for features in lof:
+    predicted_species = predictive_model( features, knn_model_final )  # pass in the model, too!
+    name = species[predicted_species]
+    print(f"from the features {features} i predict {name} ")    # answers in the assignment...
+
+
+#
+# that's it!  welcome to the world of model-building workflows!!
+#
+#             our prediction?  we'll be back for more ml!
+#
+# in fact, the rest of the hw is to run more ml workflows:
+# births, digits, another dataset, which could be titanic, housing, ...
+#
+# and more ml algorithms:
+# decision trees, random forests, neural nets
+# and, optionally, time series, recommendation systems, ...
+
+
+# we can only plot 2 dimensions at a time!
+# these two will be our constants:
+sepallen = 5.0
+sepalwid = 3.0
+# petallen =
+# petalwid =
+
+vertical = np.arange(0,8,.1) # array of vertical input values
+horizont = np.arange(0,8,.1) # array of horizontal input values
+plane = np.zeros( (len(horizont),len(vertical)) ) # the output array
+model = knn_model_final
+
+
+col = 0
+row = 0
+for petallen in vertical: # for every sepal length
+  for petalwid in horizont: # for every sepal width
+    features = [ sepallen, sepalwid, petallen, petalwid ]
+    output = predictive_model(features,model)
+    #print(f"input {features} output: {output}")
+    plane[row,col] = output
+    row += 1
+  row = 0
+  col += 1
+  print(".", end="")  # so we know it's running
+  if col % 42 == 0: print() # same...
+
+print("\n", plane[0:3,0:3]) # small bit of the lower-left corner
+
+
+# assuming 'plane', 'vertical', and 'horizont' are defined as in the original code
+
+# create a new figure and axes
+import matplotlib.pyplot as plt
+fig, ax = plt.subplots(figsize=(12, 8))
+
+# create the heatmap
+im = ax.imshow(plane, cmap="viridis", extent=[horizont.min(), horizont.max(), vertical.min(), vertical.max()], origin="lower", aspect="auto")
+
+# set axis labels and ticks
+ax.set_xlabel("petalwid", fontsize=14)
+ax.set_ylabel("petallen", fontsize=14)
+
+# calculate the indices for reduced ticks and labels
+reduced_tick_indices = np.arange(0, len(horizont), len(horizont)//8)
+# ensure that the last index is included
+# if reduced_tick_indices[-1] != len(horizont)-1:
+#   reduced_tick_indices = np.append(reduced_tick_indices, len(horizont)-1)
+
+
+# set ticks and tick labels with correct values
+ax.set_xticks(horizont[reduced_tick_indices]) # display ticks every 0.4 unit
+ax.set_yticks(vertical[reduced_tick_indices])
+ax.set_xticklabels([f"{x:.1f}" for x in horizont[reduced_tick_indices]], fontsize=12)  # format x-axis labels
+ax.set_yticklabels([f"{y:.1f}" for y in vertical[reduced_tick_indices]], fontsize=12)  # format y-axis labels
+
+
+# add a colorbar
+cbar = plt.colorbar(im)
+cbar.set_label('predicted species (0: setosa, 1: versicolor, 2: virginica)', rotation=270, labelpad=25)
+
+# set the title
+ax.set_title(f"species classification with sepal length: {sepallen}, sepal width: {sepalwid}", fontsize=16)
+
+plt.show()
+
+print("remember our species-to-number mapping:")
+print("0 - setosa")
+print("1 - versicolor")
+print("2 - virginica")
+
+
+# assuming 'plane', 'days', and 'months' are defined in the previous step
+
+# create the heatmap plot
+import matplotlib.pyplot as plt
+fig, ax = plt.subplots(figsize=(12, 8))
+
+# show the plane data as an image (heatmap)
+im = ax.imshow(plane, cmap="viridis",
+               extent=[days.min(), days.max(), months.min(), months.max()],
+               origin="lower", aspect="auto")
+
+# set axis labels
+ax.set_xlabel("day of month", fontsize=14)
+ax.set_ylabel("month", fontsize=14)
+
+# show ticks at every 4 days and 1 month
+day_ticks = np.arange(1, 32, 4)
+month_ticks = np.arange(1, 13, 1)
+
+ax.set_xticks(day_ticks)
+ax.set_yticks(month_ticks)
+
+# format tick labels
+ax.set_xticklabels([str(d) for d in day_ticks], fontsize=12)
+ax.set_yticklabels([str(m) for m in month_ticks], fontsize=12)
+
+# add a colorbar to explain the values
+cbar = plt.colorbar(im)
+cbar.set_label('predicted popularity (0: below, 1: above)', rotation=270, labelpad=25)
+
+# add a title
+ax.set_title("birthday popularity prediction by day and month", fontsize=16)
+
+# show the final plot
+plt.show()
+
+# reminder of category mapping
+print("0 - below average")
+print("1 - above average")
+
+
+
+# section 1:  libraries
+#
+import sklearn          # if not present, use a variant of  #3 install -u scikit-learn
+import numpy as np      # numpy is python's "array" library
+import pandas as pd     # pandas is python's "data" library ("dataframe" == spreadsheet)
+
+# section 2:  read the already-cleaned data  (+ view, if you wish)
+#
+cleaned_filename = "births_cleaned.csv"
+#data should be "tidy" already...
+df_tidy = pd.read_csv(cleaned_filename)               # can add encoding="utf-8" if needed
+if false:
+    print(f"{cleaned_filename} : file read into a pandas dataframe.")
+    print("df_tidy is\n", df_tidy)
+    print("df_tidy.info() is"); df_tidy.info()
+
+# section 3:  drop any columns we don't want to use
+row = 0
+column = 1
+df_model1 = df_tidy.drop(['births', 'popularitystring'], axis=column )
+if false:  print("df_model1 is\n", df_model1)
+
+# section 4:  create columns and target variables to show we're organized + know what's happening...
+columns = df_model1.columns.drop('popularitynum')                     # input features only
+target = 'popularitynum'                                              # output target
+columns_index = { c:i for i,c in enumerate(columns) }                 # str to int index for features
+if false:  print(f"{columns = } \n {columns_index = } \n {target = }")
+
+# section 5:  convert from pandas (spreadsheet) to numpy (array)
+a = df_model1.to_numpy()    # yields the underlying numpy array
+a = a.astype('float64')     # make sure everything is floating-point
+num_rows, num_cols = a.shape   # let's have num_rows and num_cols around
+if false:  print(f"\nthe dataset has {num_rows} rows and {num_cols} cols")
+
+# section 6:  define our features (x_all) and our target-to-predict (y_all)
+x_all = a[:,0:2]  # x (features): month, day
+y_all = a[:,2]    # y (label): popularitynum
+if false:
+    print(f"the labels are \n {y_all} \n ");
+    print(f"the first few data rows are \n {x_all[0:5,:]}")
+
+# section 7:  80/20 split into training and testing sets:  x_train and y_train, x_test and y_test
+from sklearn.model_selection import train_test_split      # this function splits into training + testing sets
+x_train, x_test, y_train, y_test = train_test_split(x_all, y_all, test_size=0.20)  # random_state=42 # 20% testing
+if false:
+    print(f"training with {len(y_train)} rows;  testing with {len(y_test)} rows\n" )
+    print(f"held-out testing data... (testing data: {len(y_test)} rows)")
+    print(f"y_test: {y_test}")
+    print(f"x_test (first few rows): {x_test[0:5,:]}\n")
+    print(f"training data used for modeling... (training data: {len(y_train)} rows)")
+    print(f"y_train: {y_train}")
+    print(f"x_train (first few rows): {x_train[0:5,:]}")  # 5 rows
+
+# section 8:  here's where the model-building happens!  first, we guess at the parameters (k=25)
+from sklearn.neighbors import kneighborsclassifier
+k = 25   # we don't know what k to use, so we guess!  (this will _not_ be a good value)
+knn_model = kneighborsclassifier(n_neighbors=k)       # here, k is the "k" in knn
+knn_model.fit(x_train, y_train)      # we train the model ... it's one line!
+if false:  print("created and trained a knn classifier with k =", k)
+
+# section 9:  let's see how our naive model does on the test data!
+predicted_labels = knn_model.predict(x_test)      # this is the key line:  predict
+actual_labels = y_test
+if true:
+    print("predicted labels:", predicted_labels)
+    print("actual  labels  :", actual_labels)
+    num_correct = sum(predicted_labels == actual_labels)
+    total = len(actual_labels)
+    print(f"\nresults on test set:  {num_correct} correct out of {total} total, for {num_correct*100/total:5.2f}%\n")
+
+# section 10:  let's cross-validate to find the "best" value of k, best_k:
+import time
+from sklearn.model_selection import cross_val_score
+all_accuracies = []
+best_k = 25  # not correct!
+best_accuracy = 0.0  # also not correct...
+for k in range(1,41):    # note that we are cross-validating using only our training data!
+    knn_cv_model = kneighborsclassifier(n_neighbors=k)   # build a knn_model for every k
+    cv_scores = cross_val_score( knn_cv_model, x_train, y_train, cv=5 )  # cv=5 means 80/20
+    this_cv_accuracy = cv_scores.mean()               # mean() is numpy's built-in average function
+    if false: print(f"k: {k:2d}  cv accuracy: {this_cv_accuracy:7.4f}")
+    if this_cv_accuracy > best_accuracy:  # is this one better?
+        best_accuracy = this_cv_accuracy  # track the best accuracy
+        best_k = k                        # with the best k
+    all_accuracies.append(this_cv_accuracy)
+    time.sleep(0.002)   # dramatic pauses!
+if true: print(f"best_k = {best_k}  \n    yields the highest cv accuracy: {100*best_accuracy:5.2f}%")  # print the best one
+
+# section 11:  here's where the model-building happens with the best-found parameters:
+knn_model_final = kneighborsclassifier(n_neighbors=best_k)
+knn_model_final.fit(x_all, y_all)      # we train the model ... on _all_ the data!
+if true:  print("\ncreated and trained a classifier named knn_model_final with best_k =", best_k)
+
+
+
+# we'll show predictions and actual values in a vertical table
+
+categories = ['below', 'above']  # 0 = below average, 1 = above average
+
+def compare_labels(predicted_labels, actual_labels):
+    """ this function compares predicted vs actual labels,
+        and prints them in a clear vertical format.
+    """
+    num_labels = len(predicted_labels)
+    num_correct = 0
+
+    print()
+    print(f'row {"#":>3s} : {"predicted":>12s} {"actual":<12s}   {"result"}')
+
+    for i in range(num_labels):
+        p = int(round(predicted_labels[i]))  # prediction
+        a = int(round(actual_labels[i]))     # actual label
+        result = "incorrect"                 # default to "incorrect"
+        if p == a:
+            result = ""                      # remove "incorrect" if it's correct
+            num_correct += 1                 # count correct prediction
+
+        print(f"row {i:>3d} : {categories[p]:>12s} {categories[a]:<12s}   {result}")
+
+    print()
+    print("correct:", num_correct, "out of", num_labels)
+    return num_correct
+
+# try the function using our test results (not the final model yet)
+print("the untuned model results (not the final model):")
+compare_labels(predicted_labels, actual_labels)
+
+
+
+# now, let's use the predictive model!
+# we can use the trained model to make predictions using (month, day) as input
+
+categories = ['below', 'above']  # 0 = below average, 1 = above average
+
+def predictive_model(features):
+    """ input: a list with two values → [month, day]
+        output: predicted label from the model: 'below' or 'above'
+    """
+    our_features = np.asarray([features])                     # make it 2d for prediction
+    predicted_label = knn_model_final.predict(our_features)   # make prediction
+    result = int(round(predicted_label[0]))                   # get the label (0 or 1)
+    return categories[result]                                 # return the text version
+
+# try it with example dates!
+listofdates = [
+    [1, 1],   # jan 1
+    [2, 14],  # valentine's day
+    [3, 15],  # random date
+    [7, 4],   # independence day
+    [10, 31], # halloween
+    [12, 25], # christmas
+]
+
+for features in listofdates:
+    result = predictive_model(features)
+    print(f"from the date {features}, i predict the day is: {result}")
+
+
+
+### let's see all the accuracies!
+
+import pandas as pd
+# create a dataframe that shows the accuracy for each k value we tested
+crossvalidation_df = pd.dataframe({
+    "k_value": np.asarray(range(1, 41)),         # from k = 1 to 40
+    "accuracy": np.asarray(all_accuracies)       # accuracy results we stored earlier
+})
+
+import seaborn as sns
+sns.set_theme(style="darkgrid")  # nice visual style for the plot
+
+# plot k on the x-axis and accuracy on the y-axis
+sns.lineplot(x="k_value", y="accuracy", data=crossvalidation_df)
+
+
+
+#
+# final predictive model (k-nearest-neighbor), using best k and all the data
+#
+
+categories = ['below', 'above']  # 0 = below average, 1 = above average
+
+def predictive_model(features, model):  # you can use any model here
+    """ input: a list of two features → [month, day]
+        output: the predicted category: 'below' or 'above'
+    """
+    our_features = np.asarray([features])             # convert to 2d array
+    predicted_label = model.predict(our_features)     # use model to predict
+    predicted_label = int(round(predicted_label[0]))  # unpack the result
+    return predicted_label                            # returns 0 or 1
+
+#
+# try it with sample birth dates
+#
+
+lof = [
+    [1, 1],    # new year's day
+    [2, 14],   # valentine's day
+    [3, 15],   # random day
+    [4, 22],   # random spring day
+    [5, 10],   # random may date
+    [7, 4],    # independence day
+    [10, 31],  # halloween
+    [12, 25],  # christmas
+    [8, 8],    # peak summer
+    [9, 9]     # early fall
+]
+
+# run the predictions
+for features in lof:
+    predicted = predictive_model(features, knn_model_final)
+    result = categories[predicted]
+    print(f"from the date {features}, i predict the day is: {result}")
+
+
+
+# we can only plot 2 dimensions at a time!
+# we'll use 'month' as the y-axis and 'day' as the x-axis
+
+days = np.arange(1, 32)         # 1–31 days
+months = np.arange(1, 13)       # 1–12 months
+plane = np.zeros((len(months), len(days)))  # prediction result array
+model = knn_model_final         # use the final trained model
+
+col = 0
+row = 0
+for month in months:            # for each month
+  for day in days:              # for each day in that month
+    if (month == 2 and day > 29) or (month in [4,6,9,11] and day > 30):
+        plane[row, col] = np.nan   # invalid date
+    else:
+        features = [month, day]
+        output = predictive_model(features, model)
+        plane[row, col] = output
+    col += 1
+  col = 0
+  row += 1
+  print(".", end="")  # progress
+  if row % 4 == 0: print()
+
+# let's look at a small part of the matrix
+print("\n", plane[0:3, 0:3])  # show top-left of the matrix
+
+
+
+# assuming 'plane', 'days', and 'months' are defined in the previous step
+
+# create the heatmap plot
+import matplotlib.pyplot as plt
+fig, ax = plt.subplots(figsize=(12, 8))
+
+# show the plane data as an image (heatmap)
+im = ax.imshow(plane, cmap="viridis",
+               extent=[days.min(), days.max(), months.min(), months.max()],
+               origin="lower", aspect="auto")
+
+# set axis labels
+ax.set_xlabel("day of month", fontsize=14)
+ax.set_ylabel("month", fontsize=14)
+
+# show ticks at every 4 days and 1 month
+day_ticks = np.arange(1, 32, 4)
+month_ticks = np.arange(1, 13, 1)
+
+ax.set_xticks(day_ticks)
+ax.set_yticks(month_ticks)
+
+# format tick labels
+ax.set_xticklabels([str(d) for d in day_ticks], fontsize=12)
+ax.set_yticklabels([str(m) for m in month_ticks], fontsize=12)
+
+# add a colorbar to explain the values
+cbar = plt.colorbar(im)
+cbar.set_label('predicted popularity (0: below, 1: above)', rotation=270, labelpad=25)
+
+# add a title
+ax.set_title("birthday popularity prediction by day and month", fontsize=16)
+
+# show the final plot
+plt.show()
+
+# reminder of category mapping
+print("0 - below average")
+print("1 - above average")
+
+
+
+# section 1:  libraries
+#
+import sklearn
+import numpy as np
+import pandas as pd
+
+# section 2:  read the already-cleaned data  (+ view, if you wish)
+#
+cleaned_filename = "digits_cleaned.csv"
+df_tidy = pd.read_csv(cleaned_filename)
+if false:
+    print(f"{cleaned_filename} : file read into a pandas dataframe.")
+    print("df_tidy is\n", df_tidy)
+    print("df_tidy.info() is"); df_tidy.info()
+
+# section 3:  drop any columns we don't want to use
+row = 0
+column = 1
+df_model1 = df_tidy.copy()  # no drop needed, all columns are useful
+if false:  print("df_model1 is\n", df_model1)
+
+# section 4:  create columns and labels variables to show we're organized + know what's happening...
+columns = df_model1.columns.drop('actual_digit')            # input features
+labels = list(sorted(df_model1['actual_digit'].unique()))   # digit labels: 0–9
+columns_index = { c:i for i,c in enumerate(columns) }
+if false:  print(f"{columns = } \n {columns_index = } \n {labels = }")
+
+# section 5:  convert from pandas (spreadsheet) to numpy (array)
+a = df_model1.to_numpy()
+a = a.astype('float64')     # use float format
+num_rows, num_cols = a.shape
+if false:  print(f"\nthe dataset has {num_rows} rows and {num_cols} cols")
+
+# section 6:  define our features (x_all) and our target-to-predict (y_all)
+x_all = a[:, 0:64]   # 64 features
+y_all = a[:, 64]     # target: actual digit
+if false:
+    print(f"the labels are \n {y_all} \n ")
+    print(f"the first few data rows are \n {x_all[0:5,:]}")
+
+# section 7:  split into training and testing
+from sklearn.model_selection import train_test_split
+x_train, x_test, y_train, y_test = train_test_split(x_all, y_all, test_size=0.20)
+if false:
+    print(f"training with {len(y_train)} rows;  testing with {len(y_test)} rows")
+    print(f"x_train (first few rows): {x_train[0:5,:]}")
+
+# section 8:  first try (guess k=25)
+from sklearn.neighbors import kneighborsclassifier
+k = 25
+knn_model = kneighborsclassifier(n_neighbors=k)
+knn_model.fit(x_train, y_train)
+if false: print("created and trained a knn classifier with k =", k)
+
+# section 9:  see how our model does on the test set!
+predicted_labels = knn_model.predict(x_test)
+actual_labels = y_test
+if true:
+    print("predicted labels:", predicted_labels)
+    print("actual  labels  :", actual_labels)
+    num_correct = sum(predicted_labels == actual_labels)
+    total = len(actual_labels)
+    print(f"\nresults on test set:  {num_correct} correct out of {total} total, for {num_correct*100/total:5.2f}%\n")
+
+# section 10:  cross-validation to find best_k
+import time
+from sklearn.model_selection import cross_val_score
+all_accuracies = []
+best_k = 25
+best_accuracy = 0.0
+for k in range(1, 11):  # keep it small to avoid long run
+    knn_cv_model = kneighborsclassifier(n_neighbors=k)
+    cv_scores = cross_val_score(knn_cv_model, x_train, y_train, cv=5, n_jobs=-1)
+    this_cv_accuracy = cv_scores.mean()
+    if false: print(f"k: {k:2d}  cv accuracy: {this_cv_accuracy:7.4f}")
+    if this_cv_accuracy > best_accuracy:
+        best_accuracy = this_cv_accuracy
+        best_k = k
+    all_accuracies.append(this_cv_accuracy)
+    time.sleep(0.002)
+if true: print(f"best_k = {best_k}  \n    yields the highest cv accuracy: {100*best_accuracy:5.2f}%")
+
+# section 11:  final model with best_k
+knn_model_final = kneighborsclassifier(n_neighbors=best_k)
+knn_model_final.fit(x_all, y_all)
+if true: print("\ncreated and trained a classifier named knn_model_final with best_k =", best_k)
+
+
+
+#
+# let's print things in a vertical table
+#
+
+def compare_labels(predicted_labels, actual_labels):
+    """ neatly show predictions vs actual numbers """
+    num_labels = len(predicted_labels)
+    num_correct = 0
+
+    print()
+    print(f'row {"#":>3s} : {"predicted":>9s} {"actual":<9s}   {"result"}')
+
+    for i in range(num_labels):
+        p = int(round(predicted_labels[i]))
+        a = int(round(actual_labels[i]))
+        result = "incorrect"
+        if p == a:
+            result = ""
+            num_correct += 1
+
+        print(f"row {i:>3d} : {p:>9d} {a:<9d}   {result}")
+
+    print()
+    print("correct:", num_correct, "out of", num_labels)
+    return num_correct
+
+# try it out!
+print("the untuned model results (not the final model):")
+compare_labels(predicted_labels, actual_labels)
+
+
+
+# let's see all the accuracies for different k values
+
+import pandas as pd
+# make a dataframe to hold k values and their accuracies
+crossvalidation_df = pd.dataframe({
+    "k_value": np.asarray(range(1, len(all_accuracies)+1)),
+    "accuracy": np.asarray(all_accuracies)
+})
+
+import seaborn as sns
+sns.set_theme(style="darkgrid")  # just a nicer look
+# draw line plot: accuracy vs. k value
+sns.lineplot(x="k_value", y="accuracy", data=crossvalidation_df)
+
+
+
+digit_labels = [str(i) for i in range(10)]  # 0 to 9
+
+def predictive_model(features, model):
+    """ input: a list of 64 pixel values
+        output: the predicted digit (0 to 9)
+    """
+    our_features = np.asarray([features])             # shape as 2d array
+    predicted_digit = model.predict(our_features)     # use model
+    predicted_digit = int(round(predicted_digit[0]))  # unpack result
+    return predicted_digit
+
+lof = [
+    list(x_all[10]),
+    list(x_all[100]),
+    list(x_all[200]),
+    list(x_all[300]),
+    list(x_all[500]),
+    [0.0]*64
+]
+
+for features in lof:
+    predicted = predictive_model(features, knn_model_final)
+    simple_features = [float(f) for f in features[:5]]  # convert to simple float
+    print(f"from the features {simple_features}..., i predict the digit is: {predicted}")
+
+
+
+# step 1: define which two pixels to vary
+pixel_x = 25  # pixel index on x-axis (change this if needed)
+pixel_y = 30  # pixel index on y-axis
+
+# step 2: define range of pixel values to test (0–16)
+vertical = np.arange(0, 17, 1)
+horizont = np.arange(0, 17, 1)
+
+# step 3: prepare the output plane (2d grid of predictions)
+plane = np.zeros((len(horizont), len(vertical)))
+model = knn_model_final
+
+# step 4: use a real image from the dataset as base
+base_image = list(x_all[150])  # you can try 100 or 300
+
+# step 5: fill in the plane by varying just 2 pixels
+col = 0
+row = 0
+for y_value in vertical:
+    for x_value in horizont:
+        features = base_image.copy()
+        features[pixel_x] = x_value
+        features[pixel_y] = y_value
+        output = predictive_model(features, model)
+        plane[row, col] = output
+        row += 1
+    row = 0
+    col += 1
+    print(".", end="")
+    if col % 8 == 0: print()
+
+print("\n", plane[0:3, 0:3])  # quick preview of predictions
+
+
+
+# extra step (optional): visualize a digit as an image
+# this helps us understand how the digit looks
+
+
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# choose any row to visualize (e.g., 42)
+row = 42
+
+# get the pixel values for the digit
+pixels_as_row = x_all[row]
+pixels_as_image = np.reshape(pixels_as_row, (8, 8))  # reshape to 8x8 image
+
+# plot using seaborn heatmap
+fig, ax = plt.subplots(figsize=(6, 6))
+sns.heatmap(pixels_as_image, annot=true, fmt=".1f", linewidths=0.5, ax=ax, cmap="rocket")
+
+ax.set_title(f"digit image at row {row}", fontsize=16)
+plt.show()
+
+
+
+# step 6: visualize the 2d prediction map using matplotlib and seaborn
+
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# create the figure and axis
+fig, ax = plt.subplots(figsize=(12, 8))
+
+# show the prediction plane as a heatmap
+im = ax.imshow(plane, cmap="viridis",
+               extent=[horizont.min(), horizont.max(), vertical.min(), vertical.max()],
+               origin="lower", aspect="auto")
+
+# label the axes
+ax.set_xlabel(f"pixel {pixel_x} value", fontsize=14)
+ax.set_ylabel(f"pixel {pixel_y} value", fontsize=14)
+
+# set ticks
+ax.set_xticks(np.linspace(horizont.min(), horizont.max(), 8))
+ax.set_yticks(np.linspace(vertical.min(), vertical.max(), 8))
+ax.tick_params(axis='both', labelsize=12)
+
+# add colorbar to show which digit is predicted
+cbar = plt.colorbar(im, ticks=range(10))
+cbar.set_label('predicted digit', rotation=270, labelpad=25, fontsize=12)
+cbar.ax.tick_params(labelsize=10)
+
+# title
+ax.set_title(f"digit prediction heatmap: pixel {pixel_x} vs pixel {pixel_y}", fontsize=16)
+
+plt.show()
+
+
+
+# loop to test different numbers of features (pixels) from 1 to 64
+from sklearn.model_selection import cross_val_score
+from sklearn.neighbors import kneighborsclassifier
+
+all_accuracies = []  # store accuracy for each number of features
+
+for num_features in range(1, 65):  # 1 to 64
+    x_selected = x_all[:, :num_features]  # only first `num_features` columns
+    best_accuracy = 0.0
+    best_k = 1
+
+    for k in range(1, 11):  # try k from 1 to 10
+        knn_model = kneighborsclassifier(n_neighbors=k)
+        scores = cross_val_score(knn_model, x_selected, y_all, cv=5)
+        acc = scores.mean()
+        if acc > best_accuracy:
+            best_accuracy = acc
+            best_k = k
+
+    all_accuracies.append(best_accuracy)
+
+print("\ndone. ✅")
+
+
+
+# visualize how accuracy changes with number of features
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# convert accuracy list to dataframe
+partial_digits_df = pd.dataframe({
+    "num_features": list(range(1, 65)),
+    "accuracy": all_accuracies
+})
+
+# plot
+sns.set_theme(style="whitegrid")
+plt.figure(figsize=(12, 6))
+sns.lineplot(data=partial_digits_df, x="num_features", y="accuracy", marker="o")
+
+plt.title("partial-digit accuracy by number of features", fontsize=16)
+plt.xlabel("number of pixels used (features)", fontsize=14)
+plt.ylabel("cross-validation accuracy", fontsize=14)
+plt.xticks(ticks=range(0, 65, 4))
+plt.ylim(0.7, 1.01)
+plt.grid(true)
+plt.show()
+
+
+
+
+# final reflection on digits model
+
+
+# we found that using k-nearest neighbors worked very well for predicting digits.
+# the best accuracy we reached was about 98.8% using cross-validation.
+# we also noticed that some pixels are more helpful than others when recognizing the digits.
+# overall, the model performed better than we expected with just simple features.
+
+
+
